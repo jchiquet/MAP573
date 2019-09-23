@@ -1,0 +1,10 @@
+\babel@toc {english}{}
+\beamer@sectionintoc {1}{Basic notions on graphs and networks}{3}{0}{1}
+\beamer@subsectionintoc {1}{1}{Definitions}{5}{0}{1}
+\beamer@subsectionintoc {1}{2}{Representations}{12}{0}{1}
+\beamer@sectionintoc {2}{Descriptive statistics}{21}{0}{2}
+\beamer@subsectionintoc {2}{1}{Vertex characteristics}{23}{0}{2}
+\beamer@subsectionintoc {2}{2}{Local measurements}{39}{0}{2}
+\beamer@sectionintoc {3}{Graph Partionning}{48}{0}{3}
+\beamer@subsectionintoc {3}{1}{Hierarchical clustering}{51}{0}{3}
+\beamer@subsectionintoc {3}{2}{Spectral Clustering}{57}{0}{3}

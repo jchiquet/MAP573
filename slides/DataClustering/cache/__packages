@@ -1,0 +1,12 @@
+base
+knitr
+igraph
+igraphdata
+sand
+ggplot2
+ggraph
+gridExtra
+Matrix
+statnet.common
+network
+sna

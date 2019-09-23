@@ -1,0 +1,45 @@
+#!/bin/bash
+
+function nettoie() {
+  while [ -n "$1" ] ; do
+    nom=$1     
+    rm $nom/*-concordance.tex 2>/dev/null
+    rm $nom/*.synctex.gz 2>/dev/null
+    rm $nom/*.vrb 2>/dev/null    
+    rm $nom/*.rel 2>/dev/null
+    rm $nom/*.toc 2>/dev/null
+    rm $nom/*.snm 2>/dev/null
+    rm $nom/*.nav 2>/dev/null
+    rm $nom/*.mtc* 2>/dev/null
+    rm $nom/*.dvi 2>/dev/null
+    rm $nom/*.dvi 2>/dev/null
+##    rm $nom/*.out 2>/dev/null
+    rm $nom/*.lof 2>/dev/null
+    rm $nom/*.lot 2>/dev/null
+    rm $nom/*.aux 2>/dev/null
+    rm $nom/*.idx 2>/dev/null
+    rm $nom/*.ilg 2>/dev/null
+    rm $nom/*.ind 2>/dev/null
+    rm $nom/*.log 2>/dev/null
+    rm $nom/*.*# 2>/dev/null
+    rm $nom/*.tex~ 2>/dev/null
+    rm $nom/*.bbl 2>/dev/null
+    rm $nom/*.brf 2>/dev/null
+    rm $nom/*.bmt 2>/dev/null
+    rm $nom/*.maf 2>/dev/null
+    rm $nom/*.blg 2>/dev/null
+    rm $nom/*~ 2>/dev/null
+    rm $nom/.*~ 2>/dev/null
+    rm core 2>/dev/null
+    echo -e '\E[34m' "Rep $nom :" '\E[0m' `ls $nom`
+    shift
+  done
+}
+
+nom=`pwd`
+nettoie $nom
+
+for i in `ls` ; do
+	if [ -d "$i" ] ; then nettoie $i ; fi
+done
+
