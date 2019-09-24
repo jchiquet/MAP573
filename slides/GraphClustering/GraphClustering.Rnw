@@ -4,7 +4,7 @@
 \def\currentInstitute{Polytechnique MAP 573, 2019 -- Julien Chiquet}
 \def\currentLogo{../common_figs/logo_X}
 \def\currentDate{Autumn semester, 2019}
-\def\currentChapter{Graph clustering: spectral clustering and the Stochastic Bloc Model}
+\def\currentChapter{Graph clustering and the Stochastic Bloc Model}
 
 <<preamble, child='../common_preamble.Rnw'>>=
 @
@@ -626,7 +626,7 @@ plot(hc,karate)
     \end{itemize}
   \end{block}
 
-  \begin{block}{now: \alert{clustering of network based on a probabilistic model of the graph}}<2->
+  \begin{block}{Now: \alert{clustering of network based on a probabilistic model of the graph}}
     Become familiar with
     \begin{itemize}
       \item the stochastic block model, a random graph model tailored for clustering vertices,
@@ -634,7 +634,7 @@ plot(hc,karate)
     \end{itemize}
   \end{block}
 
-  \onslide<3>{
+  \onslide{
   \begin{center}
     hierarchical/kmeans clustering $\leftrightarrow$ \alert{Gaussian mixture models} \\
       $\Updownarrow$ \\
