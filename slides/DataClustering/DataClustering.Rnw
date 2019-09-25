@@ -2,16 +2,20 @@
 
 \def\currentCourse{Unsupervised Learning}
 \def\currentInstitute{Polytechnique MAP 573, 2019 -- Julien Chiquet}
-\def\currentLogo{../common_figs/logo_x}
+\def\currentLogo{../common_figs/logo_X}
 \def\currentDate{Autumn semester, 2019}
-\def\currentChapter{Data clustering: k-means and Gaussian mixture Models}
+\def\currentChapter{Introduction to partition-based and model-based clustering}
 
 <<preamble, child='../common_preamble.Rnw'>>=
 @
 
 <<load_packages, cache = FALSE, echo=FALSE>>=
-library(igraph)
-library(sand)
+library(tidyverse)
+library(corrplot)
+library(GGally)
+library(ggfortify)
+library(RColorBrewer)
+pal <- brewer.pal(10, "Set3") # a fancy palette for graph
 @
 
 \usetikzlibrary{calc,shapes,backgrounds,arrows,automata,shadows,positioning}
@@ -21,14 +25,279 @@ library(sand)
 \dotitlepage
 
 \begin{frame}
+	\frametitle{Machine Learning}
+
+	\begin{center}
+		\includegraphics[width=\textwidth]{figures/Learning+Types.jpg}
+	\end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Supervised vs Unsupervised Learning}
+  
+  \begin{block}{Supervised Learning}
+    \begin{itemize}
+    \item Training data $\mathcal{D}_n = \{(\bx_1, y_1), \ldots, (\bx_n, y_n)\}, X_i \sim^{\text{i.i.d}} \mathbb{P}$
+    \item Construct a predictor $\hat f : \mathcal{X} \rightarrow \mathcal{Y}$ using $\mathcal{D}_n$
+    \item Loss $\ell(y, f(x))$ measures how well $f(x)$ predicts $y$
+    \item Aim: minimize the generalization error
+    \item Task: Regression, Classification
+    \end{itemize}
+    $\rightsquigarrow$ The goal is clear: predict $y$ based on $x$ (regression, classification)
+  \end{block}
+
+  \begin{block}{Unsupervised Learning}
+  \begin{itemize}
+    \item Training data $\mathcal{D} = \{x_1, \ldots, x_n\}$
+    \item Loss? , Aim?
+    \item Task: Dimension reduction, Clustering
+  \end{itemize}  
+  $\rightsquigarrow$ The goal is less well defined, and \emph{validation} is questionable
+  \end{block}
+  
+\end{frame}
+
+\begin{frame}
   \frametitle{Outline}
   \tableofcontents
 \end{frame}
 
+%% ==========================================================================
+\section{Clustering: generalities}
+%% ==========================================================================
+
+\subsection{Problem setup}
+
+\begin{frame}[label=Clustering1]
+  \frametitle{Clustering}
+  \framesubtitle{General goals}
+
+  \paragraph{Objective}: construct a map $f$ from $\mathcal{D}$ to $\{1,\ldots,K\}$ where $K$ is a fixed number of clusters.
+    
+  \vfill
+    
+  \paragraph{Careful! classification $\neq$ clustering}
+      \begin{itemize}
+      \item Classification presupposes the existence of classes
+      \item Clustering labels only elements of the dataset
+      \begin{itemize}
+      \item[$\rightsquigarrow$] no ground truth (no given labels)
+      \item[$\rightsquigarrow$] discover a structure "natural" to the data
+      \end{itemize}
+      \end{itemize}
+  
+  \vfill
+
+  \paragraph{Motivations}
+    \begin{itemize}
+    \item describe large masses of data in a simplified way,
+    \item structure a set of knowledge,
+    \item reveal structures, hidden causes,
+    \item use of the groups in further processing, \dots
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[label=Clustering2]
+
+  \frametitle{Clustering}
+  \framesubtitle{Challenges}
+
+  \begin{itemize}
+    \item Need to define the \alert{quality} of the cluster.
+    \item No obvious measure!
+    \end{itemize}
+
+    \begin{block}{Clustering quality}
+    \begin{itemize}
+      \item Inner homogeneity: samples in the same group should be similar.
+      \item Outer inhomogeneity: samples in two different groups should be different.
+    \end{itemize}
+    \end{block}
+
+    \begin{itemize}
+      \item Several possible definitions of similar and different.
+      \item Often based on the distance between the samples.
+      \item Example based on the euclidean distance:
+        \begin{itemize}
+          \item Inner homogeneity $=$ intra class variance,
+          \item Outer inhomogeneity $=$ inter class variance.
+        \end{itemize}
+    
+      \item \alert{Beware:} choice of the number of cluster $K$ often complex!
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Problem setup}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{}
+\end{frame}
+
+\subsection{Motivating example: crabs morphology}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set}
+  \framesubtitle{Morphological Measurements on Leptograpsus Crabs}
+  
+\begin{block}{Description}
+\small The crabs data frame has 200 rows and 8 columns, describing 5 morphological measurements on 50 crabs each of two colour forms and both sexes, of the species \textit{Leptograpsus variegatus} collected at Fremantle, W. Australia.
+\end{block}
+  
+<<crabs dataset >>=
+crabs <- MASS::crabs %>% select(-index) %>% 
+  rename(sex = sex, 
+         species         = sp,
+         frontal_lob     = FL,
+         rear_width      = RW,
+         carapace_length = CL,
+         carapace_width  = CW,
+         body_depth      = BD)
+crabs %>% select(sex, species) %>% summary() %>% knitr::kable("latex")
+@
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set II}
+  \framesubtitle{Pairs plot of attributes}
+
+<<crabs attributes>>=
+ggpairs(crabs, columns = 3:7, aes(colour = species, shape = sex))
+
+@
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set III}
+  \framesubtitle{PCA on the attributes}
+
+<<pca crabs untransformed>>=
+prcomp(select(crabs, -species, -sex), scale. = TRUE) %>% 
+  autoplot(loadings = TRUE, loadings.label = TRUE,
+           data = crabs, colour = 'species', shape = 'sex')
+@
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Remove size effect}
+  \framesubtitle{Carried by 1st principal components}
+
+\paragraph{PCA is solved by SVD}
+\begin{equation*}
+  \mathbf{X} = \mathbf{U} \mathbf{D} \mathbf{V}^\top.
+\end{equation*}
+
+We remove the best rank-1 approximation of $\mathbf{X}$ to remove the \textit{size effect}, carried by the first axis, that is,
+\begin{equation*}
+  \tilde{\mathbf{X}}^{(1)} = \mathbf{U}_{\bullet 1} d_{11} \mathbf{v}_{\bullet 1}^\top.
+\end{equation*}
+
+
+<<remove size effect>>=
+attributes <- select(crabs, -sex, -species)
+SVD <- svd(attributes)
+attributes_rank1 <- tcrossprod(SVD$u[, 1] * SVD$d[1], SVD$v[, 1])
+crabs_corrected <- crabs
+crabs_corrected[, 3:7] <- attributes - attributes_rank1
+@
+
+$\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at hand, common to all attributes.
+
+<<pairs plot corrected>>=
+ggpairs(crabs_corrected, columns = 3:7, aes(colour = species, shape = sex))
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{PCA on corrected data}
+<<pca crabs corrected>>=
+prcomp(select(crabs_corrected, -species, -sex), scale. = TRUE) %>% 
+  autoplot(loadings = TRUE, loadings.label = TRUE, 
+           data = crabs_corrected, colour = 'species', shape = 'sex')
+@
+\end{frame}
+
+\begin{frame}
+  \frametitle{Questions}
+  \begin{center}
+    \begin{itemize}
+      \item Could we automatically identify some grouping (\emph{clustering}) in this data?
+      \item Would this clustering correspond to some known labels (sex, species)?
+    \end{itemize}
+  \end{center}
+
+\end{frame}
+
+%% ==========================================================================
+\section{Partition-based clustering}
+%% ==========================================================================
+
+\subsection{Hierarchical Clustering}
+
+\begin{frame}[fragile,allowframebreaks]
+
+<<>>=
+Ward <- crabs %>% 
+  select(-sex, -species) %>% 
+  scale() %>%  
+  dist(method = "euclidean") %>% 
+  hclust(method = "ward.D2")
+Ward_corrected <- crabs_corrected %>% 
+  select(-sex, -species) %>%
+  scale() %>%  
+  dist(method = "euclidean") %>% 
+  hclust(method = "ward.D2")
+par(mfrow=c(1,2))
+plot(Ward)
+plot(Ward_corrected)
+@
+
+\end{frame}
+
+<<>>=
+ARI_species <- Ward %>% 
+  cutree(k = 1:10) %>% 
+  as.data.frame() %>% as.list() %>% 
+  sapply(aricode::ARI, paste(crabs$species,crabs$sex, sep="-"))
+ARI_species_corr <- Ward_corrected %>% 
+  cutree(k = 1:10) %>% 
+  as.data.frame() %>% as.list() %>% 
+  sapply(aricode::ARI, paste(crabs$species,crabs$sex, sep="-"))
+@
+
+<<>>=
+ARI_species <- Ward %>% 
+  cutree(k = 1:10) %>% 
+  as.data.frame() %>% as.list() %>% 
+  sapply(aricode::ARI, paste(crabs$species,crabs$sex, sep = "-"))
+@
+
+\subsection{The K-means algorithm}
+
+\begin{frame}[fragile,allowframebreaks]
+
+<<>>=
+pca <- prcomp(select(crabs, -species, -sex), scale. = TRUE)
+autoplot(pca, loadings = TRUE, loadings.label = TRUE,
+         data = crabs, colour = 'species')
+@
+
+\end{frame}
 
 
 %% ==========================================================================
-\section{Background: mixture models and EM}
+\section{Model-based approach: mixture models}
 %% ==========================================================================
 
 \begin{frame}
@@ -361,63 +630,63 @@ library(sand)
 
 \end{frame}
 
-% \begin{frame}[fragile]
-%   \frametitle{R code: auxiliary functions}
-% 
-% We start by defining functions to compute the complete model loglikelihood, perform the E step and the M step.
-% <<EM_mixture_auxiliaries, tidy=FALSE>>=
-% get.cloglik <- function(X, Z, theta) {
-%   alpha <- theta$alpha; mu <- theta$mu; sigma <- theta$sigma
-%   xs <- scale(matrix(X,length(x),length(alpha)),mu,sigma)
-%   return(sum(Z*(log(alpha)-log(sigma)-.5*(log(2*pi)+xs^2))))
-% }
-% 
-% M.step <- function(X, tau) {
-%   n <- length(X); Q <- ncol(tau)
-%   alpha  <- colMeans(tau)
-%   mu     <- colMeans(tau * matrix(X,n,Q)) / alpha
-%   sigma  <- sqrt(colMeans(tau*sweep(matrix(X,n,Q),2,mu,"-")^2)/alpha)
-%   return(list(alpha=alpha, mu=mu, sigma=sigma))
-% }
-% 
-% E.step <- function(X, theta) {
-%   tau <- mapply(function(alpha, mu, sigma) {
-%       alpha*dnorm(X,mu,sigma)
-%     }, theta$alpha, theta$mu, theta$sigma)
-%   return(tau / rowSums(tau))
-% }
-% @
-% 
-% \end{frame}
-% 
-% \begin{frame}[fragile]
-%   \frametitle{R code: EM for univariate mixture}
-% 
-% <<EM_mixture, echo=TRUE, tidy=FALSE>>=
-% EM.mixture <- function(X, Q,
-%                        init.cl=sample(1:Q,n,rep=TRUE), max.iter=100, eps=1e-5) {
-%     n <- length(X); tau <- matrix(0,n,Q); tau[cbind(1:n,init.cl)] <- 1
-%     Eloglik <- vector("numeric", max.iter)
-%     iter <- 0; cond <- FALSE
-% 
-%     while (!cond) {
-%         iter <- iter + 1
-%         ## M step
-%         theta <- M.step(X, tau)
-%         ## E step
-%         tau <- E.step(X, theta)
-%         ## check consistency
-%         Eloglik[iter] <- get.cloglik(X, tau, theta)
-%         if (iter > 1)
-%             cond <- (iter>=max.iter) | Eloglik[iter]-Eloglik[iter-1] < eps
-%     }
-% 
-%     return(list(alpha = theta$alpha,  mu = theta$mu,  sigma = theta$sigma,
-%                 tau   = tau, cl = apply(tau, 1, which.max),
-%                 Eloglik = Eloglik[1:iter]))
-% }
-% @
-% \end{frame}
+\begin{frame}[fragile]
+  \frametitle{R code: auxiliary functions}
+
+We start by defining functions to compute the complete model loglikelihood, perform the E step and the M step.
+<<EM_mixture_auxiliaries, tidy=FALSE>>=
+get.cloglik <- function(X, Z, theta) {
+  alpha <- theta$alpha; mu <- theta$mu; sigma <- theta$sigma
+  xs <- scale(matrix(X,length(x),length(alpha)),mu,sigma)
+  return(sum(Z*(log(alpha)-log(sigma)-.5*(log(2*pi)+xs^2))))
+}
+
+M.step <- function(X, tau) {
+  n <- length(X); Q <- ncol(tau)
+  alpha  <- colMeans(tau)
+  mu     <- colMeans(tau * matrix(X,n,Q)) / alpha
+  sigma  <- sqrt(colMeans(tau*sweep(matrix(X,n,Q),2,mu,"-")^2)/alpha)
+  return(list(alpha=alpha, mu=mu, sigma=sigma))
+}
+
+E.step <- function(X, theta) {
+  tau <- mapply(function(alpha, mu, sigma) {
+      alpha*dnorm(X,mu,sigma)
+    }, theta$alpha, theta$mu, theta$sigma)
+  return(tau / rowSums(tau))
+}
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{R code: EM for univariate mixture}
+
+<<EM_mixture, echo=TRUE, tidy=FALSE>>=
+EM.mixture <- function(X, Q,
+                       init.cl=sample(1:Q,n,rep=TRUE), max.iter=100, eps=1e-5) {
+    n <- length(X); tau <- matrix(0,n,Q); tau[cbind(1:n,init.cl)] <- 1
+    Eloglik <- vector("numeric", max.iter)
+    iter <- 0; cond <- FALSE
+
+    while (!cond) {
+        iter <- iter + 1
+        ## M step
+        theta <- M.step(X, tau)
+        ## E step
+        tau <- E.step(X, theta)
+        ## check consistency
+        Eloglik[iter] <- get.cloglik(X, tau, theta)
+        if (iter > 1)
+            cond <- (iter>=max.iter) | Eloglik[iter]-Eloglik[iter-1] < eps
+    }
+
+    return(list(alpha = theta$alpha,  mu = theta$mu,  sigma = theta$sigma,
+                tau   = tau, cl = apply(tau, 1, which.max),
+                Eloglik = Eloglik[1:iter]))
+}
+@
+\end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Example: data generation}
@@ -471,45 +740,53 @@ rug(x)
    
 \end{frame}
 
-% \begin{frame}[fragile]
-%   \frametitle{Example: adjustment}
-% 
-% <<EM_mixture_run>>=
-% out <- EM.mixture(x, Q=4, init.cl=sample(1:4,n,rep=TRUE))
-% plot(out$Eloglik, main="EM criterion", type="l", xlab="iteration")
-% @
-% \end{frame}
-% 
-% \begin{frame}[fragile, allowframebreaks]
-%   \frametitle{Example: adjustment - plot}
-% 
-% <<EM_mixture_run_plot>>=
-% out <- EM.mixture(x, Q=4, init.cl=kmeans(x,4)$cl)
-% curve(alpha[1]*dnorm(x,mu1,sigma1) +
-%       alpha[2]*dnorm(x,mu2,sigma2) +
-%       alpha[3]*dnorm(x,mu3,sigma3) +
-%       alpha[4]*dnorm(x,mu4,sigma3), col="blue",
-%       lty=1, from=0,to=30, n=1000,
-%       main="Theoretical Gaussian mixture and estimated components",
-%       xlab="x", ylab="density")
-% curve(out$alpha[1]*dnorm(x,out$mu[1],out$sigma[1]), col="red", add=TRUE, lty=2)
-% curve(out$alpha[2]*dnorm(x,out$mu[2],out$sigma[2]), col="red", add=TRUE, lty=2)
-% curve(out$alpha[3]*dnorm(x,out$mu[3],out$sigma[3]), col="red", add=TRUE, lty=2)
-% curve(out$alpha[4]*dnorm(x,out$mu[4],out$sigma[4]), col="red", add=TRUE, lty=2)
-% rug(x)
-% @
-% 
-% \end{frame}
-% 
-% \begin{frame}[fragile, allowframebreaks]
-%   \frametitle{Example: adjustment - classification}
-% 
-% <<EM_mixture_run_contingency>>=
-% table(cl, out$cl)
-% aricode::ARI(cl, out$cl)
-% @
-% 
-% \end{frame}
+\begin{frame}[fragile]
+  \frametitle{Example: adjustment}
 
+<<EM_mixture_run>>=
+out <- EM.mixture(x, Q=4, init.cl=sample(1:4,n,rep=TRUE))
+plot(out$Eloglik, main="EM criterion", type="l", xlab="iteration")
+@
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]
+  \frametitle{Example: adjustment - plot}
+
+<<EM_mixture_run_plot>>=
+out <- EM.mixture(x, Q=4, init.cl=kmeans(x,4)$cl)
+curve(alpha[1]*dnorm(x,mu1,sigma1) +
+      alpha[2]*dnorm(x,mu2,sigma2) +
+      alpha[3]*dnorm(x,mu3,sigma3) +
+      alpha[4]*dnorm(x,mu4,sigma3), col="blue",
+      lty=1, from=0,to=30, n=1000,
+      main="Theoretical Gaussian mixture and estimated components",
+      xlab="x", ylab="density")
+curve(out$alpha[1]*dnorm(x,out$mu[1],out$sigma[1]), col="red", add=TRUE, lty=2)
+curve(out$alpha[2]*dnorm(x,out$mu[2],out$sigma[2]), col="red", add=TRUE, lty=2)
+curve(out$alpha[3]*dnorm(x,out$mu[3],out$sigma[3]), col="red", add=TRUE, lty=2)
+curve(out$alpha[4]*dnorm(x,out$mu[4],out$sigma[4]), col="red", add=TRUE, lty=2)
+rug(x)
+@
+
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]
+  \frametitle{Example: adjustment - classification}
+
+<<EM_mixture_run_contingency>>=
+table(cl, out$cl)
+aricode::ARI(cl, out$cl)
+@
+
+\end{frame}
+
+% \begin{frame}
+%   \frametitle{Agglomerative Hierarchical Clustering}
+%   
+% <<>>=
+% plot(mclust::Mclust(scale(select(crabs_corrected, -sex, -species)), modelNames = c("EII", "EEI")))
+% @
+%   
+% \end{frame}
 
 \end{document}
