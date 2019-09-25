@@ -18,6 +18,7 @@ library(GGally)
 library(ggfortify)
 library(RColorBrewer)
 pal <- brewer.pal(10, "Set3") # a fancy palette for graph
+theme_set(theme_bw())
 @
 
 \usetikzlibrary{calc,shapes,backgrounds,arrows,automata,shadows,positioning}
@@ -467,9 +468,29 @@ kmeans.ani()
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]
-  \frametitle{K-means in \texttt{R}  on crabs data set}
+  \frametitle{K-means in \texttt{R} on uncorrected data set}
+
+<<kmeans uncorrected crabs>>=
+uncor_kmeans_res <- crabs %>%
+  select(-species, -sex) %>%
+  kmeans(4, nstart = 10)
+uncor_clusters <- as.factor(uncor_kmeans_res$cluster)
+uncor_centers  <- as.tibble(uncor_kmeans_res$centers)
+classes <- paste(crabs_corrected$species, crabs_corrected$sex, sep = "-")
+
+crabs %>% 
+  ggplot(aes(x = carapace_length, y = carapace_width, color = uncor_clusters)) +
+  geom_point(aes(shape = classes)) +
+  geom_point(data = uncor_centers, color = 'coral', size = 4 , pch = 21) +
+  geom_point(data = uncor_centers, color = 'coral', size = 50, alpha = 0.2)
+@
   
-  <<kmeans crabs>>=
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{K-means in \texttt{R} on corrected crabs data set}
+  
+<<kmeans crabs>>=
 kmeans_res <- crabs_corrected %>%
   select(-species, -sex) %>%
   kmeans(4, nstart = 10)
@@ -482,6 +503,32 @@ crabs_corrected %>%
   geom_point(aes(shape = classes)) +
   geom_point(data = centers, color = 'coral', size = 4 , pch = 21) +
   geom_point(data = centers, color = 'coral', size = 50, alpha = 0.2)
+@
+
+\end{frame}
+
+% <<spectral kmeans crabs>>=
+% SVD <- svd(select(crabs_corrected, -species, -sex))
+% spec_crabs <- as.tibble(SVD$u[,1:2] %*% diag(SVD$d[1:2]))
+% spec_kmeans_res <- spec_crabs %>%
+%   kmeans(4, nstart = 10)
+% spec_clusters <- as.factor(spec_kmeans_res$cluster)
+% spec_centers  <- as.tibble(spec_kmeans_res$centers)
+% classes <- paste(crabs_corrected$species, crabs_corrected$sex, sep = "-")
+% 
+% ggplot(spec_crabs, aes(V1, V2, color = spec_clusters)) +
+%   geom_point(aes(shape = classes)) +
+%   geom_point(data = spec_centers, color = 'coral', size = 4 , pch = 21) +
+%   geom_point(data = spec_centers, color = 'coral', size = 50, alpha = 0.2)
+% @
+
+\begin{frame}[fragile]
+  \frametitle{Clustering comparison}
+
+<<kmeans validation>>=
+aricode::ARI(clusters, classes)
+aricode::ARI(uncor_clusters, classes)
+table(clusters, classes)
 @
 
 \end{frame}
@@ -513,7 +560,7 @@ loss (k-means criterion)
 \framebreak
 \begin{block}{Algorithm}
 \begin{itemize}
-\item Start with $(\mathcal{C}_{i}^{(0)})= (\{ \vecX_i \})$
+\item Start with $(\mathcal{C}_{i}^{(0)})= (\{ \bx_i \})$
 the collection of all singletons.
 \item At step $s$, we have $n-s$ clusters $(\mathcal{C}_{i}^{(s)})$:
 \begin{itemize}
@@ -547,21 +594,21 @@ is possible for a given cluster.
 \begin{itemize}
 \item Minimum linkage:
 \begin{align*}
-\Delta(\mathcal{C}_i, \mathcal{C}_j) = \min_{\vecX_i \in
-\mathcal{C}_i} \min_{\vecX_ \in
-\mathcal{C}_j} d(\vecX_i, \vecX_j)
+\Delta(\mathcal{C}_i, \mathcal{C}_j) = \min_{\bx_i \in
+\mathcal{C}_i} \min_{\bx_ \in
+\mathcal{C}_j} d(\bx_i, \bx_j)
 \end{align*}
 \item Maximum linkage:
 \begin{align*}
-\Delta(\mathcal{C}_i, \mathcal{C}_j) = \max_{\vecX_i \in
-\mathcal{C}_i} \max_{\vecX_ \in
-\mathcal{C}_j} d(\vecX_i, \vecX_j)
+\Delta(\mathcal{C}_i, \mathcal{C}_j) = \max_{\bx_i \in
+\mathcal{C}_i} \max_{\bx_ \in
+\mathcal{C}_j} d(\bx_i, \bx_j)
 \end{align*}
 \item Average linkage:
 \begin{align*}
-\Delta(\mathcal{C}_i, \mathcal{C}_j) = \frac{1}{|\mathcal{C}_i||\mathcal{C}_j|} \sum_{\vecX_i \in
-\mathcal{C}_i}\sum_{\vecX_ \in
-\mathcal{C}_j} d(\vecX_i, \vecX_j)
+\Delta(\mathcal{C}_i, \mathcal{C}_j) = \frac{1}{|\mathcal{C}_i||\mathcal{C}_j|} \sum_{\bx_i \in
+\mathcal{C}_i}\sum_{\bx_ \in
+\mathcal{C}_j} d(\bx_i, \bx_j)
 \end{align*}
 \end{itemize}
 \end{block}
@@ -572,11 +619,11 @@ is possible for a given cluster.
 \item Ward's criterion:
 \begin{align*}
 \Delta(\mathcal{C}_i, \mathcal{C}_j)
-& = \sum_{\vecX_i \in \mathcal{C}_i} \left( d^2(\vecX_i,
-\mu_{\mathcal{C}_i \cup \mathcal{C}_j} ) - d^2(\vecX_i,
+& = \sum_{\bx_i \in \mathcal{C}_i} \left( d^2(\bx_i,
+\mu_{\mathcal{C}_i \cup \mathcal{C}_j} ) - d^2(\bx_i,
 \mu_{\mathcal{C}_i}) \right) \\
-& \quad + \sum_{\vecX_j \in \mathcal{C}_j} \left( d^2(\vecX_j,
-\mu_{\mathcal{C}_i \cup \mathcal{C}_j} ) - d^2(\vecX_j,
+& \quad + \sum_{\bx_j \in \mathcal{C}_j} \left( d^2(\bx_j,
+\mu_{\mathcal{C}_i \cup \mathcal{C}_j} ) - d^2(\bx_j,
 \mu_{\mathcal{C}_j}) \right)
 \end{align*}
 \item If $d$ is the euclidean distance:
