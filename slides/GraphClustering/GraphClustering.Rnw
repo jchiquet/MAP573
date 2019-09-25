@@ -309,7 +309,7 @@ grid.arrange(g1, g2, g3, g4, nrow = 2, ncol = 2)
 
   \vfill
 
-  \begin{block}{Goal of graph paritionning}
+  \begin{block}{Goal of graph partionning}
     Form a partition of the vertices with unsupervized approach where the $\mathcal{C}$ is composed by \alert{"cohesive"} sets of vertices, for instance,
     \begin{enumerate}
       \item vertices well connected among themselves

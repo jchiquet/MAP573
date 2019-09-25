@@ -1,4 +1,54 @@
-\documentclass{beamer}
+\documentclass{beamer}\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
 
 \usepackage{animate}
 
@@ -8,20 +58,86 @@
 \def\currentDate{Autumn semester, 2019}
 \def\currentChapter{Introduction to clustering}
 
-<<preamble, child='../common_preamble.Rnw'>>=
-@
 
-<<load_packages, cache = FALSE, echo=FALSE>>=
-library(tidyverse)
-library(corrplot)
-library(GGally)
-library(ggfortify)
-library(RColorBrewer)
-pal <- brewer.pal(10, "Set3") # a fancy palette for graph
-@
+% THEME BEAMER
+\usepackage{../beamer_theme}
+
+\graphicspath{{figures/},{../common_figs/}}
+
+\usepackage{multirow}
+\usepackage{tikz}
+\usepackage[vlined]{algorithm2e}
+
+\pgfdeclareimage[width=.5cm]{computer}{computer.png}
+
+% \usetikzlibrary{calc,shapes,backgrounds,arrows,automata,shadows,positioning}
+% \tikzstyle{every state}=[fill=red,draw=none,scale=0.7,font=\small,text=white]
+% \tikzstyle{every edge}=[-,shorten >=1pt,auto,thin,draw]
+% \tikzstyle{alertstate}=[fill=bleu]
+% \definecolor{genecolor}{RGB}{94,135,173}
+
+\title{\currentCourse}
+
+\subtitle{\huge\currentChapter\normalsize}
+
+\institute{\currentInstitute}
+
+\date{\currentDate}
+
+
+
+\AtBeginSection{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \framesubtitle{\insertpart}
+    \tableofcontents[currentsection,currentsubsection, subsectionstyle=show/shaded/hide]  
+  \end{frame}
+}
+
+\AtBeginSubsection{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \framesubtitle{\insertpart}
+    \tableofcontents[currentsection,currentsubsection, subsectionstyle=show/shaded/hide]  
+  \end{frame}
+}
+
+\AtBeginSubsubsection{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \framesubtitle{\insertpart}
+    \tableofcontents[currentsection,currentsubsection, subsectionstyle=show/shaded/hide]  
+  \end{frame}
+}
+
+\newcommand{\dotitlepage}{%
+  \begin{frame}
+    \titlepage
+    \vfill
+    \begin{center}
+        \scriptsize\url{https://github.com/jchiquet/CourseUnsupervisedLearningX}
+    \end{center}
+    \vfill
+    \includegraphics[width=2cm]{\currentLogo}\hfill
+    \includegraphics[width=2.5cm]{logo_inra}
+  \end{frame}
+  %
+}
+
+\newcommand{\dotoc}{%
+  \begin{frame}
+    \frametitle{Outline}
+    \tableofcontents[currentsection,
+    sectionstyle=show/show,
+    subsectionstyle=hide]
+  \end{frame}
+  %
+}
+
+
 
 \usetikzlibrary{calc,shapes,backgrounds,arrows,automata,shadows,positioning}
-
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
 \dotitlepage
@@ -79,38 +195,64 @@ pal <- brewer.pal(10, "Set3") # a fancy palette for graph
 \small The crabs data frame has 200 rows and 8 columns, describing 5 morphological measurements on 50 crabs each of two colour forms and both sexes, of the species \textit{Leptograpsus variegatus} collected at Fremantle, W. Australia.
 \end{block}
   
-<<crabs dataset >>=
-crabs <- MASS::crabs %>% select(-index) %>% 
-  rename(sex = sex, 
-         species         = sp,
-         frontal_lob     = FL,
-         rear_width      = RW,
-         carapace_length = CL,
-         carapace_width  = CW,
-         body_depth      = BD)
-crabs %>% select(sex, species) %>% summary() %>% knitr::kable("latex")
-@
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{crabs} \hlkwb{<-} \hlstd{MASS}\hlopt{::}\hlstd{crabs} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{index)} \hlopt{%>%}
+  \hlkwd{rename}\hlstd{(}\hlkwc{sex} \hlstd{= sex,}
+         \hlkwc{species}         \hlstd{= sp,}
+         \hlkwc{frontal_lob}     \hlstd{= FL,}
+         \hlkwc{rear_width}      \hlstd{= RW,}
+         \hlkwc{carapace_length} \hlstd{= CL,}
+         \hlkwc{carapace_width}  \hlstd{= CW,}
+         \hlkwc{body_depth}      \hlstd{= BD)}
+\hlstd{crabs} \hlopt{%>%} \hlkwd{select}\hlstd{(sex, species)} \hlopt{%>%} \hlkwd{summary}\hlstd{()} \hlopt{%>%} \hlstd{knitr}\hlopt{::}\hlkwd{kable}\hlstd{(}\hlstr{"latex"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\begin{tabular}{l|l|l}
+\hline
+  & sex & species\\
+\hline
+ & F:100 & B:100\\
+\hline
+ & M:100 & O:100\\
+\hline
+\end{tabular}
+
+
+\end{knitrout}
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Companion data set II}
   \framesubtitle{Pairs plot of attributes}
 
-<<crabs attributes>>=
-ggpairs(crabs, columns = 3:7, aes(colour = species, shape = sex))
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{ggpairs}\hlstd{(crabs,} \hlkwc{columns} \hlstd{=} \hlnum{3}\hlopt{:}\hlnum{7}\hlstd{,} \hlkwd{aes}\hlstd{(}\hlkwc{colour} \hlstd{= species,} \hlkwc{shape} \hlstd{= sex))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/crabs_attributes-1} 
 
-@
+\end{knitrout}
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Companion data set III}
   \framesubtitle{PCA on the attributes}
 
-<<pca crabs untransformed>>=
-prcomp(select(crabs, -species, -sex), scale. = TRUE) %>% 
-  autoplot(loadings = TRUE, loadings.label = TRUE,
-           data = crabs, colour = 'species', shape = 'sex')
-@
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{prcomp}\hlstd{(}\hlkwd{select}\hlstd{(crabs,} \hlopt{-}\hlstd{species,} \hlopt{-}\hlstd{sex),} \hlkwc{scale.} \hlstd{=} \hlnum{TRUE}\hlstd{)} \hlopt{%>%}
+  \hlkwd{autoplot}\hlstd{(}\hlkwc{loadings} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{loadings.label} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+           \hlkwc{data} \hlstd{= crabs,} \hlkwc{colour} \hlstd{=} \hlstr{'species'}\hlstd{,} \hlkwc{shape} \hlstd{=} \hlstr{'sex'}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/pca_crabs_untransformed-1} 
+
+\end{knitrout}
 
 \end{frame}
 
@@ -129,29 +271,45 @@ We remove the best rank-1 approximation of $\mathbf{X}$ to remove the \textit{si
 \end{equation*}
 
 
-<<remove size effect>>=
-attributes <- select(crabs, -sex, -species)
-SVD <- svd(attributes)
-attributes_rank1 <- tcrossprod(SVD$u[, 1] * SVD$d[1], SVD$v[, 1])
-crabs_corrected <- crabs
-crabs_corrected[, 3:7] <- attributes - attributes_rank1
-@
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{attributes} \hlkwb{<-} \hlkwd{select}\hlstd{(crabs,} \hlopt{-}\hlstd{sex,} \hlopt{-}\hlstd{species)}
+\hlstd{SVD} \hlkwb{<-} \hlkwd{svd}\hlstd{(attributes)}
+\hlstd{attributes_rank1} \hlkwb{<-} \hlkwd{tcrossprod}\hlstd{(SVD}\hlopt{$}\hlstd{u[,} \hlnum{1}\hlstd{]} \hlopt{*} \hlstd{SVD}\hlopt{$}\hlstd{d[}\hlnum{1}\hlstd{], SVD}\hlopt{$}\hlstd{v[,} \hlnum{1}\hlstd{])}
+\hlstd{crabs_corrected} \hlkwb{<-} \hlstd{crabs}
+\hlstd{crabs_corrected[,} \hlnum{3}\hlopt{:}\hlnum{7}\hlstd{]} \hlkwb{<-} \hlstd{attributes} \hlopt{-} \hlstd{attributes_rank1}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at hand, common to all attributes.
 
-<<pairs plot corrected>>=
-ggpairs(crabs_corrected, columns = 3:7, aes(colour = species, shape = sex))
-@
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{ggpairs}\hlstd{(crabs_corrected,} \hlkwc{columns} \hlstd{=} \hlnum{3}\hlopt{:}\hlnum{7}\hlstd{,} \hlkwd{aes}\hlstd{(}\hlkwc{colour} \hlstd{= species,} \hlkwc{shape} \hlstd{= sex))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/pairs_plot_corrected-1} 
+
+\end{knitrout}
 
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{PCA on corrected data}
-<<pca crabs corrected>>=
-prcomp(select(crabs_corrected, -species, -sex), scale. = TRUE) %>% 
-  autoplot(loadings = TRUE, loadings.label = TRUE, 
-           data = crabs_corrected, colour = 'species', shape = 'sex')
-@
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{prcomp}\hlstd{(}\hlkwd{select}\hlstd{(crabs_corrected,} \hlopt{-}\hlstd{species,} \hlopt{-}\hlstd{sex),} \hlkwc{scale.} \hlstd{=} \hlnum{TRUE}\hlstd{)} \hlopt{%>%}
+  \hlkwd{autoplot}\hlstd{(}\hlkwc{loadings} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{loadings.label} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+           \hlkwc{data} \hlstd{= crabs_corrected,} \hlkwc{colour} \hlstd{=} \hlstr{'species'}\hlstd{,} \hlkwc{shape} \hlstd{=} \hlstr{'sex'}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/pca_crabs_corrected-1} 
+
+\end{knitrout}
 \end{frame}
 
 \begin{frame}
@@ -432,13 +590,45 @@ are simultaneously in cluster $i$ of $U$ and in cluster $j$ of $V$.
 \begin{frame}[fragile,allowframebreaks]
 \frametitle{K-means in action}
 
-<<echo = FALSE>>=
-library(animation)
-## set larger 'interval' if the speed is too fast
-ani.options(interval = 1)
-par(mar = c(3, 3, 1, 1.5), mgp = c(1.5, 0.5, 0))
-kmeans.ani()
-@
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-1} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-2} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-3} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-4} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-5} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-6} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-7} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-8} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-9} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-10} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-11} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-12} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-13} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-14} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-15} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-16} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-17} 
+
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-18} 
+
+\end{knitrout}
 
 \end{frame}
 
@@ -469,20 +659,26 @@ kmeans.ani()
 \begin{frame}[fragile,allowframebreaks]
   \frametitle{K-means in \texttt{R}  on crabs data set}
   
-  <<kmeans crabs>>=
-kmeans_res <- crabs_corrected %>%
-  select(-species, -sex) %>%
-  kmeans(4, nstart = 10)
-clusters <- as.factor(kmeans_res$cluster)
-centers  <- as.tibble(kmeans_res$centers)
-classes <- paste(crabs_corrected$species, crabs_corrected$sex, sep = "-")
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{kmeans_res} \hlkwb{<-} \hlstd{crabs_corrected} \hlopt{%>%}
+\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{species,} \hlopt{-}\hlstd{sex)} \hlopt{%>%}
+\hlkwd{kmeans}\hlstd{(}\hlnum{4}\hlstd{,} \hlkwc{nstart} \hlstd{=} \hlnum{10}\hlstd{)}
+\hlstd{clusters} \hlkwb{<-} \hlkwd{as.factor}\hlstd{(kmeans_res}\hlopt{$}\hlstd{cluster)}
+\hlstd{centers}  \hlkwb{<-} \hlkwd{as.tibble}\hlstd{(kmeans_res}\hlopt{$}\hlstd{centers)}
+\hlstd{classes} \hlkwb{<-} \hlkwd{paste}\hlstd{(crabs_corrected}\hlopt{$}\hlstd{species, crabs_corrected}\hlopt{$}\hlstd{sex,} \hlkwc{sep} \hlstd{=} \hlstr{"-"}\hlstd{)}
 
-crabs_corrected %>% 
-  ggplot(aes(x = carapace_length, y = carapace_width, color = clusters)) +
-  geom_point(aes(shape = classes)) +
-  geom_point(data = centers, color = 'coral', size = 4 , pch = 21) +
-  geom_point(data = centers, color = 'coral', size = 50, alpha = 0.2)
-@
+\hlstd{crabs_corrected} \hlopt{%>%}
+\hlkwd{ggplot}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= carapace_length,} \hlkwc{y} \hlstd{= carapace_width,} \hlkwc{color} \hlstd{= clusters))} \hlopt{+}
+\hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{shape} \hlstd{= classes))} \hlopt{+}
+\hlkwd{geom_point}\hlstd{(}\hlkwc{data} \hlstd{= centers,} \hlkwc{color} \hlstd{=} \hlstr{'coral'}\hlstd{,} \hlkwc{size} \hlstd{=} \hlnum{4} \hlstd{,} \hlkwc{pch} \hlstd{=} \hlnum{21}\hlstd{)} \hlopt{+}
+\hlkwd{geom_point}\hlstd{(}\hlkwc{data} \hlstd{= centers,} \hlkwc{color} \hlstd{=} \hlstr{'coral'}\hlstd{,} \hlkwc{size} \hlstd{=} \hlnum{50}\hlstd{,} \hlkwc{alpha} \hlstd{=} \hlnum{0.2}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/kmeans_crabs-1} 
+
+\end{knitrout}
 
 \end{frame}
 
@@ -594,41 +790,55 @@ d^2(\mu_{\mathcal{C}_i}, \mu_{\mathcal{C}_j})
 
 \begin{frame}[fragile,allowframebreaks]
 
-<<>>=
-Ward <- crabs %>% 
-  select(-sex, -species) %>% 
-  scale() %>%  
-  dist(method = "euclidean") %>% 
-  hclust(method = "ward.D2")
-Ward_corrected <- crabs_corrected %>% 
-  select(-sex, -species) %>%
-  scale() %>%  
-  dist(method = "euclidean") %>% 
-  hclust(method = "ward.D2")
-par(mfrow=c(1,2))
-plot(Ward)
-plot(Ward_corrected)
-@
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{Ward} \hlkwb{<-} \hlstd{crabs} \hlopt{%>%}
+  \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{sex,} \hlopt{-}\hlstd{species)} \hlopt{%>%}
+  \hlkwd{scale}\hlstd{()} \hlopt{%>%}
+  \hlkwd{dist}\hlstd{(}\hlkwc{method} \hlstd{=} \hlstr{"euclidean"}\hlstd{)} \hlopt{%>%}
+  \hlkwd{hclust}\hlstd{(}\hlkwc{method} \hlstd{=} \hlstr{"ward.D2"}\hlstd{)}
+\hlstd{Ward_corrected} \hlkwb{<-} \hlstd{crabs_corrected} \hlopt{%>%}
+  \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{sex,} \hlopt{-}\hlstd{species)} \hlopt{%>%}
+  \hlkwd{scale}\hlstd{()} \hlopt{%>%}
+  \hlkwd{dist}\hlstd{(}\hlkwc{method} \hlstd{=} \hlstr{"euclidean"}\hlstd{)} \hlopt{%>%}
+  \hlkwd{hclust}\hlstd{(}\hlkwc{method} \hlstd{=} \hlstr{"ward.D2"}\hlstd{)}
+\hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{))}
+\hlkwd{plot}\hlstd{(Ward)}
+\hlkwd{plot}\hlstd{(Ward_corrected)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-2-1} 
+
+\end{knitrout}
 
 \end{frame}
 
-<<>>=
-ARI_species <- Ward %>% 
-  cutree(k = 1:10) %>% 
-  as.data.frame() %>% as.list() %>% 
-  sapply(aricode::ARI, paste(crabs$species,crabs$sex, sep="-"))
-ARI_species_corr <- Ward_corrected %>% 
-  cutree(k = 1:10) %>% 
-  as.data.frame() %>% as.list() %>% 
-  sapply(aricode::ARI, paste(crabs$species,crabs$sex, sep="-"))
-@
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{ARI_species} \hlkwb{<-} \hlstd{Ward} \hlopt{%>%}
+  \hlkwd{cutree}\hlstd{(}\hlkwc{k} \hlstd{=} \hlnum{1}\hlopt{:}\hlnum{10}\hlstd{)} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{as.list}\hlstd{()} \hlopt{%>%}
+  \hlkwd{sapply}\hlstd{(aricode}\hlopt{::}\hlstd{ARI,} \hlkwd{paste}\hlstd{(crabs}\hlopt{$}\hlstd{species,crabs}\hlopt{$}\hlstd{sex,} \hlkwc{sep}\hlstd{=}\hlstr{"-"}\hlstd{))}
+\hlstd{ARI_species_corr} \hlkwb{<-} \hlstd{Ward_corrected} \hlopt{%>%}
+  \hlkwd{cutree}\hlstd{(}\hlkwc{k} \hlstd{=} \hlnum{1}\hlopt{:}\hlnum{10}\hlstd{)} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{as.list}\hlstd{()} \hlopt{%>%}
+  \hlkwd{sapply}\hlstd{(aricode}\hlopt{::}\hlstd{ARI,} \hlkwd{paste}\hlstd{(crabs}\hlopt{$}\hlstd{species,crabs}\hlopt{$}\hlstd{sex,} \hlkwc{sep}\hlstd{=}\hlstr{"-"}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
-<<>>=
-ARI_species <- Ward %>% 
-  cutree(k = 1:10) %>% 
-  as.data.frame() %>% as.list() %>% 
-  sapply(aricode::ARI, paste(crabs$species,crabs$sex, sep = "-"))
-@
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{ARI_species} \hlkwb{<-} \hlstd{Ward} \hlopt{%>%}
+  \hlkwd{cutree}\hlstd{(}\hlkwc{k} \hlstd{=} \hlnum{1}\hlopt{:}\hlnum{10}\hlstd{)} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{as.list}\hlstd{()} \hlopt{%>%}
+  \hlkwd{sapply}\hlstd{(aricode}\hlopt{::}\hlstd{ARI,} \hlkwd{paste}\hlstd{(crabs}\hlopt{$}\hlstd{species,crabs}\hlopt{$}\hlstd{sex,} \hlkwc{sep} \hlstd{=} \hlstr{"-"}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 %% ==========================================================================
 \section{Model-based approach: mixture models}
@@ -968,101 +1178,119 @@ ARI_species <- Ward %>%
   \frametitle{R code: auxiliary functions}
 
 We start by defining functions to compute the complete model loglikelihood, perform the E step and the M step.
-<<EM_mixture_auxiliaries, tidy=FALSE>>=
-get.cloglik <- function(X, Z, theta) {
-  alpha <- theta$alpha; mu <- theta$mu; sigma <- theta$sigma
-  xs <- scale(matrix(X,length(x),length(alpha)),mu,sigma)
-  return(sum(Z*(log(alpha)-log(sigma)-.5*(log(2*pi)+xs^2))))
-}
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{get.cloglik} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{X}\hlstd{,} \hlkwc{Z}\hlstd{,} \hlkwc{theta}\hlstd{) \{}
+  \hlstd{alpha} \hlkwb{<-} \hlstd{theta}\hlopt{$}\hlstd{alpha; mu} \hlkwb{<-} \hlstd{theta}\hlopt{$}\hlstd{mu; sigma} \hlkwb{<-} \hlstd{theta}\hlopt{$}\hlstd{sigma}
+  \hlstd{xs} \hlkwb{<-} \hlkwd{scale}\hlstd{(}\hlkwd{matrix}\hlstd{(X,}\hlkwd{length}\hlstd{(x),}\hlkwd{length}\hlstd{(alpha)),mu,sigma)}
+  \hlkwd{return}\hlstd{(}\hlkwd{sum}\hlstd{(Z}\hlopt{*}\hlstd{(}\hlkwd{log}\hlstd{(alpha)}\hlopt{-}\hlkwd{log}\hlstd{(sigma)}\hlopt{-}\hlnum{.5}\hlopt{*}\hlstd{(}\hlkwd{log}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{pi)}\hlopt{+}\hlstd{xs}\hlopt{^}\hlnum{2}\hlstd{))))}
+\hlstd{\}}
 
-M.step <- function(X, tau) {
-  n <- length(X); Q <- ncol(tau)
-  alpha  <- colMeans(tau)
-  mu     <- colMeans(tau * matrix(X,n,Q)) / alpha
-  sigma  <- sqrt(colMeans(tau*sweep(matrix(X,n,Q),2,mu,"-")^2)/alpha)
-  return(list(alpha=alpha, mu=mu, sigma=sigma))
-}
+\hlstd{M.step} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{X}\hlstd{,} \hlkwc{tau}\hlstd{) \{}
+  \hlstd{n} \hlkwb{<-} \hlkwd{length}\hlstd{(X); Q} \hlkwb{<-} \hlkwd{ncol}\hlstd{(tau)}
+  \hlstd{alpha}  \hlkwb{<-} \hlkwd{colMeans}\hlstd{(tau)}
+  \hlstd{mu}     \hlkwb{<-} \hlkwd{colMeans}\hlstd{(tau} \hlopt{*} \hlkwd{matrix}\hlstd{(X,n,Q))} \hlopt{/} \hlstd{alpha}
+  \hlstd{sigma}  \hlkwb{<-} \hlkwd{sqrt}\hlstd{(}\hlkwd{colMeans}\hlstd{(tau}\hlopt{*}\hlkwd{sweep}\hlstd{(}\hlkwd{matrix}\hlstd{(X,n,Q),}\hlnum{2}\hlstd{,mu,}\hlstr{"-"}\hlstd{)}\hlopt{^}\hlnum{2}\hlstd{)}\hlopt{/}\hlstd{alpha)}
+  \hlkwd{return}\hlstd{(}\hlkwd{list}\hlstd{(}\hlkwc{alpha}\hlstd{=alpha,} \hlkwc{mu}\hlstd{=mu,} \hlkwc{sigma}\hlstd{=sigma))}
+\hlstd{\}}
 
-E.step <- function(X, theta) {
-  tau <- mapply(function(alpha, mu, sigma) {
-      alpha*dnorm(X,mu,sigma)
-    }, theta$alpha, theta$mu, theta$sigma)
-  return(tau / rowSums(tau))
-}
-@
+\hlstd{E.step} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{X}\hlstd{,} \hlkwc{theta}\hlstd{) \{}
+  \hlstd{tau} \hlkwb{<-} \hlkwd{mapply}\hlstd{(}\hlkwa{function}\hlstd{(}\hlkwc{alpha}\hlstd{,} \hlkwc{mu}\hlstd{,} \hlkwc{sigma}\hlstd{) \{}
+      \hlstd{alpha}\hlopt{*}\hlkwd{dnorm}\hlstd{(X,mu,sigma)}
+    \hlstd{\}, theta}\hlopt{$}\hlstd{alpha, theta}\hlopt{$}\hlstd{mu, theta}\hlopt{$}\hlstd{sigma)}
+  \hlkwd{return}\hlstd{(tau} \hlopt{/} \hlkwd{rowSums}\hlstd{(tau))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{R code: EM for univariate mixture}
 
-<<EM_mixture, echo=TRUE, tidy=FALSE>>=
-EM.mixture <- function(X, Q,
-                       init.cl=sample(1:Q,n,rep=TRUE), max.iter=100, eps=1e-5) {
-    n <- length(X); tau <- matrix(0,n,Q); tau[cbind(1:n,init.cl)] <- 1
-    Eloglik <- vector("numeric", max.iter)
-    iter <- 0; cond <- FALSE
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{EM.mixture} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{X}\hlstd{,} \hlkwc{Q}\hlstd{,}
+                       \hlkwc{init.cl}\hlstd{=}\hlkwd{sample}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{Q,n,}\hlkwc{rep}\hlstd{=}\hlnum{TRUE}\hlstd{),} \hlkwc{max.iter}\hlstd{=}\hlnum{100}\hlstd{,} \hlkwc{eps}\hlstd{=}\hlnum{1e-5}\hlstd{) \{}
+    \hlstd{n} \hlkwb{<-} \hlkwd{length}\hlstd{(X); tau} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{0}\hlstd{,n,Q); tau[}\hlkwd{cbind}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{n,init.cl)]} \hlkwb{<-} \hlnum{1}
+    \hlstd{Eloglik} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlstr{"numeric"}\hlstd{, max.iter)}
+    \hlstd{iter} \hlkwb{<-} \hlnum{0}\hlstd{; cond} \hlkwb{<-} \hlnum{FALSE}
 
-    while (!cond) {
-        iter <- iter + 1
-        ## M step
-        theta <- M.step(X, tau)
-        ## E step
-        tau <- E.step(X, theta)
-        ## check consistency
-        Eloglik[iter] <- get.cloglik(X, tau, theta)
-        if (iter > 1)
-            cond <- (iter>=max.iter) | Eloglik[iter]-Eloglik[iter-1] < eps
-    }
+    \hlkwa{while} \hlstd{(}\hlopt{!}\hlstd{cond) \{}
+        \hlstd{iter} \hlkwb{<-} \hlstd{iter} \hlopt{+} \hlnum{1}
+        \hlcom{## M step}
+        \hlstd{theta} \hlkwb{<-} \hlkwd{M.step}\hlstd{(X, tau)}
+        \hlcom{## E step}
+        \hlstd{tau} \hlkwb{<-} \hlkwd{E.step}\hlstd{(X, theta)}
+        \hlcom{## check consistency}
+        \hlstd{Eloglik[iter]} \hlkwb{<-} \hlkwd{get.cloglik}\hlstd{(X, tau, theta)}
+        \hlkwa{if} \hlstd{(iter} \hlopt{>} \hlnum{1}\hlstd{)}
+            \hlstd{cond} \hlkwb{<-} \hlstd{(iter}\hlopt{>=}\hlstd{max.iter)} \hlopt{|} \hlstd{Eloglik[iter]}\hlopt{-}\hlstd{Eloglik[iter}\hlopt{-}\hlnum{1}\hlstd{]} \hlopt{<} \hlstd{eps}
+    \hlstd{\}}
 
-    return(list(alpha = theta$alpha,  mu = theta$mu,  sigma = theta$sigma,
-                tau   = tau, cl = apply(tau, 1, which.max),
-                Eloglik = Eloglik[1:iter]))
-}
-@
+    \hlkwd{return}\hlstd{(}\hlkwd{list}\hlstd{(}\hlkwc{alpha} \hlstd{= theta}\hlopt{$}\hlstd{alpha,}  \hlkwc{mu} \hlstd{= theta}\hlopt{$}\hlstd{mu,}  \hlkwc{sigma} \hlstd{= theta}\hlopt{$}\hlstd{sigma,}
+                \hlkwc{tau}   \hlstd{= tau,} \hlkwc{cl} \hlstd{=} \hlkwd{apply}\hlstd{(tau,} \hlnum{1}\hlstd{, which.max),}
+                \hlkwc{Eloglik} \hlstd{= Eloglik[}\hlnum{1}\hlopt{:}\hlstd{iter]))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Example: data generation}
 
 We first generate data with 4 components:
-<<EM_mixture_example_data>>=
-mu1 <- 5   ; sigma1 <- 1; n1 <- 100
-mu2 <- 10  ; sigma2 <- 1; n2 <- 200
-mu3 <- 15  ; sigma3 <- 2; n3 <- 50
-mu4 <- 20  ; sigma4 <- 3; n4 <- 100
-cl <- rep(1:4,c(n1,n2,n3,n4))
-x <- c(rnorm(n1,mu1,sigma1),rnorm(n2,mu2,sigma2),
-       rnorm(n3,mu3,sigma3),rnorm(n4,mu4,sigma4))
-n <- length(x)
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mu1} \hlkwb{<-} \hlnum{5}   \hlstd{; sigma1} \hlkwb{<-} \hlnum{1}\hlstd{; n1} \hlkwb{<-} \hlnum{100}
+\hlstd{mu2} \hlkwb{<-} \hlnum{10}  \hlstd{; sigma2} \hlkwb{<-} \hlnum{1}\hlstd{; n2} \hlkwb{<-} \hlnum{200}
+\hlstd{mu3} \hlkwb{<-} \hlnum{15}  \hlstd{; sigma3} \hlkwb{<-} \hlnum{2}\hlstd{; n3} \hlkwb{<-} \hlnum{50}
+\hlstd{mu4} \hlkwb{<-} \hlnum{20}  \hlstd{; sigma4} \hlkwb{<-} \hlnum{3}\hlstd{; n4} \hlkwb{<-} \hlnum{100}
+\hlstd{cl} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{4}\hlstd{,}\hlkwd{c}\hlstd{(n1,n2,n3,n4))}
+\hlstd{x} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlkwd{rnorm}\hlstd{(n1,mu1,sigma1),}\hlkwd{rnorm}\hlstd{(n2,mu2,sigma2),}
+       \hlkwd{rnorm}\hlstd{(n3,mu3,sigma3),}\hlkwd{rnorm}\hlstd{(n4,mu4,sigma4))}
+\hlstd{n} \hlkwb{<-} \hlkwd{length}\hlstd{(x)}
 
-## we randomize the class ordering
-rnd <- sample(1:n)
-cl <- cl[rnd]
-x  <- x[rnd]
+\hlcom{## we randomize the class ordering}
+\hlstd{rnd} \hlkwb{<-} \hlkwd{sample}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{n)}
+\hlstd{cl} \hlkwb{<-} \hlstd{cl[rnd]}
+\hlstd{x}  \hlkwb{<-} \hlstd{x[rnd]}
 
-alpha <- c(n1,n2,n3,n4)/n
-@
+\hlstd{alpha} \hlkwb{<-} \hlkwd{c}\hlstd{(n1,n2,n3,n4)}\hlopt{/}\hlstd{n}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 \end{frame}
 
 \begin{frame}[fragile, allowframebreaks]
   \frametitle{Example: data generation - plot}
 
 Let us plot the data and the theoretical mixture.
-<<EM_mixture_example_data_plot>>=
-curve(alpha[1]*dnorm(x,mu1,sigma1) +
-      alpha[2]*dnorm(x,mu2,sigma2) +
-      alpha[3]*dnorm(x,mu3,sigma3) +
-      alpha[4]*dnorm(x,mu4,sigma3),
-      col="blue", lty=1, from=0,to=30, n=1000,
-      main="Theoretical Gaussian mixture and its components",
-      xlab="x", ylab="density")
-curve(alpha[1]*dnorm(x,mu1,sigma1), col="red", add=TRUE, lty=2)
-curve(alpha[2]*dnorm(x,mu2,sigma2), col="red", add=TRUE, lty=2)
-curve(alpha[3]*dnorm(x,mu3,sigma3), col="red", add=TRUE, lty=2)
-curve(alpha[4]*dnorm(x,mu4,sigma4), col="red", add=TRUE, lty=2)
-rug(x)
-@
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{curve}\hlstd{(alpha[}\hlnum{1}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu1,sigma1)} \hlopt{+}
+      \hlstd{alpha[}\hlnum{2}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu2,sigma2)} \hlopt{+}
+      \hlstd{alpha[}\hlnum{3}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu3,sigma3)} \hlopt{+}
+      \hlstd{alpha[}\hlnum{4}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu4,sigma3),}
+      \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{from}\hlstd{=}\hlnum{0}\hlstd{,}\hlkwc{to}\hlstd{=}\hlnum{30}\hlstd{,} \hlkwc{n}\hlstd{=}\hlnum{1000}\hlstd{,}
+      \hlkwc{main}\hlstd{=}\hlstr{"Theoretical Gaussian mixture and its components"}\hlstd{,}
+      \hlkwc{xlab}\hlstd{=}\hlstr{"x"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"density"}\hlstd{)}
+\hlkwd{curve}\hlstd{(alpha[}\hlnum{1}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu1,sigma1),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{curve}\hlstd{(alpha[}\hlnum{2}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu2,sigma2),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{curve}\hlstd{(alpha[}\hlnum{3}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu3,sigma3),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{curve}\hlstd{(alpha[}\hlnum{4}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu4,sigma4),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{rug}\hlstd{(x)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/EM_mixture_example_data_plot-1} 
+
+\end{knitrout}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -1077,40 +1305,69 @@ rug(x)
 \begin{frame}[fragile]
   \frametitle{Example: adjustment}
 
-<<EM_mixture_run>>=
-out <- EM.mixture(x, Q=4, init.cl=sample(1:4,n,rep=TRUE))
-plot(out$Eloglik, main="EM criterion", type="l", xlab="iteration")
-@
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{out} \hlkwb{<-} \hlkwd{EM.mixture}\hlstd{(x,} \hlkwc{Q}\hlstd{=}\hlnum{4}\hlstd{,} \hlkwc{init.cl}\hlstd{=}\hlkwd{sample}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{4}\hlstd{,n,}\hlkwc{rep}\hlstd{=}\hlnum{TRUE}\hlstd{))}
+\hlkwd{plot}\hlstd{(out}\hlopt{$}\hlstd{Eloglik,} \hlkwc{main}\hlstd{=}\hlstr{"EM criterion"}\hlstd{,} \hlkwc{type}\hlstd{=}\hlstr{"l"}\hlstd{,} \hlkwc{xlab}\hlstd{=}\hlstr{"iteration"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/EM_mixture_run-1} 
+
+\end{knitrout}
 \end{frame}
 
 \begin{frame}[fragile, allowframebreaks]
   \frametitle{Example: adjustment - plot}
 
-<<EM_mixture_run_plot>>=
-out <- EM.mixture(x, Q=4, init.cl=kmeans(x,4)$cl)
-curve(alpha[1]*dnorm(x,mu1,sigma1) +
-      alpha[2]*dnorm(x,mu2,sigma2) +
-      alpha[3]*dnorm(x,mu3,sigma3) +
-      alpha[4]*dnorm(x,mu4,sigma3), col="blue",
-      lty=1, from=0,to=30, n=1000,
-      main="Theoretical Gaussian mixture and estimated components",
-      xlab="x", ylab="density")
-curve(out$alpha[1]*dnorm(x,out$mu[1],out$sigma[1]), col="red", add=TRUE, lty=2)
-curve(out$alpha[2]*dnorm(x,out$mu[2],out$sigma[2]), col="red", add=TRUE, lty=2)
-curve(out$alpha[3]*dnorm(x,out$mu[3],out$sigma[3]), col="red", add=TRUE, lty=2)
-curve(out$alpha[4]*dnorm(x,out$mu[4],out$sigma[4]), col="red", add=TRUE, lty=2)
-rug(x)
-@
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{out} \hlkwb{<-} \hlkwd{EM.mixture}\hlstd{(x,} \hlkwc{Q}\hlstd{=}\hlnum{4}\hlstd{,} \hlkwc{init.cl}\hlstd{=}\hlkwd{kmeans}\hlstd{(x,}\hlnum{4}\hlstd{)}\hlopt{$}\hlstd{cl)}
+\hlkwd{curve}\hlstd{(alpha[}\hlnum{1}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu1,sigma1)} \hlopt{+}
+      \hlstd{alpha[}\hlnum{2}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu2,sigma2)} \hlopt{+}
+      \hlstd{alpha[}\hlnum{3}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu3,sigma3)} \hlopt{+}
+      \hlstd{alpha[}\hlnum{4}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu4,sigma3),} \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{,}
+      \hlkwc{lty}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{from}\hlstd{=}\hlnum{0}\hlstd{,}\hlkwc{to}\hlstd{=}\hlnum{30}\hlstd{,} \hlkwc{n}\hlstd{=}\hlnum{1000}\hlstd{,}
+      \hlkwc{main}\hlstd{=}\hlstr{"Theoretical Gaussian mixture and estimated components"}\hlstd{,}
+      \hlkwc{xlab}\hlstd{=}\hlstr{"x"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"density"}\hlstd{)}
+\hlkwd{curve}\hlstd{(out}\hlopt{$}\hlstd{alpha[}\hlnum{1}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,out}\hlopt{$}\hlstd{mu[}\hlnum{1}\hlstd{],out}\hlopt{$}\hlstd{sigma[}\hlnum{1}\hlstd{]),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{curve}\hlstd{(out}\hlopt{$}\hlstd{alpha[}\hlnum{2}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,out}\hlopt{$}\hlstd{mu[}\hlnum{2}\hlstd{],out}\hlopt{$}\hlstd{sigma[}\hlnum{2}\hlstd{]),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{curve}\hlstd{(out}\hlopt{$}\hlstd{alpha[}\hlnum{3}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,out}\hlopt{$}\hlstd{mu[}\hlnum{3}\hlstd{],out}\hlopt{$}\hlstd{sigma[}\hlnum{3}\hlstd{]),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{curve}\hlstd{(out}\hlopt{$}\hlstd{alpha[}\hlnum{4}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,out}\hlopt{$}\hlstd{mu[}\hlnum{4}\hlstd{],out}\hlopt{$}\hlstd{sigma[}\hlnum{4}\hlstd{]),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{rug}\hlstd{(x)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/EM_mixture_run_plot-1} 
+
+\end{knitrout}
 
 \end{frame}
 
 \begin{frame}[fragile, allowframebreaks]
   \frametitle{Example: adjustment - classification}
 
-<<EM_mixture_run_contingency>>=
-table(cl, out$cl)
-aricode::ARI(cl, out$cl)
-@
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{table}\hlstd{(cl, out}\hlopt{$}\hlstd{cl)}
+\end{alltt}
+\begin{verbatim}
+##    
+## cl    1   2   3   4
+##   1  55  40   4   1
+##   2   0   0   6 194
+##   3   0   0  47   3
+##   4   0   0 100   0
+\end{verbatim}
+\begin{alltt}
+\hlstd{aricode}\hlopt{::}\hlkwd{ARI}\hlstd{(cl, out}\hlopt{$}\hlstd{cl)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.751809
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 \end{frame}
 
