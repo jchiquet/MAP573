@@ -535,108 +535,112 @@ table(clusters, classes)
 
 \subsection{Hierarchical Agglomerative Clustering}
 
-\begin{frame}[allowframebreaks]
-\frametitle{Agglomerative Clustering}
-\begin{block}{Agglomerative Clustering Heuristic}
-\begin{itemize}
-\item Start with very small clusters (a sample by cluster?)
-\item Sequential merging of
-the most similar clusters...
-\item according to some \emph{greedy} criterion $\Delta$.
-\end{itemize}
-\end{block}
-\begin{itemize}
-\item Generates a hierarchy of clustering instead of a single one.
-\item Need to select the number of cluster afterwards.
-\item Several choice for the merging criterion...
-\item Examples:
-\begin{itemize}
-\item Minimum Linkage: merge the closest cluster in term of the
-usual distance
-\item Ward's criterion: merge the two clusters yielding the less inner inertia
-loss (k-means criterion)
-\end{itemize}
-\end{itemize}
-\framebreak
-\begin{block}{Algorithm}
-\begin{itemize}
-\item Start with $(\mathcal{C}_{i}^{(0)})= (\{ \bx_i \})$
-the collection of all singletons.
-\item At step $s$, we have $n-s$ clusters $(\mathcal{C}_{i}^{(s)})$:
-\begin{itemize}
-\item Find the two clusters the most similar according to a
-criterion $\Delta$:%%\\[-.75cm]
-\begin{align*}
-(i,i') = \argmin_{(j,j')} \Delta(\mathcal{C}_{j}^{(s)},\mathcal{C}_{j'}^{(s)})
-\end{align*}
-\item Merge $\mathcal{C}_{i}^{(s)}$ and $\mathcal{C}_{i'}^{(s)}$
-into $\mathcal{C}_{i}^{(s+1)}$
-\item Keep the $n-s-2$ other clusters
-$\mathcal{C}_{i''}^{(s+1)} = \mathcal{C}_{i''}^{(s)}$
-\end{itemize}
-\item Repeat until there is only one cluster.
-\end{itemize}
-\end{block}
-\vspace*{-.25cm}
-\begin{itemize}
-\item Complexity: $O(n^3)$ if no restriction on the merging
-possibilities.
-\item Can be reduced to $O(n^2)$ if only a bounded number of merging
-is possible for a given cluster.
-\end{itemize}
-\framebreak
-\begin{center}
-\includegraphics[width=.3\textwidth]{ex_sautmin}
-\hspace*{.1\textwidth}
-\includegraphics[width=.3\textwidth]{ex_sautmax}
-\end{center}
-\begin{block}{Merging criterion based on the distance between points}
-\begin{itemize}
-\item Minimum linkage:
-\begin{align*}
-\Delta(\mathcal{C}_i, \mathcal{C}_j) = \min_{\bx_i \in
-\mathcal{C}_i} \min_{\bx_ \in
-\mathcal{C}_j} d(\bx_i, \bx_j)
-\end{align*}
-\item Maximum linkage:
-\begin{align*}
-\Delta(\mathcal{C}_i, \mathcal{C}_j) = \max_{\bx_i \in
-\mathcal{C}_i} \max_{\bx_ \in
-\mathcal{C}_j} d(\bx_i, \bx_j)
-\end{align*}
-\item Average linkage:
-\begin{align*}
-\Delta(\mathcal{C}_i, \mathcal{C}_j) = \frac{1}{|\mathcal{C}_i||\mathcal{C}_j|} \sum_{\bx_i \in
-\mathcal{C}_i}\sum_{\bx_ \in
-\mathcal{C}_j} d(\bx_i, \bx_j)
-\end{align*}
-\end{itemize}
-\end{block}
+\begin{frame}
+  \frametitle{Agglomerative Clustering: Heuristic}
+    
+    \begin{block}{Idea}
+      \begin{enumerate}
+        \item Start with small clusters (\textit{e.g.} one cluster $\equiv$ one individual)
+        \item Merge the most similar clusters sequentially (and greedily)
+        \item Stops when all individuals are in the same groups
+      \end{enumerate}
+    \end{block}
 
-\framebreak
-\begin{block}{Merging criterion based on the inertia (distance to the mean)}
-\begin{itemize}
-\item Ward's criterion:
-\begin{align*}
-\Delta(\mathcal{C}_i, \mathcal{C}_j)
-& = \sum_{\bx_i \in \mathcal{C}_i} \left( d^2(\bx_i,
-\mu_{\mathcal{C}_i \cup \mathcal{C}_j} ) - d^2(\bx_i,
-\mu_{\mathcal{C}_i}) \right) \\
-& \quad + \sum_{\bx_j \in \mathcal{C}_j} \left( d^2(\bx_j,
-\mu_{\mathcal{C}_i \cup \mathcal{C}_j} ) - d^2(\bx_j,
-\mu_{\mathcal{C}_j}) \right)
-\end{align*}
-\item If $d$ is the euclidean distance:
-\begin{align*}
-\Delta(\mathcal{C}_i, \mathcal{C}_j) = \frac{2
-|\mathcal{C}_i||\mathcal{C}_j|}{|\mathcal{C}_i|+ |\mathcal{C}_j|}
-d^2(\mu_{\mathcal{C}_i}, \mu_{\mathcal{C}_j})
-\end{align*}
-\end{itemize}
-\end{block}
-\begin{itemize}
-\item Same criterion than in the $k$-means algorithm but greedy optimization.
-\end{itemize}
+    \begin{block}{Ingredients}
+      \begin{enumerate}
+        \item a dissimilarity measure (distance between individuals)
+        \item a merging criterion $\Delta$ (dissimilarity between clusters)
+      \end{enumerate}
+    \end{block}
+
+    \begin{itemize}
+      \item[+] Generates a hierarchy of clustering instead of a single one
+      \item[--] Need to select the number of cluster afterwards.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Agglomerative Clustering: general algorithm}
+
+  \begin{block}{Algorithm}
+    \vspace{-.25cm}
+    \begin{enumerate}
+      \item Start with $(\mathcal{C}_i^{(0)})= (\{ \bx_i \})$ the collection of all singletons.
+      \item At step $s$, we have $n-s$ clusters $(\mathcal{C}_{i}^{(s)})$:
+
+      \begin{itemize}
+        \item Find the two most similar clusters according to a criterion $\Delta$:%%\\[-.75cm]
+        \begin{align*}
+          (i,i') = \argmin_{(j,j')} \Delta(\mathcal{C}_{j}^{(s)},\mathcal{C}_{j'}^{(s)})
+        \end{align*}
+        \item Merge $\mathcal{C}_{i}^{(s)}$ and $\mathcal{C}_{i'}^{(s)}$ into $\mathcal{C}_{i}^{(s+1)}$
+        \item Update the distances between $\mathcal{C}_{i}^{(s+1)}$ and the remaining clusters
+      \end{itemize}
+  
+      \item Repeat until there is only one cluster.
+    \end{enumerate}
+  \end{block}
+
+  \vfill
+
+  \begin{block}{Complexity}<2>
+    \vspace{-.25cm}
+    \begin{itemize}
+      \item In general $O(n^3)$
+      \item Can be reduced to $O(n^2)$ if boundering the number of merging
+    \end{itemize}
+  \end{block}
+  
+\end{frame}
+
+\begin{frame}
+
+  \begin{center}
+    \includegraphics[width=.3\textwidth]{ex_sautmin}
+    \hspace*{.1\textwidth}
+    \includegraphics[width=.3\textwidth]{ex_sautmax}
+  \end{center}
+
+  \begin{block}{Merging criterion based on the distance between points}
+    \begin{itemize}
+      \item Single linkage (or minimum linkage):
+      \begin{align*}
+        \Delta(\mathcal{C}_i, \mathcal{C}_j) = \min_{\bx_i \in \mathcal{C}_i, \bx_ \in \mathcal{C}_j} d(\bx_i, \bx_j)
+      \end{align*}
+      \item Complete linkage (or maximum linkage):
+      \begin{align*}
+        \Delta(\mathcal{C}_i, \mathcal{C}_j) = \max_{\bx_i \in \mathcal{C}_i} \max_{\bx_ \in \mathcal{C}_j}d(\bx_i, \bx_j)
+    \end{align*}
+    \item Average linkage (or group linkage):
+      \begin{align*}
+        \Delta(\mathcal{C}_i, \mathcal{C}_j) = \frac{1}{|\mathcal{C}_i||\mathcal{C}_j|} \sum_{\bx_i \in \mathcal{C}_i}\sum_{\bx_ \in\mathcal{C}_j} d(\bx_i, \bx_j)
+      \end{align*}
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Ward's criteria}
+  
+  \begin{block}{Merging criterion based on the inertia (distance to the mean)}
+    \begin{itemize}
+        \item Ward's criterion:
+        \begin{align*}
+          \Delta(\mathcal{C}_i, \mathcal{C}_j) 
+          & = \sum_{\bx_i \in \mathcal{C}_i} \left( d^2(\bx_i, \bmu_{\mathcal{C}_i \cup \mathcal{C}_j} ) - d^2(\bx_i, \bmu_{\mathcal{C}_i}) \right) \\
+          & \quad + \sum_{\bx_j \in \mathcal{C}_j} \left( d^2(\bx_j, \bmu_{\mathcal{C}_i \cup \mathcal{C}_j} ) - d^2(\bx_j, \bmu_{\mathcal{C}_j}) \right)
+        \end{align*}
+        \item If $d$ is the euclidean distance:
+
+        \begin{align*}
+          \Delta(\mathcal{C}_i, \mathcal{C}_j) = \frac{2|\mathcal{C}_i||\mathcal{C}_j|}{|\mathcal{C}_i|+|\mathcal{C}_j|}d^2(\bmu_{\mathcal{C}_i}, \bmu_{\mathcal{C}_j})
+        \end{align*}
+      \end{itemize}
+    \end{block}
+    \begin{itemize}
+      \item Same criterion than in the $k$-means algorithm but greedy optimization.
+    \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]
