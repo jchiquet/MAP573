@@ -2,18 +2,18 @@ MAP 573 - Unsupervised Learning with R
 ================
 
 > This repository regroups some material (slides, labs, projects)
-> associated to the course MAP
-573.
+> associated to the course MAP 573.
 
 <!-- ## Schedule (tentative) -->
 
-<!-- ### Descriptive Analysis of Network Data -->
+### Unsupervised Learning: Clustering
 
-<!-- October the 1st, 2019 -->
+October the 1st, 2019
 
-<!--   - *Course* Statistics on network data, Graph Partitionning   - [slides](https://github.com/jchiquet/CourseStatNetwork/raw/master/slides/DescriptiveAnalysis/DescriptiveAnalysis.pdf) -->
-
-<!--   - *Tutorial* Basical graph manipulation and Spectral Clustering [sheet](https://github.com/jchiquet/CourseStatNetwork/raw/master/practicals/DescriptiveAnalysis/tuto_DescriptiveAnalysis.pdf), [quick element of correction](https://github.com/jchiquet/CourseStatNetwork/raw/master/practicals/DescriptiveAnalysis/tuto_DescriptiveAnalysis_corr.pdf) -->
+  - *Course*: Introduction to clustering –
+    [slides](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/slides/DataClustering/DataClustering.pdf)
+  - *Labs*: EM algorithm for mixtures of univariate Gaussians
+    [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/labs/MixtureModelsEM/tuto_mixtureModelsEM.pdf)
 
 <!-- ### Statistical Models for Networks Data: SBM part 1 -->
 
