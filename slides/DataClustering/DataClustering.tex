@@ -53,9 +53,9 @@
 \usepackage{animate}
 
 \def\currentCourse{Unsupervised Learning}
-\def\currentInstitute{Polytechnique MAP 573, 2019 -- Julien Chiquet}
+\def\currentInstitute{MAP 573, 2019 -- Julien Chiquet}
 \def\currentLogo{../common_figs/logo_X}
-\def\currentDate{Autumn semester, 2019}
+\def\currentDate{École Polytechnique, Autumn semester, 2019}
 \def\currentChapter{Introduction to clustering}
 
 
@@ -134,8 +134,6 @@
   %
 }
 
-
-
 \usetikzlibrary{calc,shapes,backgrounds,arrows,automata,shadows,positioning}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
@@ -167,7 +165,7 @@
 
   \begin{block}{Unsupervised Learning}
   \begin{itemize}
-    \item Training data $\mathcal{D} = \{x_1, \ldots, x_n\}$
+    \item Training data $\mathcal{D} = \{\bx_1, \ldots, \bx_n\}$
     \item Loss? , Aim?
     \item Task: Dimension reduction, Clustering
   \end{itemize}  
@@ -184,6 +182,29 @@
 %% ==========================================================================
 \section{Clustering: introduction}
 %% ==========================================================================
+
+\begin{frame}[fragile]
+  \frametitle{Packages required for reproducing the slides}
+  
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(tidyverse)}  \hlcom{# opinionated collection of packages for data manipulation}
+\hlkwd{library}\hlstd{(corrplot)}   \hlcom{# fancy plots of matrices as images}
+\hlkwd{library}\hlstd{(GGally)}     \hlcom{# extension to ggplot vizualization system}
+\hlkwd{library}\hlstd{(ggfortify)}  \hlcom{# extension to ggplot vizualization system}
+\hlkwd{library}\hlstd{(mclust)}     \hlcom{# Gaussian mixture models}
+\hlkwd{library}\hlstd{(aricode)}    \hlcom{# fast computation of clustering measures}
+\hlkwd{library}\hlstd{(animation)}  \hlcom{# kmeans animation slides}
+\hlcom{# color and plots themes}
+\hlkwd{library}\hlstd{(RColorBrewer)}
+\hlstd{pal} \hlkwb{<-} \hlkwd{brewer.pal}\hlstd{(}\hlnum{10}\hlstd{,} \hlstr{"Set3"}\hlstd{)}
+\hlkwd{theme_set}\hlstd{(}\hlkwd{theme_bw}\hlstd{())}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+\end{frame}
 
 \subsection{Motivating example}
 
@@ -258,7 +279,7 @@
 
 \begin{frame}[fragile,allowframebreaks]
   \frametitle{Remove size effect}
-  \framesubtitle{Carried by 1st principal components}
+  \framesubtitle{Carried by the 1st principal component}
 
 \paragraph{PCA is solved by SVD}
 \begin{equation*}
@@ -339,7 +360,8 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
       \item Clustering labels only elements of the dataset
       \begin{itemize}
       \item[$\rightsquigarrow$] no ground truth (no given labels)
-      \item[$\rightsquigarrow$] discover a structure "natural" to the data
+      \item[$\rightsquigarrow$] discovers a structure "natural" to the data
+      \item[$\rightsquigarrow$] not necessarily related to a known classification
       \end{itemize}
       \end{itemize}
   
@@ -350,7 +372,8 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
     \item describe large masses of data in a simplified way,
     \item structure a set of knowledge,
     \item reveal structures, hidden causes,
-    \item use of the groups in further processing, \dots
+    \item use of the groups in further processing, 
+    \item \dots
   \end{itemize}
 
 \end{frame}
@@ -360,7 +383,7 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
   \frametitle{Clustering: challenges}
 
     \begin{block}{Clustering quality}
-      No obvious measure to define the \alert{quality} of the clusters.
+      No obvious measure to define the \alert{quality} of the clusters. Ideas:
       \begin{itemize}
         \item \alert{Inner} homogeneity: samples in the same group should be similar
         \item \alert{Outer} inhomogeneity: samples in different groups should be different
@@ -370,10 +393,10 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
     \vspace{-.25cm}
 
     \begin{block}{Number of clusters}
-      Choice of the number of cluster $K$ often complex
+      Choice of the number of clusters $K$ often complex
       \begin{itemize}
         \item No ground truth in unsupervised learning!
-        \item Several solution might be equally good
+        \item Several solutions might be equally good
       \end{itemize}
     \end{block}
 
@@ -403,13 +426,13 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
   For instance, two objects are similar if 
   \begin{itemize}
     \item they share a certain feature
-    \item \alert{their features are close according measure of proximity}
+    \item \alert{their features are close according to a measure of proximity}
   \end{itemize}
   
   \vfill
   
   \begin{definition}[distance/metric]<2>
-    Dissimilairty can be measuresd by distances, \textit{i.e.} a function $d_{ii'}$ between pairs in \{$\bx_i\}$ s.t.
+    Dissimilairty can be measuresd by distances, \textit{i.e.} a function $d_{ij}$ between pairs in \{$\bx_i\}$ s.t.
     \vspace{-.25cm}
     \begin{multicols}{2}
     \begin{itemize}
@@ -429,7 +452,11 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
   \paragraph{\it Clustering leads to a grouping (or classification) of individuals into homogeneous classes} 
   \bigskip
   
-  We consider two structures to describe this classification: \alert{partitions} and \alert{hierarchies}.
+  We consider two structures to describe this classification: 
+  \begin{itemize}
+    \item \alert{partitions} and
+    \item \alert{hierarchies}.
+  \end{itemize}
 
   \vfill
 
@@ -449,7 +476,7 @@ class and only one.
   \frametitle{Classification structures: Hierarchy}
 
   \begin{definition}[Hierarchy]
-    A hierarchy $\mathcal{H}$ is a is a non empty subsetof a finite ensemble $\Omega$ such that
+    A hierarchy $\mathcal{H}$ is a non empty subset of a finite ensemble $\Omega$ such that
     \begin{itemize}
       \item $\Omega \in \mathcal{H}$,
       \item $\forall \bx \in \Omega, \{\bx\} \in \mathcal{H}$,
@@ -483,8 +510,8 @@ class and only one.
   \frametitle{Clusterings Comparison: Contingency table}
 
   \begin{definition}
-    Consider two clustering $U$ and $V$ of $\Omega$ elements, in respectively $|U|$ and $|V|$ classes. The $|U| \times |V|$ contingency matrix stores at position $i$, $j$ the number of elements that
-are simultaneously in cluster $i$ of $U$ and in cluster $j$ of $V$.
+    Consider two clusterings $U$ and $V$ of elements in $\Omega$, into respectively $|U|$ and $|V|$ classes. The $|U| \times |V|$ contingency matrix stores at position $(i,j)$ the number of elements that
+are simultaneously in cluster $i$ of $U$ and  $j$ of $V$.
 
 \begin{center}  
   \begin{tabular}{c|cccc|c}
@@ -502,11 +529,35 @@ are simultaneously in cluster $i$ of $U$ and in cluster $j$ of $V$.
 \end{frame}
 
 \begin{frame}
-  \frametitle{Clusterings Comparison: Measures}
+  \frametitle{Clusterings Comparison: Measures (I)}
 
-  The ARI (most popular) is a measure of accuracy between two clustering, adjusted for chance grouping of element.
+\begin{definition}[Rand index]
+  Given a set $\Omega$ of $n$ elements and two partitions $U$ and $V$ to compare, define the following:
+\begin{itemize}
+\item  $a$, the number of pairs in the same subset in $U$ and in in $V$
+\item  $b$, the number of pairs in different subsets in $U$ and in $V$
+\end{itemize}
+The Rand index, $RI \in[0,1]$ is
+\begin{equation*}
+  RI = \frac {a+b}{{n \choose 2}}
+\end{equation*}
+  \end{definition}
 
-  \begin{definition}[Adjusted Rand-index]
+\onslide{
+The Rand index can be viewed as a measure of the percentage of correct decisions:
+\begin{equation*}
+  RI = \frac{TP+TN}{{n \choose 2}},
+\end{equation*}
+where $TP, TN$ are true positive and true negative decisions.
+}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Clusterings Comparison: Measures (II)}
+
+The ARI (most popular) is a version of the RI adjusted for chance grouping of element (i.e., the expected similarity of all pair-wise comparisons).
+
+\begin{definition}[Adjusted Rand-index]
 	\begin{displaymath}
 		ARI(U, V) = 
 			\frac{ 
@@ -572,7 +623,7 @@ are simultaneously in cluster $i$ of $U$ and in cluster $j$ of $V$.
     \end{enumerate}
   \end{block}
 
-  \begin{block}{Criteria: intra-class variance/ Within-inertia}
+  \begin{block}{Criteria: intra-class variance/ Inertia "within"}
     Intra-class variance measures \alert{inner} homogeneity
     \begin{equation*}
       I_W = \sum_{k=1}^K \sum_{i=1}^n c_{ik} \left\| \bx_i - \bmu_k \right\|_2^2,
@@ -591,7 +642,7 @@ are simultaneously in cluster $i$ of $U$ and in cluster $j$ of $V$.
   
   Ideally, one would solve
   \begin{equation*}
-    (\hat{\mathbf{c}}, \hat{\bmu}) = \argmin_{(\mathbf{c}, \bmu)}  I_w((\mathbf{c}, \bmu)), \qquad \text{s.t $\mathbf{c}$ is a partion matrix}.
+    (\hat{\mathbf{c}}, \hat{\bmu}) = \argmin_{(\mathbf{c}, \bmu)}  I_w((\mathbf{c}, \bmu)), \quad \text{s.t \quad $\mathbf{c}$ is a partion matrix}.
   \end{equation*}
   
   This problem is hard to solve but can be optimized locally as follows:
@@ -603,7 +654,7 @@ are simultaneously in cluster $i$ of $U$ and in cluster $j$ of $V$.
     \item[\textbf{Initialization}] start by a (pseudo) random choice for the centers $\bmu_k$
     \item[\textbf{Alternate}] until convergence
       \begin{enumerate}
-        \item[step 1] given $\bmu$, chose $\mathbf{c}$ minimizing $I_w$ $\equiv$ assign $\bx_i$ to nearest prototype
+        \item[step 1] given $\bmu$, chose $\mathbf{c}$ minimizing $I_w$ $\equiv$ assign $\bx_i$ to the nearest prototype
         \item[step 2] given $\mathbf{c}$, chose $\bmu$ minimizing $I_w$ $\equiv$ update $\bmu$ by the new means of classes
       \end{enumerate}
     \end{description}
@@ -675,7 +726,7 @@ are simultaneously in cluster $i$ of $U$ and in cluster $j$ of $V$.
   \end{block}
 
   \begin{block}{Complexity}
-     $O(n \times K \times T)$ where $T$ is the number of step in the algorithm.
+     $O(n K T)$ where $T$ is the number of step in the algorithm.
   \end{block}
   
 \end{frame}
@@ -818,8 +869,8 @@ B-F & B-M & O-F & O-M\\
     \end{block}
 
     \begin{itemize}
-      \item[+] Generates a hierarchy of clustering instead of a single one
-      \item[--] Need to select the number of cluster afterwards.
+      \item[+] Generates a hierarchy of clustering instead of a single partition
+      \item[--] Need to select the number of cluster afterwards
     \end{itemize}
 \end{frame}
 
@@ -851,7 +902,7 @@ B-F & B-M & O-F & O-M\\
     \vspace{-.25cm}
     \begin{itemize}
       \item In general $O(n^3)$
-      \item Can be reduced to $O(n^2)$ if boundering the number of merging
+      \item Can be reduced to $O(n^2)$ if boundering the number of merges
     \end{itemize}
   \end{block}
   
@@ -919,19 +970,17 @@ B-F & B-M & O-F & O-M\\
     \item  $\mathcal{P} = (\mathcal{C}_1, \dots,\mathcal{C}_K)$ at one level of the hierarchy $\Omega$
     \item  $\mathcal{P}'$ is $\mathcal{P}$ once $\mathcal{C}_k, \mathcal{C}_\ell$ merged
   \end{itemize}
-  }
-  \onslide<3->{
   Then
   \begin{equation*}
     I_W(\mathcal{P}) - I_W(\mathcal{P'}) = \frac{|\mathcal{C}_k||\mathcal{C}_\ell|}{|\mathcal{C}_k|+|\mathcal{C}_\ell|}d^2(\bmu_{\mathcal{C}_k}, \bmu_{\mathcal{C}_\ell}) = \frac{1}{2} \Delta(\mathcal{C}_k, \mathcal{C}_\ell).
   \end{equation*}
   }
 
-  \onslide<4>{
+  \onslide<3>{
   \begin{itemize}
     \item[$\rightsquigarrow$] At each step, Ward limits the increase of the intra class variance
-    \item[$\rightsquigarrow$] defined the indexed hierarchy (height of the dendrogram)
-    \item[$\rightsquigarrow$] Same criteria as in K-means algorithm
+    \item[$\rightsquigarrow$] Defines an indexed hierarchy (height of the dendrogram)
+    \item[$\rightsquigarrow$] Same criteria as in the K-means algorithm
   \end{itemize}
   }
 
@@ -1022,7 +1071,7 @@ Look at Ward intra-class variance
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{plot}\hlstd{(}\hlkwd{rev}\hlstd{(Ward}\hlopt{$}\hlstd{height),} \hlkwc{xlab} \hlstd{=} \hlstr{"number of clusters"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"height"}\hlstd{)}
+\hlkwd{plot}\hlstd{(}\hlkwd{rev}\hlstd{(Ward}\hlopt{$}\hlstd{height)[}\hlnum{1}\hlopt{:}\hlnum{20}\hlstd{],} \hlkwc{xlab} \hlstd{=} \hlstr{"number of clusters"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"height"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=.8\textwidth]{figures/criteria-1} 
@@ -1053,9 +1102,26 @@ Look at Ward intra-class variance
 \end{knitrout}
 \end{frame}
 
+\begin{frame}[fragile]
+  \frametitle{Reordered correlation matrix between individuals}
+  
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{C} \hlkwb{<-} \hlkwd{cor}\hlstd{(}\hlkwd{t}\hlstd{(}\hlkwd{select}\hlstd{(crabs_corrected,} \hlopt{-}\hlstd{sex,} \hlopt{-}\hlstd{species)))}
+\hlstd{C} \hlkwb{<-} \hlstd{C[}\hlkwd{order}\hlstd{(clusters_ward),}\hlkwd{order}\hlstd{(clusters_ward)]}
+  \hlkwd{corrplot}\hlstd{(C,} \hlkwc{method} \hlstd{=} \hlstr{"color"}\hlstd{,} \hlkwc{tl.pos} \hlstd{=} \hlstr{"n"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/Ward_corrplot-1} 
+
+\end{knitrout}
+  
+
+\end{frame}
 
 %% ==========================================================================
-\section{Model-based approach: mixture models}
+\section{Model-based approach}
 %% ==========================================================================
 
 \begin{frame}
@@ -1115,7 +1181,6 @@ Look at Ward intra-class variance
     \begin{itemize}
       \item $(Z_i, i\geq 1)$ is Markov chain: \alert{Markov models}
       \item $Z_i$ categorical and independent: \alert{mixture models}
-      \item<3> \alert{what if $X_i = X_{i'j'}$ is a collection of edges in a graph?}
     \end{itemize}
   \end{block}
 
