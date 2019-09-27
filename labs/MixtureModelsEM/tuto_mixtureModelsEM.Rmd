@@ -72,5 +72,5 @@ is, $X_i | Z_{iq} = 1 \sim \mathcal{N}(\mu_q,\sigma^2_q)$.
 - _Implementation._  Test  your  EM  algorithm on  simulate data.  Try  different values for $\mu_q$,  $\sigma_q$. Also consider different initialization. Compare with the output of the function \texttt{normalmixEM} in the package \textbf{mixtools}.
 - _Model Selection._ Compute  the ICL criterion and test  it on your simulated data.
 \begin{equation*}
-  ICL(Q) =-2 \log L(X,\hat{Z}; \hat{\alpha},\hat{\mu}, \hat{\sigma^2}) + \log(n) \mathrm{df}(Q).
+  ICL(Q) =-2 \log \mathbb{E}[L(X, Z; \hat{\alpha},\hat{\mu}, \hat{\sigma^2})] + \log(n) \mathrm{df}(Q).
 \end{equation*}
