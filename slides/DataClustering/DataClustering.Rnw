@@ -1256,48 +1256,48 @@ plot(GMM, 'classification')
 % @
 % \end{frame}
 
-% \begin{frame}[fragile]
-%   \frametitle{Example: data generation}
-% 
-% We first generate data with 4 components:
-% <<EM_mixture_example_data>>=
-% mu1 <- 5   ; sigma1 <- 1; n1 <- 100
-% mu2 <- 10  ; sigma2 <- 1; n2 <- 200
-% mu3 <- 15  ; sigma3 <- 2; n3 <- 50
-% mu4 <- 20  ; sigma4 <- 3; n4 <- 100
-% cl <- rep(1:4,c(n1,n2,n3,n4))
-% x <- c(rnorm(n1,mu1,sigma1),rnorm(n2,mu2,sigma2),
-%        rnorm(n3,mu3,sigma3),rnorm(n4,mu4,sigma4))
-% n <- length(x)
-% 
-% ## we randomize the class ordering
-% rnd <- sample(1:n)
-% cl <- cl[rnd]
-% x  <- x[rnd]
-% 
-% alpha <- c(n1,n2,n3,n4)/n
-% @
-% \end{frame}
-% 
-% \begin{frame}[fragile, allowframebreaks]
-%   \frametitle{Example: data generation - plot}
-% 
-% Let us plot the data and the theoretical mixture.
-% <<EM_mixture_example_data_plot>>=
-% curve(alpha[1]*dnorm(x,mu1,sigma1) +
-%       alpha[2]*dnorm(x,mu2,sigma2) +
-%       alpha[3]*dnorm(x,mu3,sigma3) +
-%       alpha[4]*dnorm(x,mu4,sigma3),
-%       col="blue", lty=1, from=0,to=30, n=1000,
-%       main="Theoretical Gaussian mixture and its components",
-%       xlab="x", ylab="density")
-% curve(alpha[1]*dnorm(x,mu1,sigma1), col="red", add=TRUE, lty=2)
-% curve(alpha[2]*dnorm(x,mu2,sigma2), col="red", add=TRUE, lty=2)
-% curve(alpha[3]*dnorm(x,mu3,sigma3), col="red", add=TRUE, lty=2)
-% curve(alpha[4]*dnorm(x,mu4,sigma4), col="red", add=TRUE, lty=2)
-% rug(x)
-% @
-% \end{frame}
+\begin{frame}[fragile]
+  \frametitle{Example: data generation}
+
+We first generate data with 4 components:
+<<EM_mixture_example_data>>=
+mu1 <- 5   ; sigma1 <- 1; n1 <- 100
+mu2 <- 10  ; sigma2 <- 1; n2 <- 200
+mu3 <- 15  ; sigma3 <- 2; n3 <- 50
+mu4 <- 20  ; sigma4 <- 3; n4 <- 100
+cl <- rep(1:4,c(n1,n2,n3,n4))
+x <- c(rnorm(n1,mu1,sigma1),rnorm(n2,mu2,sigma2),
+       rnorm(n3,mu3,sigma3),rnorm(n4,mu4,sigma4))
+n <- length(x)
+
+## we randomize the class ordering
+rnd <- sample(1:n)
+cl <- cl[rnd]
+x  <- x[rnd]
+
+alpha <- c(n1,n2,n3,n4)/n
+@
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]
+  \frametitle{Example: data generation - plot}
+
+Let us plot the data and the theoretical mixture.
+<<EM_mixture_example_data_plot>>=
+curve(alpha[1]*dnorm(x,mu1,sigma1) +
+      alpha[2]*dnorm(x,mu2,sigma2) +
+      alpha[3]*dnorm(x,mu3,sigma3) +
+      alpha[4]*dnorm(x,mu4,sigma3),
+      col="blue", lty=1, from=0,to=30, n=1000,
+      main="Theoretical Gaussian mixture and its components",
+      xlab="x", ylab="density")
+curve(alpha[1]*dnorm(x,mu1,sigma1), col="red", add=TRUE, lty=2)
+curve(alpha[2]*dnorm(x,mu2,sigma2), col="red", add=TRUE, lty=2)
+curve(alpha[3]*dnorm(x,mu3,sigma3), col="red", add=TRUE, lty=2)
+curve(alpha[4]*dnorm(x,mu4,sigma4), col="red", add=TRUE, lty=2)
+rug(x)
+@
+\end{frame}
 % 
 % \begin{frame}[fragile]
 %    \frametitle{Implementation}

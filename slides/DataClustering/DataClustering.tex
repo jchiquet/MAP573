@@ -683,26 +683,6 @@ The ARI (most popular) is a version of the RI adjusted for chance grouping of el
 
 \includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-8} 
 
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-9} 
-
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-10} 
-
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-11} 
-
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-12} 
-
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-13} 
-
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-14} 
-
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-15} 
-
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-16} 
-
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-17} 
-
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-18} 
-
 \end{knitrout}
 
 \end{frame}
@@ -824,21 +804,21 @@ The ARI (most popular) is a version of the RI adjusted for chance grouping of el
 \hlstd{knitr}\hlopt{::}\hlkwd{kable}\hlstd{(}\hlkwd{table}\hlstd{(clusters, classes),}
 \hlkwc{caption} \hlstd{=} \hlstr{"Estimating structure with k-means"}\hlstd{)}
 \end{alltt}
-\end{kframe}\begin{table}[t]
+\end{kframe}\begin{table}
 
 \caption{\label{tab:contingency_table_kmeans}Estimating structure with k-means}
 \centering
-\begin{tabular}{r|r|r|r}
+\begin{tabular}[t]{r|r|r|r}
 \hline
 B-F & B-M & O-F & O-M\\
+\hline
+0 & 35 & 0 & 0\\
 \hline
 0 & 0 & 50 & 9\\
 \hline
 0 & 0 & 0 & 41\\
 \hline
 50 & 15 & 0 & 0\\
-\hline
-0 & 35 & 0 & 0\\
 \hline
 \end{tabular}
 \end{table}
@@ -1032,21 +1012,21 @@ Compare with out reference classification and k-means
 \hlstd{knitr}\hlopt{::}\hlkwd{kable}\hlstd{(}\hlkwd{table}\hlstd{(clusters,} \hlkwd{cutree}\hlstd{(Ward,}\hlnum{4}\hlstd{)),}
 \hlkwc{caption} \hlstd{=} \hlstr{"k-means vs Ward"}\hlstd{)}
 \end{alltt}
-\end{kframe}\begin{table}[t]
+\end{kframe}\begin{table}
 
 \caption{\label{tab:contingency_table_kmeans_vs_ward}k-means vs Ward}
 \centering
-\begin{tabular}{r|r|r|r}
+\begin{tabular}[t]{r|r|r|r}
 \hline
 1 & 2 & 3 & 4\\
+\hline
+5 & 30 & 0 & 0\\
 \hline
 2 & 0 & 49 & 8\\
 \hline
 1 & 0 & 0 & 40\\
 \hline
 65 & 0 & 0 & 0\\
-\hline
-5 & 30 & 0 & 0\\
 \hline
 \end{tabular}
 \end{table}
@@ -1595,48 +1575,58 @@ Look at Ward intra-class variance
 % @
 % \end{frame}
 
-% \begin{frame}[fragile]
-%   \frametitle{Example: data generation}
-% 
-% We first generate data with 4 components:
-% <<EM_mixture_example_data>>=
-% mu1 <- 5   ; sigma1 <- 1; n1 <- 100
-% mu2 <- 10  ; sigma2 <- 1; n2 <- 200
-% mu3 <- 15  ; sigma3 <- 2; n3 <- 50
-% mu4 <- 20  ; sigma4 <- 3; n4 <- 100
-% cl <- rep(1:4,c(n1,n2,n3,n4))
-% x <- c(rnorm(n1,mu1,sigma1),rnorm(n2,mu2,sigma2),
-%        rnorm(n3,mu3,sigma3),rnorm(n4,mu4,sigma4))
-% n <- length(x)
-% 
-% ## we randomize the class ordering
-% rnd <- sample(1:n)
-% cl <- cl[rnd]
-% x  <- x[rnd]
-% 
-% alpha <- c(n1,n2,n3,n4)/n
-% @
-% \end{frame}
-% 
-% \begin{frame}[fragile, allowframebreaks]
-%   \frametitle{Example: data generation - plot}
-% 
-% Let us plot the data and the theoretical mixture.
-% <<EM_mixture_example_data_plot>>=
-% curve(alpha[1]*dnorm(x,mu1,sigma1) +
-%       alpha[2]*dnorm(x,mu2,sigma2) +
-%       alpha[3]*dnorm(x,mu3,sigma3) +
-%       alpha[4]*dnorm(x,mu4,sigma3),
-%       col="blue", lty=1, from=0,to=30, n=1000,
-%       main="Theoretical Gaussian mixture and its components",
-%       xlab="x", ylab="density")
-% curve(alpha[1]*dnorm(x,mu1,sigma1), col="red", add=TRUE, lty=2)
-% curve(alpha[2]*dnorm(x,mu2,sigma2), col="red", add=TRUE, lty=2)
-% curve(alpha[3]*dnorm(x,mu3,sigma3), col="red", add=TRUE, lty=2)
-% curve(alpha[4]*dnorm(x,mu4,sigma4), col="red", add=TRUE, lty=2)
-% rug(x)
-% @
-% \end{frame}
+\begin{frame}[fragile]
+  \frametitle{Example: data generation}
+
+We first generate data with 4 components:
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mu1} \hlkwb{<-} \hlnum{5}   \hlstd{; sigma1} \hlkwb{<-} \hlnum{1}\hlstd{; n1} \hlkwb{<-} \hlnum{100}
+\hlstd{mu2} \hlkwb{<-} \hlnum{10}  \hlstd{; sigma2} \hlkwb{<-} \hlnum{1}\hlstd{; n2} \hlkwb{<-} \hlnum{200}
+\hlstd{mu3} \hlkwb{<-} \hlnum{15}  \hlstd{; sigma3} \hlkwb{<-} \hlnum{2}\hlstd{; n3} \hlkwb{<-} \hlnum{50}
+\hlstd{mu4} \hlkwb{<-} \hlnum{20}  \hlstd{; sigma4} \hlkwb{<-} \hlnum{3}\hlstd{; n4} \hlkwb{<-} \hlnum{100}
+\hlstd{cl} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{4}\hlstd{,}\hlkwd{c}\hlstd{(n1,n2,n3,n4))}
+\hlstd{x} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlkwd{rnorm}\hlstd{(n1,mu1,sigma1),}\hlkwd{rnorm}\hlstd{(n2,mu2,sigma2),}
+       \hlkwd{rnorm}\hlstd{(n3,mu3,sigma3),}\hlkwd{rnorm}\hlstd{(n4,mu4,sigma4))}
+\hlstd{n} \hlkwb{<-} \hlkwd{length}\hlstd{(x)}
+
+\hlcom{## we randomize the class ordering}
+\hlstd{rnd} \hlkwb{<-} \hlkwd{sample}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{n)}
+\hlstd{cl} \hlkwb{<-} \hlstd{cl[rnd]}
+\hlstd{x}  \hlkwb{<-} \hlstd{x[rnd]}
+
+\hlstd{alpha} \hlkwb{<-} \hlkwd{c}\hlstd{(n1,n2,n3,n4)}\hlopt{/}\hlstd{n}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]
+  \frametitle{Example: data generation - plot}
+
+Let us plot the data and the theoretical mixture.
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{curve}\hlstd{(alpha[}\hlnum{1}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu1,sigma1)} \hlopt{+}
+      \hlstd{alpha[}\hlnum{2}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu2,sigma2)} \hlopt{+}
+      \hlstd{alpha[}\hlnum{3}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu3,sigma3)} \hlopt{+}
+      \hlstd{alpha[}\hlnum{4}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu4,sigma3),}
+      \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{from}\hlstd{=}\hlnum{0}\hlstd{,}\hlkwc{to}\hlstd{=}\hlnum{30}\hlstd{,} \hlkwc{n}\hlstd{=}\hlnum{1000}\hlstd{,}
+      \hlkwc{main}\hlstd{=}\hlstr{"Theoretical Gaussian mixture and its components"}\hlstd{,}
+      \hlkwc{xlab}\hlstd{=}\hlstr{"x"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"density"}\hlstd{)}
+\hlkwd{curve}\hlstd{(alpha[}\hlnum{1}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu1,sigma1),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{curve}\hlstd{(alpha[}\hlnum{2}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu2,sigma2),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{curve}\hlstd{(alpha[}\hlnum{3}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu3,sigma3),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{curve}\hlstd{(alpha[}\hlnum{4}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu4,sigma4),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
+\hlkwd{rug}\hlstd{(x)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/EM_mixture_example_data_plot-1} 
+
+\end{knitrout}
+\end{frame}
 % 
 % \begin{frame}[fragile]
 %    \frametitle{Implementation}
