@@ -1287,7 +1287,7 @@ Let us plot the data and the theoretical mixture.
 curve(alpha[1]*dnorm(x,mu1,sigma1) +
       alpha[2]*dnorm(x,mu2,sigma2) +
       alpha[3]*dnorm(x,mu3,sigma3) +
-      alpha[4]*dnorm(x,mu4,sigma3),
+      alpha[4]*dnorm(x,mu4,sigma4),
       col="blue", lty=1, from=0,to=30, n=1000,
       main="Theoretical Gaussian mixture and its components",
       xlab="x", ylab="density")

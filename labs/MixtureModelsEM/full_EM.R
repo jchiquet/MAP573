@@ -1,11 +1,15 @@
 rm(list=ls())
 
 get_cloglik <- function(X, Z, theta) {
+  n <- length(x); Q <- ncol(Z)
   alpha <- theta$alpha; mu <- theta$mu; sigma <- theta$sigma
   xs <- scale(matrix(X, length(X), length(alpha)), mu, sigma)
-  res <- sum(Z*(log(alpha) - log(sigma) - .5*(log(2*pi) + xs^2)))
+  log_alpha <- matrix(rep(log(alpha), n), n, Q, byrow = TRUE)
+  log_sigma <- matrix(rep(log(sigma), n), n, Q, byrow = TRUE)
+  res <- sum(Z*(log_alpha - log_sigma - .5*(log(2*pi) + xs^2)))
   res
 }
+
 M_step <- function(X, tau) {
   n <- length(X); Q <- ncol(tau)
   alpha  <- colMeans(tau)
