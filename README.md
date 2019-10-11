@@ -6,8 +6,6 @@ MAP 573 - Unsupervised Learning with R
 
 <!-- ## Schedule (tentative) -->
 
-### Unsupervised Learning: Clustering
-
 October the 1st, 2019
 
   - *Course*: Introduction to clustering –
@@ -15,11 +13,22 @@ October the 1st, 2019
   - *Labs*: EM algorithm for mixtures of univariate Gaussians
     [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/labs/MixtureModelsEM/tuto_mixtureModelsEM.pdf)
 
+October the 15th, 2019
+
+  - *Course*: Introduction to graph clustering –
+    [slides](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/slides/GraphClustering/GraphClustering.pdf)
+  - *Labs*: Hierarchical and Spectral Clustering for Network Data
+    [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/labs/GraphPartitioning//tuto_GraphPartitioning.pdf)
+  - *Homework*: Implementing Variational EM in the Stochastic Block
+    Model
+    [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/labs/Homework/Homework.pdf)
+
 <!-- ### Statistical Models for Networks Data: SBM part 1 -->
 
 <!-- November the 15th, 2018 -->
 
-<!--   - *Course*: Mixture Models, EM algorithm - [slides](https://github.com/jchiquet/CourseStatNetwork/raw/master/slides/GraphModel/GraphModels.pdf) -->
+<!--   - *Course*: Mixture Models, EM algorithm - ### Unsupervised Learning: Clustering
+[slides](https://github.com/jchiquet/CourseStatNetwork/raw/master/slides/GraphModel/GraphModels.pdf) -->
 
 <!--   - *Tutorial*: Reminder on mixture models [sheet](https://github.com/jchiquet/CourseStatNetwork/raw/master/practicals/MixtureModelsEM/tuto_mixtureModelsEM.pdf) -->
 
