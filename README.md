@@ -21,7 +21,7 @@ October the 15th, 2019
     [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/labs/GraphPartitioning//tuto_GraphPartitioning.pdf)
   - *Homework*: Implementing Variational EM in the Stochastic Block
     Model
-    [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/Homework/Homework.pdf)
+    [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/Homework/Homework_SBM.pdf)
 
 <!-- ### Statistical Models for Networks Data: SBM part 1 -->
 
