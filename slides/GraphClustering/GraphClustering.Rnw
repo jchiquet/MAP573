@@ -4,7 +4,7 @@
 \def\currentInstitute{Polytechnique MAP 573, 2019 -- Julien Chiquet}
 \def\currentLogo{../common_figs/logo_X}
 \def\currentDate{Autumn semester, 2019}
-\def\currentChapter{Graph clustering and the Stochastic Bloc Model}
+\def\currentChapter{Graph clustering and the Stochastic Block Model}
 
 <<preamble, child='../common_preamble.Rnw'>>=
 @
