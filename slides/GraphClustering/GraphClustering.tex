@@ -419,15 +419,11 @@
     \newblock \textcolor{black}{Eric Kolazcyk}
     \newblock \alert{Chapiter 4, Section 4}
 
-    \bibitem[EK1]{EK1} Statistical Analysis of Network Data with \texttt{R}, 
-    \newblock \textcolor{black}{Eric Kolazcyk, G\'abor Cs\'ardi}
-    \newblock \alert{Chapiter 4, Section 4}
-
-      \setbeamertemplate{bibliography item}[article]
-
     \bibitem[CM1]{CM1} Analyse statistique de graphes, 
-    \newblock \textcolor{black}{Catherine Matias}
-    \newblock \alert{Chapitre 3}
+    \newblock \textcolor{black}{Catherine Matias}, \alert{Chapitre 3}
+
+    \bibitem{DS}{DS} David Sontag's Lecture
+    \newblock \url{http://people.csail.mit.edu/dsontag/courses/ml13/slides/lecture16.pdf}
     
     \bibitem[VLB]{VLB} A Tutorial on Spectral Clustering, 
     \newblock \textcolor{black}{Ulrike von Luxburg}
@@ -449,7 +445,7 @@
 
   \vfill
 
-  \begin{block}{Goal of graph paritionning}
+  \begin{block}{Goal of graph partionning}
     Form a partition of the vertices with unsupervized approach where the $\mathcal{C}$ is composed by \alert{"cohesive"} sets of vertices, for instance,
     \begin{enumerate}
       \item vertices well connected among themselves
@@ -622,7 +618,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Normalized Graph Laplacian}
+  \frametitle{Some variants}
 
   \begin{definition}[(Normalized) Laplacian]
     The normalized Laplacian matrix $\bL$ is defined by 
@@ -630,25 +626,10 @@
       \bL_N = \bD^{-1/2}\bL\bD^{-1/2} = \bI - \bD^{-1/2} \bA \bD^{-1/2}.
     \]
   \end{definition}
+  
+  \vfill
 
-  \begin{proposition}
-    The $n\times n$ matrix $\bL_N$ has the following properties:
-      \[
-        \bx^\top \bL_N \bx = \frac{1}{2} \sum_{i,j} A_{ij}\left(\frac{x_i}{\sqrt{d_i}} - \frac{x_j}{\sqrt{d_j}} \right)^2, quad\forall\bx\in\Rset^n.
-      \]
-    \vspace{-.25cm}
-    \begin{itemize}
-      \item $\bL$ is a symmetric, positive semi-definite matrix, with $n$ nonnegative eigenvalues $0=\lambda_1<\dots <\lambda_n$
-      \item  the smallest eigenvalue is $0$ with associated eigenvector $\bD^{-1/2}\mathbf{1}$.
-    \end{itemize}  
-  \end{proposition}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Absolute Graph Laplacian}
-
-  \begin{definition}[(Absolute) Laplacian]
+  \begin{definition}[(Absolute) Graph Laplacian]
     The absolute Laplacian matrix $\bL_{abs}$ is defined by 
     \[
       \bL_{abs} = \bD^{-1/2}\bA\bD^{-1/2} = \bI - \bL_N,
@@ -676,6 +657,7 @@
 
 \begin{frame}
   \frametitle{Normalized Spectral Clustering}
+  \framesubtitle{by Ng, Jordan and Weiss (2002)}
 
 \begin{algorithm}[H]
   \KwIn{Adjacency matrix and number of classes $Q$}
@@ -684,38 +666,46 @@
   
   Compute the normalized graph Laplacian $\mathbf{L}$\;
   Compute the eigen vectors of $\mathbf{L}$ associated with the $Q$ \alert{smallest eigenvalues}\;
-  Define $\mathbf{U}$,  the $p\times Q$ matrix  that encompasses these $Q$ vectors \;
+  Define $\mathbf{U}$,  the $n\times Q$ matrix  that encompasses these $Q$ vectors \;
   Define $\tilde{\mathbf{U}}$, the row-wise normalized version of $\mathbf{U}$: $ \tilde{u}_{ij} = \frac{u_{ij}}{\| \mathbf{U}_i\|_2}$\;
-  Apply k-means to $(\tilde{\mathbf{U}}_i)_{i=1,\dots,p}$
+  Apply k-means to $(\tilde{\mathbf{U}}_i)_{i=1,\dots,n}$
 
   \BlankLine\BlankLine
-  \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^p$, such as  $C_i = q$ if $i\in q$}
+  \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^n$, such as  $C_i = q$ if $i\in q$}
 
-  \caption{Spectral Clustering by Ng, Jordan and Weiss (2002)}
 \end{algorithm}
 
-\end{frame}
+  \vfill
 
-\begin{frame}
-  \frametitle{Absolute Spectral Clustering}
-
-\begin{algorithm}[H]
-  \KwIn{Adjacency matrix and number of classes $Q$}
-  \BlankLine\BlankLine
-  \DontPrintSemicolon
+  \begin{block}{Remarks}
+    \begin{itemize}
+      \item implemented during today's lab
+      \item also apply to no graphical data!
+    \end{itemize}
+  \end{block}
   
-  Compute the graph Laplacian $\mathbf{L}_{abs}$\;
-  Compute the eigen vectors of $\mathbf{L}_{abs}$ associated with the $Q$ \alert{largest} absolute eigenvalues\;
-  Define $\mathbf{U}$,  the $p\times Q$ matrix  that encompasses these $Q$ vectors \;
-  Apply k-means to $(\mathbf{U}_i)_{i=1,\dots,p}$
-
-  \BlankLine\BlankLine
-  \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^p$, such as  $C_i = q$ if $i\in q$}
-
-  \caption{Spectral Clustering by Rohe et al. (2011)}
-\end{algorithm}
-
 \end{frame}
+
+% \begin{frame}
+%   \frametitle{Absolute Spectral Clustering}
+% 
+% \begin{algorithm}[H]
+%   \KwIn{Adjacency matrix and number of classes $Q$}
+%   \BlankLine\BlankLine
+%   \DontPrintSemicolon
+%   
+%   Compute the graph Laplacian $\mathbf{L}_{abs}$\;
+%   Compute the eigen vectors of $\mathbf{L}_{abs}$ associated with the $Q$ \alert{largest} absolute eigenvalues\;
+%   Define $\mathbf{U}$,  the $p\times Q$ matrix  that encompasses these $Q$ vectors \;
+%   Apply k-means to $(\mathbf{U}_i)_{i=1,\dots,p}$
+% 
+%   \BlankLine\BlankLine
+%   \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^p$, such as  $C_i = q$ if $i\in q$}
+% 
+%   \caption{Spectral Clustering by Rohe et al. (2011)}
+% \end{algorithm}
+% 
+% \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]
   \frametitle{Example: Karate club and Fielder vector and eigenvalue}
@@ -723,22 +713,18 @@
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{k.lap} \hlkwb{<-} \hlkwd{graph.laplacian}\hlstd{(karate)}
-\hlstd{eig.anal} \hlkwb{<-} \hlkwd{eigen}\hlstd{(k.lap)}
+\hlstd{eigen_karate} \hlkwb{<-} \hlkwd{graph.laplacian}\hlstd{(karate)} \hlopt{%>%} \hlkwd{eigen}\hlstd{()}
 
+\hlstd{fielder_vector} \hlkwb{<-} \hlstd{eigen_karate}\hlopt{$}\hlstd{vectors[, igraph}\hlopt{::}\hlkwd{vcount}\hlstd{(karate)} \hlopt{-} \hlnum{1}\hlstd{]}
+\hlstd{faction} \hlkwb{<-} \hlkwd{as.character}\hlstd{(}\hlkwd{vcount}\hlstd{(karate))}
+\hlstd{faction[}\hlkwd{V}\hlstd{(karate)}\hlopt{$}\hlstd{Faction} \hlopt{==} \hlnum{1}\hlstd{]} \hlkwb{<-} \hlstr{"red"}
+\hlstd{faction[}\hlkwd{V}\hlstd{(karate)}\hlopt{$}\hlstd{Faction} \hlopt{==} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstr{"cyan"}
 
-\hlstd{f.vec} \hlkwb{<-} \hlstd{eig.anal}\hlopt{$}\hlstd{vectors[,} \hlnum{33}\hlstd{]}
-\hlstd{faction} \hlkwb{<-} \hlstd{igraph}\hlopt{::}\hlkwd{get.vertex.attribute}\hlstd{(karate,} \hlstr{"Faction"}\hlstd{)}
-\hlstd{f.colors} \hlkwb{<-} \hlkwd{as.character}\hlstd{(}\hlkwd{length}\hlstd{(faction))}
-\hlstd{f.colors[faction} \hlopt{==} \hlnum{1}\hlstd{]} \hlkwb{<-} \hlstr{"red"}
-\hlstd{f.colors[faction} \hlopt{==} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstr{"cyan"}
-
-\hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{))}
-\hlkwd{plot}\hlstd{(eig.anal}\hlopt{$}\hlstd{values,} \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{,}
-   \hlkwc{ylab}\hlstd{=}\hlstr{"Eigenvalues of Graph Laplacian"}\hlstd{)}
-\hlkwd{plot}\hlstd{(f.vec,} \hlkwc{pch}\hlstd{=}\hlnum{16}\hlstd{,} \hlkwc{xlab}\hlstd{=}\hlstr{"Actor Number"}\hlstd{,}
-   \hlkwc{ylab}\hlstd{=}\hlstr{"Fiedler Vector Entry"}\hlstd{,} \hlkwc{col}\hlstd{=f.colors)}
-\hlkwd{abline}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{col}\hlstd{=}\hlstr{"lightgray"}\hlstd{)}
+\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{))}
+\hlkwd{plot}\hlstd{(eigen_karate}\hlopt{$}\hlstd{values,} \hlkwc{col} \hlstd{=} \hlstr{"blue"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"Eigenvalues of Graph Laplacian"}\hlstd{)}
+\hlkwd{plot}\hlstd{(fielder_vector,} \hlkwc{pch} \hlstd{=} \hlnum{16}\hlstd{,} \hlkwc{xlab} \hlstd{=} \hlstr{"labels"}\hlstd{,}
+   \hlkwc{ylab} \hlstd{=} \hlstr{"Fiedler vector entry"}\hlstd{,} \hlkwc{col} \hlstd{= faction)}
+\hlkwd{abline}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlkwc{lwd} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"lightgray"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=.8\textwidth]{figures/laplacian_example-1} 
