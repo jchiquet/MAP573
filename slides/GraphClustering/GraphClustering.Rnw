@@ -4,7 +4,7 @@
 \def\currentInstitute{Polytechnique MAP 573, 2019 -- Julien Chiquet}
 \def\currentLogo{../common_figs/logo_X}
 \def\currentDate{Autumn semester, 2019}
-\def\currentChapter{Graph clustering and the Stochastic Bloc Model}
+\def\currentChapter{Graph clustering and the Stochastic Block Model}
 
 <<preamble, child='../common_preamble.Rnw'>>=
 @
@@ -279,15 +279,11 @@ grid.arrange(g1, g2, g3, g4, nrow = 2, ncol = 2)
     \newblock \textcolor{black}{Eric Kolazcyk}
     \newblock \alert{Chapiter 4, Section 4}
 
-    \bibitem[EK1]{EK1} Statistical Analysis of Network Data with \texttt{R}, 
-    \newblock \textcolor{black}{Eric Kolazcyk, G\'abor Cs\'ardi}
-    \newblock \alert{Chapiter 4, Section 4}
-
-      \setbeamertemplate{bibliography item}[article]
-
     \bibitem[CM1]{CM1} Analyse statistique de graphes, 
-    \newblock \textcolor{black}{Catherine Matias}
-    \newblock \alert{Chapitre 3}
+    \newblock \textcolor{black}{Catherine Matias}, \alert{Chapitre 3}
+
+    \bibitem{DS}{DS} David Sontag's Lecture
+    \newblock \url{http://people.csail.mit.edu/dsontag/courses/ml13/slides/lecture16.pdf}
     
     \bibitem[VLB]{VLB} A Tutorial on Spectral Clustering, 
     \newblock \textcolor{black}{Ulrike von Luxburg}
@@ -457,7 +453,7 @@ plot(hc,karate)
 \end{frame}
 
 \begin{frame}
-  \frametitle{Normalized Graph Laplacian}
+  \frametitle{Some variants}
 
   \begin{definition}[(Normalized) Laplacian]
     The normalized Laplacian matrix $\bL$ is defined by 
@@ -465,7 +461,10 @@ plot(hc,karate)
       \bL_N = \bD^{-1/2}\bL\bD^{-1/2} = \bI - \bD^{-1/2} \bA \bD^{-1/2}.
     \]
   \end{definition}
+  
+  \vfill
 
+<<<<<<< HEAD
   \begin{proposition}
     The $n\times n$ matrix $\bL_N$ has the following properties:
       \[
@@ -484,6 +483,9 @@ plot(hc,karate)
   \frametitle{Absolute Graph Laplacian}
 
   \begin{definition}[(Absolute) Laplacian]
+=======
+  \begin{definition}[(Absolute) Graph Laplacian]
+>>>>>>> 52575e4e622d18a45c04f6a99328ce5984031b62
     The absolute Laplacian matrix $\bL_{abs}$ is defined by 
     \[
       \bL_{abs} = \bD^{-1/2}\bA\bD^{-1/2} = \bI - \bL_N,
@@ -511,6 +513,7 @@ plot(hc,karate)
 
 \begin{frame}
   \frametitle{Normalized Spectral Clustering}
+  \framesubtitle{by Ng, Jordan and Weiss (2002)}
 
 \begin{algorithm}[H]
   \KwIn{Adjacency matrix and number of classes $Q$}
@@ -519,59 +522,63 @@ plot(hc,karate)
   
   Compute the normalized graph Laplacian $\mathbf{L}$\;
   Compute the eigen vectors of $\mathbf{L}$ associated with the $Q$ \alert{smallest eigenvalues}\;
-  Define $\mathbf{U}$,  the $p\times Q$ matrix  that encompasses these $Q$ vectors \;
+  Define $\mathbf{U}$,  the $n\times Q$ matrix  that encompasses these $Q$ vectors \;
   Define $\tilde{\mathbf{U}}$, the row-wise normalized version of $\mathbf{U}$: $ \tilde{u}_{ij} = \frac{u_{ij}}{\| \mathbf{U}_i\|_2}$\;
-  Apply k-means to $(\tilde{\mathbf{U}}_i)_{i=1,\dots,p}$
+  Apply k-means to $(\tilde{\mathbf{U}}_i)_{i=1,\dots,n}$
 
   \BlankLine\BlankLine
-  \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^p$, such as  $C_i = q$ if $i\in q$}
+  \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^n$, such as  $C_i = q$ if $i\in q$}
 
-  \caption{Spectral Clustering by Ng, Jordan and Weiss (2002)}
 \end{algorithm}
 
-\end{frame}
+  \vfill
 
-\begin{frame}
-  \frametitle{Absolute Spectral Clustering}
-
-\begin{algorithm}[H]
-  \KwIn{Adjacency matrix and number of classes $Q$}
-  \BlankLine\BlankLine
-  \DontPrintSemicolon
+  \begin{block}{Remarks}
+    \begin{itemize}
+      \item implemented during today's lab
+      \item also apply to no graphical data!
+    \end{itemize}
+  \end{block}
   
-  Compute the graph Laplacian $\mathbf{L}_{abs}$\;
-  Compute the eigen vectors of $\mathbf{L}_{abs}$ associated with the $Q$ \alert{largest} absolute eigenvalues\;
-  Define $\mathbf{U}$,  the $p\times Q$ matrix  that encompasses these $Q$ vectors \;
-  Apply k-means to $(\mathbf{U}_i)_{i=1,\dots,p}$
-
-  \BlankLine\BlankLine
-  \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^p$, such as  $C_i = q$ if $i\in q$}
-
-  \caption{Spectral Clustering by Rohe et al. (2011)}
-\end{algorithm}
-
 \end{frame}
+
+% \begin{frame}
+%   \frametitle{Absolute Spectral Clustering}
+% 
+% \begin{algorithm}[H]
+%   \KwIn{Adjacency matrix and number of classes $Q$}
+%   \BlankLine\BlankLine
+%   \DontPrintSemicolon
+%   
+%   Compute the graph Laplacian $\mathbf{L}_{abs}$\;
+%   Compute the eigen vectors of $\mathbf{L}_{abs}$ associated with the $Q$ \alert{largest} absolute eigenvalues\;
+%   Define $\mathbf{U}$,  the $p\times Q$ matrix  that encompasses these $Q$ vectors \;
+%   Apply k-means to $(\mathbf{U}_i)_{i=1,\dots,p}$
+% 
+%   \BlankLine\BlankLine
+%   \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^p$, such as  $C_i = q$ if $i\in q$}
+% 
+%   \caption{Spectral Clustering by Rohe et al. (2011)}
+% \end{algorithm}
+% 
+% \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]
   \frametitle{Example: Karate club and Fielder vector and eigenvalue}
 
 <<laplacian example>>=
-k.lap <- graph.laplacian(karate)
-eig.anal <- eigen(k.lap)
+eigen_karate <- graph.laplacian(karate) %>% eigen()
 
+fielder_vector <- eigen_karate$vectors[, igraph::vcount(karate) - 1]
+faction <- as.character(vcount(karate))
+faction[V(karate)$Faction == 1] <- "red"
+faction[V(karate)$Faction == 2] <- "cyan"
 
-f.vec <- eig.anal$vectors[, 33]
-faction <- igraph::get.vertex.attribute(karate, "Faction")
-f.colors <- as.character(length(faction))
-f.colors[faction == 1] <- "red"
-f.colors[faction == 2] <- "cyan"
-
-par(mfrow=c(1,2))
-plot(eig.anal$values, col="blue",
-   ylab="Eigenvalues of Graph Laplacian")
-plot(f.vec, pch=16, xlab="Actor Number",
-   ylab="Fiedler Vector Entry", col=f.colors)
-abline(0, 0, lwd=2, col="lightgray")
+par(mfrow = c(1,2))
+plot(eigen_karate$values, col = "blue", ylab = "Eigenvalues of Graph Laplacian")
+plot(fielder_vector, pch = 16, xlab = "labels",
+   ylab = "Fiedler vector entry", col = faction)
+abline(0, 0, lwd = 2, col = "lightgray")
 @
 
 \end{frame}
