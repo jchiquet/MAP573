@@ -154,7 +154,7 @@ library(sand)
   \end{definition}
 
   \begin{proposition}
-    The degree of $\clG$ are then simply obtained as the row-wise and/or column-wise sums of $\bA$.
+    The degrees of $\clG$ are then simply obtained as the row-wise and/or column-wise sums of $\bA$.
   \end{proposition}
 
   \begin{block}{Remark}
@@ -184,7 +184,7 @@ library(sand)
     where $\bD = \diag(\set{d_i, i\in\clV})$ is the diagonal matrix of degrees. 
   \end{proposition}
 
-  $\rightsquigarrow \tilde \bB \tilde \bB^\intercal $ is called the Laplacian matrix and will be studied latter.
+  $\rightsquigarrow \tilde \bB \tilde \bB^\intercal $ is called the Laplacian matrix and will be studied later.
 
 \end{frame}
 
@@ -325,11 +325,10 @@ grid.arrange(g1, g2, g3, g4, nrow = 2, ncol = 2)
 
 \begin{frame}
   \frametitle{Principle}
-  \framesubtitle{}
 
 
   \begin{algorithm}[H]
-    \KwIn{$n$ individuals with $p$ attributes)}
+    \KwIn{$n$ individuals with $p$ attributes}
     \BlankLine\BlankLine
     \DontPrintSemicolon
       1. Compute the dissimilarity between groups \;
@@ -470,7 +469,7 @@ plot(hc,karate)
   \begin{proposition}
     The $n\times n$ matrix $\bL_N$ has the following properties:
       \[
-        \bx^\top \bL_N \bx = \frac{1}{2} \sum_{i,j} A_{ij}\left(\frac{x_i}{\sqrt{d_i}} - \frac{x_j}{\sqrt{d_j}} \right)^2, quad\forall\bx\in\Rset^n.
+        \bx^\top \bL_N \bx = \frac{1}{2} \sum_{i,j} A_{ij}\left(\frac{x_i}{\sqrt{d_i}} - \frac{x_j}{\sqrt{d_j}} \right)^2, \quad\forall\bx\in\Rset^n.
       \]
     \vspace{-.25cm}
     \begin{itemize}
@@ -652,7 +651,7 @@ plot(hc,karate)
   \frametitle{A mathematical model: Erdös-Rényi graph}
 
   \begin{definition}
-    Let $\clV = {1,\dots,n}$ be a set of fixed vertices. The (simple) Erdös-Rény model $\mathcal{G}(n,\pi)$ assumes random edges between pairs of nodes with probability $\pi$. In orther word, the (random) adjacency matrix $\bX$ is such that
+    Let $\clV = {1,\dots,n}$ be a set of fixed vertices. The (simple) Erdös-Rényi model $\mathcal{G}(n,\pi)$ assumes random edges between pairs of nodes with probability $\pi$. In orther word, the (random) adjacency matrix $\bX$ is such that
     \begin{equation*}
       X_{ij} \sim \mathcal{B}(\pi)
     \end{equation*}
@@ -996,7 +995,7 @@ plot(star, vertex.label=NA, vertex.color = rep(1:2,c(4,96)))
   \begin{block}{Conditional degree distribution}
     The conditional degree distribution of a node $i\in q$ is
     \begin{equation*}
-      D_i | i \in q \sim \mathrm{b}(n-1,\bar\pi) \approx \mathcal{P}(\lambda_q), \qquad \bar\pi_q = \sum_{\ell=1}^Q \alpha_\ell, \pi_{q\ell} \quad \lambda_q = (n-1)\bar\pi_q
+      D_i | i \in q \sim \mathrm{b}(n-1,\bar\pi) \approx \mathcal{P}(\lambda_q), \qquad \bar\pi_q = \sum_{\ell=1}^Q \alpha_\ell \pi_{q\ell}, \quad \lambda_q = (n-1)\bar\pi_q
     \end{equation*}
   \end{block}
 
