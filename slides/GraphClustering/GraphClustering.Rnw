@@ -367,7 +367,7 @@ grid.arrange(g1, g2, g3, g4, nrow = 2, ncol = 2)
 \end{frame}
 
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Example: karaté club}
 
 <<degree_1>>=
@@ -388,6 +388,11 @@ hist(degree(karate), col=adjustcolor("lightblue", alpha.f = 0.5), main="")
 
 <<>>=
 hc <- cluster_fast_greedy(karate)
+plot(hc,karate)
+@
+
+<<>>=
+hc <- cluster_louvain(karate)
 plot(hc,karate)
 @
 
@@ -464,28 +469,7 @@ plot(hc,karate)
   
   \vfill
 
-<<<<<<< HEAD
-  \begin{proposition}
-    The $n\times n$ matrix $\bL_N$ has the following properties:
-      \[
-        \bx^\top \bL_N \bx = \frac{1}{2} \sum_{i,j} A_{ij}\left(\frac{x_i}{\sqrt{d_i}} - \frac{x_j}{\sqrt{d_j}} \right)^2, \quad\forall\bx\in\Rset^n.
-      \]
-    \vspace{-.25cm}
-    \begin{itemize}
-      \item $\bL$ is a symmetric, positive semi-definite matrix, with $n$ nonnegative eigenvalues $0=\lambda_1<\dots <\lambda_n$
-      \item  the smallest eigenvalue is $0$ with associated eigenvector $\bD^{-1/2}\mathbf{1}$.
-    \end{itemize}  
-  \end{proposition}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Absolute Graph Laplacian}
-
-  \begin{definition}[(Absolute) Laplacian]
-=======
   \begin{definition}[(Absolute) Graph Laplacian]
->>>>>>> 52575e4e622d18a45c04f6a99328ce5984031b62
     The absolute Laplacian matrix $\bL_{abs}$ is defined by 
     \[
       \bL_{abs} = \bD^{-1/2}\bA\bD^{-1/2} = \bI - \bL_N,
@@ -563,25 +547,25 @@ plot(hc,karate)
 % 
 % \end{frame}
 
-\begin{frame}[fragile,allowframebreaks]
-  \frametitle{Example: Karate club and Fielder vector and eigenvalue}
-
-<<laplacian example>>=
-eigen_karate <- graph.laplacian(karate) %>% eigen()
-
-fielder_vector <- eigen_karate$vectors[, igraph::vcount(karate) - 1]
-faction <- as.character(vcount(karate))
-faction[V(karate)$Faction == 1] <- "red"
-faction[V(karate)$Faction == 2] <- "cyan"
-
-par(mfrow = c(1,2))
-plot(eigen_karate$values, col = "blue", ylab = "Eigenvalues of Graph Laplacian")
-plot(fielder_vector, pch = 16, xlab = "labels",
-   ylab = "Fiedler vector entry", col = faction)
-abline(0, 0, lwd = 2, col = "lightgray")
-@
-
-\end{frame}
+% \begin{frame}[fragile,allowframebreaks]
+%   \frametitle{Example: Karate club and Fielder vector and eigenvalue}
+% 
+% <<laplacian example>>=
+% eigen_karate <- graph.laplacian(karate) %>% eigen()
+% 
+% fielder_vector <- eigen_karate$vectors[, igraph::vcount(karate) - 1]
+% faction <- as.character(vcount(karate))
+% faction[V(karate)$Faction == 1] <- "red"
+% faction[V(karate)$Faction == 2] <- "cyan"
+% 
+% par(mfrow = c(1,2))
+% plot(eigen_karate$values, col = "blue", ylab = "Eigenvalues of Graph Laplacian")
+% plot(fielder_vector, pch = 16, xlab = "labels",
+%    ylab = "Fiedler vector entry", col = faction)
+% abline(0, 0, lwd = 2, col = "lightgray")
+% @
+% 
+% \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Clustering based on the first non null eigenvalue}
@@ -1182,70 +1166,70 @@ where
 
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Example on the French blogsphere (I)}
-
-<<example blockmodels 2, cache = TRUE>>=
-library(blockmodels)
-library(sand)
-
-adj_blog <- upgrade_graph(fblog) %>% 
-    as_adjacency_matrix() %>% 
-    as.matrix()
-
-mySBM_collection <- BM_bernoulli(
-  "SBM_sym", 
-  adj_blog, verbosity = 0, 
-  plotting = "figures/ICL_fblog.pdf"
-)
-mySBM_collection$estimate()
-@
-
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Example on the French blogsphere (II)}
-
-\includegraphics[width=.7\textwidth]{figures/ICL_fblog}
-
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Example on the French blogsphere (III)}
-
-<<example blockmodels 3>>=
-library(Matrix)
-clusters <- 
-  apply(mySBM_collection$memberships[[10]]$Z, 1, which.max)
-image(Matrix(adj_blog[order(clusters), order(clusters)]))
-@
-
-\end{frame}
-
-
-\begin{frame}[fragile,allowframebreaks]
-  \frametitle{Example on the French blogsphere (IV)}
-
-<<example blockmodels 4, fig.align="center", fig.height=8>>=
-library(RColorBrewer); pal <- brewer.pal(10, "Set3")
-
-g <- graph_from_adjacency_matrix(
-  adj_blog,
-  mode = "undirected",
-  weighted = TRUE,
-  diag = FALSE
-)
-V(g)$class <- clusters
-V(g)$size <- 5
-V(g)$frame.color <- "white"
-V(g)$color <- pal[V(g)$class]
-V(g)$label <- ""
-E(g)$arrow.mode <- 0
-
-par(mar =c(0,0,0,0))
-plot(g, edge.width=E(g)$weight)
-@
-
-\end{frame}
+% \begin{frame}[fragile]
+%   \frametitle{Example on the French blogsphere (I)}
+% 
+% <<example blockmodels 2, cache = TRUE>>=
+% library(blockmodels)
+% library(sand)
+% 
+% adj_blog <- upgrade_graph(fblog) %>% 
+%     as_adjacency_matrix() %>% 
+%     as.matrix()
+% 
+% mySBM_collection <- BM_bernoulli(
+%   "SBM_sym", 
+%   adj_blog, verbosity = 0, 
+%   plotting = "figures/ICL_fblog.pdf"
+% )
+% mySBM_collection$estimate()
+% @
+% 
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+%   \frametitle{Example on the French blogsphere (II)}
+% 
+% \includegraphics[width=.7\textwidth]{figures/ICL_fblog}
+% 
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+%   \frametitle{Example on the French blogsphere (III)}
+% 
+% <<example blockmodels 3>>=
+% library(Matrix)
+% clusters <- 
+%   apply(mySBM_collection$memberships[[10]]$Z, 1, which.max)
+% image(Matrix(adj_blog[order(clusters), order(clusters)]))
+% @
+% 
+% \end{frame}
+% 
+% 
+% \begin{frame}[fragile,allowframebreaks]
+%   \frametitle{Example on the French blogsphere (IV)}
+% 
+% <<example blockmodels 4, fig.align="center", fig.height=8>>=
+% library(RColorBrewer); pal <- brewer.pal(10, "Set3")
+% 
+% g <- graph_from_adjacency_matrix(
+%   adj_blog,
+%   mode = "undirected",
+%   weighted = TRUE,
+%   diag = FALSE
+% )
+% V(g)$class <- clusters
+% V(g)$size <- 5
+% V(g)$frame.color <- "white"
+% V(g)$color <- pal[V(g)$class]
+% V(g)$label <- ""
+% E(g)$arrow.mode <- 0
+% 
+% par(mar =c(0,0,0,0))
+% plot(g, edge.width=E(g)$weight)
+% @
+% 
+% \end{frame}
 
 \end{document}

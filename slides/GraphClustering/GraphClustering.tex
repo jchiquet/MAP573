@@ -274,7 +274,7 @@
   \end{definition}
 
   \begin{proposition}
-    The degree of $\clG$ are then simply obtained as the row-wise and/or column-wise sums of $\bA$.
+    The degrees of $\clG$ are then simply obtained as the row-wise and/or column-wise sums of $\bA$.
   \end{proposition}
 
   \begin{block}{Remark}
@@ -304,7 +304,7 @@
     where $\bD = \diag(\set{d_i, i\in\clV})$ is the diagonal matrix of degrees. 
   \end{proposition}
 
-  $\rightsquigarrow \tilde \bB \tilde \bB^\intercal $ is called the Laplacian matrix and will be studied latter.
+  $\rightsquigarrow \tilde \bB \tilde \bB^\intercal $ is called the Laplacian matrix and will be studied later.
 
 \end{frame}
 
@@ -461,11 +461,10 @@
 
 \begin{frame}
   \frametitle{Principle}
-  \framesubtitle{}
 
 
   \begin{algorithm}[H]
-    \KwIn{$n$ individuals with $p$ attributes)}
+    \KwIn{$n$ individuals with $p$ attributes}
     \BlankLine\BlankLine
     \DontPrintSemicolon
       1. Compute the dissimilarity between groups \;
@@ -508,7 +507,7 @@
 \end{frame}
 
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Example: karaté club}
 
 \begin{knitrout}\scriptsize
@@ -547,7 +546,7 @@
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_edge_betweenness}\hlstd{(karate)}
+\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_louvain}\hlstd{(karate)}
 \hlkwd{plot}\hlstd{(hc,karate)}
 \end{alltt}
 \end{kframe}
@@ -558,11 +557,22 @@
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_walktrap}\hlstd{(karate)}
+\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_edge_betweenness}\hlstd{(karate)}
 \hlkwd{plot}\hlstd{(hc,karate)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=.8\textwidth]{figures/unnamed-chunk-3-1} 
+
+\end{knitrout}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_walktrap}\hlstd{(karate)}
+\hlkwd{plot}\hlstd{(hc,karate)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-4-1} 
 
 \end{knitrout}
 
@@ -707,31 +717,25 @@
 % 
 % \end{frame}
 
-\begin{frame}[fragile,allowframebreaks]
-  \frametitle{Example: Karate club and Fielder vector and eigenvalue}
-
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{eigen_karate} \hlkwb{<-} \hlkwd{graph.laplacian}\hlstd{(karate)} \hlopt{%>%} \hlkwd{eigen}\hlstd{()}
-
-\hlstd{fielder_vector} \hlkwb{<-} \hlstd{eigen_karate}\hlopt{$}\hlstd{vectors[, igraph}\hlopt{::}\hlkwd{vcount}\hlstd{(karate)} \hlopt{-} \hlnum{1}\hlstd{]}
-\hlstd{faction} \hlkwb{<-} \hlkwd{as.character}\hlstd{(}\hlkwd{vcount}\hlstd{(karate))}
-\hlstd{faction[}\hlkwd{V}\hlstd{(karate)}\hlopt{$}\hlstd{Faction} \hlopt{==} \hlnum{1}\hlstd{]} \hlkwb{<-} \hlstr{"red"}
-\hlstd{faction[}\hlkwd{V}\hlstd{(karate)}\hlopt{$}\hlstd{Faction} \hlopt{==} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstr{"cyan"}
-
-\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{))}
-\hlkwd{plot}\hlstd{(eigen_karate}\hlopt{$}\hlstd{values,} \hlkwc{col} \hlstd{=} \hlstr{"blue"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"Eigenvalues of Graph Laplacian"}\hlstd{)}
-\hlkwd{plot}\hlstd{(fielder_vector,} \hlkwc{pch} \hlstd{=} \hlnum{16}\hlstd{,} \hlkwc{xlab} \hlstd{=} \hlstr{"labels"}\hlstd{,}
-   \hlkwc{ylab} \hlstd{=} \hlstr{"Fiedler vector entry"}\hlstd{,} \hlkwc{col} \hlstd{= faction)}
-\hlkwd{abline}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlkwc{lwd} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"lightgray"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=.8\textwidth]{figures/laplacian_example-1} 
-
-\end{knitrout}
-
-\end{frame}
+% \begin{frame}[fragile,allowframebreaks]
+%   \frametitle{Example: Karate club and Fielder vector and eigenvalue}
+% 
+% <<laplacian example>>=
+% eigen_karate <- graph.laplacian(karate) %>% eigen()
+% 
+% fielder_vector <- eigen_karate$vectors[, igraph::vcount(karate) - 1]
+% faction <- as.character(vcount(karate))
+% faction[V(karate)$Faction == 1] <- "red"
+% faction[V(karate)$Faction == 2] <- "cyan"
+% 
+% par(mfrow = c(1,2))
+% plot(eigen_karate$values, col = "blue", ylab = "Eigenvalues of Graph Laplacian")
+% plot(fielder_vector, pch = 16, xlab = "labels",
+%    ylab = "Fiedler vector entry", col = faction)
+% abline(0, 0, lwd = 2, col = "lightgray")
+% @
+% 
+% \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Clustering based on the first non null eigenvalue}
@@ -743,7 +747,7 @@
 \hlkwd{plot}\hlstd{(hc,karate)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-4-1} 
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-5-1} 
 
 \end{knitrout}
 
@@ -814,7 +818,7 @@
   \frametitle{A mathematical model: Erdös-Rényi graph}
 
   \begin{definition}
-    Let $\clV = {1,\dots,n}$ be a set of fixed vertices. The (simple) Erdös-Rény model $\mathcal{G}(n,\pi)$ assumes random edges between pairs of nodes with probability $\pi$. In orther word, the (random) adjacency matrix $\bX$ is such that
+    Let $\clV = {1,\dots,n}$ be a set of fixed vertices. The (simple) Erdös-Rényi model $\mathcal{G}(n,\pi)$ assumes random edges between pairs of nodes with probability $\pi$. In orther word, the (random) adjacency matrix $\bX$ is such that
     \begin{equation*}
       X_{ij} \sim \mathcal{B}(\pi)
     \end{equation*}
@@ -859,8 +863,8 @@
 \hlkwd{average.path.length}\hlstd{(G3);} \hlkwd{diameter}\hlstd{(G3)}
 \end{alltt}
 \begin{verbatim}
-## [1] 5.834998
-## [1] 14
+## [1] 5.414784
+## [1] 12
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -918,8 +922,8 @@
 \hlkwd{average.path.length}\hlstd{(G3);} \hlkwd{diameter}\hlstd{(G3)}
 \end{alltt}
 \begin{verbatim}
-## [1] 6.137487
-## [1] 14
+## [1] 6.470101
+## [1] 15
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1170,7 +1174,7 @@
 \hlkwd{plot}\hlstd{(communities,} \hlkwc{vertex.label}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{vertex.color} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{3}\hlstd{,}\hlkwd{c}\hlstd{(}\hlnum{25}\hlstd{,} \hlnum{50}\hlstd{,} \hlnum{25}\hlstd{)))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-5-1} 
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-6-1} 
 
 \end{knitrout}
 
@@ -1188,7 +1192,7 @@
 \hlkwd{plot}\hlstd{(star,} \hlkwc{vertex.label}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{vertex.color} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{2}\hlstd{,}\hlkwd{c}\hlstd{(}\hlnum{4}\hlstd{,}\hlnum{96}\hlstd{)))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-6-1} 
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-7-1} 
 
 \end{knitrout}
 
@@ -1200,7 +1204,7 @@
   \begin{block}{Conditional degree distribution}
     The conditional degree distribution of a node $i\in q$ is
     \begin{equation*}
-      D_i | i \in q \sim \mathrm{b}(n-1,\bar\pi) \approx \mathcal{P}(\lambda_q), \qquad \bar\pi_q = \sum_{\ell=1}^Q \alpha_\ell, \pi_{q\ell} \quad \lambda_q = (n-1)\bar\pi_q
+      D_i | i \in q \sim \mathrm{b}(n-1,\bar\pi) \approx \mathcal{P}(\lambda_q), \qquad \bar\pi_q = \sum_{\ell=1}^Q \alpha_\ell \pi_{q\ell}, \quad \lambda_q = (n-1)\bar\pi_q
     \end{equation*}
   \end{block}
 
@@ -1380,92 +1384,70 @@ where
 
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Example on the French blogsphere (I)}
-
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(blockmodels)}
-\hlkwd{library}\hlstd{(sand)}
-
-\hlstd{adj_blog} \hlkwb{<-} \hlkwd{upgrade_graph}\hlstd{(fblog)} \hlopt{%>%}
-    \hlkwd{as_adjacency_matrix}\hlstd{()} \hlopt{%>%}
-    \hlkwd{as.matrix}\hlstd{()}
-
-\hlstd{mySBM_collection} \hlkwb{<-} \hlkwd{BM_bernoulli}\hlstd{(}
-  \hlstr{"SBM_sym"}\hlstd{,}
-  \hlstd{adj_blog,} \hlkwc{verbosity} \hlstd{=} \hlnum{0}\hlstd{,}
-  \hlkwc{plotting} \hlstd{=} \hlstr{"figures/ICL_fblog.pdf"}
-\hlstd{)}
-\hlstd{mySBM_collection}\hlopt{$}\hlkwd{estimate}\hlstd{()}
-\end{alltt}
-\end{kframe}
-
-\end{knitrout}
-
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Example on the French blogsphere (II)}
-
-\includegraphics[width=.7\textwidth]{figures/ICL_fblog}
-
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Example on the French blogsphere (III)}
-
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(Matrix)}
-\hlstd{clusters} \hlkwb{<-}
-  \hlkwd{apply}\hlstd{(mySBM_collection}\hlopt{$}\hlstd{memberships[[}\hlnum{10}\hlstd{]]}\hlopt{$}\hlstd{Z,} \hlnum{1}\hlstd{, which.max)}
-\hlkwd{image}\hlstd{(}\hlkwd{Matrix}\hlstd{(adj_blog[}\hlkwd{order}\hlstd{(clusters),} \hlkwd{order}\hlstd{(clusters)]))}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=.8\textwidth]{figures/example_blockmodels_3-1} 
-
-\end{knitrout}
-
-\end{frame}
-
-
-\begin{frame}[fragile,allowframebreaks]
-  \frametitle{Example on the French blogsphere (IV)}
-
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(RColorBrewer); pal} \hlkwb{<-} \hlkwd{brewer.pal}\hlstd{(}\hlnum{10}\hlstd{,} \hlstr{"Set3"}\hlstd{)}
-
-\hlstd{g} \hlkwb{<-} \hlkwd{graph_from_adjacency_matrix}\hlstd{(}
-  \hlstd{adj_blog,}
-  \hlkwc{mode} \hlstd{=} \hlstr{"undirected"}\hlstd{,}
-  \hlkwc{weighted} \hlstd{=} \hlnum{TRUE}\hlstd{,}
-  \hlkwc{diag} \hlstd{=} \hlnum{FALSE}
-\hlstd{)}
-\hlkwd{V}\hlstd{(g)}\hlopt{$}\hlstd{class} \hlkwb{<-} \hlstd{clusters}
-\hlkwd{V}\hlstd{(g)}\hlopt{$}\hlstd{size} \hlkwb{<-} \hlnum{5}
-\hlkwd{V}\hlstd{(g)}\hlopt{$}\hlstd{frame.color} \hlkwb{<-} \hlstr{"white"}
-\hlkwd{V}\hlstd{(g)}\hlopt{$}\hlstd{color} \hlkwb{<-} \hlstd{pal[}\hlkwd{V}\hlstd{(g)}\hlopt{$}\hlstd{class]}
-\hlkwd{V}\hlstd{(g)}\hlopt{$}\hlstd{label} \hlkwb{<-} \hlstr{""}
-\hlkwd{E}\hlstd{(g)}\hlopt{$}\hlstd{arrow.mode} \hlkwb{<-} \hlnum{0}
-
-\hlkwd{par}\hlstd{(}\hlkwc{mar} \hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{))}
-\hlkwd{plot}\hlstd{(g,} \hlkwc{edge.width}\hlstd{=}\hlkwd{E}\hlstd{(g)}\hlopt{$}\hlstd{weight)}
-\end{alltt}
-\end{kframe}
-
-{\centering \includegraphics[width=.8\textwidth]{figures/example_blockmodels_4-1} 
-
-}
-
-
-
-\end{knitrout}
-
-\end{frame}
+% \begin{frame}[fragile]
+%   \frametitle{Example on the French blogsphere (I)}
+% 
+% <<example blockmodels 2, cache = TRUE>>=
+% library(blockmodels)
+% library(sand)
+% 
+% adj_blog <- upgrade_graph(fblog) %>% 
+%     as_adjacency_matrix() %>% 
+%     as.matrix()
+% 
+% mySBM_collection <- BM_bernoulli(
+%   "SBM_sym", 
+%   adj_blog, verbosity = 0, 
+%   plotting = "figures/ICL_fblog.pdf"
+% )
+% mySBM_collection$estimate()
+% @
+% 
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+%   \frametitle{Example on the French blogsphere (II)}
+% 
+% \includegraphics[width=.7\textwidth]{figures/ICL_fblog}
+% 
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+%   \frametitle{Example on the French blogsphere (III)}
+% 
+% <<example blockmodels 3>>=
+% library(Matrix)
+% clusters <- 
+%   apply(mySBM_collection$memberships[[10]]$Z, 1, which.max)
+% image(Matrix(adj_blog[order(clusters), order(clusters)]))
+% @
+% 
+% \end{frame}
+% 
+% 
+% \begin{frame}[fragile,allowframebreaks]
+%   \frametitle{Example on the French blogsphere (IV)}
+% 
+% <<example blockmodels 4, fig.align="center", fig.height=8>>=
+% library(RColorBrewer); pal <- brewer.pal(10, "Set3")
+% 
+% g <- graph_from_adjacency_matrix(
+%   adj_blog,
+%   mode = "undirected",
+%   weighted = TRUE,
+%   diag = FALSE
+% )
+% V(g)$class <- clusters
+% V(g)$size <- 5
+% V(g)$frame.color <- "white"
+% V(g)$color <- pal[V(g)$class]
+% V(g)$label <- ""
+% E(g)$arrow.mode <- 0
+% 
+% par(mar =c(0,0,0,0))
+% plot(g, edge.width=E(g)$weight)
+% @
+% 
+% \end{frame}
 
 \end{document}
