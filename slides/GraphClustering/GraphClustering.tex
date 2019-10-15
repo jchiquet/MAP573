@@ -1261,7 +1261,7 @@
   \vfill
 
   \begin{block}{Solution: mean field approximation}
-    Approximate $\eta_{ijq\ell}$ by $\tau_{iq}\tau_{j\ell}$, i.e., \alert{assume independence between $Z_{iq}$}\\
+    Approximate $\eta_{ijq\ell}$ by $\tau_{iq}\tau_{j\ell}$, i.e., \alert{assume conditional independence between $Z_{iq}$}\\
 
     $\rightsquigarrow$ This can be formalized in the variational framework
   \end{block}
@@ -1280,7 +1280,7 @@
     where $\mathcal{H}$ is the entropy and $\mathrm{KL}( \cdot| \cdot)$ is the Kullback-Leibler divergence:
     \begin{gather*}
       \mathcal{H}(\mathbb{Q}) = - \sum_z \mathbb{Q}(z) \log \mathbb{Q}(z) = - \E_\mathbb{Q} [\log \mathbb{Q} (Z)]\\
-      \mathcal{KL}(\mathbb{Q} \ | \ \prob(\bZ|\bX;\btheta)) = \sum_z \mathbb{Q}(z) \log \frac{\mathbb{Q}(z)}{\prob(\bZ|\bX;\btheta)} = \E_\mathbb{Q} \left[\log \frac{\mathbb{Q}(z)}{\prob(\bZ|\bX;\btheta)}\right]\\
+      \mathrm{KL}(\mathbb{Q} \ | \ \prob(\bZ|\bX;\btheta)) = \sum_z \mathbb{Q}(z) \log \frac{\mathbb{Q}(z)}{\prob(\bZ|\bX;\btheta)} = \E_\mathbb{Q} \left[\log \frac{\mathbb{Q}(z)}{\prob(\bZ|\bX;\btheta)}\right]\\
     \end{gather*}
   \end{proposition}
 \end{frame}
@@ -1316,11 +1316,11 @@
   \end{block}
 
   \begin{block}{Family of distribution that factorizes}
-      We chose $\mathbb{Q}$ so as the $Z_{iq}$ are marginally independents:
+      We chose $\mathbb{Q}$ the multinomial distribution so that
       \begin{equation*}
         \mathbb{Q}(\bZ) = \prod_{i=1}^n \mathbb{Q}_i(Z_i) = \prod_{i=1}^n\prod_{q=1}^Q \tau_{iq}^{Z_{iq}},
       \end{equation*}
-      where $\tau_{iq} =\mathbb{Q}_i(Z_{i} = q) = \E{Q}(Z_{iq})$, with $\sum_{q} \tau_{iq} = 1$ for all $i=1,\dots,n$.
+      where $\tau_{iq} =\mathbb{Q}_i(Z_{i} = q) = \E_{\mathbb{Q}}(Z_{iq})$, with $\sum_{q} \tau_{iq} = 1$ for all $i=1,\dots,n$.
   \end{block}
 
 \end{frame}
