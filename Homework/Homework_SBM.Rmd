@@ -115,10 +115,9 @@ The variational parameters $\tau_{iq}$ verify the following fixed point relation
 
 The variational ICL used to compare models with different numbers of clusters is
 \begin{multline*}
-  \mathrm{vICL}(Q) = \sum_{i,q} \hat{Z}_{iq} \log \hat{\alpha}_q + \sum_{i<j,q,\ell}  \hat{Z}_{iq}  \hat{Z}_{j\ell} b(X_{ij} ; \hat{\pi}_{q\ell})
-  \\ - \frac{1}{2} \left(\frac{Q(Q+1)}{2} \log \frac{n(n-1)}{2} + (Q-1) \log (n) \right)
+  \mathrm{vICL}(Q) = \sum_{i,q} \hat{\tau}_{iq} \log \hat{\alpha}_q + \sum_{i<j,q,\ell}  \hat{\tau}_{iq}  \hat{\tau}_{j\ell} b(X_{ij} ; \hat{\pi}_{q\ell})
+  \\ - \frac{1}{2} \left(\frac{Q(Q+1)}{2} \log \frac{n(n-1)}{2} + (Q-1) \log (n) \right).
 \end{multline*}
-where $\hat{Z}_{iq}$ is the maximum a posteriori associated to the estimated probability $\hat{\tau}_{iq}$.
 
 # Simulations
 
