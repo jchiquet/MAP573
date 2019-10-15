@@ -424,7 +424,7 @@ plot(hc,karate)
 
   \begin{block}{Remark}
     \begin{itemize}
-    \item $\bL$ is called Laplacian by analogy to the second order derivative (see below).
+    \item $\bL$ is called the graph Laplacian (by analogy to continuous Laplacian).
     \item Spectrum of $\bL$ has much to say about the structure of the graph $\clG$.
     \end{itemize}
   \end{block}
@@ -1034,7 +1034,7 @@ plot(star, vertex.label=NA, vertex.color = rep(1:2,c(4,96)))
 
   \begin{block}{Ouch: another intractability problem}
     \begin{itemize}
-      \item the $Z_{iq}$ are \alert{not independent} in the SBM framework\dots
+      \item the $Z_{iq}$ are \alert{not independent conditional on $(X_{ij}, i<j)$} \dots
       \item we cannot compute $\eta_{ijq\ell} = \prob(Z_{iq}Z_{j\ell} = 1 | \bX) = \E \left[Z_{iq}Z_{j\ell} | \bX\right]$,
       \item the conditional expectation $Q(\btheta)$, i.e. the main EM ingredient, is \alert{intractable}.
     \end{itemize}
