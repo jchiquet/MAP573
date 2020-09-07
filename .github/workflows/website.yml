@@ -1,0 +1,30 @@
+name: website
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  website:
+    name: Build website with rmarkdown
+    if: "!contains(github.event.head_commit.message, 'webskip')"
+    runs-on: "ubuntu-latest"
+    steps:
+# not used at the moment (no need for external apt libraries)
+#      - uses: actions/checkout@v2
+#      - name: apt install
+#        run: xargs -a binder/apt.txt sudo apt-get install
+      - uses: goanpeca/setup-miniconda@v1
+        with:
+          auto-update-conda: true
+          environment-file: binder/environment.yml
+          activate-environment: MAP573
+      - shell: bash -l {0}
+        run: |
+          conda run -n MAP573 Rscript binder/additional_R_packages.R
+          conda run -n MAP573 Rscript -e 'rmarkdown::render_site(".")'
+      - name: GitHub Pages action
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.BINDER_PRIV }}
+          publish_dir: ./public
