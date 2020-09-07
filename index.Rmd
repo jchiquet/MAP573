@@ -11,7 +11,7 @@ library(DT)
 
 ## Course description
 
-[Moodle entry of MAP573](https://moodle.polytechnique.fr/enrol/index.php?id=9404)  
+[Moodle entry](https://moodle.polytechnique.fr/enrol/index.php?id=9404)  
 
 The objective of MAP 573  is to give students a comprehensive introduction to unsupervised analysis (downsizing and clustering) and to acquire solid and practical skills for the exploratory analysis of current data sets, using R software.
 
