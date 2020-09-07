@@ -1,0 +1,44 @@
+---
+title: "Welcome to the MAP573 20-21's website"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(readODS)
+library(DT)
+```
+
+## Course description
+
+[Moodle entry of MAP573](https://moodle.polytechnique.fr/enrol/index.php?id=9404)  
+
+The objective of MAP 573  is to give students a comprehensive introduction to unsupervised analysis (downsizing and clustering) and to acquire solid and practical skills for the exploratory analysis of current data sets, using R software.
+
+The course begins with two sessions presenting the basics of programming with the R language, as well as data manipulation and the tidyverse graphical representation libraries. R's Python interfacing capabilities are also discussed.
+
+The course then presents the classical methods of downsizing and clustering in detail (PCA, blending models, k-means, CAH), with a brief introduction to the many approaches that generalize them (kernel approaches, embedding, etc.).
+
+Finally, the third part of the module proposes to the students a series of data sets to be studied in groups using the methods of the course and their generalization. These projects will constitute the main part of the evaluation of this module.
+
+## Teachers
+
+  - Coordinator: Julien Chiquet
+  - TA: Florian Bourgey
+  - TA: Florian Dumas
+
+## Practical information
+
+- All courses will be given 100% online via zoom ([check the moodle page to get the link](https://moodle.polytechnique.fr/enrol/index.php?id=9404))
+- All "Petites classes" (Labs and projects) will be hybrid (face-to-face + broadcasted with zoom)
+- All Material is in English, course will be given in French
+
+## Schedule
+
+```{r}
+readODS::read_ods(path = "schedule.ods") %>% 
+  datatable(options = list(pageLength = 24, dom = "t", ordering = FALSE), rownames = FALSE)
+
+
+```
+

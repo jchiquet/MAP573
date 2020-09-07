@@ -1,0 +1,72 @@
+name: "MAP573 - Data Analysis and Unsupervised Learning"
+output_dir: "public"
+exclude: ["slides", "Homework", "labs"]
+navbar:
+  title: "MAP573 - Data Analysis and Unsupervised Learning"
+  left:
+    - text: ""
+      icon: fa-github
+      href: https://github.com/StateOfTheR/finistR2020
+    - text: "Formateurs"
+      icon: fas fa-chalkboard-teacher
+      menu:
+          - text: "Florian Bourgey"
+          - text: "Julien Chiquet (coordinator)"
+          - text: "Élise Dumas"
+  right:
+    - text: "Dimensionality Reduction"
+      icon: fas fa-chalkboard-teacher
+      menu:
+        - text: "Linear method"
+        - text: "PCA and co"
+#          href: .html
+        - text: "Tutorial"
+#          href: .html     
+        - text: "----------"
+        - text: "Non linear methods"
+        - text: "Kernel PCA and co"
+#          href: .html
+        - text: "Tutorial"
+#          href: .html     
+
+    - text: "Clustering"
+      icon: fas fa-chalkboard-teacher
+      menu:
+        - text: "Linear method"
+        - text: "PCA and co"
+#          href: .html
+        - text: "Tutorial"
+#          href: .html     
+        - text: "----------"
+        - text: "Non linear methods"
+        - text: "Kernel PCA and co"
+#          href: .html
+        - text: "Tutorial"
+#          href: .html     
+
+    - text: "Labs (\"petites classes\")"
+      icon: fas fa-gear
+      menu:
+
+    - text: "Homework"
+      icon: fas fa-gear
+      menu:
+        - text: "Linear method"
+        - text: "Deadline: "
+#          href: .html
+        - text: "Linear method"
+        - text: "Deadline: "
+#          href: .html
+        - text: "Linear method"
+        - text: "Deadline: "
+#          href: .html
+
+    - text: "Projects"
+      icon: fas fa-gear
+#    - href: .html
+
+output:
+  html_document:
+    theme: cosmo
+    highlight: textmate
+
