@@ -11,6 +11,7 @@ dependencies:
   - r-base=3.6.3
   - r-devtools
   - r-dt
+  - r-readods
   - r-ggally
   - r-rcpp
   - r-rcpparmadillo
