@@ -11,8 +11,6 @@ library(DT)
 
 ## Course description
 
-[Moodle entry](https://moodle.polytechnique.fr/enrol/index.php?id=9404)  
-
 The objective of MAP 573  is to give students a comprehensive introduction to unsupervised analysis (downsizing and clustering) and to acquire solid and practical skills for the exploratory analysis of current data sets, using R software.
 
 The course begins with two sessions presenting the basics of programming with the R language, as well as data manipulation and the tidyverse graphical representation libraries. R's Python interfacing capabilities are also discussed.
@@ -29,7 +27,7 @@ Finally, the third part of the module proposes to the students a series of data 
 
 ## Practical information
 
-- All courses will be given 100% online via zoom ([check the moodle page to get the link](https://moodle.polytechnique.fr/enrol/index.php?id=9404))
+- All courses will be given 100% online via zoom ([link provided at the moodle page](https://moodle.polytechnique.fr/enrol/index.php?id=9404))
 - All "Petites classes" (Labs and projects) will be hybrid (face-to-face + broadcasted with zoom)
 - All Material is in English, course will be given in French
 
@@ -38,7 +36,5 @@ Finally, the third part of the module proposes to the students a series of data 
 ```{r}
 readODS::read_ods(path = "schedule.ods") %>% 
   datatable(options = list(pageLength = 24, dom = "t", ordering = FALSE), rownames = FALSE)
-
-
 ```
 
