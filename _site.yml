@@ -6,21 +6,25 @@ navbar:
   left:
     - text: ""
       icon: fa-github
-      href: https://github.com/StateOfTheR/finistR2020
+      href: https://github.com/jchiquet/CourseUnsupervisedLearningX
     - text: "Moodle"
       icon: fa-server
       href: https://moodle.polytechnique.fr/enrol/index.php?id=9404
   right:
-    - text: "Lecture"
+    - text: "Lectures"
       icon: fas fa-chalkboard-teacher
       menu:
+        - text: "Introduction to R"
+        - text: "Base R programming"
+#          href: .html
+        - text: "Manipulation and Representation"
+#          href: .html
+        - text: "----------"
         - text: "Dimension Reduction"
         - text: "Linear methods: PCA and variants"
 #          href: .html
         - text: "Non linear methods: Kernel PCA, t-SNE"
 #          href: .html
-        - text: "Tutorial"
-#          href: .html     
         - text: "----------"
         - text: "Clustering"
         - text: "Partitioning: HAC, k-means"
