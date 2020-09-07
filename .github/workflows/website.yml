@@ -10,8 +10,8 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'webskip')"
     runs-on: "ubuntu-latest"
     steps:
+      - uses: actions/checkout@v2
 # not used at the moment (no need for external apt libraries)
-#      - uses: actions/checkout@v2
 #      - name: apt install
 #        run: xargs -a binder/apt.txt sudo apt-get install
       - uses: goanpeca/setup-miniconda@v1
