@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Welcome to the MAP573 20-21’s website</title>
+
+<script src="site_libs/header-attrs-2.3/header-attrs.js"></script>
+<script src="site_libs/jquery-1.12.4/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="site_libs/datatables-binding-0.15/datatables.js"></script>
+<link href="site_libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="site_libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="site_libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="site_libs/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">MAP573 - Data Analysis and Unsupervised Learning</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="https://github.com/StateOfTheR/finistR2020">
+    <span class="fa fa-github"></span>
+     
+    
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-chalkboard-teacher"></span>
+     
+    Formateurs
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Florian Bourgey</li>
+    <li class="dropdown-header">Julien Chiquet (coordinator)</li>
+    <li class="dropdown-header">Élise Dumas</li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-chalkboard-teacher"></span>
+     
+    Dimensionality Reduction
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Linear method</li>
+    <li class="dropdown-header">PCA and co</li>
+    <li class="dropdown-header">Tutorial</li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Non linear methods</li>
+    <li class="dropdown-header">Kernel PCA and co</li>
+    <li class="dropdown-header">Tutorial</li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-chalkboard-teacher"></span>
+     
+    Clustering
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Linear method</li>
+    <li class="dropdown-header">PCA and co</li>
+    <li class="dropdown-header">Tutorial</li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Non linear methods</li>
+    <li class="dropdown-header">Kernel PCA and co</li>
+    <li class="dropdown-header">Tutorial</li>
+  </ul>
+</li>
+<li class="dropdown-header">Labs ("petites classes")</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-gear"></span>
+     
+    Homework
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Linear method</li>
+    <li class="dropdown-header">Deadline: </li>
+    <li class="dropdown-header">Linear method</li>
+    <li class="dropdown-header">Deadline: </li>
+    <li class="dropdown-header">Linear method</li>
+    <li class="dropdown-header">Deadline: </li>
+  </ul>
+</li>
+<li class="dropdown-header">Projects</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Welcome to the MAP573 20-21’s website</h1>
+
+</div>
+
+
+<div id="course-description" class="section level2">
+<h2>Course description</h2>
+<p><a href="https://moodle.polytechnique.fr/enrol/index.php?id=9404">Moodle entry</a></p>
+<p>The objective of MAP 573 is to give students a comprehensive introduction to unsupervised analysis (downsizing and clustering) and to acquire solid and practical skills for the exploratory analysis of current data sets, using R software.</p>
+<p>The course begins with two sessions presenting the basics of programming with the R language, as well as data manipulation and the tidyverse graphical representation libraries. R’s Python interfacing capabilities are also discussed.</p>
+<p>The course then presents the classical methods of downsizing and clustering in detail (PCA, blending models, k-means, CAH), with a brief introduction to the many approaches that generalize them (kernel approaches, embedding, etc.).</p>
+<p>Finally, the third part of the module proposes to the students a series of data sets to be studied in groups using the methods of the course and their generalization. These projects will constitute the main part of the evaluation of this module.</p>
+</div>
+<div id="teachers" class="section level2">
+<h2>Teachers</h2>
+<ul>
+<li>Coordinator: Julien Chiquet</li>
+<li>TA: Florian Bourgey</li>
+<li>TA: Florian Dumas</li>
+</ul>
+</div>
+<div id="practical-information" class="section level2">
+<h2>Practical information</h2>
+<ul>
+<li>All courses will be given 100% online via zoom (<a href="https://moodle.polytechnique.fr/enrol/index.php?id=9404">check the moodle page to get the link</a>)</li>
+<li>All “Petites classes” (Labs and projects) will be hybrid (face-to-face + broadcasted with zoom)</li>
+<li>All Material is in English, course will be given in French</li>
+</ul>
+</div>
+<div id="schedule" class="section level2">
+<h2>Schedule</h2>
+<div id="htmlwidget-c101ec63d5bac744bcd5" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c101ec63d5bac744bcd5">{"x":{"filter":"none","data":[["09/22/2020, 2pm – 6pm","09/29/2020, 2pm – 6pm","10/13/2020, 2pm – 6pm","10/20/2020, 2pm – 6pm","11/03/2020, 2pm – 6pm","11/10/2020, 2pm – 6pm","11/17/2020, 2pm – 6pm","11/24/2020, 2pm – 6pm","12/01/2020, 2pm – 6pm","12/15/2020 – 9am – 17pm"],["Introduction + base R (programming, Rmarkdown)","data manipulation and representation (tidyverse)","Dimension Reduction part I – PCA and linear method","Dimension Reduction part II – Non-linear method","Clustering (I) – partitioning (HAC, k-means, spectral clustering)","Clustering (II) – model based approaches (GMM)","Project follow-up","Project follow-up","Project follow-up","Project – talk"],["2h lecture, 2h tutorial","2h lecture, 2h labs (PC)","2h lecture, 2h tutorial","2h lecture, 2h labs (PC)","2h lecture, 2h tutorial","2h lecture, 2h labs (PC)","4h – PC","4h – PC","4h – PC","30mn/group"],["Amphi","Amphi + PC","Amphi","Amphi + PC","Amphi","Amphi + PC","PC","PC","PC",null],["JC","JC + FB/ED","JC","JC + FB/ED","JC","JC + FB/ED","FB/ED","FB/ED","FB/ED","JC/FB/ED"],["Rmarkdown report","labs report","PCA analysis","labs report","Spectral clustering","labs report",null,null,null,null]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>When<\/th>\n      <th>Theme<\/th>\n      <th>Timing<\/th>\n      <th>Where<\/th>\n      <th>Who<\/th>\n      <th>Homework<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":24,"dom":"t","ordering":false,"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[10,24,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
