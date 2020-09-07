@@ -1,0 +1,19 @@
+name: MAP573
+channels:
+  - conda-forge
+dependencies:
+#  - graph-tool
+#  - jupytext
+#  - numpy
+#  - matplotlib
+#  - pandoc
+  - r-aricode
+  - r-base=4.0.2
+  - r-devtools
+  - r-dt
+  - r-ggally
+  - r-rcpp
+  - r-rcpparmadillo
+  - r-reticulate
+  - r-rmarkdown
+  - r-tidyverse
