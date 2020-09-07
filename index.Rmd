@@ -1,5 +1,5 @@
 ---
-title: "Welcome to the MAP573 20-21's website"
+title: "MAP 573 - Data Analysis and Unsupervised Learning"
 ---
 
 ```{r setup, include=FALSE}

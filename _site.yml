@@ -2,68 +2,78 @@ name: "MAP573 - Data Analysis and Unsupervised Learning"
 output_dir: "public"
 exclude: ["slides", "Homework", "labs"]
 navbar:
-  title: "MAP573 - Data Analysis and Unsupervised Learning"
+  title: "MAP573"
   left:
     - text: ""
       icon: fa-github
       href: https://github.com/StateOfTheR/finistR2020
-    - text: "Formateurs"
-      icon: fas fa-chalkboard-teacher
-      menu:
-          - text: "Florian Bourgey"
-          - text: "Julien Chiquet (coordinator)"
-          - text: "Élise Dumas"
+    - text: "Moodle"
+      icon: fa-server
+      href: https://moodle.polytechnique.fr/enrol/index.php?id=9404
   right:
-    - text: "Dimensionality Reduction"
+    - text: "Lecture"
       icon: fas fa-chalkboard-teacher
       menu:
-        - text: "Linear method"
-        - text: "PCA and co"
+        - text: "Dimension Reduction"
+        - text: "Linear methods: PCA and variants"
+#          href: .html
+        - text: "Non linear methods: Kernel PCA, t-SNE"
 #          href: .html
         - text: "Tutorial"
 #          href: .html     
         - text: "----------"
-        - text: "Non linear methods"
-        - text: "Kernel PCA and co"
+        - text: "Clustering"
+        - text: "Partitioning: HAC, k-means"
 #          href: .html
-        - text: "Tutorial"
+        - text: "Model-based clustering: Gaussian mixture model"
 #          href: .html     
-
-    - text: "Clustering"
-      icon: fas fa-chalkboard-teacher
-      menu:
-        - text: "Linear method"
-        - text: "PCA and co"
-#          href: .html
-        - text: "Tutorial"
-#          href: .html     
-        - text: "----------"
-        - text: "Non linear methods"
-        - text: "Kernel PCA and co"
-#          href: .html
-        - text: "Tutorial"
-#          href: .html     
-
     - text: "Labs (\"petites classes\")"
-      icon: fas fa-gear
+      icon: fas fa-brain
       menu:
-
+        - text: "#1 Data manipulation and representation"
+#          href: .html
+        - text: "#2 Non-linear methods for dimension reduction"
+#          href: .html
+        - text: "#3 Gaussian mixture models"
+#          href: .html
     - text: "Homework"
-      icon: fas fa-gear
+      icon: fas fa-keyboard
       menu:
-        - text: "Linear method"
-        - text: "Deadline: "
+        - text: "Reporting with Rmarkdown"
 #          href: .html
-        - text: "Linear method"
-        - text: "Deadline: "
+        - text: "Report for lab #1"
 #          href: .html
-        - text: "Linear method"
-        - text: "Deadline: "
+        - text: "Data analysis with PCA"
 #          href: .html
-
+        - text: "Report for lab #2"
+#          href: .html
+        - text: "Spectral Clustering"
+#          href: .html
+        - text: "Report for lab #3"
+#          href: .html
     - text: "Projects"
       icon: fas fa-gear
-#    - href: .html
+      menu:
+        - text: "Subject 1:"
+#          href: .html
+        - text: "Subject 2:"
+#          href: .html
+        - text: "Subject 3:"
+#          href: .html
+        - text: "Subject 4:"
+#          href: .html
+        - text: "Subject 5:"
+#          href: .html
+        - text: "Subject 6:"
+#          href: .html
+        - text: "Subject 7:"
+#          href: .html
+        - text: "Subject 8:"
+#          href: .html
+        - text: "Subject 9:"
+#          href: .html
+        - text: "Subject 10:"
+#          href: .html
 
 output:
   html_document:
