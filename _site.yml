@@ -11,35 +11,36 @@ navbar:
       icon: fa-server
       href: https://moodle.polytechnique.fr/enrol/index.php?id=9404
   right:
-    - text: "Lectures"
+    - text: "Introduction to R"
       icon: fas fa-chalkboard-teacher
       menu:
-        - text: "Introduction to R"
-        - text: "Base R programming"
-#          href: .html
+        - text: "R Basics"
+          href: basics.html
         - text: "Manipulation and Representation"
-#          href: .html
-        - text: "----------"
-        - text: "Dimension Reduction"
+          href: tidy.html
+    - text: "Dimension Reduction"
+      icon: fas fa-chalkboard-teacher
+      menu:
         - text: "Linear methods: PCA and variants"
 #          href: .html
         - text: "Non linear methods: Kernel PCA, t-SNE"
 #          href: .html
-        - text: "----------"
-        - text: "Clustering"
+    - text: "Clustering"
+      icon: fas fa-chalkboard-teacher
+      menu:
         - text: "Partitioning: HAC, k-means"
 #          href: .html
         - text: "Model-based clustering: Gaussian mixture model"
 #          href: .html     
-    - text: "Labs (\"petites classes\")"
-      icon: fas fa-brain
-      menu:
-        - text: "#1 Data manipulation and representation"
-#          href: .html
-        - text: "#2 Non-linear methods for dimension reduction"
-#          href: .html
-        - text: "#3 Gaussian mixture models"
-#          href: .html
+#     - text: "Labs (\"petites classes\")"
+#       icon: fas fa-brain
+#       menu:
+#         - text: "#1 Data manipulation and representation"
+# #          href: .html
+#         - text: "#2 Non-linear methods for dimension reduction"
+# #          href: .html
+#         - text: "#3 Gaussian mixture models"
+# #          href: .html
     - text: "Homework"
       icon: fas fa-keyboard
       menu:

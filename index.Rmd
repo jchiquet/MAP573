@@ -15,9 +15,9 @@ The objective of MAP 573  is to give students a comprehensive introduction to un
 
 The course begins with two sessions presenting the basics of programming with the R language, as well as data manipulation and the tidyverse graphical representation libraries. R's Python interfacing capabilities are also discussed.
 
-The course then presents the classical methods of downsizing and clustering in detail (PCA, blending models, k-means, CAH), with a brief introduction to the many approaches that generalize them (kernel approaches, embedding, etc.).
+The course then presents the classical methods of dimensionality reduction and clustering in detail (PCA, mixture models, k-means, CAH), with a brief introduction to the many approaches that generalize them (kernel approaches, embedding, etc.).
 
-Finally, the third part of the module proposes to the students a series of data sets to be studied in groups using the methods of the course and their generalization. These projects will constitute the main part of the evaluation of this module.
+Finally, the third part of the module proposes to the students a series of data sets to be studied in groups using the methods of the course and their generalizations. These projects will constitute the main part of the evaluation of this module.
 
 ## Teachers
 

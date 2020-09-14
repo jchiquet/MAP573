@@ -1,0 +1,20 @@
+---
+title: "Data manipulation and representation"
+subtitle: "Introduction to the tidyverse"
+---
+
+## Slides
+
+  - []()
+
+## Tutorials (restricted access)
+
+  - [Structures of tidyverse: tibbles](http://cremeriefamily.info:8080/MAP573/transform/structure)
+  - [Data extraction](http://cremeriefamily.info:8080/MAP573/transform/extract)
+  - [Data summarizing](http://cremeriefamily.info:8080/MAP573/transform/summarise)
+
+## Supplements
+
+  - link to swirl
+
+

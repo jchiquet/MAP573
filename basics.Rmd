@@ -1,0 +1,18 @@
+---
+title: "R Basics"
+---
+
+## Slides
+
+  - []()
+
+## Tutorials (restricted access)
+
+  - [Base R fundamentals](http://cremeriefamily.info:8080/MAP573/basics/prog)
+  - [Vizu fundamentals](http://cremeriefamily.info:8080/MAP573/basics/vis)
+
+## Supplements
+
+  - [faster base R programming]()
+  - link to swirl
+  - more gentle introduction to R
