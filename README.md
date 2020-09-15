@@ -1,6 +1,3 @@
----
-output: github_document
----
 
 # MAP 573 - Unsupervised Learning with R
 
@@ -8,11 +5,9 @@ output: github_document
 
 > This repository regroups some material (slides, labs, projects) associated to the course MAP 573.
 
-## Schedule (tentative)
-
   - **Teachers** : Julien Chiquet (coordinator), Florian Bourgey, Élise Dumas
-  - **Lectures/tutorials are 100% online** via zoom ([link in moodle](https://moodle.polytechnique.fr/enrol/index.php?id=9404)).  Amphi Gay-Lussac is available if you need 
-  - **Practicals and projects follow-up are hybrid** (face-to-face in PC + zoom) ([link in moodle](https://moodle.polytechnique.fr/enrol/index.php?id=9404))
+  - **Lectures/tutorials are 100% online** via zoom ([link in moodle](https://moodle.polytechnique.fr/enrol/index.php?id=9404)).  Amphi Gay-Lussac is available if needed
+  - **Practicals and projects follow-up are hybrid** (face-to-face in PC + zoom)
 
 ![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1-1.png)
 
