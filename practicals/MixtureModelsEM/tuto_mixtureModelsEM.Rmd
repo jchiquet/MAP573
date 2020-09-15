@@ -1,0 +1,76 @@
+---
+title: "Tutorial: Gaussian mixture model and the EM algorithm"
+author: "MAP573 -- Introduction to unsupervised learning"
+date: "École Polytechnique - Autumn 2019"
+fontsize: 11pt
+lang: en
+geometry: left=1.45in,top=1.35in,right=1.45in,bottom=1.35in
+classoption: a4paper
+linkcolor: red
+urlcolor: blue
+citecolor: green
+output:
+  pdf_document:
+    number_sections: true
+    citation_package: natbib
+    includes:
+      in_header: ../preamble.sty
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = FALSE)
+```
+
+# Preliminaries {-}
+
+\textsf{Goals.}
+
+1. Gaussian mixture models
+2. Expectation-Maximization algorithm for mixture models
+
+\textsf{Instructions.} Each student _may_ send an `R markdown` report generated via `R studio` to <julien.chiquet@inra.fr> at the end of the tutorial. This report should answer the questions by commentaries and codes generating appropriate graphical outputs. [A cheat sheet of the  markdown syntax can be found here.](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
+
+\textsf{Required packages.} Check that the following packages are available on your computer:
+```{r, message=FALSE}
+library(aricode)
+library(mixtools)
+```
+
+You also need `Rstudio`, \LaTeX\ and packages for markdown: 
+```{r, message=FALSE}
+library(knitr)
+library(rmarkdown)
+```
+
+# Gaussian Mixture Models
+
+We    consider   a   collection   of    random   variables $(X_1, \dots,  X_n)$ associated  with $n$  individuals drawn from $Q$ populations. The label of each individual describes the population (or class) to  which it belongs and  is unobserved.  The $Q$  classes have _a priori_ distribution ${\boldsymbol     \alpha} = (\alpha_1,\dots,\alpha_Q)$ with
+$\alpha_q  = \mathbb{P}(i  \in  q)$.  The  hidden  random indicator  variables $(Z_{iq})_{i\in\mathcal{P},  q\in\mathcal{Q}}$ describe  the label  of each individuals, that is,
+
+\begin{equation*}
+  \label{eq:prior_classes}
+  \alpha_q  = \mathbb{P}(Z_{iq}  =  1) =  \mathbb{P}(i  \in q),  \quad
+  \text{ such that} \sum_{q=1}^Q \alpha_q = 1.
+\end{equation*}
+Remark that we have $\mathbf{Z}_i      =      (Z_{i1},       \dots,      Z_{iQ})      \sim
+\mathcal{M}(1,\boldsymbol\alpha)$. The distribution of  $X_i$ conditional on the label of  $i$ is assumed
+to be a univariate gaussian distribution with unknown parameters, that
+is, $X_i | Z_{iq} = 1 \sim \mathcal{N}(\mu_q,\sigma^2_q)$.
+
+# Questions
+
+- _Likelihood._ Write the model complete-data loglikelihood.
+- _E-step._ For fixed values of  $\hat\mu_q, \hat\sigma_q^2$ and  $\hat\alpha_q$, give  the expression  of the  estimates of the posterior probabilities $\tau_{iq}= \mathbb{P}(Z_{iq}=1|X_i)$.
+- _M-step._  For fixed values of  $\hat\tau_{iq}$, show that the maximization step leads to the following estimator for the model parameters:
+\begin{equation*}
+  \hat{\alpha}_q =  \frac{1}{n} \sum_{i=1}^n  \hat{\tau}_{iq}, \quad
+  \hat\mu_q     =    \frac{\sum_i     \hat{\tau}_{iq}    x_i}{\sum_i
+  \hat{\tau}_{iq}},    \quad   \hat{\sigma}^2_q    =   \frac{\sum_i
+  \hat{\tau}_{iq} (x_i-\hat\mu_q)^2}{\sum_i \hat{\tau}_{iq}}
+\end{equation*}
+- _Implementation._  Test  your  EM  algorithm on  simulate data.  Try  different values for $\mu_q$,  $\sigma_q$. Also consider different initialization. Compare with the output of the function \texttt{normalmixEM} in the package \textbf{mixtools}.
+- _Model Selection._ Compute  the ICL criterion and test  it on your simulated data.
+\begin{equation*}
+  ICL(Q) =-2 \log \mathbb{E}[L(X, Z; \hat{\alpha},\hat{\mu}, \hat{\sigma^2})] + \log(n) \mathrm{df}(Q).
+\end{equation*}
