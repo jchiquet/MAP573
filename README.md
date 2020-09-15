@@ -13,22 +13,7 @@ output: github_document
   - **Lectures/tutorials are 100% online** via zoom ([link in moodle](https://moodle.polytechnique.fr/enrol/index.php?id=9404)).  Amphi Gay-Lussac is available if you need 
   - **Practicals and projects follow-up are hybrid** (face-to-face in PC + zoom) ([link in moodle](https://moodle.polytechnique.fr/enrol/index.php?id=9404))
 
-
-```
-## PhantomJS not found. You can install it with webshot::install_phantomjs(). If it is installed, please make sure the phantomjs executable can be found via the PATH variable.
-```
-
-```
-## Warning in normalizePath(f2): path[1]="webshot65f23329c61a.png": No such file or directory
-```
-
-```
-## Warning in file(con, "rb"): cannot open file 'webshot65f23329c61a.png': No such file or directory
-```
-
-```
-## Error in file(con, "rb"): cannot open the connection
-```
+![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1-1.png)
 
 
 
