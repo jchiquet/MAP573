@@ -1,7 +1,8 @@
 ---
-title: "MAP 573 - Unsupervised Learning with R"
 output: github_document
 ---
+
+# MAP 573 - Unsupervised Learning with R
 
 
 
