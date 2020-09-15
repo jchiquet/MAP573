@@ -3,7 +3,7 @@
 
 
 
-> This repository regroups some material (slides, labs, projects) associated to the course MAP 573.
+This repository regroups some material (slides, labs, projects) associated to the course MAP 573. [See the website here](https://jchiquet.github.io/CourseUnsupervisedLearningX).
 
   - **Teachers** : Julien Chiquet (coordinator), Florian Bourgey, Élise Dumas
   - **Lectures/tutorials are 100% online** via zoom ([link in moodle](https://moodle.polytechnique.fr/enrol/index.php?id=9404)).  Amphi Gay-Lussac is available if needed
