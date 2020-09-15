@@ -483,13 +483,42 @@ div.tocify {
 </div>
 
 
-<div id="r-tutorials" class="section level2">
-<h2>R Tutorials</h2>
 <p>During the first two weeks of MAP573, students are introduced to the basics of the R language: R-base programming, data manipulation, visualization.</p>
 <p>To do so, the lectures are accompanied by interactive tutorials which are shamelessly taken from <a href="https://rstudio.cloud/learn/primers">rstudio-education</a>.</p>
-<p>These tutorials are either available online (via <a href="http://shiny.cremerfiefamily.info">a shiny server</a>) or as an R package so that you can install them on you computer and follow the tutorials without access to an internet connection, or if the .</p>
-<div id="shiny-server-restricted-access" class="section level3">
-<h3>Shiny server (restricted access)</h3>
+<p>These tutorials are either available online (via <a href="http://shiny.cremeriefamily.info">a shiny server</a>) or as an R package so that you can install them on you computer and follow the tutorials without access to an internet connection. Prefer this last solution.</p>
+<div id="r-package-map573tutorials" class="section level2">
+<h2>R package MAP573tutorials</h2>
+<p>First, you need the <strong>remotes</strong> package to install <code>R</code> packages from other sources than the CRAN (install just once!)</p>
+<pre class="r"><code>install.packages(&quot;remotes&quot;)</code></pre>
+<p>Then, you can instakl the <code>R</code> packages that contains the <code>R</code> tutorials of MAP573:</p>
+<pre class="r"><code>remotes::install_github(&quot;jchiquet/CoursUnsupervisedLearningX&quot;, subdir = &#39;MAP573tutorials&#39;)</code></pre>
+<p>Once this package is installed, you can access the tutorials as follows (only one at a time):</p>
+<div id="r-basics" class="section level3">
+<h3>R Basics</h3>
+<pre class="r"><code>learnr::run_tutorial(&quot;basics_prog&quot;, package = &quot;MAP573tutorials&quot;)
+learnr::run_tutorial(&quot;basics_vis&quot; , package = &quot;MAP573tutorials&quot;)</code></pre>
+</div>
+<div id="data-manipulation" class="section level3">
+<h3>Data manipulation</h3>
+<pre class="r"><code>learnr::run_tutorial(&quot;transform_structure&quot;, package = &quot;MAP573tutorials&quot;)
+learnr::run_tutorial(&quot;transform_extract&quot;  , package = &quot;MAP573tutorials&quot;)
+learnr::run_tutorial(&quot;transform_summarise&quot;, package = &quot;MAP573tutorials&quot;)</code></pre>
+</div>
+<div id="data-visualization" class="section level3">
+<h3>Data visualization</h3>
+<pre class="r"><code>learnr::run_tutorial(&quot;vis_01-exploratory-data-analysis&quot;, package = &quot;MAP573tutorials&quot;)
+learnr::run_tutorial(&quot;vis_02-bar-charts&quot;               , package = &quot;MAP573tutorials&quot;)
+learnr::run_tutorial(&quot;vis_03-histograms&quot;               , package = &quot;MAP573tutorials&quot;)
+learnr::run_tutorial(&quot;vis_04-boxplots&quot;                 , package = &quot;MAP573tutorials&quot;)
+learnr::run_tutorial(&quot;vis_05-scatterplots&quot;             , package = &quot;MAP573tutorials&quot;)
+learnr::run_tutorial(&quot;vis_06-line-graphs&quot;              , package = &quot;MAP573tutorials&quot;)
+learnr::run_tutorial(&quot;vis_07-overplotting&quot;             , package = &quot;MAP573tutorials&quot;)
+learnr::run_tutorial(&quot;vis_08-customize&quot;                , package = &quot;MAP573tutorials&quot;)</code></pre>
+</div>
+</div>
+<div id="shiny-server-limited-access" class="section level2">
+<h2>Shiny server (limited access)</h2>
+<p>This runs on my personal server, so prefer the package solution.</p>
 <ol style="list-style-type: decimal">
 <li><strong>R Basics</strong>
 <ul>
@@ -500,7 +529,7 @@ div.tocify {
 <ul>
 <li><a href="http://cremeriefamily.info:8080/MAP573/transform_structure">The ‘tibble’ Structure</a></li>
 <li><a href="http://cremeriefamily.info:8080/MAP573/transform_extract">Extract from data</a></li>
-<li><a href="http://cremeriefamily.info:8080/MAP573/transform_summarize">Summarise data</a></li>
+<li><a href="http://cremeriefamily.info:8080/MAP573/transform_summarise">Summarise data</a></li>
 </ul></li>
 <li><strong>Vizualisation</strong>
 <ul>
@@ -514,37 +543,6 @@ div.tocify {
 <li><a href="http://cremeriefamily.info:8080/MAP573/vis_08-customize">Customize</a></li>
 </ul></li>
 </ol>
-</div>
-<div id="r-package-map573tutorials" class="section level3">
-<h3>R package MAP573tutorials</h3>
-<p>First, you need the <strong>remotes</strong> package to install <code>R</code> packages from other sources than the CRAN (install just once!)</p>
-<pre class="r"><code>install.packages(&quot;remotes&quot;)</code></pre>
-<p>Then, you can instakl the <code>R</code> packages that contains the <code>R</code> tutorials of MAP573:</p>
-<pre class="r"><code>remotes::install_github(&quot;jchiquet/CoursUnsupervisedLearningX&quot;, subdir = &#39;MAP573tutorials&#39;)</code></pre>
-<p>Once this package is installed, you can access the tutorials as follows (only one at a time):</p>
-<div id="r-basics" class="section level4">
-<h4>R Basics</h4>
-<pre class="r"><code>learnr::run_tutorial(&quot;basics_prog&quot;, package = &quot;MAP573tutorials&quot;)
-learnr::run_tutorial(&quot;basics_vis&quot; , package = &quot;MAP573tutorials&quot;)</code></pre>
-</div>
-<div id="data-manipulation" class="section level4">
-<h4>Data manipulation</h4>
-<pre class="r"><code>learnr::run_tutorial(&quot;transform_structure&quot;, package = &quot;MAP573tutorials&quot;)
-learnr::run_tutorial(&quot;transform_extract&quot;  , package = &quot;MAP573tutorials&quot;)
-learnr::run_tutorial(&quot;transform_summarise&quot;, package = &quot;MAP573tutorials&quot;)</code></pre>
-</div>
-<div id="data-visualization" class="section level4">
-<h4>Data visualization</h4>
-<pre class="r"><code>learnr::run_tutorial(&quot;vis_01-exploratory-data-analysis&quot;, package = &quot;MAP573tutorials&quot;)
-learnr::run_tutorial(&quot;vis_02-bar-charts&quot;               , package = &quot;MAP573tutorials&quot;)
-learnr::run_tutorial(&quot;vis_03-histograms&quot;               , package = &quot;MAP573tutorials&quot;)
-learnr::run_tutorial(&quot;vis_04-boxplots&quot;                 , package = &quot;MAP573tutorials&quot;)
-learnr::run_tutorial(&quot;vis_05-scatterplots&quot;             , package = &quot;MAP573tutorials&quot;)
-learnr::run_tutorial(&quot;vis_06-line-graphs&quot;              , package = &quot;MAP573tutorials&quot;)
-learnr::run_tutorial(&quot;vis_07-overplotting&quot;             , package = &quot;MAP573tutorials&quot;)
-learnr::run_tutorial(&quot;vis_08-customize&quot;                , package = &quot;MAP573tutorials&quot;)</code></pre>
-</div>
-</div>
 </div>
 
 
