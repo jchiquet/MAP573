@@ -2,35 +2,13 @@
 title: "Introduction to R: tutorials"
 ---
 
-## R Tutorials
-
- 
 During the first two weeks of MAP573, students are introduced to the basics of the R language: R-base programming, data manipulation, visualization.
 
 To do so, the lectures are accompanied by interactive tutorials which are shamelessly taken from [rstudio-education](https://rstudio.cloud/learn/primers).
 
-These tutorials are either available online (via [a shiny server](http://shiny.cremerfiefamily.info)) or as an R package so that you can install them on you computer and follow the tutorials without access to an internet connection, or if the .
+These tutorials are either available online (via [a shiny server](http://shiny.cremeriefamily.info)) or as an R package so that you can install them on you computer and follow the tutorials without access to an internet connection. Prefer this last solution.
 
-### Shiny server (restricted access)
-
-  1. **R Basics**
-        - [Base R fundamentals](http://cremeriefamily.info:8080/MAP573/basics_prog)
-        - [Visualization fundamentals](http://cremeriefamily.info:8080/MAP573/basics_vis)
-  2. **Data manipulation**
-        - [The 'tibble' Structure](http://cremeriefamily.info:8080/MAP573/transform_structure)
-        - [Extract from data](http://cremeriefamily.info:8080/MAP573/transform_extract)
-        - [Summarise data](http://cremeriefamily.info:8080/MAP573/transform_summarize)
-  3. **Vizualisation**
-        - [Exploratory analysis](http://cremeriefamily.info:8080/MAP573/vis_01-exploratory-data-analysis)
-        - [Bar charts](http://cremeriefamily.info:8080/MAP573/vis_02-bar-charts)
-        - [Histograms](http://cremeriefamily.info:8080/MAP573/vis_03-histograms)
-        - [Boxplots](http://cremeriefamily.info:8080/MAP573/vis_04-boxplots)
-        - [Scatterplots](http://cremeriefamily.info:8080/MAP573/vis_05-scatterplots)
-        - [Line graphs](http://cremeriefamily.info:8080/MAP573/vis_06-line-graphs)
-        - [Overplotting](http://cremeriefamily.info:8080/MAP573/vis_07-overplotting)
-        - [Customize](http://cremeriefamily.info:8080/MAP573/vis_08-customize)
-
-### R package MAP573tutorials
+## R package MAP573tutorials
 
 First, you need the **remotes** package to install `R` packages from other sources than the CRAN (install just once!)
 
@@ -46,14 +24,14 @@ remotes::install_github("jchiquet/CoursUnsupervisedLearningX", subdir = 'MAP573t
 
 Once this package is installed, you can access the tutorials as follows (only one at a time):
 
-#### R Basics
+### R Basics
 
 ```{r launch R base tuto, eval = FALSE}
 learnr::run_tutorial("basics_prog", package = "MAP573tutorials")
 learnr::run_tutorial("basics_vis" , package = "MAP573tutorials")
 ```
 
-#### Data manipulation
+### Data manipulation
 
 ```{r launch manip tuto, eval = FALSE}
 learnr::run_tutorial("transform_structure", package = "MAP573tutorials")
@@ -61,7 +39,7 @@ learnr::run_tutorial("transform_extract"  , package = "MAP573tutorials")
 learnr::run_tutorial("transform_summarise", package = "MAP573tutorials")
 ```
 
-#### Data visualization
+### Data visualization
 
 ```{r launch vis tuto, eval = FALSE}
 learnr::run_tutorial("vis_01-exploratory-data-analysis", package = "MAP573tutorials")
@@ -73,3 +51,25 @@ learnr::run_tutorial("vis_06-line-graphs"              , package = "MAP573tutori
 learnr::run_tutorial("vis_07-overplotting"             , package = "MAP573tutorials")
 learnr::run_tutorial("vis_08-customize"                , package = "MAP573tutorials")
 ```
+
+## Shiny server (limited access)
+
+This runs on my personal server, so prefer the package solution.
+
+  1. **R Basics**
+        - [Base R fundamentals](http://cremeriefamily.info:8080/MAP573/basics_prog)
+        - [Visualization fundamentals](http://cremeriefamily.info:8080/MAP573/basics_vis)
+  2. **Data manipulation**
+        - [The 'tibble' Structure](http://cremeriefamily.info:8080/MAP573/transform_structure)
+        - [Extract from data](http://cremeriefamily.info:8080/MAP573/transform_extract)
+        - [Summarise data](http://cremeriefamily.info:8080/MAP573/transform_summarise)
+  3. **Vizualisation**
+        - [Exploratory analysis](http://cremeriefamily.info:8080/MAP573/vis_01-exploratory-data-analysis)
+        - [Bar charts](http://cremeriefamily.info:8080/MAP573/vis_02-bar-charts)
+        - [Histograms](http://cremeriefamily.info:8080/MAP573/vis_03-histograms)
+        - [Boxplots](http://cremeriefamily.info:8080/MAP573/vis_04-boxplots)
+        - [Scatterplots](http://cremeriefamily.info:8080/MAP573/vis_05-scatterplots)
+        - [Line graphs](http://cremeriefamily.info:8080/MAP573/vis_06-line-graphs)
+        - [Overplotting](http://cremeriefamily.info:8080/MAP573/vis_07-overplotting)
+        - [Customize](http://cremeriefamily.info:8080/MAP573/vis_08-customize)
+
