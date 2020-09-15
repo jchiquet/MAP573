@@ -11,7 +11,7 @@ library(DT)
 
 ## Course description
 
-The objective of MAP 573  is to give students a comprehensive introduction to unsupervised analysis (downsizing and clustering) and to acquire solid and practical skills for the exploratory analysis of current data sets, using R software.
+The objective of MAP 573 is to give students a comprehensive introduction to unsupervised analysis (downsizing and clustering) and to acquire solid and practical skills for the exploratory analysis of current data sets, using R software.
 
 The course begins with two sessions presenting the basics of programming with the R language, as well as data manipulation and the tidyverse graphical representation libraries. R's Python interfacing capabilities are also discussed.
 
@@ -19,19 +19,12 @@ The course then presents the classical methods of dimensionality reduction and c
 
 Finally, the third part of the module proposes to the students a series of data sets to be studied in groups using the methods of the course and their generalizations. These projects will constitute the main part of the evaluation of this module.
 
-## Teachers
-
-  - Coordinator: Julien Chiquet
-  - TA: Florian Bourgey
-  - TA: Florian Dumas
-
-## Practical information
-
-- All courses will be given 100% online via zoom ([link provided at the moodle page](https://moodle.polytechnique.fr/enrol/index.php?id=9404))
-- All "Petites classes" (Labs and projects) will be hybrid (face-to-face + broadcasted with zoom)
-- All Material is in English, course will be given in French
 
 ## Schedule
+
+  - **Teachers** : Julien Chiquet (coordinator), Florian Bourgey, Élise Dumas
+  - **Lectures/tutorials are 100% online** via zoom ([link in moodle](https://moodle.polytechnique.fr/enrol/index.php?id=9404)).  Amphi Gay-Lussac is available if you need 
+  - **Practicals and projects follow-up are hybrid** (face-to-face in PC + zoom) ([link in moodle](https://moodle.polytechnique.fr/enrol/index.php?id=9404))
 
 ```{r}
 readODS::read_ods(path = "schedule.ods") %>% 
