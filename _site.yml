@@ -1,6 +1,6 @@
 name: "MAP573 - Data Analysis and Unsupervised Learning"
 output_dir: "public"
-exclude: ["slides", "Homework", "labs"]
+exclude: ["slides", "Homework", "labs", "MAP573tutorials", "README"]
 navbar:
   title: "MAP573"
   left:
@@ -12,18 +12,30 @@ navbar:
       href: https://moodle.polytechnique.fr/enrol/index.php?id=9404
   right:
     - text: "Introduction to R"
-      icon: fas fa-chalkboard-teacher
+      icon: fas fa-laptop
       menu:
-        - text: "R Basics"
-          href: basics.html
+        - text: "Lectures"
+        - text: "Base R programming"
+          href: https://github.com/jchiquet/CourseAdvancedR/raw/master/201806_Dauphine/R_base_programming.pdf
         - text: "Manipulation and Representation"
-          href: tidy.html
+          href: https://github.com/jchiquet/CourseAdvancedR/raw/master/201806_Dauphine/R_intro_tidyverse.pdf
+        - text: "------------------"
+        - text: "Tutorials"
+          href: tutorials_R.html
+        - text: "------------------"
+        - text: "Supplements"
+        - text: "Swirl: learn R in R"
+          href: https://github.com/swirldev/swirl_courses
+        - text: "Gentle introduction to R"
+          href: https://julien.cremeriefamily.info/teachings_L3BI_ISV51.html
+        - text: "Faster base R programming"
+          href: https://github.com/jchiquet/CourseAdvancedR/raw/master/201806_Dauphine/R_faster_programming.pdf
     - text: "Dimension Reduction"
       icon: fas fa-chalkboard-teacher
       menu:
         - text: "Linear methods: PCA and variants"
 #          href: .html
-        - text: "Non linear methods: Kernel PCA, t-SNE"
+        - text: "Non linear methods: Kernel PCA, t-SNE, VAE"
 #          href: .html
     - text: "Clustering"
       icon: fas fa-chalkboard-teacher
@@ -79,9 +91,13 @@ navbar:
 #          href: .html
         - text: "Subject 10:"
 #          href: .html
-
 output:
   html_document:
     theme: cosmo
     highlight: textmate
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
 

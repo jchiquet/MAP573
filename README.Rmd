@@ -4,23 +4,37 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(readODS)
+library(DT)
 ```
 
 > This repository regroups some material (slides, labs, projects) associated to the course MAP 573.
 
-<!-- ## Schedule (tentative) -->
+## Schedule (tentative)
 
-October the 1st, 2019
+  - **Teachers** : Julien Chiquet (coordinator), Florian Bourgey, Élise Dumas
+  - **Lectures/tutorials are 100% online** via zoom ([link in moodle](https://moodle.polytechnique.fr/enrol/index.php?id=9404)).  Amphi Gay-Lussac is available if you need 
+  - **Practicals and projects follow-up are hybrid** (face-to-face in PC + zoom) ([link in moodle](https://moodle.polytechnique.fr/enrol/index.php?id=9404))
 
-  - *Course*: Introduction to clustering -- [slides](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/slides/DataClustering/DataClustering.pdf)
-  - *Labs*: EM algorithm for mixtures of univariate Gaussians [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/labs/MixtureModelsEM/tuto_mixtureModelsEM.pdf)
+```{r}
+readODS::read_ods(path = "schedule.ods") %>% 
+  datatable(options = list(pageLength = 24, dom = "t", ordering = FALSE), rownames = FALSE)
+```
 
-October the 15th, 2019
 
-  - *Course*: Introduction to graph clustering -- [slides](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/slides/GraphClustering/GraphClustering.pdf)
-  - *Labs*: Hierarchical and Spectral Clustering for Network Data [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/labs/GraphPartitioning//tuto_GraphPartitioning.pdf)
-  - *Homework*: Implementing Variational EM in the Stochastic Block Model [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/Homework/Homework_SBM.pdf)
+
+<!-- October the 1st, 2019 -->
+
+<!--   - *Course*: Introduction to clustering -- [slides](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/slides/DataClustering/DataClustering.pdf) -->
+<!--   - *Labs*: EM algorithm for mixtures of univariate Gaussians [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/labs/MixtureModelsEM/tuto_mixtureModelsEM.pdf) -->
+
+<!-- October the 15th, 2019 -->
+
+<!--   - *Course*: Introduction to graph clustering -- [slides](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/slides/GraphClustering/GraphClustering.pdf) -->
+<!--   - *Labs*: Hierarchical and Spectral Clustering for Network Data [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/labs/GraphPartitioning//tuto_GraphPartitioning.pdf) -->
+<!--   - *Homework*: Implementing Variational EM in the Stochastic Block Model [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/Homework/Homework_SBM.pdf) -->
 
 
 <!-- ### Statistical Models for Networks Data: SBM part 1 -->

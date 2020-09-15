@@ -1,27 +1,48 @@
-MAP 573 - Unsupervised Learning with R
-================
+---
+title: "MAP 573 - Unsupervised Learning with R"
+output: github_document
+---
 
-> This repository regroups some material (slides, labs, projects)
-> associated to the course MAP 573.
 
-<!-- ## Schedule (tentative) -->
 
-October the 1st, 2019
+> This repository regroups some material (slides, labs, projects) associated to the course MAP 573.
 
-  - *Course*: Introduction to clustering –
-    [slides](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/slides/DataClustering/DataClustering.pdf)
-  - *Labs*: EM algorithm for mixtures of univariate Gaussians
-    [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/labs/MixtureModelsEM/tuto_mixtureModelsEM.pdf)
+## Schedule (tentative)
 
-October the 15th, 2019
+  - **Teachers** : Julien Chiquet (coordinator), Florian Bourgey, Élise Dumas
+  - **Lectures/tutorials are 100% online** via zoom ([link in moodle](https://moodle.polytechnique.fr/enrol/index.php?id=9404)).  Amphi Gay-Lussac is available if you need 
+  - **Practicals and projects follow-up are hybrid** (face-to-face in PC + zoom) ([link in moodle](https://moodle.polytechnique.fr/enrol/index.php?id=9404))
 
-  - *Course*: Introduction to graph clustering –
-    [slides](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/slides/GraphClustering/GraphClustering.pdf)
-  - *Labs*: Hierarchical and Spectral Clustering for Network Data
-    [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/labs/GraphPartitioning//tuto_GraphPartitioning.pdf)
-  - *Homework*: Implementing Variational EM in the Stochastic Block
-    Model
-    [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/Homework/Homework_SBM.pdf)
+
+```
+## PhantomJS not found. You can install it with webshot::install_phantomjs(). If it is installed, please make sure the phantomjs executable can be found via the PATH variable.
+```
+
+```
+## Warning in normalizePath(f2): path[1]="webshot65f23329c61a.png": No such file or directory
+```
+
+```
+## Warning in file(con, "rb"): cannot open file 'webshot65f23329c61a.png': No such file or directory
+```
+
+```
+## Error in file(con, "rb"): cannot open the connection
+```
+
+
+
+<!-- October the 1st, 2019 -->
+
+<!--   - *Course*: Introduction to clustering -- [slides](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/slides/DataClustering/DataClustering.pdf) -->
+<!--   - *Labs*: EM algorithm for mixtures of univariate Gaussians [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/labs/MixtureModelsEM/tuto_mixtureModelsEM.pdf) -->
+
+<!-- October the 15th, 2019 -->
+
+<!--   - *Course*: Introduction to graph clustering -- [slides](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/slides/GraphClustering/GraphClustering.pdf) -->
+<!--   - *Labs*: Hierarchical and Spectral Clustering for Network Data [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/labs/GraphPartitioning//tuto_GraphPartitioning.pdf) -->
+<!--   - *Homework*: Implementing Variational EM in the Stochastic Block Model [sheet](https://github.com/jchiquet/CourseUnsupervisedLearningX/raw/master/Homework/Homework_SBM.pdf) -->
+
 
 <!-- ### Statistical Models for Networks Data: SBM part 1 -->
 
@@ -29,19 +50,14 @@ October the 15th, 2019
 
 <!--   - *Course*: Mixture Models, EM algorithm - ### Unsupervised Learning: Clustering
 [slides](https://github.com/jchiquet/CourseStatNetwork/raw/master/slides/GraphModel/GraphModels.pdf) -->
-
 <!--   - *Tutorial*: Reminder on mixture models [sheet](https://github.com/jchiquet/CourseStatNetwork/raw/master/practicals/MixtureModelsEM/tuto_mixtureModelsEM.pdf) -->
-
 <!-- [hints](https://github.com/jchiquet/CourseStatNetwork/raw/master/practicals/MixtureModelsEM/hints.R) -->
-
 <!--   - *Correction*: [full algorithm in R](https://github.com/jchiquet/CourseStatNetwork/raw/master/practicals/MixtureModelsEM/full_EM.R) and  -->
-
 <!-- [detailed correction](https://github.com/jchiquet/CourseStatNetwork/raw/master/practicals/MixtureModelsEM/tuto_mixtureModelsEM_corr.pdf) -->
 
 <!-- ### Statistical Models for Networks Data: SBM part 2 -->
 
-<!--   - *Course*: Variational EM algorithm, Stochastic Block Model - [slides](https://github.com/jchiquet/CourseStatNetwork/raw/master/slides/GraphModel/GraphModels.pdf) -->
-
+<!--   - *Course*: Variational EM algorithm, Stochastic Block Model	- [slides](https://github.com/jchiquet/CourseStatNetwork/raw/master/slides/GraphModel/GraphModels.pdf) -->
 <!--   - *Tutorial*: Stochastic Block Model and variational inference [sheet](https://github.com/jchiquet/CourseStatNetwork/raw/master/practicals/GraphModels/tuto_GraphModels.pdf) -->
 
 <!-- November the 22th, 2018 -->
@@ -53,49 +69,33 @@ October the 15th, 2019
 <!-- ### Basic packages for R extensions -->
 
 <!-- ```{r other packages, eval = FALSE} -->
-
 <!-- install.packages("devtools") -->
-
 <!-- install.packages("knitr") -->
-
 <!-- install.packages("rmarkdown") -->
-
 <!-- install.packages("aricode") -->
-
 <!-- install.packages("Matrix") -->
-
 <!-- ``` -->
 
 <!-- ### Packages for graph manipulation -->
 
 <!-- ```{r graph packages, eval = FALSE} -->
-
 <!-- install.packages("igraph") -->
-
 <!-- install.packages("sna") -->
-
 <!-- install.packages("network") -->
-
 <!-- ``` -->
 
 <!-- ### Packages for stochastic block models -->
 
 <!-- ```{r SBM packages, eval = FALSE} -->
-
 <!-- install.packages("blockmodels") -->
-
 <!-- install.packages("mixer") ## you must install from source -->
-
 <!-- ``` -->
 
 <!-- ### Packages for fancy plotting -->
 
 <!-- ```{r tidy packages, eval = FALSE} -->
-
 <!-- install.packages("tidyverse") -->
-
 <!-- install.packages("ggraph") -->
-
 <!-- ``` -->
 
 <!-- ## Evaluation and Projects: extension of the stochastic block model -->
@@ -113,15 +113,13 @@ October the 15th, 2019
 <!-- Some book (not freely available, sorry) -->
 
 <!-- * [Statistical Analysis of Network Data: Methods and Models, by Eric D. Kolaczyk](https://books.google.fr/books?id=Q-GNLsqq7QwC&source=gbs_book_similarbooks) -->
-
 <!-- * [Statistical Analysis of Network Data with R, by Eric D. Kolaczyk, Gábor Csárdi](https://books.google.fr/books?id=cNMhBAAAQBAJ&source=gbs_navlinks_s) -->
-
 <!-- * Bishop, C. (2000). Introduction to graphical modelling, 2nd edn. Springer, New York. -->
-
 <!-- * Højsgaard, S., Edwards , D., Lauritzen, S. (2012). Graphical Models with R. Springer,  New York. -->
 
 <!-- Some material online  -->
 
 <!-- * [Eric D. Kolazcyk's course slides](http://math.bu.edu/ness12/ness2012-shortcourse-kolaczyk.pdf) -->
-
 <!-- * [Catherine Matias's course page (in French)](http://cmatias.perso.math.cnrs.fr/Cours_Graphes.html) -->
+
+
