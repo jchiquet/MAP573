@@ -11,54 +11,45 @@ navbar:
       icon: fa-server
       href: https://moodle.polytechnique.fr/enrol/index.php?id=9404
   right:
-    - text: "Introduction to R"
-      icon: fas fa-laptop
+    - text: "Lectures/Slides"
+      icon: fas fa-chalkboard-teacher
       menu:
-        - text: "Lectures"
+        - text: "Introduction to R"
         - text: "Base R programming"
           href: https://github.com/jchiquet/CourseAdvancedR/raw/master/201806_Dauphine/R_base_programming.pdf
         - text: "Manipulation and Representation"
           href: https://github.com/jchiquet/CourseAdvancedR/raw/master/201806_Dauphine/R_intro_tidyverse.pdf
         - text: "------------------"
-        - text: "Tutorials"
-          href: tutorials_R.html
-        - text: "------------------"
-        - text: "Supplements"
-        - text: "Swirl: learn R in R"
-          href: https://github.com/swirldev/swirl_courses
-        - text: "Gentle introduction to R"
-          href: https://julien.cremeriefamily.info/teachings_L3BI_ISV51.html
-        - text: "Faster base R programming"
-          href: https://github.com/jchiquet/CourseAdvancedR/raw/master/201806_Dauphine/R_faster_programming.pdf
-    - text: "Dimension Reduction"
-      icon: fas fa-chalkboard-teacher
-      menu:
+        - text: "Dimensionality Reduction"
         - text: "Linear methods: PCA and variants"
 #          href: .html
         - text: "Non linear methods: Kernel PCA, t-SNE, VAE"
 #          href: .html
-    - text: "Clustering"
-      icon: fas fa-chalkboard-teacher
-      menu:
-        - text: "Partitioning: HAC, k-means"
+        - text: "------------------"
+        - text: "Clustering"
+        - text: "Partitioning: HAC, k-means, Spectral clustering"
 #          href: .html
-        - text: "Model-based clustering: Gaussian mixture model"
+        - text: "Model-based clustering: Gaussian mixture model and EM"
 #          href: .html     
-#     - text: "Labs (\"petites classes\")"
-#       icon: fas fa-brain
-#       menu:
-#         - text: "#1 Data manipulation and representation"
-# #          href: .html
-#         - text: "#2 Non-linear methods for dimension reduction"
-# #          href: .html
-#         - text: "#3 Gaussian mixture models"
-# #          href: .html
+    - text: "Tutorials/practicals"
+      icon: fas fa-laptop
+      menu:
+        - text: "R tutorials"
+          href: tutorials_R.html
+        - text: "PCA"
+#          href: tutorials_PCA.html
+        - text: "auto-encoder"
+#          href: tutorials_VAE.html
+        - text: "Clustering"
+#          href: tutorials_PCA.html
+        - text: "GGM and EM"
+#          href: tutorials_PCA.html
     - text: "Homework"
       icon: fas fa-keyboard
       menu:
-        - text: "Reporting with Rmarkdown"
+        - text: "Exploratory analysis"
 #          href: .html
-        - text: "Report for lab #1"
+        - text: "Visualization"
 #          href: .html
         - text: "Data analysis with PCA"
 #          href: .html
@@ -66,7 +57,7 @@ navbar:
 #          href: .html
         - text: "Spectral Clustering"
 #          href: .html
-        - text: "Report for lab #3"
+        - text: "Handling Missing Values"
 #          href: .html
     - text: "Projects"
       icon: fas fa-gear

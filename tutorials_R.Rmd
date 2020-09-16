@@ -19,7 +19,7 @@ install.packages("remotes")
 Then, you can instakl the `R` packages that contains the `R` tutorials of MAP573:
 
 ```{r install tuto package, eval = FALSE}
-remotes::install_github("jchiquet/CourseUnsupervisedLearningX", subdir = 'MAP573tutorials')
+remotes::install_github("jchiquet/MAP573", subdir = 'MAP573tutorials')
 ```
 
 Once this package is installed, you can access the tutorials as follows (only one at a time):
