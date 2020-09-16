@@ -1,76 +1,60 @@
 ---
-title: "Tutorial: Clustering of Network data"
-author: "MAP573 -- Introduction to unsupervised learning"
-date: "École Polytechnique - Autumn 2019"
-fontsize: 11pt
-lang: en
-geometry: left=1.45in,top=1.35in,right=1.45in,bottom=1.35in
-classoption: a4paper
-linkcolor: red
-urlcolor: blue
-citecolor: green
-output:
-  pdf_document:
-    number_sections: true
-    citation_package: natbib
-    includes:
-      in_header: ../preamble.sty
-
+title: 'Homework: Clustering of Network data'
+author: 'Julien Chiquet'
+date: "`r Sys.Date()`"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  cache = TRUE,
+  echo  = TRUE,
+  rows.print = 5)
 ```
 
-# Preliminaries {-}
+## Preliminaries
 
-\textsf{Goals.}
+### Information
 
-1. Basic network manipulations with `igraph`, vizualization, descriptive statistics
-2. Graph partitioning: hierarchical clustering and spectral clustering algorithms
-3. Analysis of the network of French political blogs
+Homework is due Sunday 11/08 23:59 in Rmd (see assignment in Moodle).
 
-\textsf{Required packages.} Check that the following packages are available on your computer:
+### Package requirements
+
+Check that the following packages are available on your computer:
+
 ```{r, message=FALSE}
 library(igraph)
-library(sand)
 library(Matrix)
 library(aricode)
 ```
 
-You also need `Rstudio`, \LaTeX\ and packages for markdown: 
-```{r, message=FALSE}
-library(knitr)
-library(rmarkdown)
-```
-If( and only if!!) you have time, you can also play with 
-```{r, message=FALSE}
-library(ggraph)
-```
+<!-- If( and only if!!) you have time, you can also play with  -->
+<!-- ```{r, message=FALSE} -->
+<!-- library(ggraph) -->
+<!-- ``` -->
 
-# Introduction to **igraph**
+## Introduction to **igraph**
 
-## Tutorials 
+### Tutorials 
 
 Have a glance at these two tutorials
 
 - [an **igraph** tutorial](https://rstudio-pubs-static.s3.amazonaws.com/74248_3bd99f966ed94a91b36d39d8f21e3dc3.html) for graphs manipulation.
--  [network analysis with **igraph**](http://kateto.net/networks-r-igraph) that gives an overview of the standard features of **igraph** to perform basic statistical analysis on network graphs.
+- [network analysis with **igraph**](http://kateto.net/networks-r-igraph) that gives an overview of the standard features of **igraph** to perform basic statistical analysis on network graphs.
 
-# Analysis of the French political Blogs in 2006
+## Analysis of the French political Blogs in 2006
 
-Load the data set and upgrade to the current version of **igraph** 
+Load the data set from the missSBM package
 ```{r}
-blogosphere2006 <- upgrade_graph(fblog)
+missSBM::frenchblog2007
 ```
 
-## Graph Partitioning
+### Graph Partitioning
 
 It is time to find some subtle structure in the network by performing graph clustering of the nodes. A commonly seeked structure in networks is the presence of _communities_,  like clusters of friends in social networks.
 
 The two methods explored today for community detection do not assume any underlying model on the graph. The first one is based on a generalization of hierarchical clustering for graphs using the concept of _modularity_ to define an appropriate dissimilarity measure between clusters. The second is the normalized spectral clustering.
 
-### Hierarchical clustering with modularity
+#### Hierarchical clustering with modularity
 
 Just like in usual hierarchical clustering, we need some cost function to choose which clusters are fused during construction of the hierarchy. Let $\mathcal{C} = \{C_1,\dots,C_K\}$ be a candidate partition and define $f_{ij}(\mathcal{C})$ to be the fraction of edges in the original network that connect vertices in $C_i$ with vertices in $C_j$. The modularity of $\mathcal{C}$ is the value
 \begin{equation*}
@@ -82,7 +66,7 @@ Use this function to extract a possible clustering of the nodes for the French b
 
 Explore the results offered by other clustering methods for community detection (e.g. `igraph::cluster_edge_betweenness`), or the ones obtained by a simple hierarchical clustering on dissimilarity measured on the adjacency matrix.
 
-### Spectral Analysis
+#### Spectral Analysis
 
 Here is a reminder of the spectral clustering algorithm presented during course.
 

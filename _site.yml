@@ -68,8 +68,8 @@ navbar:
           href: homework_3_PCA.html
         - text: "Report for lab #2"
 #          href: .html
-        - text: "Spectral Clustering"
-#          href: .html
+        - text: "Spectral Clustering for graphs"
+          href: homework_4_GraphPartitioning.html
         - text: "Handling Missing Values"
 #          href: .html
     - text: "Projects"
