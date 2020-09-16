@@ -6,6 +6,7 @@ local({
 
 ## non CRAN packages
 
+install.packages("missSBM")     # SBM with missing data
 install.packages("factoextra")  # Fancy plotting of factor-based methods
 install.packages("FactoMineR")  # Factor analysis
 install.packages("GGally")      # pairs plots
