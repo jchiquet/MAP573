@@ -1,0 +1,30 @@
+.btn {
+    border-width: 0 0 0 0;
+    font-weight: normal;
+}
+.btn-default {
+    color: #2ecc71;
+    background-color: #ffffff;
+    border-color: #ffffff;
+}
+
+.showopt {
+  background-color: #2ecc71;
+  color: #FFFFFF; 
+  width: 100px;
+  height: 20px;
+  text-align: center;
+  vertical-align: middle !important;
+  font-family: sans-serif;
+  border-radius: 8px;
+  float: right;
+}
+
+.showopt:hover {
+    background-color: #eeeeee;
+    color: #2ecc71;
+}
+
+pre.plot {
+  background-color: white !important;
+}

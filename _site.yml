@@ -1,5 +1,18 @@
 name: "MAP573 - Data Analysis and Unsupervised Learning"
 output_dir: "public"
+output:
+  html_document:
+    theme: yeti
+    highlight: tango
+    css: resources/style.css
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+    includes:
+      in_header: resources/hideOutput.script
+mathjax: "http://example.com/MathJax.js"
 exclude: ["slides", "Homework", "labs", "MAP573tutorials", "README"]
 navbar:
   title: "MAP573"
@@ -37,7 +50,7 @@ navbar:
         - text: "R tutorials"
           href: tutorials_R.html
         - text: "PCA"
-#          href: tutorials_PCA.html
+          href: tutorial_PCA_budget.html
         - text: "auto-encoder"
 #          href: tutorials_VAE.html
         - text: "Clustering"
@@ -82,13 +95,5 @@ navbar:
 #          href: .html
         - text: "Subject 10:"
 #          href: .html
-output:
-  html_document:
-    theme: cosmo
-    highlight: textmate
-    toc: true
-    toc_depth: 3
-    toc_float:
-      collapsed: false
-      smooth_scroll: false
+
 
