@@ -12,6 +12,7 @@ dependencies:
   - r-corrplot
   - r-devtools
   - r-dt
+  - r-foreign
   - r-ggally
   - r-knitr
   - r-readods
