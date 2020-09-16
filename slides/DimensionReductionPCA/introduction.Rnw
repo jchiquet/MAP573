@@ -1,0 +1,263 @@
+\begin{frame}[fragile]
+  \partpage
+
+\paragraph{Packages required for reproducing the slides}
+<<load_packages, cache = FALSE, message=FALSE, warning=FALSE>>=
+library(tidyverse)  # opinionated collection of packages for data manipulation
+library(GGally)     # extension to ggplot vizualization system
+library(FactoMineR) # PCA and oter linear method for dimension reduction
+library(factoextra) # fancy plotting for FactoMineR output
+# color and plots themes
+library(RColorBrewer)
+pal <- brewer.pal(10, "Set3")
+theme_set(theme_bw())
+@
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Machine Learning}
+
+	\begin{center}
+		\includegraphics[width=\textwidth]{Learning+Types}
+	\end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Supervised vs Unsupervised Learning}
+
+  \begin{block}{Supervised Learning}
+    \begin{itemize}
+    \item Training data $\mathcal{D}_n = \{(\bx_1, y_1), \ldots, (\bx_n, y_n)\}, X_i \sim^{\text{i.i.d}} \mathbb{P}$
+    \item Construct a predictor $\hat f : \mathcal{X} \rightarrow \mathcal{Y}$ using $\mathcal{D}_n$
+    \item Loss $\ell(y, f(x))$ measures how well $f(x)$ predicts $y$
+    \item Aim: minimize the generalization error
+    \item Task: Regression, Classification
+    \end{itemize}
+    $\rightsquigarrow$ The goal is clear: predict $y$ based on $x$ (regression, classification)
+  \end{block}
+
+  \begin{block}{Unsupervised Learning}
+  \begin{itemize}
+    \item Training data $\mathcal{D} = \{\bx_1, \ldots, \bx_n\}$
+    \item Loss? , Aim?
+    \item Task: \alert{\bf Dimension reduction}, Clustering
+  \end{itemize}
+  $\rightsquigarrow$ The goal is less well defined, and \emph{validation} is questionable
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Dimension Reduction?}
+
+\begin{figure}
+  \includegraphics<1>[height=.5\textheight]{belardi-camel-3d-4}
+  \includegraphics<2>[height=.5\textheight]{belardi-camel-3d-3}
+  \includegraphics<3>[height=.5\textheight]{belardi-camel-3d-2}
+  \caption{\tiny source: F. Belardi}
+\end{figure}
+
+\begin{itemize}
+\item How to view a high-dimensional dataset ?
+\item High-dimension: dimension larger than 2!
+\item \emph{Projection} in a 2D space.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set: 'crabs'}
+  \framesubtitle{Morphological Measurements on Leptograpsus Crabs}
+
+\begin{block}{Description: \textcolor{black}{\it small data, low-dimensional}}
+\small The crabs data frame has 200 rows and 8 columns, describing 5 morphological measurements on 50 crabs each of two colour forms and both sexes, of the species \textit{Leptograpsus variegatus} collected at Fremantle, W. Australia.\\
+\end{block}
+
+\begin{figure}
+  \includegraphics[width=3cm]{crab}
+  \caption{A leptograpsus Crab}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Companion data set: 'crabs'}
+  \framesubtitle{Table header}
+
+<<crabs dataset1>>=
+crabs <- MASS::crabs %>% select(-index) %>%
+  rename(sex = sex,
+         species         = sp,
+         frontal_lob     = FL,
+         rear_width      = RW,
+         carapace_length = CL,
+         carapace_width  = CW,
+         body_depth      = BD)
+crabs %>% select(sex, species) %>% summary() %>% knitr::kable("latex")
+dim(crabs)
+@
+
+<<crabs dataset head>>=
+crabs %>% head(15) %>% knitr::kable("latex")
+@
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set: 'crabs'}
+  \framesubtitle{Pairs plot of attributes}
+
+<<crabs attributes>>=
+ggpairs(crabs, columns = 3:7, aes(colour = species, shape = sex))
+@
+$\rightsquigarrow$ Pairs plot don't help...
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set: 'crabs'}
+  \framesubtitle{Correlation matrix}
+
+<<crabs corr>>=
+crabs %>%  select(-species, -sex) %>% cor( ) %>% kable('latex', digits = 3)
+@
+
+\bigskip
+
+\alert{Very high correlation!}
+\begin{itemize}
+ \item much redundancy?
+ \item hidden factor?
+\end{itemize}
+$\rightsquigarrow$ dimension reduction might hem
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Another example: 'snp'}
+  \framesubtitle{Genetics variant in European population}
+
+\begin{block}{Description: \textcolor{black}{\it medium/large data, high-dimensional}}
+500, 000 Genetics variants (SNP -- Single Nucleotide Polymorphism) for  3000 individuals
+(1 meter $\times$ 166 meter (height $\times$ width)
+\end{block}
+
+\begin{multicols}{2}
+  \begin{itemize}
+  \item SNP : 90 \% of human genetic variations
+  \item coded as 0, 1 or 2 (10, 1 or 2 allel different against the population reference)
+  \end{itemize}
+
+  \begin{figure}
+    \centering
+     \includegraphics[height=4cm]{SNP}   
+    \caption{SNP (wikipedia)}
+  \end{figure}
+\end{multicols}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Summarize 500,000 variables in 2}
+
+  \begin{figure}
+    \centering
+      \includegraphics[height=6cm]{geneMirrorGeography}
+    \caption{PCA output {\tiny source: Nature "Gene  Mirror Geography Within  Europe", 2008}}
+  \end{figure}
+
+  $\rightsquigarrow$ How much information is lost?
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Theoretical argument: dimensionality Curse}
+
+\begin{block}{High Dimension Geometry Curse}
+\begin{itemize}
+\item Folks theorem: In high dimension, everyone is alone.
+\item Theorem: If $\bx_1,\ldots, \bx_n$ in the
+hypercube of dimension $d$  such
+that their coordinates are i.i.d then
+\begin{align*}
+\mspace{-20mu} d^{-1/p} \left( \max \|\bx_i-\bx_{i'}\|_p - \min \|\bx_i-\bx_{i'}\|_p
+\right)  &= 0 + O\left(\sqrt{\frac{\log n}{d}}\right)\\
+\frac{\max \|\bx_i-\bx_{i'}\|_p}{\min \|\bx_i-\bx_{i'}\|_p} &= 1 +
+O\left(\sqrt{\frac{\log n}{d}}\right).
+\end{align*}
+\end{itemize}
+\end{block}
+
+  $\rightsquigarrow$ When $d$ is large, all the points are almost equidistant\\
+
+  Hopefully, the data \alert{\bf are not really leaving in $d$} dimension (think of the SNP example)
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dimension reduction: goals summary}
+
+  \paragraph{Main objective:} find a \alert{\bf low-dimensional representation} that captures the "essence" of (high-dimensional) data
+
+  \vfill
+
+  \begin{block}{Application in Machine Learning}
+  Preprocessing, Regularization
+  \begin{itemize}
+    \item compression, denoising,  anomaly detection
+    \item Reduce overfitting in supervised learning (improve performances)
+  \end{itemize}
+  \end{block}
+
+\vfill
+
+  \begin{block}{Application in statistics and data analysis}
+    Better understand the data 
+    \begin{itemize}
+      \item descriptive/exploratory methods
+      \item visualization: difficult to plot and interpret $> 3d$!
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dimension reduction: problem setup}
+
+    \begin{block}{Settings}
+      \begin{itemize}
+        \item \alert{Training data } : $\mathcal{D}=\{\bx_1,\ldots,\bx_n\} \in \Rset^d$,   (i.i.d.)
+        \item Space $\Rset^d$ of possibly high dimension $(n \ll d)$
+      \end{itemize}
+    \end{block}
+
+    \vfill
+    
+    \begin{block}{Dimension Reduction Map}
+       Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
+      \begin{align*}
+          \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
+                     & \bx \mapsto \Phi(\bx)
+      \end{align*}
+    \end{block}
+    
+\end{frame}
+ 
+\begin{frame}
+  \frametitle{How should we design/construct $\Phi$?}
+
+  \paragraph{Criterion}
+  \begin{itemize}
+    \item \alert{\bf Geometrical approach}
+    \item Reconstruction error
+    \item Relationship preservation
+  \end{itemize}
+
+  \vfill
+  
+  \paragraph{Form of the map $\Phi$}
+  \begin{itemize}
+    \item \alert{\bf Linear} or non-linear ?
+    \item tradeoff between \alert{\bf interpretability} and versatility ?
+    \item tradeoff between high or \alert{\bf low} computational resource
+  \end{itemize}
+
+\end{frame}

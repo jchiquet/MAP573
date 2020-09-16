@@ -1,0 +1,101 @@
+\begin{frame}
+  \frametitle{Some references\dots}
+  \framesubtitle{\dots biased choices!}
+  
+    \begin{thebibliography}{99}
+      \setbeamertemplate{bibliography item}[book]
+
+    \bibitem[ACP]{ACP} Analyse en composantes principales, \alert{Course AgroParisTech}
+    \newblock \textcolor{black}{Carine Ruby, Stéphane Robin}
+    \newblock {\tiny\url{http://www.agroparistech.fr/IMG/pdf/AnalyseComposantesPrincipales-AgroParisTech.pdf}}
+
+    \bibitem[husson]{husson} Exploratory Multivariate Analysis by Example using R,
+    \newblock \textcolor{black}{Husson, Le, Pages, 2017.}
+    \newblock Chapman \& Hall
+
+    \bibitem[pages]{pages} Multiple Factor Analysis by Example using R,
+    \newblock \textcolor{black}{J. Pagès 2015.}
+    \newblock CRC Press
+
+    \bibitem[ELS]{ELS} An Introduction to Statistical Learning
+    \newblock \textcolor{black}{G. James, D. Witten, T. Hastie and R. Tibshirani}
+    \newblock {\tiny\url{http://faculty.marshall.usc.edu/gareth-james/ISL/}}
+
+    \end{thebibliography}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{PCA and classical Linear methods}
+  
+  \paragraph{\bf Principal component Analysis (PCA) is for continuous data}
+
+  \begin{block}{Non continuous data}
+  \begin{itemize}
+    \item Correspondence analysis (CA): contingency table \medskip
+    \item Multiple correspondence analysis (MCA): categorical data \medskip
+    \item Multiple factor analysis (MFA): multi-table, array data 
+  \end{itemize}
+  $\rightsquigarrow$ Basic \alert{adaptation that build on PCA} to deal with non-continuous data\\
+  $\rightsquigarrow$ smart encoding of non-continuous data to continuous ones
+  \end{block}
+
+  \vfill
+  
+  \begin{center}
+    \alert{\bf We will focus on PCA}, as the mother or most linear (and non-linear) methods.
+  \end{center}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{The data matrix}
+
+  The data set is a $n\times d$ matrix  $\bX = (x_{ij})$ with values in $\Rset$:
+  \begin{itemize}
+    \item each row $\bx_i$ represents an individual/observation
+    \item each col $\bx^j$ represents a variable/attribute
+  \end{itemize}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{crabs} \hlopt{%>%} \hlkwd{head}\hlstd{(}\hlnum{6}\hlstd{)} \hlopt{%>%} \hlstd{knitr}\hlopt{::}\hlkwd{kable}\hlstd{(}\hlstr{"latex"}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in crabs \%>\% head(6) \%>\% knitr::kable("{}latex"{}): could not find function "{}\%>\%"{}}}\end{kframe}
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Objectives}
+  
+\paragraph{Individual/Observations}
+  
+  \begin{itemize}
+    \item similarity between observations with respect to all the variables 
+    \item Find pattern ($\sim$ partition) between individuals
+  \end{itemize}
+
+\vfill
+
+\paragraph{Variables} 
+  
+  \begin{itemize}
+  \item linear relationships between variables 
+  \item visualization of the correlation matrix
+  \item find synthetic variables
+  \end{itemize}
+
+\vfill
+
+\paragraph{Link between the two}
+  
+  \begin{itemize}
+    \item characterization of the groups of individuals with variables
+    \item specific observations to understand links between variables
+  \end{itemize}
+
+\end{frame}
