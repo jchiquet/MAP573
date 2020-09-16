@@ -6,7 +6,7 @@ local({
 
 ## non CRAN packages
 
-library(knitr)       # R notebook export and formatting 
-install.packages("factoextra")  # Fancy plotting of FactoMineR outputs
+install.packages("factoextra")  # Fancy plotting of factor-based methods
 install.packages("FactoMineR")  # Factor analysis
-install.packages("GGally") # paris plots
+install.packages("GGally")      # pairs plots
+install.packages("kableExtra")  # fancy kable
