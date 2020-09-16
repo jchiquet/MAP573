@@ -6,13 +6,16 @@ dependencies:
 #  - jupytext
 #  - numpy
 #  - matplotlib
-#  - pandoc
+  - pandoc
   - r-aricode
   - r-base=3.6.3
+  - r-corrplot
   - r-devtools
   - r-dt
-  - r-readods
+  - r-foreign
   - r-ggally
+  - r-knitr
+  - r-readods
   - r-rcpp
   - r-rcpparmadillo
   - r-reticulate
