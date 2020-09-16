@@ -1,6 +1,6 @@
 Package: MAP573tutorials
 Type: Package
-Title: Tutorials introducting R to MAP573 students 
+Title: Tutorials introducing R to MAP573 students 
 Version: 0.1.0
 Authors@R: 
     person(given = "Julien", 

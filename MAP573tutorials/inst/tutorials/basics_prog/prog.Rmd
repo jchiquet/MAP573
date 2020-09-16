@@ -241,10 +241,6 @@ iris
 
 ## Vectors
 
-### Vectors
-
-![](https://vimeo.com/220490316)
-
 ### Create a vector
 
 In the chunk below, create a vector that contains the integers from one to ten.
