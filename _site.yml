@@ -44,7 +44,7 @@ navbar:
 #          href: .html
         - text: "Model-based clustering: Gaussian mixture model and EM"
 #          href: .html     
-    - text: "Tutorials/practicals"
+    - text: "Tutorials"
       icon: fas fa-laptop
       menu:
         - text: "R tutorials"
@@ -65,7 +65,7 @@ navbar:
         - text: "Visualization"
 #          href: .html
         - text: "Data analysis with PCA"
-#          href: .html
+          href: homework_3_PCA.html
         - text: "Report for lab #2"
 #          href: .html
         - text: "Spectral Clustering"

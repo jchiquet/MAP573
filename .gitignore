@@ -5,3 +5,7 @@
 public/
 gh-pages
 gh-pages.pub
+homework_solutions/
+*_files/
+*_cache/
+
