@@ -9,12 +9,14 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Julien Chiquet" />
 
+<meta name="date" content="2020-09-16" />
 
-<title>MAP 573 - Data Analysis and Unsupervised Learning</title>
+<title>Homework: Clustering of Network data</title>
 
 <script src="site_libs/header-attrs-2.3/header-attrs.js"></script>
-<script src="site_libs/jquery-1.12.4/jquery.min.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -24,14 +26,6 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<script src="site_libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
-<link href="site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-<script src="site_libs/datatables-binding-0.15/datatables.js"></script>
-<link href="site_libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
-<link href="site_libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
-<script src="site_libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
-<link href="site_libs/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
-<script src="site_libs/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 <script src="resources/hideOutput.js"></script>
@@ -553,57 +547,83 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">MAP 573 - Data Analysis and Unsupervised Learning</h1>
+<h1 class="title toc-ignore">Homework: Clustering of Network data</h1>
+<h4 class="author">Julien Chiquet</h4>
+<h4 class="date">2020-09-16</h4>
 
 </div>
 
 
-<div id="course-description" class="section level2">
-<h2>Course description</h2>
-<p>The objective of MAP 573 is to give students a comprehensive introduction to unsupervised analysis (downsizing and clustering) and to acquire solid and practical skills for the exploratory analysis of current data sets, using R software.</p>
-<p>The course begins with two sessions presenting the basics of programming with the R language, as well as data manipulation and the tidyverse graphical representation libraries. R’s Python interfacing capabilities are also discussed.</p>
-<p>The course then presents the classical methods of dimensionality reduction and clustering in detail (PCA, mixture models, k-means, CAH), with a brief introduction to the many approaches that generalize them (kernel approaches, embedding, etc.).</p>
-<p>Finally, the third part of the module proposes to the students a series of data sets to be studied in groups using the methods of the course and their generalizations. These projects will constitute the main part of the evaluation of this module.</p>
+<div id="preliminaries" class="section level2">
+<h2>Preliminaries</h2>
+<div id="information" class="section level3">
+<h3>Information</h3>
+<p>Homework is due Sunday 11/08 23:59 in Rmd (see assignment in Moodle).</p>
 </div>
-<div id="schedule" class="section level2">
-<h2>Schedule</h2>
-<ul>
-<li><strong>Teachers</strong> : Julien Chiquet (coordinator), Florian Bourgey, Élise Dumas</li>
-<li><strong>Lectures/tutorials are 100% online</strong> via zoom (<a href="https://moodle.polytechnique.fr/enrol/index.php?id=9404">link in moodle</a>). Amphi Gay-Lussac is available if you need</li>
-<li><strong>Practicals and projects follow-up are hybrid</strong> (face-to-face in PC + zoom) (<a href="https://moodle.polytechnique.fr/enrol/index.php?id=9404">link in moodle</a>)</li>
-</ul>
-<div id="htmlwidget-b50438732a3d39aca5aa" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b50438732a3d39aca5aa">{"x":{"filter":"none","data":[["09/22/2020, 2pm – 6pm","09/29/2020, 2pm – 6pm","10/13/2020, 2pm – 6pm","10/20/2020, 2pm – 6pm","11/03/2020, 2pm – 6pm","11/10/2020, 2pm – 6pm","11/17/2020, 2pm – 6pm","11/24/2020, 2pm – 6pm","12/01/2020, 2pm – 6pm","12/15/2020 – 9am – 17pm"],["Introduction + R basics","data manipulation and representation","Dimension Reduction part I – PCA and linear methods","Dimension Reduction part II – Non-linear methods","Clustering (I) – partitioning (HAC, k-means)","Clustering (II) – model based approaches (GMM)","Project follow-up","Project follow-up","Project follow-up","Project – talk"],["2h lecture, 2h tutorial","2h lecture, 2h practical","2h lecture, 2h tutorial","2h lecture, 2h practical","2h lecture, 2h tutorial","2h lecture, 2h practical","4h – PC","4h – PC","4h – PC","30mn/group"],["Amphi","Amphi + PC","Amphi","Amphi + PC","Amphi","Amphi + PC","PC","PC","PC","Amphi"],["online","online + hybrid","online","online + hybrid","online","online + hybrid","hybrid","hybrid","hybrid","live"],["JC","JC + FB/ED","JC","JC + FB/ED","JC","JC + FB/ED","FB/ED","FB/ED","FB/ED","JC/FB/ED"],["#1 – deadline 09/27","#2 – deadline 10/04","#3 – deadline 10/18","#4 – deadline 10/25","#5 – deadline 11/08","#6 – deadline 11/15",null,null,null,null]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>When<\/th>\n      <th>Theme<\/th>\n      <th>Timing<\/th>\n      <th>Where<\/th>\n      <th>How<\/th>\n      <th>Who<\/th>\n      <th>Homework<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":24,"dom":"t","ordering":false,"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[10,24,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div id="package-requirements" class="section level3">
+<h3>Package requirements</h3>
+<p>Check that the following packages are available on your computer:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(igraph)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(Matrix)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">library</span>(aricode)</span></code></pre></div>
+<!-- If( and only if!!) you have time, you can also play with  -->
+<!-- ```{r, message=FALSE} -->
+<!-- library(ggraph) -->
+<!-- ``` -->
 </div>
-<div id="prerequisites" class="section level2">
-<h2>Prerequisites</h2>
-<div id="installing-r" class="section level3">
-<h3>Installing R</h3>
-<p><a href="https://cran.r-project.org/">Go to the CRAN webpage</a>, select your OS and follow the instructions.</p>
 </div>
-<div id="installing-rstudio-desktop" class="section level3">
-<h3>Installing RStudio Desktop</h3>
-<p><a href="https://rstudio.com/products/rstudio/download/#download">Go to the download page</a>. Select, download and install the file corresponding to your OS.</p>
+<div id="introduction-to-igraph" class="section level2">
+<h2>Introduction to <strong>igraph</strong></h2>
+<div id="tutorials" class="section level3">
+<h3>Tutorials</h3>
+<p>Have a glance at these two tutorials</p>
+<ul>
+<li><a href="https://rstudio-pubs-static.s3.amazonaws.com/74248_3bd99f966ed94a91b36d39d8f21e3dc3.html">an <strong>igraph</strong> tutorial</a> for graphs manipulation.</li>
+<li><a href="http://kateto.net/networks-r-igraph">network analysis with <strong>igraph</strong></a> that gives an overview of the standard features of <strong>igraph</strong> to perform basic statistical analysis on network graphs.</li>
+</ul>
 </div>
-<div id="installing-r-packages" class="section level3">
-<h3>Installing R packages</h3>
-<p>Launch Rstudio and execute the following commands in the console (at least these R packages will be needed during MAP573)</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;remotes&quot;</span>) </span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;learnr&quot;</span>) </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>) </span></code></pre></div>
-<ul>
-<li><strong>On Windows</strong></li>
-</ul>
-<p>You may need Rtools (<a href="https://cran.r-project.org/bin/windows/Rtools/">dedicated page</a>) and git (<a href="https://git-scm.com/download/win">dedicated page</a>)</p>
-<ul>
-<li><strong>On MacOS</strong></li>
-</ul>
-<p>You may need XCode: <a href="https://mac.r-project.org/tools/">visit the dedicated page</a>, download the Mandatory tools and install them on your computer</p>
-<ul>
-<li><strong>On Linux</strong></li>
-</ul>
-<p>If installation of a package fails in Rstudio, just <em>READ THE MESSAGES</em>: you may be asked to install some missing system libraries with, e.g.,</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">sudo</span> apt-get install lib-missing</span></code></pre></div>
+</div>
+<div id="analysis-of-the-french-political-blogs-in-2006" class="section level2">
+<h2>Analysis of the French political Blogs in 2006</h2>
+<p>Load the data set from the missSBM package</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>missSBM<span class="op">::</span>frenchblog2007</span></code></pre></div>
+<pre><code>## IGRAPH 7b93b75 UN-- 196 1432 -- 
+## + attr: name (v/c), party (v/c)
+## + edges from 7b93b75 (vertex names):
+## [1]  jeunesverts.org/bordeaux-- bix.enix.org/                    
+## [2]  jeunesverts.org/bordeaux-- dominiquevoynet.net/blog         
+## [3]  bix.enix.org/           -- www.arnaudcaron.net/             
+## [4]  bix.enix.org/           -- dominiquevoynet.net/blog         
+## [5]  bix.enix.org/           -- blogs.lesverts.fr/               
+## [6]  bix.enix.org/           -- emilien.net/                     
+## [7]  bix.enix.org/           -- lipietz.net/blog.php3?id_breve=63
+## [8]  bix.enix.org/           -- democratiesansfrontiere.org/     
+## + ... omitted several edges</code></pre>
+<div id="graph-partitioning" class="section level3">
+<h3>Graph Partitioning</h3>
+<p>It is time to find some subtle structure in the network by performing graph clustering of the nodes. A commonly seeked structure in networks is the presence of <em>communities</em>, like clusters of friends in social networks.</p>
+<p>The two methods explored today for community detection do not assume any underlying model on the graph. The first one is based on a generalization of hierarchical clustering for graphs using the concept of <em>modularity</em> to define an appropriate dissimilarity measure between clusters. The second is the normalized spectral clustering.</p>
+<div id="hierarchical-clustering-with-modularity" class="section level4">
+<h4>Hierarchical clustering with modularity</h4>
+<p>Just like in usual hierarchical clustering, we need some cost function to choose which clusters are fused during construction of the hierarchy. Let <span class="math inline">\(\mathcal{C} = \{C_1,\dots,C_K\}\)</span> be a candidate partition and define <span class="math inline">\(f_{ij}(\mathcal{C})\)</span> to be the fraction of edges in the original network that connect vertices in <span class="math inline">\(C_i\)</span> with vertices in <span class="math inline">\(C_j\)</span>. The modularity of <span class="math inline">\(\mathcal{C}\)</span> is the value <span class="math display">\[\begin{equation*}
+  \mathrm{modularity}(\mathcal{C}) = \sum_{k=1}^K \left(f_{kk}(\mathcal{C}) - f_{kk}^\star\right)^2
+\end{equation*}\]</span> where <span class="math inline">\(f_{kk}^\star\)</span> is the expected value of <span class="math inline">\(f_{kk}\)</span> under some model of random edge assignment. The <code>igraph::fastgreedy.community</code> function performs and approximated optimization of the modularity measure.</p>
+<p>Use this function to extract a possible clustering of the nodes for the French blogosophere. Use the plot function for object with class <code>communities</code> outputing from <code>igraph::fastgreedy.community</code>. Compare this clustering with the political labels of the nodes (use for instance confusion tables with <code>table</code> or adjusted Rand-Index with <code>aricode::ARI</code>).</p>
+<p>Explore the results offered by other clustering methods for community detection (e.g. <code>igraph::cluster_edge_betweenness</code>), or the ones obtained by a simple hierarchical clustering on dissimilarity measured on the adjacency matrix.</p>
+</div>
+<div id="spectral-analysis" class="section level4">
+<h4>Spectral Analysis</h4>
+<p>Here is a reminder of the spectral clustering algorithm presented during course.</p>
+<ol style="list-style-type: decimal">
+<li>Compute the graph Laplacian (normalized of unormalized) by hands or with the <code>igraph::graph.laplacian</code> function.</li>
+<li>Compute its eigen values and represent the scree plot (eigen values by increasing order). Comment.</li>
+<li>Compute its eigen vectors and represent the pairs plot between the first 10 eigen vectors with non-null eigen values. Add colors associated to the Political labels of the nodes. Comment.</li>
+<li>Implement the Spectral clustering algorithm and apply it to the French Blogosphere for various numbers of clusters.</li>
+<li>Compare your clustering to the political labels and to the one obtained by hierarchical clustering. Comment, make plots changing node colors, etc.</li>
+<li>Redo the analysis with the absolute spectral clustering of Rohe et al (2011).</li>
+</ol>
+<p><strong>Remark:</strong> Another fancy alternative to the <strong>igraph</strong> package is the <code>Matrix::image</code> or <code>corrplot</code> methods on the adjacency matrix of a graph once rows and columns reordered according to the clustering to represent the clustered network.</p>
+</div>
 </div>
 </div>
 

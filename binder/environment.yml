@@ -12,9 +12,12 @@ dependencies:
   - r-corrplot
   - r-devtools
   - r-dt
+  - r-codetools
   - r-foreign
   - r-ggally
+  - r-igraph
   - r-knitr
+  - r-matrix
   - r-readods
   - r-rcpp
   - r-rcpparmadillo
