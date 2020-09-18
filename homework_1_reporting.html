@@ -13,7 +13,7 @@
 
 <meta name="date" content="2020-09-18" />
 
-<title>Homework: Clustering of Network data</title>
+<title>Homework: R basics with swirl, first analyses and Rmarkdown reporting</title>
 
 <script src="site_libs/header-attrs-2.3/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -549,7 +549,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Homework: Clustering of Network data</h1>
+<h1 class="title toc-ignore">Homework: R basics with swirl, first analyses and Rmarkdown reporting</h1>
 <h4 class="author">Julien Chiquet</h4>
 <h4 class="date">2020-09-18</h4>
 
@@ -558,74 +558,51 @@ div.tocify {
 
 <div id="preliminaries" class="section level2">
 <h2>Preliminaries</h2>
-<div id="information" class="section level3">
-<h3>Information</h3>
-<p>Homework is due Sunday 11/08 23:59 in Rmd (see assignment in Moodle).</p>
+<p>Data sets are available at <a href="https://github.com/jchiquet/MAP573/tree/master/data"></a>. Homework is due Sunday 09/27 23:59 in Rmd (see assignment in Moodle).</p>
 </div>
-<div id="package-requirements" class="section level3">
-<h3>Package requirements</h3>
-<p>Check that the following packages are available on your computer:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(igraph)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(Matrix)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">library</span>(aricode)</span></code></pre></div>
-<!-- If( and only if!!) you have time, you can also play with  -->
-<!-- ```{r, message=FALSE} -->
-<!-- library(ggraph) -->
-<!-- ``` -->
-</div>
-</div>
-<div id="introduction-to-igraph" class="section level2">
-<h2>Introduction to <strong>igraph</strong></h2>
-<div id="tutorials" class="section level3">
-<h3>Tutorials</h3>
-<p>Have a glance at these two tutorials</p>
-<ul>
-<li><a href="https://rstudio-pubs-static.s3.amazonaws.com/74248_3bd99f966ed94a91b36d39d8f21e3dc3.html">an <strong>igraph</strong> tutorial</a> for graphs manipulation.</li>
-<li><a href="http://kateto.net/networks-r-igraph">network analysis with <strong>igraph</strong></a> that gives an overview of the standard features of <strong>igraph</strong> to perform basic statistical analysis on network graphs.</li>
-</ul>
+<div id="part-1-swirl" class="section level2">
+<h2>Part 1: Swirl</h2>
+<p>The first part of this assignment is to use the <a href="https://github.com/swirldev/R_Programming_E">swirl</a> package to continue your basic R training.</p>
+<p>Install <strong>swirl</strong> as follows:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;swirl&quot;</span>)</span></code></pre></div>
+<p>Install the formation as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="kw">library</span>(swirl)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="kw">install_course_github</span>(<span class="st">&quot;swirldev&quot;</span>, <span class="st">&quot;R_Programming_E&quot;</span>)</span></code></pre></div>
+<p>To launch the formation, simply run ion the <code>R</code> console (or Rstudio) and follow the instructions</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">swirl</span>()</span></code></pre></div>
+<p>Though less appealing than the <strong>learnR tutorials</strong>, swirl proved to be efficient to quickly learn R basics.</p>
+<div id="questionsassignment" class="section level3">
+<h3>Questions/assignment</h3>
+<p>Go through the first 9 or 10 first items of the “R Programming E” formation. I expect you to finish at least parts 2, 4, 6, 7, 9.</p>
 </div>
 </div>
-<div id="analysis-of-the-french-political-blogs-in-2006" class="section level2">
-<h2>Analysis of the French political Blogs in 2006</h2>
-<p>Load the data set from the missSBM package</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>missSBM<span class="op">::</span>frenchblog2007</span></code></pre></div>
-<pre><code>## IGRAPH 7b93b75 UN-- 196 1432 -- 
-## + attr: name (v/c), party (v/c)
-## + edges from 7b93b75 (vertex names):
-## [1]  jeunesverts.org/bordeaux-- bix.enix.org/                    
-## [2]  jeunesverts.org/bordeaux-- dominiquevoynet.net/blog         
-## [3]  bix.enix.org/           -- www.arnaudcaron.net/             
-## [4]  bix.enix.org/           -- dominiquevoynet.net/blog         
-## [5]  bix.enix.org/           -- blogs.lesverts.fr/               
-## [6]  bix.enix.org/           -- emilien.net/                     
-## [7]  bix.enix.org/           -- lipietz.net/blog.php3?id_breve=63
-## [8]  bix.enix.org/           -- democratiesansfrontiere.org/     
-## + ... omitted several edges</code></pre>
-<div id="graph-partitioning" class="section level3">
-<h3>Graph Partitioning</h3>
-<p>It is time to find some subtle structure in the network by performing graph clustering of the nodes. A commonly seeked structure in networks is the presence of <em>communities</em>, like clusters of friends in social networks.</p>
-<p>The two methods explored today for community detection do not assume any underlying model on the graph. The first one is based on a generalization of hierarchical clustering for graphs using the concept of <em>modularity</em> to define an appropriate dissimilarity measure between clusters. The second is the normalized spectral clustering.</p>
-<div id="hierarchical-clustering-with-modularity" class="section level4">
-<h4>Hierarchical clustering with modularity</h4>
-<p>Just like in usual hierarchical clustering, we need some cost function to choose which clusters are fused during construction of the hierarchy. Let <span class="math inline">\(\mathcal{C} = \{C_1,\dots,C_K\}\)</span> be a candidate partition and define <span class="math inline">\(f_{ij}(\mathcal{C})\)</span> to be the fraction of edges in the original network that connect vertices in <span class="math inline">\(C_i\)</span> with vertices in <span class="math inline">\(C_j\)</span>. The modularity of <span class="math inline">\(\mathcal{C}\)</span> is the value <span class="math display">\[\begin{equation*}
-  \mathrm{modularity}(\mathcal{C}) = \sum_{k=1}^K \left(f_{kk}(\mathcal{C}) - f_{kk}^\star\right)^2
-\end{equation*}\]</span> where <span class="math inline">\(f_{kk}^\star\)</span> is the expected value of <span class="math inline">\(f_{kk}\)</span> under some model of random edge assignment. The <code>igraph::fastgreedy.community</code> function performs and approximated optimization of the modularity measure.</p>
-<p>Use this function to extract a possible clustering of the nodes for the French blogosophere. Use the plot function for object with class <code>communities</code> outputing from <code>igraph::fastgreedy.community</code>. Compare this clustering with the political labels of the nodes (use for instance confusion tables with <code>table</code> or adjusted Rand-Index with <code>aricode::ARI</code>).</p>
-<p>Explore the results offered by other clustering methods for community detection (e.g. <code>igraph::cluster_edge_betweenness</code>), or the ones obtained by a simple hierarchical clustering on dissimilarity measured on the adjacency matrix.</p>
+<div id="part-2-reporting-with-rmarkdown" class="section level2">
+<h2>Part 2: Reporting with Rmarkdown</h2>
+<p>Report can be written in English or in French.</p>
+<div id="changing-the-way-it-looksrmarkdown-configuration" class="section level3">
+<h3>Changing the way it looks/Rmarkdown configuration</h3>
+<p>Configure the YAML metadata of your Rmarkdown report so that - you provide relevant title, author name and date - you change the default theme for HTML output - you let the possibility to output both PDF and HTML output - A table floating table of content is available</p>
 </div>
-<div id="spectral-analysis" class="section level4">
-<h4>Spectral Analysis</h4>
-<p>Here is a reminder of the spectral clustering algorithm presented during course.</p>
+<div id="about-swirl" class="section level3">
+<h3>About Swirl</h3>
+<p>Write a few lines about what you have learned in Swirl (one small paragraph for each item 2, 4, 6, 7, 9)</p>
+</div>
+<div id="basic-exploratory-data-analysis" class="section level3">
+<h3>Basic exploratory data analysis</h3>
+<p>The ‘fertility.csv’ data set contains the female fertility in Europe in 2012 for 39 European countries splitted by age groups 15-19, 20-24, 25-29, 30-34, 35-39, 40 and over. The fertility is given as the mean number of children born per 1000 women.</p>
 <ol style="list-style-type: decimal">
-<li>Compute the graph Laplacian (normalized of unormalized) by hands or with the <code>igraph::graph.laplacian</code> function.</li>
-<li>Compute its eigen values and represent the scree plot (eigen values by increasing order). Comment.</li>
-<li>Compute its eigen vectors and represent the pairs plot between the first 10 eigen vectors with non-null eigen values. Add colors associated to the Political labels of the nodes. Comment.</li>
-<li>Implement the Spectral clustering algorithm and apply it to the French Blogosphere for various numbers of clusters.</li>
-<li>Compare your clustering to the political labels and to the one obtained by hierarchical clustering. Comment, make plots changing node colors, etc.</li>
-<li>Redo the analysis with the absolute spectral clustering of Rohe et al (2011).</li>
+<li><p>Download and read the data set from the data directory of MAP573’s github repository (use, e.g. <code>read.csv</code>). Store it into a data frame called fertility.</p></li>
+<li><p>Display the first 10 rows in the R markdown report.</p></li>
+<li><p>Make a summary of the data and display it</p></li>
+<li><p>Find the country and age group with the highest, smallest value in each Region</p></li>
+<li><p>Display boxplots of the fertility for each age group</p></li>
+<li><p>Display boxplots for each ‘Region’ for the youngest age group</p></li>
+<li><p>Display boxplots + points for each age group/region (use <code>fill</code> and <code>x</code> argument of <code>geom_boxplot</code> in <code>ggplot</code> )</p></li>
+<li><p>Extract all the data rows with Country starting by “A”</p></li>
+<li><p>Extract the fertility values of the Region from North Europe make an histogram</p></li>
+<li><p>Extract the fertility values of the Region from East Europe and plot a kernel density estimate (function <code>density</code>)</p></li>
+<li><p>Write the mathematical expression for the kernel density estimator as given in <a href="https://en.wikipedia.org/wiki/Kernel_density_estimation">https://en.wikipedia.org/wiki/Kernel_density_estimation</a></p></li>
 </ol>
-<p><strong>Remark:</strong> Another fancy alternative to the <strong>igraph</strong> package is the <code>Matrix::image</code> or <code>corrplot</code> methods on the adjacency matrix of a graph once rows and columns reordered according to the clustering to represent the clustered network.</p>
-</div>
 </div>
 </div>
 
