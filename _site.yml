@@ -31,10 +31,9 @@ navbar:
       icon: fas fa-chalkboard-teacher
       menu:
         - text: "Introduction to R"
-        - text: "Base R programming"
-          href: https://github.com/jchiquet/CourseAdvancedR/raw/master/201806_Dauphine/R_base_programming.pdf
+          href: https://github.com/jchiquet/CourseAdvancedR/raw/master/2020_MAP573/R_intro.pdf
         - text: "Manipulation and Representation"
-          href: https://github.com/jchiquet/CourseAdvancedR/raw/master/201806_Dauphine/R_intro_tidyverse.pdf
+#          href: .html
         - text: "------------------"
         - text: "Dimensionality Reduction"
         - text: "Linear methods: PCA and variants"
@@ -68,11 +67,11 @@ navbar:
         - text: "Visualization"
 #          href: .html
         - text: "Data analysis with PCA"
-          href: homework_3_PCA.html
+#          href: homework_3_PCA.html
         - text: "Report for lab #2"
 #          href: .html
         - text: "Spectral Clustering for graphs"
-          href: homework_4_GraphPartitioning.html
+#          href: homework_4_GraphPartitioning.html
         - text: "Handling Missing Values"
 #          href: .html
     - text: "Projects"
