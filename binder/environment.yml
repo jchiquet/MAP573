@@ -17,6 +17,7 @@ dependencies:
   - r-ggally
   - r-igraph
   - r-knitr
+  - r-learnr
   - r-matrix
   - r-readods
   - r-rcpp
