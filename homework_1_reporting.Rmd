@@ -1,0 +1,88 @@
+---
+title: 'Homework: R basics with swirl, first analyses and Rmarkdown reporting'
+author: 'Julien Chiquet'
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  cache = TRUE,
+  echo  = TRUE,
+  rows.print = 5)
+```
+
+## Preliminaries
+
+Data sets are available at [](https://github.com/jchiquet/MAP573/tree/master/data). Homework is due Sunday 09/27 23:59 in Rmd (see assignment in Moodle).
+
+## Part 1: Swirl
+
+The first part of this assignment is to use the [swirl](https://github.com/swirldev/R_Programming_E) package to continue your basic R training. 
+
+Install **swirl** as follows:
+
+```{r install swirl, eval = FALSE}
+install.packages("swirl")
+```
+
+Install the formation as follows:
+
+```{r swirl formation Programming, eval = FALSE}
+library(swirl)
+install_course_github("swirldev", "R_Programming_E")
+```
+
+To launch the formation, simply run ion the `R` console (or Rstudio) and follow the instructions
+
+```{r swwirl run, eval = FALSE}
+swirl()
+```
+
+Though less appealing than the **learnR tutorials**, swirl proved to be efficient to quickly learn R basics.
+
+### Questions/assignment
+
+Go through the first 9 or 10 first items of the "R Programming E" formation. I expect you to finish at least parts 2, 4, 6, 7, 9.
+
+## Part 2: Reporting with Rmarkdown
+
+Report can be written in English or in French.
+
+### Changing the way it looks/Rmarkdown configuration 
+
+Configure the YAML metadata of your Rmarkdown report so that
+- you provide relevant title, author name and date
+- you change the default theme for HTML output
+- you let the possibility to output both PDF and HTML output
+- A table floating table of content is available
+
+### About Swirl
+
+Write a few lines about what you have learned in Swirl (one small paragraph for each item 2, 4, 6, 7, 9)
+
+### Basic exploratory data analysis
+
+The 'fertility.csv' data set contains the female fertility in Europe in 2012 for 39 European countries splitted by age groups  15-19, 20-24, 25-29, 30-34, 35-39, 40 and over. The fertility is given as the mean number of children born per 1000 women.
+
+1. Download and read the data set from the data directory of MAP573's github repository (use, e.g. `read.csv`). Store it into a data frame called fertility.
+
+2. Display the first 10 rows in the R markdown report.
+
+3. Make a summary of the data and display it
+
+4. Find the country and age group with the highest, smallest value in each Region
+
+4. Display boxplots of the fertility for each age group
+
+5. Display boxplots for each 'Region' for the youngest age group
+
+6. Display boxplots + points for each age group/region (use `fill` and `x` argument of `geom_boxplot` in `ggplot` )
+
+7. Extract all the data rows with Country starting by "A"
+
+8. Extract the fertility values of the Region from North Europe make an histogram
+
+8. Extract the fertility values of the Region from East Europe and plot a kernel density estimate (function `density`)
+
+10. Write the mathematical expression for the kernel density estimator as given in [https://en.wikipedia.org/wiki/Kernel_density_estimation](https://en.wikipedia.org/wiki/Kernel_density_estimation)
+
