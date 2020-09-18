@@ -11,7 +11,7 @@
 
 
 
-<title>Installation instructions</title>
+<title>Setup instructions</title>
 
 <script src="site_libs/header-attrs-2.3/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -464,13 +464,10 @@ div.tocify {
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li class="dropdown-header">Introduction to R</li>
     <li>
-      <a href="https://github.com/jchiquet/CourseAdvancedR/raw/master/201806_Dauphine/R_base_programming.pdf">Base R programming</a>
+      <a href="https://github.com/jchiquet/CourseAdvancedR/raw/master/2020_MAP573/R_intro.pdf">Introduction to R</a>
     </li>
-    <li>
-      <a href="https://github.com/jchiquet/CourseAdvancedR/raw/master/201806_Dauphine/R_intro_tidyverse.pdf">Manipulation and Representation</a>
-    </li>
+    <li class="dropdown-header">Manipulation and Representation</li>
     <li class="divider"></li>
     <li class="dropdown-header">Dimensionality Reduction</li>
     <li class="dropdown-header">Linear methods: PCA and variants</li>
@@ -510,15 +507,13 @@ div.tocify {
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li class="dropdown-header">Exploratory analysis</li>
+    <li>
+      <a href=".html">Swirl + reporting</a>
+    </li>
     <li class="dropdown-header">Visualization</li>
-    <li>
-      <a href="homework_3_PCA.html">Data analysis with PCA</a>
-    </li>
+    <li class="dropdown-header">Data analysis with PCA</li>
     <li class="dropdown-header">Report for lab #2</li>
-    <li>
-      <a href="homework_4_GraphPartitioning.html">Spectral Clustering for graphs</a>
-    </li>
+    <li class="dropdown-header">Spectral Clustering for graphs</li>
     <li class="dropdown-header">Handling Missing Values</li>
   </ul>
 </li>
@@ -552,13 +547,11 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Installation instructions</h1>
+<h1 class="title toc-ignore">Setup instructions</h1>
 
 </div>
 
 
-<div id="setup-instructions" class="section level2 allowframebreaks">
-<h2 class="allowframebreaks">Setup instructions</h2>
 <p><strong>R</strong> and <strong>RStudio</strong> are separate downloads and installations</p>
 <ul>
 <li><p>R is the underlying statistical computing environment</p></li>
@@ -577,7 +570,8 @@ div.tocify {
 <p>Launch Rstudio and execute the following commands in the console (at least these R packages will be needed during MAP573)</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;remotes&quot;</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;learnr&quot;</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)</span></code></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;babynames&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>On Windows</strong></li>
 </ul>
@@ -591,7 +585,6 @@ div.tocify {
 </ul>
 <p>If installation of a package fails in Rstudio, just <em>READ THE MESSAGES</em>: you may be asked to install some missing system libraries with, e.g.,</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">sudo</span> apt-get install lib-missing</span></code></pre></div>
-</div>
 </div>
 
 
