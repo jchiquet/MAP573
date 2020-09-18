@@ -24,6 +24,9 @@ navbar:
       icon: fa-server
       href: https://moodle.polytechnique.fr/enrol/index.php?id=9404
   right:
+    - text: "Setup"
+      href: instructions.html
+      icon: fas fa-gear
     - text: "Lectures/Slides"
       icon: fas fa-chalkboard-teacher
       menu:
@@ -43,7 +46,7 @@ navbar:
         - text: "Partitioning: HAC, k-means, Spectral clustering"
 #          href: .html
         - text: "Model-based clustering: Gaussian mixture model and EM"
-#          href: .html     
+#          href: .html
     - text: "Tutorials"
       icon: fas fa-laptop
       menu:
@@ -73,7 +76,7 @@ navbar:
         - text: "Handling Missing Values"
 #          href: .html
     - text: "Projects"
-      icon: fas fa-gear
+      icon: fas fa-chart-bar
       menu:
         - text: "Subject 1:"
 #          href: .html

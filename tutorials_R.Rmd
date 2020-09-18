@@ -6,9 +6,13 @@ During the first two weeks of MAP573, students are introduced to the basics of t
 
 To do so, the lectures are accompanied by interactive tutorials which are shamelessly taken from [rstudio-education](https://rstudio.cloud/learn/primers).
 
-These tutorials are either available online (via [a shiny server](http://shiny.cremeriefamily.info)) or as an R package so that you can install them on you computer and follow the tutorials without access to an internet connection. Prefer this last solution.
+## Installing the tutorials
 
-If you experience some difficulties for installing R and some dependencies, you can also use a remote R session to complete the tutorial by launching binder:  [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jchiquet/MAP573/master?urlpath=rstudio). You only need a web browser. The main drawbacks are that (i) you lose your progress each time you launch a new session and (ii) the binder image will take some time to launch (usually a few minutes).
+These tutorials are available as an R package called 'MAP573' (see below) so that you can install them on you computer and follow the tutorials without access to an internet connection. Prefer this solution.
+
+However, if you experience some difficulties for installing R and some dependencies, the tutorials are also available online via a [a shiny server](http://shiny.cremeriefamily.info)) (see the links at the bottom of that page).
+
+Alternatively, you can use a remote R session to complete the tutorials with binder: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jchiquet/MAP573/master?urlpath=rstudio). You only need a web browser. The main drawbacks are that (i) you lose your progress each time you launch a new session and (ii) the binder image will take some time to launch (approximately 15 minutes).
 
 ## R package MAP573tutorials
 
@@ -25,7 +29,8 @@ remotes::install_github("jchiquet/MAP573", subdir = 'MAP573tutorials')
 ```
 
 If this fails, check that the following dependencies are correctly installed (it should be done automatically):
-```{r install remotes, eval = FALSE}
+```{r install imports, eval = FALSE}
+install.packages("learn")
 install.packages("tidyverse")
 install.packages("babynames")
 ```
