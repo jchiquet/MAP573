@@ -21,7 +21,7 @@ jobs:
           activate-environment: MAP573
       - shell: bash -l {0}
         run: |
-          conda run -n MAP573 Rscript binder/additional_R_packages.R
+          conda run -n MAP573 Rscript binder/install.R
           conda run -n MAP573 Rscript -e 'rmarkdown::render_site(".")'
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3
