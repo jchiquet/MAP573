@@ -8,6 +8,8 @@ To do so, the lectures are accompanied by interactive tutorials which are shamel
 
 These tutorials are either available online (via [a shiny server](http://shiny.cremeriefamily.info)) or as an R package so that you can install them on you computer and follow the tutorials without access to an internet connection. Prefer this last solution.
 
+If you experience some difficulties for installing R and some dependencies, you can also use a remote R session to complete the tutorial by launching binder:  [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jchiquet/MAP573/master?urlpath=rstudio). You only need a web browser. The main drawbacks are that (i) you lose your progress each time you launch a new session and (ii) the binder image will take some time to launch (usually a few minutes).
+
 ## R package MAP573tutorials
 
 First, you need the **remotes** package to install `R` packages from other sources than the CRAN (install just once!)
@@ -16,10 +18,16 @@ First, you need the **remotes** package to install `R` packages from other sourc
 install.packages("remotes")
 ```
 
-Then, you can instakl the `R` packages that contains the `R` tutorials of MAP573:
+Then, you can install the `R` packages that contains the `R` tutorials of MAP573:
 
 ```{r install tuto package, eval = FALSE}
 remotes::install_github("jchiquet/MAP573", subdir = 'MAP573tutorials')
+```
+
+If this fails, check that the following dependencies are correctly installed (it should be done automatically):
+```{r install remotes, eval = FALSE}
+install.packages("tidyverse")
+install.packages("babynames")
 ```
 
 Once this package is installed, you can access the tutorials as follows (only one at a time):

@@ -17,7 +17,8 @@ LazyData: true
 Imports: 
     learnr,
     tidyverse,
-    babynames,
+    babynames
+Suggests: 
     maps,
     mapproj,
     gapminder,
