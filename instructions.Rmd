@@ -1,0 +1,49 @@
+---
+title: "Installation instructions"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup instructions {.allowframebreaks}
+
+**R** and **RStudio** are separate downloads and installations
+
+- R is the underlying statistical computing environment
+
+- RStudio is a graphical integrated development environment (IDE)
+
+### Installing R
+
+[Go to the CRAN webpage](https://cran.r-project.org/), select your OS and follow the instructions.
+
+### Installing RStudio Desktop
+
+[Go to the download page](https://rstudio.com/products/rstudio/download/#download). Select, download and install the file corresponding to your OS.
+
+### Installing R packages
+
+Launch Rstudio and execute the following commands in the console (at least these R packages will be needed during MAP573)
+
+```{r, eval = FALSE}
+install.packages("remotes")
+install.packages("learnr")
+install.packages("tidyverse")
+```
+
+- **On Windows**
+
+You may need Rtools ([dedicated page](https://cran.r-project.org/bin/windows/Rtools/)) and git ([dedicated page](https://git-scm.com/download/win))
+
+- **On MacOS**
+
+You may need XCode: [visit the dedicated page](https://mac.r-project.org/tools/), download the Mandatory tools and install them on your computer
+
+- **On Linux**
+
+If installation of a package fails in Rstudio, just _READ THE MESSAGES_: you may be asked to install some missing system libraries with, e.g.,
+
+```{bash, eval = FALSE}
+sudo apt-get install lib-missing
+```
