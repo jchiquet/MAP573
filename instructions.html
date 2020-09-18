@@ -11,7 +11,7 @@
 
 
 
-<title>Introduction to R: tutorials</title>
+<title>Installation instructions</title>
 
 <script src="site_libs/header-attrs-2.3/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -552,80 +552,46 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Introduction to R: tutorials</h1>
+<h1 class="title toc-ignore">Installation instructions</h1>
 
 </div>
 
 
-<p>During the first two weeks of MAP573, students are introduced to the basics of the R language: R-base programming, data manipulation, visualization.</p>
-<p>To do so, the lectures are accompanied by interactive tutorials which are shamelessly taken from <a href="https://rstudio.cloud/learn/primers">rstudio-education</a>.</p>
-<div id="installing-the-tutorials" class="section level2">
-<h2>Installing the tutorials</h2>
-<p>These tutorials are available as an R package called ‘MAP573’ (see below) so that you can install them on you computer and follow the tutorials without access to an internet connection. Prefer this solution.</p>
-<p>However, if you experience some difficulties for installing R and some dependencies, the tutorials are also available online via a <a href="http://shiny.cremeriefamily.info">a shiny server</a>) (see the links at the bottom of that page).</p>
-<p>Alternatively, you can use a remote R session to complete the tutorials with binder: <a href="https://mybinder.org/v2/gh/jchiquet/MAP573/master?urlpath=rstudio"><img src="https://mybinder.org/badge_logo.svg" alt="Binder" /></a>. You only need a web browser. The main drawbacks are that (i) you lose your progress each time you launch a new session and (ii) the binder image will take some time to launch (approximately 15 minutes).</p>
-</div>
-<div id="r-package-map573tutorials" class="section level2">
-<h2>R package MAP573tutorials</h2>
-<p>First, you need the <strong>remotes</strong> package to install <code>R</code> packages from other sources than the CRAN (install just once!)</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;remotes&quot;</span>)</span></code></pre></div>
-<p>Then, you can install the <code>R</code> packages that contains the <code>R</code> tutorials of MAP573:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>remotes<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;jchiquet/MAP573&quot;</span>, <span class="dt">subdir =</span> <span class="st">&#39;MAP573tutorials&#39;</span>)</span></code></pre></div>
-<p>If this fails, check that the following dependencies are correctly installed (it should be done automatically):</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;learn&quot;</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;babynames&quot;</span>)</span></code></pre></div>
-<p>Once this package is installed, you can access the tutorials as follows (only one at a time):</p>
-<div id="r-basics" class="section level3">
-<h3>R Basics</h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;basics_prog&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;basics_vis&quot;</span> , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span></code></pre></div>
-</div>
-<div id="data-manipulation" class="section level3">
-<h3>Data manipulation</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;transform_structure&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;transform_extract&quot;</span>  , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;transform_summarise&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span></code></pre></div>
-</div>
-<div id="data-visualization" class="section level3">
-<h3>Data visualization</h3>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_01-exploratory-data-analysis&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_02-bar-charts&quot;</span>               , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_03-histograms&quot;</span>               , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_04-boxplots&quot;</span>                 , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_05-scatterplots&quot;</span>             , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_06-line-graphs&quot;</span>              , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_07-overplotting&quot;</span>             , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_08-customize&quot;</span>                , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span></code></pre></div>
-</div>
-</div>
-<div id="shiny-server-limited-access" class="section level2">
-<h2>Shiny server (limited access)</h2>
-<p>This runs on my personal server, so prefer the package solution.</p>
-<ol style="list-style-type: decimal">
-<li><strong>R Basics</strong>
+<div id="setup-instructions" class="section level2 allowframebreaks">
+<h2 class="allowframebreaks">Setup instructions</h2>
+<p><strong>R</strong> and <strong>RStudio</strong> are separate downloads and installations</p>
 <ul>
-<li><a href="http://cremeriefamily.info:8080/MAP573/basics_prog">Base R fundamentals</a></li>
-<li><a href="http://cremeriefamily.info:8080/MAP573/basics_vis">Visualization fundamentals</a></li>
-</ul></li>
-<li><strong>Data manipulation</strong>
+<li><p>R is the underlying statistical computing environment</p></li>
+<li><p>RStudio is a graphical integrated development environment (IDE)</p></li>
+</ul>
+<div id="installing-r" class="section level3">
+<h3>Installing R</h3>
+<p><a href="https://cran.r-project.org/">Go to the CRAN webpage</a>, select your OS and follow the instructions.</p>
+</div>
+<div id="installing-rstudio-desktop" class="section level3">
+<h3>Installing RStudio Desktop</h3>
+<p><a href="https://rstudio.com/products/rstudio/download/#download">Go to the download page</a>. Select, download and install the file corresponding to your OS.</p>
+</div>
+<div id="installing-r-packages" class="section level3">
+<h3>Installing R packages</h3>
+<p>Launch Rstudio and execute the following commands in the console (at least these R packages will be needed during MAP573)</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;remotes&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;learnr&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)</span></code></pre></div>
 <ul>
-<li><a href="http://cremeriefamily.info:8080/MAP573/transform_structure">The ‘tibble’ Structure</a></li>
-<li><a href="http://cremeriefamily.info:8080/MAP573/transform_extract">Extract from data</a></li>
-<li><a href="http://cremeriefamily.info:8080/MAP573/transform_summarise">Summarise data</a></li>
-</ul></li>
-<li><strong>Vizualisation</strong>
+<li><strong>On Windows</strong></li>
+</ul>
+<p>You may need Rtools (<a href="https://cran.r-project.org/bin/windows/Rtools/">dedicated page</a>) and git (<a href="https://git-scm.com/download/win">dedicated page</a>)</p>
 <ul>
-<li><a href="http://cremeriefamily.info:8080/MAP573/vis_01-exploratory-data-analysis">Exploratory analysis</a></li>
-<li><a href="http://cremeriefamily.info:8080/MAP573/vis_02-bar-charts">Bar charts</a></li>
-<li><a href="http://cremeriefamily.info:8080/MAP573/vis_03-histograms">Histograms</a></li>
-<li><a href="http://cremeriefamily.info:8080/MAP573/vis_04-boxplots">Boxplots</a></li>
-<li><a href="http://cremeriefamily.info:8080/MAP573/vis_05-scatterplots">Scatterplots</a></li>
-<li><a href="http://cremeriefamily.info:8080/MAP573/vis_06-line-graphs">Line graphs</a></li>
-<li><a href="http://cremeriefamily.info:8080/MAP573/vis_07-overplotting">Overplotting</a></li>
-<li><a href="http://cremeriefamily.info:8080/MAP573/vis_08-customize">Customize</a></li>
-</ul></li>
-</ol>
+<li><strong>On MacOS</strong></li>
+</ul>
+<p>You may need XCode: <a href="https://mac.r-project.org/tools/">visit the dedicated page</a>, download the Mandatory tools and install them on your computer</p>
+<ul>
+<li><strong>On Linux</strong></li>
+</ul>
+<p>If installation of a package fails in Rstudio, just <em>READ THE MESSAGES</em>: you may be asked to install some missing system libraries with, e.g.,</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">sudo</span> apt-get install lib-missing</span></code></pre></div>
+</div>
 </div>
 
 
