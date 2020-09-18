@@ -62,8 +62,8 @@ navbar:
     - text: "Homework"
       icon: fas fa-keyboard
       menu:
-        - text: "Exploratory analysis"
-#          href: .html
+        - text: "Swirl + reporting"
+          href: .html
         - text: "Visualization"
 #          href: .html
         - text: "Data analysis with PCA"

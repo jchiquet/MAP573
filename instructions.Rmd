@@ -1,12 +1,10 @@
 ---
-title: "Installation instructions"
+title: "Setup instructions"
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-## Setup instructions {.allowframebreaks}
 
 **R** and **RStudio** are separate downloads and installations
 
@@ -30,6 +28,7 @@ Launch Rstudio and execute the following commands in the console (at least these
 install.packages("remotes")
 install.packages("learnr")
 install.packages("tidyverse")
+install.packages("babynames")
 ```
 
 - **On Windows**
