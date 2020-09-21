@@ -30,6 +30,9 @@ navbar:
     - text: "Lectures/Slides"
       icon: fas fa-chalkboard-teacher
       menu:
+        - text: "General introduction"
+          href: resources/introMAP573.pdf
+        - text: "------------------"
         - text: "Introduction to R"
           href: https://github.com/jchiquet/CourseAdvancedR/raw/master/2020_MAP573/R_intro.pdf
         - text: "Manipulation and Representation"
