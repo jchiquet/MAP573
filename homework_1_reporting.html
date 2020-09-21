@@ -9,11 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Julien Chiquet" />
+<meta name="author" content="MAP573" />
 
-<meta name="date" content="2020-09-18" />
+<meta name="date" content="2020-09-22" />
 
-<title>Homework: R basics with swirl, first analyses and Rmarkdown reporting</title>
+<title>Homework #1</title>
 
 <script src="site_libs/header-attrs-2.3/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -549,61 +549,85 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Homework: R basics with swirl, first analyses and Rmarkdown reporting</h1>
-<h4 class="author">Julien Chiquet</h4>
-<h4 class="date">2020-09-18</h4>
+<h1 class="title toc-ignore">Homework #1</h1>
+<h3 class="subtitle">Swirl, Rmarkdown reporting and first analyses</h3>
+<h4 class="author">MAP573</h4>
+<h4 class="date">09/22/2020</h4>
 
 </div>
 
 
 <div id="preliminaries" class="section level2">
 <h2>Preliminaries</h2>
-<p>Data sets are available at <a href="https://github.com/jchiquet/MAP573/tree/master/data"></a>. Homework is due Sunday 09/27 23:59 in Rmd (see assignment in Moodle).</p>
+<div id="general-instructions" class="section level3">
+<h3>General instructions</h3>
+<p>Report must be written by means of <a href="https://rmarkdown.rstudio.com/">Rmarkdown</a> and returned as an <code>Rmd</code> file. Homework is due Sunday 09/27 23:59 (see assignment in Moodle).</p>
+<p>Please double check the configuration of the YAML metadata of your Rmarkdown report so that you provide relevant title, author name and date.</p>
+<p>Report can be written in English or in French.</p>
+</div>
+<div id="data-sets-parts-2-and-3" class="section level3">
+<h3>Data sets (parts 2 and 3)</h3>
+<p>Data sets are available at <a href="https://github.com/jchiquet/MAP573/tree/master/data">https://github.com/jchiquet/MAP573/tree/master/data</a>.</p>
+</div>
 </div>
 <div id="part-1-swirl" class="section level2">
 <h2>Part 1: Swirl</h2>
 <p>The first part of this assignment is to use the <a href="https://github.com/swirldev/R_Programming_E">swirl</a> package to continue your basic R training.</p>
 <p>Install <strong>swirl</strong> as follows:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;swirl&quot;</span>)</span></code></pre></div>
-<p>Install the formation as follows:</p>
+<p>Download the basic <code>R programming</code> formation as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="kw">library</span>(swirl)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="kw">install_course_github</span>(<span class="st">&quot;swirldev&quot;</span>, <span class="st">&quot;R_Programming_E&quot;</span>)</span></code></pre></div>
-<p>To launch the formation, simply run ion the <code>R</code> console (or Rstudio) and follow the instructions</p>
+<p>To launch this formation, simply run <code>swirl()</code> in the <code>R</code> console (or Rstudio) and follow the instructions</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">swirl</span>()</span></code></pre></div>
-<p>Though less appealing than the <strong>learnR tutorials</strong>, swirl proved to be efficient to quickly learn R basics.</p>
+<p>Though less visually appealing than the <strong>learnR</strong> tutorials, <strong>swirl</strong> proved to be efficient to quickly learn R basics.</p>
 <div id="questionsassignment" class="section level3">
 <h3>Questions/assignment</h3>
-<p>Go through the first 9 or 10 first items of the “R Programming E” formation. I expect you to finish at least parts 2, 4, 6, 7, 9.</p>
-</div>
-</div>
-<div id="part-2-reporting-with-rmarkdown" class="section level2">
-<h2>Part 2: Reporting with Rmarkdown</h2>
-<p>Report can be written in English or in French.</p>
-<div id="changing-the-way-it-looksrmarkdown-configuration" class="section level3">
-<h3>Changing the way it looks/Rmarkdown configuration</h3>
-<p>Configure the YAML metadata of your Rmarkdown report so that - you provide relevant title, author name and date - you change the default theme for HTML output - you let the possibility to output both PDF and HTML output - A table floating table of content is available</p>
-</div>
-<div id="about-swirl" class="section level3">
-<h3>About Swirl</h3>
+<p>Go through the first 9 items of the “R Programming E” formation. I expect you to finish at least parts 2, 4, 6, 7, 9.</p>
 <p>Write a few lines about what you have learned in Swirl (one small paragraph for each item 2, 4, 6, 7, 9)</p>
 </div>
-<div id="basic-exploratory-data-analysis" class="section level3">
-<h3>Basic exploratory data analysis</h3>
-<p>The ‘fertility.csv’ data set contains the female fertility in Europe in 2012 for 39 European countries splitted by age groups 15-19, 20-24, 25-29, 30-34, 35-39, 40 and over. The fertility is given as the mean number of children born per 1000 women.</p>
+</div>
+<div id="part-2-basic-exploratory-data-analysis" class="section level2">
+<h2>Part 2: Basic exploratory data analysis</h2>
+<p>The <a href="https://raw.githubusercontent.com/jchiquet/MAP573/master/data/fertility.csv">‘fertility.csv’</a> data set contains the female fertility in Europe in 2012 for 39 European countries splitted by age groups 15-19, 20-24, 25-29, 30-34, 35-39, 40 and over. The fertility is given as the mean number of children born per 1000 women.</p>
 <ol style="list-style-type: decimal">
 <li><p>Download and read the data set from the data directory of MAP573’s github repository (use, e.g. <code>read.csv</code>). Store it into a data frame called fertility.</p></li>
 <li><p>Display the first 10 rows in the R markdown report.</p></li>
-<li><p>Make a summary of the data and display it</p></li>
+<li><p>Make a summary of the data and display it (command <code>summary</code>)</p></li>
 <li><p>Find the country and age group with the highest, smallest value in each Region</p></li>
 <li><p>Display boxplots of the fertility for each age group</p></li>
-<li><p>Display boxplots for each ‘Region’ for the youngest age group</p></li>
-<li><p>Display boxplots + points for each age group/region (use <code>fill</code> and <code>x</code> argument of <code>geom_boxplot</code> in <code>ggplot</code> )</p></li>
+<li><p>Display boxplots of the fertility for each ‘Region’ for the youngest age group</p></li>
 <li><p>Extract all the data rows with Country starting by “A”</p></li>
-<li><p>Extract the fertility values of the Region from North Europe make an histogram</p></li>
+<li><p>Extract the fertility values of the Region from North Europe and make a histogram</p></li>
 <li><p>Extract the fertility values of the Region from East Europe and plot a kernel density estimate (function <code>density</code>)</p></li>
-<li><p>Write the mathematical expression for the kernel density estimator as given in <a href="https://en.wikipedia.org/wiki/Kernel_density_estimation">https://en.wikipedia.org/wiki/Kernel_density_estimation</a></p></li>
+<li><p>Include in your report the mathematical expression of the kernel density estimator as given at <a href="https://en.wikipedia.org/wiki/Kernel_density_estimation">https://en.wikipedia.org/wiki/Kernel_density_estimation</a></p></li>
 </ol>
 </div>
+<div id="part-3-basic-handling-of-missing-values" class="section level2">
+<h2>Part 3: Basic handling of missing values</h2>
+<p>The <a href="https://raw.githubusercontent.com/jchiquet/MAP573/master/data/ozoneNA.csv">‘ozoneNA.csv’</a> data set contains 112 observations about air pollution collected during the summer of 2001 in Rennes. The aim of this study is to analyze the relationship between the maximum daily ozone level (maxO3) and the other meteorological variables. Hence, the variables recorded in this data set are the following:</p>
+<ul>
+<li>maxO3 (maximum daily ozone)</li>
+<li>maxO3v (maximum daily ozone the previous day)</li>
+<li>T12 (temperature at midday)</li>
+<li>T9 (Temp at 9am)</li>
+<li>T15 (Temp at 3pm)</li>
+<li>Vx12 (projection of the wind speed vector on the east-west axis at midday)</li>
+<li>Vx9 and Vx15 (same at 9am and 3pm)</li>
+<li>Ne9, Ne12, Ne15 Nebulosity (cloud)</li>
+</ul>
+<p>This data is incomplete - there are missing values. Indeed, it occurs frequently to have machines that fail one day, leading to some information not recorded. In this exercice, we will perform extremely basic imputation of missing values for the variable <code>maxO3</code>, measuring the maximum value of ozone of the day.</p>
+<ol style="list-style-type: decimal">
+<li><p>Import the data as a data frame named <code>ozone</code>.</p></li>
+<li><p>Represent an histogram of the variable <code>maxO3</code>.</p></li>
+<li><p>Perform a <em>very</em> basic imputation by replacing <code>NA</code> values in <code>maxO3</code> by the mean value. Create a vector <code>maxO3_NA_mean</code>.</p></li>
+<li><p>We suggest now to perform imputation via the k-nearest neighbor approach (see <a href="https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm">https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm</a> ). Use the package <strong>simputation</strong> to perform knn-imputation of the missing-value in <code>maxO3</code> based on a distance computed with all remaming variable. To do so, use</p></li>
+</ol>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>simputation<span class="op">::</span><span class="kw">impute_knn</span>(ozone, maxO3 <span class="op">~</span><span class="st"> </span>.)</span></code></pre></div>
+<p>where <code>ozone</code> is your data frame. The string <code>maxO3 ~ .</code> is a formula explaining that <code>maxO3</code> is the variable on which imputation must be performed, and while <code>~ .</code> says that all remaining variables of the data frame are used to perform the imputation. Create a vector <code>maxO3_NA_knn</code> with the vector with imputed values.</p>
+<ol start="5" style="list-style-type: decimal">
+<li>Compare visually the distributions of the three vectors <code>maxO3</code>,<code>maxO3_NA_mean</code> and <code>maxO3_NA_knn</code>.</li>
+</ol>
 </div>
 
 
