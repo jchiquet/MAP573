@@ -1,7 +1,8 @@
 ---
-title: 'Homework: R basics with swirl, first analyses and Rmarkdown reporting'
-author: 'Julien Chiquet'
-date: "`r Sys.Date()`"
+title: 'Homework #1'
+subtitle: 'Swirl, Rmarkdown reporting and first analyses'
+author: 'MAP573'
+date: "09/22/2020"
 ---
 
 ```{r setup, include=FALSE}
@@ -13,7 +14,17 @@ knitr::opts_chunk$set(
 
 ## Preliminaries
 
-Data sets are available at [](https://github.com/jchiquet/MAP573/tree/master/data). Homework is due Sunday 09/27 23:59 in Rmd (see assignment in Moodle).
+### General instructions
+
+Report must be written by means of [Rmarkdown](https://rmarkdown.rstudio.com/) and returned as an `Rmd` file. Homework is due Sunday 09/27 23:59 (see assignment in Moodle).
+
+Please double check the configuration of the YAML metadata of your Rmarkdown report so that you provide relevant title, author name and date.
+
+Report can be written in English or in French.
+
+### Data sets (parts 2 and 3)
+
+Data sets are available at [https://github.com/jchiquet/MAP573/tree/master/data](https://github.com/jchiquet/MAP573/tree/master/data). 
 
 ## Part 1: Swirl
 
@@ -25,44 +36,30 @@ Install **swirl** as follows:
 install.packages("swirl")
 ```
 
-Install the formation as follows:
+Download the basic `R programming` formation as follows:
 
 ```{r swirl formation Programming, eval = FALSE}
 library(swirl)
 install_course_github("swirldev", "R_Programming_E")
 ```
 
-To launch the formation, simply run ion the `R` console (or Rstudio) and follow the instructions
+To launch this formation, simply run `swirl()` in the `R` console (or Rstudio) and follow the instructions
 
-```{r swwirl run, eval = FALSE}
+```{r swirl run, eval = FALSE}
 swirl()
 ```
 
-Though less appealing than the **learnR tutorials**, swirl proved to be efficient to quickly learn R basics.
+Though less visually appealing than the **learnR** tutorials, **swirl** proved to be efficient to quickly learn R basics.
 
 ### Questions/assignment
 
-Go through the first 9 or 10 first items of the "R Programming E" formation. I expect you to finish at least parts 2, 4, 6, 7, 9.
-
-## Part 2: Reporting with Rmarkdown
-
-**NB:** Report can be written in English or in French.
-
-### Changing the way it looks/Rmarkdown configuration 
-
-Configure the YAML metadata of your Rmarkdown report so that
-- you provide relevant title, author name and date
-- you change the default theme for HTML output
-- you let the possibility to output both PDF and HTML output
-- A table floating table of content is available
-
-### About Swirl
+Go through the first 9 items of the "R Programming E" formation. I expect you to finish at least parts 2, 4, 6, 7, 9.
 
 Write a few lines about what you have learned in Swirl (one small paragraph for each item 2, 4, 6, 7, 9)
 
-### Basic exploratory data analysis
+## Part 2: Basic exploratory data analysis
 
-The 'fertility.csv' data set contains the female fertility in Europe in 2012 for 39 European countries splitted by age groups  15-19, 20-24, 25-29, 30-34, 35-39, 40 and over. The fertility is given as the mean number of children born per 1000 women.
+The ['fertility.csv'](https://raw.githubusercontent.com/jchiquet/MAP573/master/data/fertility.csv) data set contains the female fertility in Europe in 2012 for 39 European countries splitted by age groups  15-19, 20-24, 25-29, 30-34, 35-39, 40 and over. The fertility is given as the mean number of children born per 1000 women.
 
 1. Download and read the data set from the data directory of MAP573's github repository (use, e.g. `read.csv`). Store it into a data frame called fertility.
 
@@ -78,15 +75,15 @@ The 'fertility.csv' data set contains the female fertility in Europe in 2012 for
 
 7. Extract all the data rows with Country starting by "A"
 
-8. Extract the fertility values of the Region from North Europe make an histogram
+8. Extract the fertility values of the Region from North Europe and make a histogram
 
 9. Extract the fertility values of the Region from East Europe and plot a kernel density estimate (function `density`)
 
-10. Write the mathematical expression for the kernel density estimator as given in [https://en.wikipedia.org/wiki/Kernel_density_estimation](https://en.wikipedia.org/wiki/Kernel_density_estimation)
+10. Include in your report the mathematical expression of the kernel density estimator as given at [https://en.wikipedia.org/wiki/Kernel_density_estimation](https://en.wikipedia.org/wiki/Kernel_density_estimation)
 
-### Basic missing value imputation
+## Part 3: Basic handling of missing values
 
-The 'ozoneNA.csv' data set contains 112 observations about air pollution collected during the summer of 2001 in Rennes. The aim of this study is to analyze the relationship between the maximum daily ozone (maxO3) level and the other meteorological variables. The variables recorded are nd measure in the air to assess its quality are
+The ['ozoneNA.csv'](https://raw.githubusercontent.com/jchiquet/MAP573/master/data/ozoneNA.csv) data set contains 112 observations about air pollution collected during the summer of 2001 in Rennes. The aim of this study is to analyze the relationship between the maximum daily ozone level (maxO3) and the other meteorological variables. Hence, the variables recorded in this data set are the following:
 
 - maxO3 (maximum daily ozone)
 - maxO3v (maximum daily ozone the previous day)
@@ -97,20 +94,21 @@ The 'ozoneNA.csv' data set contains 112 observations about air pollution collect
 - Vx9 and Vx15 (same at 9am and 3pm)
 - Ne9, Ne12, Ne15 Nebulosity (cloud)
 
-This data is incomplete - there are missing values. Indeed, it occurs frequently to have machines that fail one day, leading to some information not recorded. We will now perform extremely basic imputation of missing value for the variable `maxO3`measuring  the maximum value of ozone of the day.
+This data is incomplete - there are missing values. Indeed, it occurs frequently to have machines that fail one day, leading to some information not recorded. In this exercice, we will perform extremely basic imputation of missing values for the variable `maxO3`, measuring the maximum value of ozone of the day.
 
-1. Import the data and keep only the continuous variables.
+1. Import the data as a data frame named `ozone`.
 
-2. Represent an histogram of variable `maxO3`.
+2. Represent an histogram of the variable `maxO3`.
 
-3. Perform _very_ basic imputation by replacing `NA` values in ` maxO3` by its mean. Create a vector max03_NA_ _mean.
+3. Perform a _very_ basic imputation by replacing `NA` values in ` maxO3` by the mean value. Create a vector `maxO3_NA_mean`.
 
-4. We suggest here to perform basic imputation of these missing value via the k-nearest neighbor approach (see [https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm) ). Use the package **simputation** to perform knn-imputation of the missing-value in `maxO3` based on a distance computed with all remaming variable. To do so, use
+4. We suggest now to perform imputation via the k-nearest neighbor approach (see [https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm) ). Use the package **simputation** to perform knn-imputation of the missing-value in `maxO3` based on a distance computed with all remaming variable. To do so, use
 
 ```{r, eval = FALSE}
 simputation::impute_knn(ozone, maxO3 ~ .)
 ```
 
-where `ozone` is your data frame and `maxO3 ~ .` is a formula explaining that `maxO3` is the variable of which imputation must be performed, and `~ .` that all remaining variables of the data frame are used to perform the imputation. Create a vector `maxO3_NAknn` with the completed vector of data.
+where `ozone` is your data frame. The string `maxO3 ~ .` is a formula explaining that `maxO3` is the variable on which imputation must be performed, and while `~ .` says that all remaining variables of the data frame are used to perform the imputation. Create a vector `maxO3_NA_knn` with the vector with imputed values.
 
-5. Compare visually the distributions of the three vector `maxO3`,`maxO3_NAmean` and `maxO3_NAknn`.
+5. Compare visually the distributions of the three vectors `maxO3`,`maxO3_NA_mean` and `maxO3_NA_knn`.
+
