@@ -36,7 +36,7 @@ navbar:
         - text: "Introduction to R"
           href: https://github.com/jchiquet/CourseAdvancedR/raw/master/2020_MAP573/R_intro.pdf
         - text: "Manipulation and Representation"
-#          href: .html
+#          href: .html # rats
         - text: "------------------"
         - text: "Dimensionality Reduction"
         - text: "Linear methods: PCA and variants"
