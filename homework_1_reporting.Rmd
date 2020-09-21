@@ -46,7 +46,7 @@ Go through the first 9 or 10 first items of the "R Programming E" formation. I e
 
 ## Part 2: Reporting with Rmarkdown
 
-Report can be written in English or in French.
+**NB:** Report can be written in English or in French.
 
 ### Changing the way it looks/Rmarkdown configuration 
 
@@ -68,21 +68,49 @@ The 'fertility.csv' data set contains the female fertility in Europe in 2012 for
 
 2. Display the first 10 rows in the R markdown report.
 
-3. Make a summary of the data and display it
+3. Make a summary of the data and display it (command `summary`)
 
 4. Find the country and age group with the highest, smallest value in each Region
 
 4. Display boxplots of the fertility for each age group
 
-5. Display boxplots for each 'Region' for the youngest age group
-
-6. Display boxplots + points for each age group/region (use `fill` and `x` argument of `geom_boxplot` in `ggplot` )
+5. Display boxplots of the fertility for each 'Region' for the youngest age group
 
 7. Extract all the data rows with Country starting by "A"
 
 8. Extract the fertility values of the Region from North Europe make an histogram
 
-8. Extract the fertility values of the Region from East Europe and plot a kernel density estimate (function `density`)
+9. Extract the fertility values of the Region from East Europe and plot a kernel density estimate (function `density`)
 
 10. Write the mathematical expression for the kernel density estimator as given in [https://en.wikipedia.org/wiki/Kernel_density_estimation](https://en.wikipedia.org/wiki/Kernel_density_estimation)
 
+### Basic missing value imputation
+
+The 'ozoneNA.csv' data set contains 112 observations about air pollution collected during the summer of 2001 in Rennes. The aim of this study is to analyze the relationship between the maximum daily ozone (maxO3) level and the other meteorological variables. The variables recorded are nd measure in the air to assess its quality are
+
+- maxO3 (maximum daily ozone)
+- maxO3v (maximum daily ozone the previous day)
+- T12 (temperature at midday)
+- T9 (Temp at 9am)
+- T15 (Temp at 3pm)
+- Vx12 (projection of the wind speed vector on the east-west axis at midday)
+- Vx9 and Vx15 (same at 9am and 3pm)
+- Ne9, Ne12, Ne15 Nebulosity (cloud)
+
+This data is incomplete - there are missing values. Indeed, it occurs frequently to have machines that fail one day, leading to some information not recorded. We will now perform extremely basic imputation of missing value for the variable `maxO3`measuring  the maximum value of ozone of the day.
+
+1. Import the data and keep only the continuous variables.
+
+2. Represent an histogram of variable `maxO3`.
+
+3. Perform _very_ basic imputation by replacing `NA` values in ` maxO3` by its mean. Create a vector max03_NA_ _mean.
+
+4. We suggest here to perform basic imputation of these missing value via the k-nearest neighbor approach (see [https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm) ). Use the package **simputation** to perform knn-imputation of the missing-value in `maxO3` based on a distance computed with all remaming variable. To do so, use
+
+```{r, eval = FALSE}
+simputation::impute_knn(ozone, maxO3 ~ .)
+```
+
+where `ozone` is your data frame and `maxO3 ~ .` is a formula explaining that `maxO3` is the variable of which imputation must be performed, and `~ .` that all remaining variables of the data frame are used to perform the imputation. Create a vector `maxO3_NAknn` with the completed vector of data.
+
+5. Compare visually the distributions of the three vector `maxO3`,`maxO3_NAmean` and `maxO3_NAknn`.
