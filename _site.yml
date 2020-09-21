@@ -62,7 +62,7 @@ navbar:
     - text: "Homework"
       icon: fas fa-keyboard
       menu:
-        - text: "Swirl + reporting"
+        - text: "Swirl, Rmarkdown, R basics"
           href: homework_1_reporting.html
         - text: "Visualization"
 #          href: .html
