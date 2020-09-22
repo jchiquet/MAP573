@@ -52,7 +52,7 @@
 
 \usepackage{animate}
 
-\def\currentCourse{Data anaysis and Unsupervised Learning}
+\def\currentCourse{Data Anaysis and Unsupervised Learning}
 \def\currentInstitute{MAP 573, 2020 -- Julien Chiquet}
 \def\currentLogo{../common_figs/logo_X}
 \def\currentDate{\'Ecole Polytechnique, Autumn semester, 2020}
@@ -141,18 +141,18 @@
 \dotitlepage
 
 \begin{frame}
-  \frametitle{Exploratory analysis of (modern) data set}
+  \frametitle{Exploratory analysis of (modern) data sets}
 
   Assume a table with $n$ individuals described by $p$ features/variables
   
   \vfill
   
   \begin{block}{Questions}
-    Look for pattern or structure, summarize the data by
+    Look for \alert{\bf patterns} or \alert{\bf structures} to summarize the data by
     \begin{itemize}
       \item Finding \alert{groups} of "similar" individuals
-      \item Finding variables important for these data
-      \item Performing visualization
+      \item Finding variables \alert{important} for these data
+      \item Performing \alert{visualization}
     \end{itemize}
   \end{block}
 
@@ -160,10 +160,10 @@
 
   \begin{block}{Challenges}
     \begin{description}
-      \item[Size] Data may be \alert{large} (\og big data \og: large $n$ large $p$)    
-      \item[Dimension] Data may be \alert{high dimensional} (much more variables than individual or $n \ll p$)    
-      \item[Redundancy] Many variables can carry the \alert{same information}
-      \item[Unsupervised] We \alert{do not necessary know} what we are looking after
+      \item[Size] data may be \alert{large} (\og big data \og: large $n$ large $p$)    
+      \item[Dimension] data may be \alert{high dimensional} (more variables than individual or $n \ll p$)    
+      \item[Redundancy] many variables may carry the \alert{same information}
+      \item[Unsupervised] we \alert{don't necessary know} what we are looking after
     \end{description}
   \end{block}
 
@@ -195,24 +195,25 @@
 
 
 \begin{frame}
-  \frametitle{Summarize 500,000 variables in 2}
+  \frametitle{Summarize 500,000 variables with 2 features}
 
   \begin{figure}
     \centering
       \includegraphics[height=5.5cm]{geneMirrorGeography}
-    \caption{PCA output {\tiny source: Nature "Gene  Mirror Geography Within  Europe", 2008}}
+    \caption{Dimension reduction + labels {\tiny source: Nature "Gene  Mirror Geography Within  Europe", 2008}}
   \end{figure}
 
   In the original messy $3,000 \times 500,000$ table, we may find
-    \begin{itemize}
-      \item an extremely strong structure between individuals (\alert{\bf clustering})
-      \item a very simple subspace where it is obvious (\alert{\bf dimension reduction})
-    \end{itemize}
+  \begin{itemize}
+    \item an extremely strong structure between individuals (\alert{\bf "clustering"})
+    \item a very simple subspace where it is obvious (\alert{\bf "dimension reduction"})
+  \end{itemize}
 
 \end{frame}
 
 \begin{frame}
 	\frametitle{Overview of Statistics \& Machine Learning}
+	\framesubtitle{Where is MAP573 in this big picture?}
 
 	\begin{center}
 		\includegraphics[width=\textwidth]{figures/Learning+Types.jpg}
@@ -257,20 +258,20 @@
   \vfill
 
   \begin{block}{Application in Machine Learning}
-  Preprocessing, Regularization
+  \alert{Preprocessing, Regularization}
   \begin{itemize}
-    \item compression, denoising,  anomaly detection
-    \item Reduce overfitting in supervised learning (improve performances)
+    \item Compression, denoising,  anomaly detection
+    \item Reduce overfitting in supervised learning
   \end{itemize}
   \end{block}
 
 \vfill
 
-  \begin{block}{Application in statistics and data analysis}
-    Better understanding of the data 
+  \begin{block}{Application in Statistics/Data analysis}
+    \alert{Better understanding of the data}
     \begin{itemize}
       \item descriptive/exploratory methods
-      \item visualization: difficult to plot and interpret $> 3d$!
+      \item visualization (difficult to plot and interpret $> 3d$!)
     \end{itemize}
   \end{block}
 
@@ -282,7 +283,18 @@
   \paragraph{Main objective}: construct a map $f$ from $\mathcal{D}$ to $\{1,\ldots,K\}$ where $K$ is a fixed number of clusters.
     
   \vfill
-    
+
+  \begin{block}{Motivations and Applications}
+    \begin{itemize}
+    \item describe large masses of data in a simplified way,
+    \item reveal structures, hidden causes,
+    \item structure a set of knowledge,
+    \item use of the groups in further processing, etc. 
+  \end{itemize}
+  \end{block}
+  
+  \vfill
+
   \paragraph{Careful! classification $\neq$ clustering}
       \begin{itemize}
       \item Classification presupposes the existence of classes
@@ -294,17 +306,6 @@
       \end{itemize}
       \end{itemize}
   
-  \vfill
-
-  \paragraph{Motivations}
-    \begin{itemize}
-    \item describe large masses of data in a simplified way,
-    \item structure a set of knowledge,
-    \item reveal structures, hidden causes,
-    \item use of the groups in further processing, 
-    \item \dots
-  \end{itemize}
-
 \end{frame}
 
 
@@ -313,8 +314,8 @@
 
   \begin{block}{Comprehensive introduction to unsupervised learning}  
     \begin{itemize}  
-      \item Dimension Reduction
-      \item Clustering
+      \item Dimension Reduction {\tiny (PCA and variants, nonlinear methods,  a bit of AE)}
+      \item Clustering {\tiny(partionned based approaches, model-based approaches, spectral variants)}
       \item + handling missing data
     \end{itemize}
   \end{block}
@@ -323,9 +324,9 @@
   
   \begin{block}{Practical skills for data/exploratory analysis}
       \begin{itemize}  
-        \item by applying classical unsupervised approaches and their recents developments
+        \item by applying classical unsupervised approaches and some recent developments
         \item by performing complete analyses via projects
-        \item To develop critical evaluation
+        \item for developing critical evaluation
       \end{itemize}
   \end{block}
 
@@ -335,7 +336,7 @@
   \frametitle{Outline}
   
   \begin{block}{Part 1: 2 sessions to get started with \C{R}}
-    $\rightsquigarrow$ 2 lectures set of tutorials, 2 homework assignments
+    $\rightsquigarrow$ 2 lectures, a deck of tutorials, 2 homework assignments
   \end{block}
 
   \vfill
