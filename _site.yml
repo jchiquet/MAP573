@@ -55,7 +55,7 @@ navbar:
         - text: "R tutorials"
           href: tutorials_R.html
         - text: "PCA"
-          href: tutorial_PCA_budget.html
+#          href: tutorial_PCA_budget.html
         - text: "auto-encoder"
 #          href: tutorials_VAE.html
         - text: "Clustering"
@@ -68,7 +68,7 @@ navbar:
         - text: "Swirl, Rmarkdown, R basics"
           href: homework_1_reporting.html
         - text: "Visualization"
-#          href: .html
+#          href: homework_2_data_manipulation_representation.html
         - text: "Data analysis with PCA"
 #          href: homework_3_PCA.html
         - text: "Report for lab #2"

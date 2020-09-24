@@ -1,0 +1,228 @@
+---
+title: 'Homework #2'
+subtitle: 'Data manipulation and representation'
+author: "MAP573 team"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  cache = TRUE,
+  echo  = TRUE,
+  rows.print = 5)
+```
+
+## Preliminaries
+
+### Information
+
+Homework is due Sunday 10/04 23:59 in Rmd (see assignment in Moodle).
+
+### Package requirements
+
+We start by loading a couple of packages for data manipulation and representation. Please install them using install.packages("name_of_the_pacakge") if not already done.
+
+```{r packages, message = FALSE, warning = FALSE}
+library(tidyverse)    # advanced data manipulation and vizualisation
+library(knitr)        # R notebook export and formatting 
+library(ggsci)        # Fancy color palettes inspired by scientific journals
+library(cowplot)      # To combine several plots on the same canvas
+```
+
+## Exercise 1 {.tabset}
+
+### Import data
+
+This exercise relies on the native R dataset "UCBAdmissions" which stores **student admissions at UC Berkeley** for the six largest departments in 1973 in function of the student gender. Please note that the data is originally stored as a 3-dimensional array, which we convert into a data frame for the rest of the exercise.
+
+```{r import_data_students_berkeley}
+#TO RUN 
+UCBAdmissions #3-dim array
+UCBAdmissions <- as.data.frame(UCBAdmissions) #Convert into a data frame
+head(UCBAdmissions)
+```
+
+**Question 1**: Have a closer look at the dataset: how many rows? How many variables? How many observations (*i.e.* number of applications)? How many different college departments are there? Briefly describe the variables.
+
+```{r question1_ex1}
+#TODO : Your code here
+```
+
+**Your answer here**
+ 
+### Data description 
+
+**Question 2**: Using what you have learned about tidy data and the dplyr package, compute the total **number** of admissions and rejections per Gender as well as the admission rates (number of admissions divided by number of applications) per Gender. 
+
+Do you see a difference in admission rates per Gender at Berkeley? 
+
+```{r question2_ex1}
+#TODO
+```
+
+**Your answer here**
+
+**Question 3**: Compute now the number of:
+
+1. Applications by department. 
+2. Admission/rejection rates per department (without distinction on the gender). 
+
+Are there departments with more applications than others? Do the admission rates differ according to the department?  
+
+```{r question3}
+#TODO
+```
+
+**Your answer here**
+
+**Question 4**: Compute finally the rates of male/female applications per department (without taking into account the admission results).
+
+Can you draw a hypothesis to explain the difference in rate admissions between males and females (question 2)? 
+
+```{r question4}
+#TODO
+```
+
+**Your answer here**
+
+### Fancy data representation
+
+The paradox you have illustrated in the previous part is called the *Simpson's paradox*.
+[You can read more about it here.](https://en.wikipedia.org/wiki/Simpson%27s_paradox)
+
+The goal of this section is to illustrate this paradox by plotting the sex admission rate (in percentage) per department. 
+
+**Question 5**: Please observe the plot thereafter and reproduce it using ggplot2.
+
+```{r question5_plot_to_reproduce}
+include_graphics("resources/sex_admission_rate.png")
+```
+
+*Hints*: 
+
+1) The color palette is "JAMA", which comes from the package 'ggsci' loaded at the beginning of the homework. You can use the function "scale_color_jama()" or "scale_fill_jama()".
+
+2) You can use the function *round* to round the percentage of admission per sex. 
+
+3) You can use the function *paste0* to concatenate in a single string the number of applications (Freq) and the sex admission rate in percentage. The special character '\\n' is used for a line break. 
+
+4) To use geom bar with pre-computed Frequencies (and thus with an "x" and a "y" aesthetics) you should use *stat = "identity"*. 
+
+5) To ask geom_text to use a dodge position, you can set the argument "position" to the value  *position_dodge(width =1)*. 
+
+6) The argument "size" from the function geom_text enables us to change the font size. 
+
+```{r question5}
+#TODO
+```
+
+## Exercise 2 {.tabset}
+
+### Import data
+
+Exercise 2 relies on the dataset "relig_income" coming from the tidyverse package. The dataset store the results of a religion vs income survey: number of survey respondents in each category religion/income. The incomes are cut into 10k dollar ranges. Note that there are special categories for "missing" data: "Don't know/ refused".
+
+```{r show_data}
+relig_income
+```
+
+The goal of this exercise is to plot the distribution of religious beliefs faceted by income ranges. You see that the way the data is presented (with the income ranges in different columns) prevents us from directly using "facet_wrap" or "group_by" function. One commonly says that the dataset is in a "wide" format. 
+We will present two methods to override this issue:
+
+1. Draw separately one plot per income range and gather all the plots using the package cowplot. Though being a good introduction to cowplot, we will see why this method proves to be very inefficient here.
+
+2. Transform the dataset from a wide format to a **long format** with tidyverse tools in order to use "facet_wrap". This method is much more recommended. 
+
+### Method 1
+
+**Question 1** 
+
+For this question, let us focus on a given income range (let us say less than 10k dollars). Note that you surround the colnames by "`" since they contain special characters (which is something you should definitely avoid when creating datasets).
+
+1. Compute the rounded percentage of religious affiliations for this income range. Arrange the dataset per decreasing percentage and keep only the 5th top rows (you can use the function head).
+
+2. Plot the distribution of the top 5 religious affiliations as a bar plot. Make sure to rename the y-axis label properly as well as to choose a color palette for religion. Use geom_text to write the percentage of each religion for this income range on top of the bars (you can use vjust = 0 to align the text to the top). Remove the x-axis text and x-axis title since it is redundant with the legend and position the legend at the bottom of the plot. Once done, rename your ggplot object as relig_income_less_10k.
+
+```{r question1_ex2}
+#Step 1 
+relig_income_less_10k <- relig_income %>% 
+  select(religion, `<$10k`) #%>% #TODO : complete the code 
+
+#Step 2
+#TODO : plot 
+# relig_income_less_10k = 
+```
+
+**Question 2** 
+
+Reproduce the code above for data income range "more than 150k dollars". Call your plot relig_income_more_150k. What issue can you see with the color palette? 
+
+```{r question2_ex2}
+#TODO 
+#relig_income_more_150k = 
+```
+
+**You answer here**
+
+**Question 3** 
+
+Use the function plot_grid from the cowplot package to gather the two plots into one figure (on the same row). Are you satisfied with the results? 
+
+```{r question3_ex2}
+#?plot_grid
+#TODO : gather twe two plots into one figure
+```
+
+**Your answer here** 
+
+You have seen how to gather two plots into a single one using plot_grid. Actually, plot_grid can take as argument a list of plots, meaning that we could have used it to draw bar plots for each level of income  (using a for loop or a function such as lapply to generate the list of plots).
+
+In the next section, we will focus on another method, much more useful in practice, to plot the distribution of the top 5 religious beliefs per income range. 
+
+### Method 2
+
+The relig_income dataset is stored in a wide format. In this section, we are going to convert it into a "long" format meaning that we are going to create a new variable storing income ranges. The dataset in a long format will have only 3 columns (religion, income, and count) but more rows than the original dataset in wide format: one row per couple religion/income range. 
+
+**Question 4**: 
+
+Transform relig_income into relig_income_long using the function pivot_longer function from the tidyverse package. 
+
+```{r question4_ex2}
+?pivot_longer
+#TODO : convert relig_income to relig_income_long using pivot_longer
+```
+
+**Question 5**: 
+
+Compute the rounded percentage of people belonging to each religion per income range. Keep only the 5 top religions per income range (you can use group_by and slice_max function). 
+
+```{r question5_ex2}
+#?slice_max
+#TODO : question 5 
+```
+
+
+**Question 6**:
+
+Plot the distribution of the top 5 religions **facetted by** income ranges (using facet_wrap). Make sure to rename the y-axis label properly as well as to choose a color palette for religion. Use geom_text to write the percentage of each religion for this income range on top of the bars (you can use vjust = 0 to align the text to the top). Remove the x-axis text and title since it is redundant with the legend and position the legend at the bottom of the plot. 
+
+```{r question6_ex2}
+#TODO 
+```
+
+You should see that facet_wrap creates a common legend (a religion has the same color in all the plots) and leaves blanks when a religion does stand in the top 5 religions for a given income range.
+
+**Question 7**:
+
+We still have an issue concerning the order of the facet wrap plots which seems to follow the alphabetical order, while we would have liked it to be arranged from lower to higher incomes.
+
+One way to cope with this is to set the levels of the variable income (seen as a factor variable) either by hand or by using regular expressions. In this case, we can use the order defined by the columns of the wide relig_income dataset, which were already in good order.
+Re-do the plot after arranging the levels of the variable income.
+
+```{r question7_ex2}
+#Run the line below to re-arrange the income levels
+#relig_income_long_top5$income <- factor(relig_income_long_top5$income, levels = setdiff(colnames(relig_income),"religion"))
+
+#TODO : re-do the facetted plot of question 6
+```
