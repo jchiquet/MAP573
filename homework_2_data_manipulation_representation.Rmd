@@ -17,7 +17,12 @@ knitr::opts_chunk$set(
 
 ### Information
 
-Homework is due Sunday 10/04 23:59 in Rmd (see assignment in Moodle).
+Report must be written by means of [Rmarkdown](https://rmarkdown.rstudio.com/) and returned as an `Rmd` file. Homework is due Sunday October 4th at 23:59 in Rmd (see assignment in Moodle).
+
+Please double check the configuration of the YAML metadata of your Rmarkdown report so that you provide relevant title, author name and date.
+
+Report can be written in English or in French.
+
 
 ### Package requirements
 
