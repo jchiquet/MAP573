@@ -67,8 +67,8 @@ navbar:
       menu:
         - text: "Swirl, Rmarkdown, R basics"
           href: homework_1_reporting.html
-        - text: "Visualization"
-#          href: homework_2_data_manipulation_representation.html
+        - text: "Data manipulation and representation"
+          href: homework_2_data_manipulation_representation.html
         - text: "Data analysis with PCA"
 #          href: homework_3_PCA.html
         - text: "Report for lab #2"
