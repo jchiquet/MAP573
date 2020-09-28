@@ -1,6 +1,7 @@
 ---
-title: 'Homework: PCA for vizu, compression and exploratory analysis \\ SNP and MNIST data sets'
-author: 'Julien Chiquet'
+title: 'Homework #3'
+subtitle: 'PCA for vizu, compression and exploratory analysis'
+author: 'MAP573 team'
 date: "`r Sys.Date()`"
 ---
 

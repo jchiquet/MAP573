@@ -1,8 +1,8 @@
 ---
 title: 'Homework #1'
 subtitle: 'Swirl, Rmarkdown reporting and first analyses'
-author: 'MAP573'
-date: "09/22/2020"
+author: 'MAP573 team'
+date: "09/29/2020"
 ---
 
 ```{r setup, include=FALSE}
