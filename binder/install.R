@@ -13,3 +13,4 @@ install.packages("kableExtra")  # fancy kable
 install.packages("babynames")   # data in tutorials
 install.packages("ggsci")       # fancy plotting
 install.packages("cowplot")     # more fancy plotting
+install.packages("simputation") # imputation

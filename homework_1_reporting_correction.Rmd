@@ -22,13 +22,15 @@ library(tidyverse)
 
 ## Part 1: Swirl
 
-A bit long but not so complicated...
+A bit long but essentially straightforward.
 
 ## Part 2: Basic exploratory data analysis
 
 The ['fertility.csv'](https://raw.githubusercontent.com/jchiquet/MAP573/master/data/fertility.csv) data set contains the female fertility in Europe in 2012 for 39 European countries splitted by age groups  15-19, 20-24, 25-29, 30-34, 35-39, 40 and over. The fertility is given as the mean number of children born per 1000 women.
 
 1. Download and read the data set from the data directory of MAP573's github repository (use, e.g. `read.csv`). Store it into a data frame called fertility.
+
+I suggest two solution, one in base R and another one using `readr`. 
 
 ```{r fertilily}
 ## base R
@@ -39,19 +41,21 @@ fertility <- read_csv("data/fertility.csv") %>% select(-id)
 
 2. Display the first 10 rows in the R markdown report.
 
+The `kable` function is useful to format table-like printing The formating is adapted to the type of output (PDF, HTML, doc). 
+
 ```{r}
 fertility %>% head() %>% knitr::kable()
 ```
 
 3. Make a summary of the data and display it (command `summary`)
 
-The **tibble**'s command `glimpse` let you have a quick overview of the structure of your table:
+The **tibble**'s command `glimpse` allows us to have a quick overview of the structure of your table:
 
 ```{r glimpse}
 fertility %>% tibble::glimpse()
 ```
 
-`summary` gives a summary statistics of each column, dependnign on its type (factor, numeric)
+The command `summary` - when applied on table like object - gives a summary statistics of each column, depending on its type (factor, numeric).
 
 ```{r summary}
 fertility %>% summary()
@@ -71,12 +75,12 @@ fertility %>%
     `smallest (Age)`     = Age[which.min(Fertilite)],
     `fertility max `     = max(Fertilite),
     `highest (Country)`  = Pays[which.max(Fertilite)],
-    `highest (Age)`      = Age[which.max(Fertilite)])
+    `highest (Age)`      = Age[which.max(Fertilite)]) %>% knitr::kable()
 ```
 
 4. Display boxplots of the fertility for each age group
 
-I first relevel the levels in Age
+I first relevel the levels in Age for presenting them in the more interpretable and natural order.
 
 ```{r}
 fertility %>% 
@@ -84,12 +88,13 @@ fertility %>%
   ggplot() + aes(x = Age, y = Fertilite) + geom_boxplot()
 ```
 
-As a bonus, split by region:
+Bonus: split by region.
 
 ```{r Region}
 fertility %>% 
   mutate(Age = fct_relevel(Age, c("15-19", "20-24", "25-29", "30-34", "35-39", ">=40"))) %>%  
-  ggplot() + aes(x = Age, y = Fertilite, fill = Region) + geom_boxplot() + geom_jitter(alpha = 0.5, size = 1)
+  ggplot() + aes(x = Age, y = Fertilite, fill = Region) + 
+    geom_boxplot() + geom_jitter(alpha = 0.5, size = 1)
 ```
 
 
@@ -97,15 +102,15 @@ fertility %>%
 
 ```{r Region youngest}
 fertility %>% 
-  filter(Age == "15-19") %>% 
-  group_by(Region) %>% 
+  filter(Age == "15-19") %>%
+  group_by(Region) %>%  # 
   ggplot() + aes(x = Region, y = Fertilite) + geom_boxplot()
 ```
 
 7. Extract all the data rows with Country starting by "A"
 
 ```{r}
-filter(fertility, str_detect(Pays, "^A"))
+filter(fertility, str_detect(Pays, "^A")) %>% knitr::kable()
 ```
 
 8. Extract the fertility values of the Region from North Europe and make a histogram
@@ -149,9 +154,24 @@ This data is incomplete - there are missing values. Indeed, it occurs frequently
 
 1. Import the data as a data frame named `ozone`.
 
+```{r}
+ozone <- read_csv("data/ozoneNA.csv") %>% select(-X1)
+```
+
 2. Represent an histogram of the variable `maxO3`.
 
+```{r}
+ozone %>% 
+  ggplot() + aes(x = maxO3) + geom_histogram()
+```
+
+
 3. Perform a _very_ basic imputation by replacing `NA` values in ` maxO3` by the mean value. Create a vector `maxO3_NA_mean`.
+
+```{r}
+maxO3_NA_mean <- ozone$maxO3
+maxO3_NA_mean[is.na(maxO3_NA_mean)] <- mean(maxO3_NA_mean, na.rm = TRUE)
+```
 
 4. We suggest now to perform imputation via the k-nearest neighbor approach (see [https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm) ). Use the package **simputation** to perform knn-imputation of the missing-value in `maxO3` based on a distance computed with all remaming variable. To do so, use
 
@@ -161,5 +181,20 @@ simputation::impute_knn(ozone, maxO3 ~ .)
 
 where `ozone` is your data frame. The string `maxO3 ~ .` is a formula explaining that `maxO3` is the variable on which imputation must be performed, and while `~ .` says that all remaining variables of the data frame are used to perform the imputation. Create a vector `maxO3_NA_knn` with the vector with imputed values.
 
+```{r}
+maxO3_NA_knn <- ozone %>% as.data.frame() %>% 
+  simputation::impute_knn(maxO3 ~ .) %>% pull(maxO3)
+```
+
 5. Compare visually the distributions of the three vectors `maxO3`,`maxO3_NA_mean` and `maxO3_NA_knn`.
+
+```{r}
+tibble(
+  no_imputation   = ozone$maxO3,
+  mean_imputation = maxO3_NA_mean, 
+  knn_imputation  = maxO3_NA_knn
+  ) %>% 
+  pivot_longer(everything()) %>% 
+  ggplot() + aes(x = value) + geom_histogram() + facet_grid(~ name)
+```
 
