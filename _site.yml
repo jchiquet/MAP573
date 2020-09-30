@@ -65,9 +65,8 @@ navbar:
     - text: "Homework"
       icon: fas fa-keyboard
       menu:
-        - text: "#1; Swirl, Rmarkdown, R basics"
-          href: homework_1_reporting.html
-        - text: "#1: correction"
+        - text: "#1: Swirl, Rmarkdown, R basics - correction"
+#          href: homework_1_reporting.html
           href: homework_1_reporting_correction.html
         - text: "Data manipulation and representation"
           href: homework_2_data_manipulation_representation.html

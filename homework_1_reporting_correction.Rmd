@@ -7,22 +7,30 @@ date: "09/29/2020"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  cache = TRUE,
   echo  = TRUE,
   rows.print = 5)
 ```
 
 ## Preliminaries
 
+### Remark 
+
+If you want to enjoy and discover subtle Rmarkdown syntax, you can access the source code of this document on the github repository: [https://github.com/jchiquet/MAP573/blob/master/homework_1_reporting_correction.Rmd](https://github.com/jchiquet/MAP573/blob/master/homework_1_reporting_correction.Rmd)
+
+### Dependencies
+
 Let us load a couple of packages useful in our analyses:
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
+library(simputation)
 ```
 
-## Part 1: Swirl
+## Part 1: Swirl - **no correction**
 
-A bit long but essentially straightforward.
+The first part of this assignment is to use the [swirl](https://github.com/swirldev/R_Programming_E) package to continue your basic R training. 
+
+_A bit long but essentially straightforward._
 
 ## Part 2: Basic exploratory data analysis
 
@@ -30,9 +38,9 @@ The ['fertility.csv'](https://raw.githubusercontent.com/jchiquet/MAP573/master/d
 
 1. Download and read the data set from the data directory of MAP573's github repository (use, e.g. `read.csv`). Store it into a data frame called fertility.
 
-I suggest two solution, one in base R and another one using `readr`. 
+I suggest two solutions, one in base R and another one using `readr`. 
 
-```{r fertilily}
+```{r fertilily, message=FALSE}
 ## base R
 fertility <- read.csv("data/fertility.csv", row.names = 1, header = TRUE) %>% as_tibble()
 ## readr
@@ -55,7 +63,7 @@ The **tibble**'s command `glimpse` allows us to have a quick overview of the str
 fertility %>% tibble::glimpse()
 ```
 
-The command `summary` - when applied on table like object - gives a summary statistics of each column, depending on its type (factor, numeric).
+The command `summary` - when applied on a table like object - gives a summary statistics of each column, depending on its type (factor, numeric).
 
 ```{r summary}
 fertility %>% summary()
@@ -64,7 +72,7 @@ fertility %>% summary()
 
 4. Find the country and age group with the highest, smallest value in each Region
 
-Let us do this with a mix f tidyverse and base R tools:
+Let us try to answer this in a (more or less) tidy way:
 
 ```{r }
 fertility %>% 
@@ -80,7 +88,7 @@ fertility %>%
 
 4. Display boxplots of the fertility for each age group
 
-I first relevel the levels in Age for presenting them in the more interpretable and natural order.
+I first recode the levels in Age for presenting them in the more interpretable and natural order.
 
 ```{r}
 fertility %>% 
@@ -100,6 +108,8 @@ fertility %>%
 
 5. Display boxplots of the fertility for each 'Region' for the youngest age group
 
+Same idea: use `filter` from **dplyr**:
+
 ```{r Region youngest}
 fertility %>% 
   filter(Age == "15-19") %>%
@@ -109,11 +119,15 @@ fertility %>%
 
 7. Extract all the data rows with Country starting by "A"
 
+I had to make a research on the internet to find the appropriate "scoping"  (function `stringr::str_detect()`)
+
 ```{r}
 filter(fertility, str_detect(Pays, "^A")) %>% knitr::kable()
 ```
 
 8. Extract the fertility values of the Region from North Europe and make a histogram
+
+Some filtering again, and adjusted binwidth (the default choice send warning)
 
 ```{r}
 fertility %>% 
@@ -123,6 +137,8 @@ fertility %>%
 
 9. Extract the fertility values of the Region from East Europe and plot a kernel density estimate (function `density`)
 
+The function `density` is from the **stats** package, loaded at start-up. It produces an object for which a plot method is available:
+
 ```{r}
 fertility %>% 
   filter(Region == 'Europe est') %>% pull(Fertilite) %>% 
@@ -131,7 +147,7 @@ fertility %>%
 
 10. Include in your report the mathematical expression of the kernel density estimator as given at [https://en.wikipedia.org/wiki/Kernel_density_estimation](https://en.wikipedia.org/wiki/Kernel_density_estimation)
 
-Here it is:
+I just had to edit the wikipedia page, extract the \LatTeX formula and copy-paste. Here it is:
 
 \[
 \widehat{f}_h(x) = \frac{1}{n}\sum_{i=1}^n K_h (x - x_i) = \frac{1}{nh} \sum_{i=1}^n K\Big(\frac{x-x_i}{h}\Big),
@@ -154,6 +170,8 @@ This data is incomplete - there are missing values. Indeed, it occurs frequently
 
 1. Import the data as a data frame named `ozone`.
 
+The first column, which contains no header in the `csv` file, is an id from the date of sampling. We do not need it so we remove it just after reading the data:  
+
 ```{r}
 ozone <- read_csv("data/ozoneNA.csv") %>% select(-X1)
 ```
@@ -168,12 +186,14 @@ ozone %>%
 
 3. Perform a _very_ basic imputation by replacing `NA` values in ` maxO3` by the mean value. Create a vector `maxO3_NA_mean`.
 
+Let us do this in base `R`. Notice the `na.rm` option in the call to function `mean`:
+
 ```{r}
 maxO3_NA_mean <- ozone$maxO3
 maxO3_NA_mean[is.na(maxO3_NA_mean)] <- mean(maxO3_NA_mean, na.rm = TRUE)
 ```
 
-4. We suggest now to perform imputation via the k-nearest neighbor approach (see [https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm) ). Use the package **simputation** to perform knn-imputation of the missing-value in `maxO3` based on a distance computed with all remaming variable. To do so, use
+4. We suggest now to perform imputation via the k-nearest neighbor approach (see [https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm) ). Use the package **simputation** to perform knn-imputation of the missing-value in `maxO3` based on a distance computed with all remaining variables. To do so, use
 
 ```{r, eval = FALSE}
 simputation::impute_knn(ozone, maxO3 ~ .)
@@ -181,12 +201,15 @@ simputation::impute_knn(ozone, maxO3 ~ .)
 
 where `ozone` is your data frame. The string `maxO3 ~ .` is a formula explaining that `maxO3` is the variable on which imputation must be performed, and while `~ .` says that all remaining variables of the data frame are used to perform the imputation. Create a vector `maxO3_NA_knn` with the vector with imputed values.
 
+We apply the imputation method on the while data frame and extract the correspoding column to store the reslut in a simple numeric vector: 
 ```{r}
 maxO3_NA_knn <- ozone %>% as.data.frame() %>% 
   simputation::impute_knn(maxO3 ~ .) %>% pull(maxO3)
 ```
 
 5. Compare visually the distributions of the three vectors `maxO3`,`maxO3_NA_mean` and `maxO3_NA_knn`.
+
+We put all results together in the same data frame (remark the name exlicitly given), reshape it with `pivot_longer` a make an histogram for each. Remark the detrimental effect of mean imputation on the histogram, compare to KNN (far from ideal, though).
 
 ```{r}
 tibble(
