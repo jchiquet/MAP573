@@ -1,6 +1,6 @@
 ---
 title: 'Homework: Clustering of Network data'
-author: 'Julien Chiquet'
+author: 'MAP 573'
 date: "`r Sys.Date()`"
 ---
 
