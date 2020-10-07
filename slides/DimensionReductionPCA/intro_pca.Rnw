@@ -36,7 +36,7 @@
     \item Multiple correspondence analysis (MCA): categorical data \medskip
     \item Multiple factor analysis (MFA): multi-table, array data 
   \end{itemize}
-  $\rightsquigarrow$ Basic \alert{adaptation that build on PCA} to deal with non-continuous data\\
+  $\rightsquigarrow$ Basic \alert{adaptations that build on PCA} to deal with non-continuous data\\
   $\rightsquigarrow$ smart encoding of non-continuous data to continuous ones
   \end{block}
 

@@ -4,8 +4,7 @@
 \def\currentInstitute{MAP 573, 2020 -- Julien Chiquet}
 \def\currentLogo{../common_figs/logo_X}
 \def\currentDate{\'Ecole Polytechnique, Autumn semester, 2020}
-\def\currentChapter{Dimensionality Reduction: PCA an linear methods}
-\def\web{https://jchiquet.github.io/MAP573}
+\def\currentChapter{Dimensionality Reduction: PCA}
 
 <<preamble, child='../common_preamble.Rnw'>>=
 @
@@ -36,7 +35,7 @@
 %% ==========================================================================
 %% Background: high-school algebra
 %% ==========================================================================
-\input{background_algebra}
+%% \input{background_algebra}
 
 %% ==========================================================================
 %% Geometric point of View
@@ -62,118 +61,118 @@
 <<complements, child='complements_pca.Rnw'>>=
 @
 
-%% ==========================================================================
-\section{Beyond linear methods}
-%% ==========================================================================
-
-\subsection{Reconstruction error point of view}
-
-\begin{frame}
-  \frametitle{Reconstruction error approach}
-
-  \begin{enumerate}
-    \item  Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
-      \begin{align*}
-      \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
-               & \bx \mapsto \Phi(\bx)
-      \end{align*}
-    \item Construct $\widetilde{\Phi}$ from $\Rset^{d'}$ to $\Rset^d$ (\alert{reconstruction formula})
-     \item Control an error between $\bx$ and its reconstruction $\tilde{\Phi}(\Phi(\bx))$, e.g
-      \begin{equation*}
-        \sum_{i=1}^n \left\| \bx_i - \tilde{\Phi}(\Phi(\bx_i)) \right\|^2
-      \end{equation*}
-  \end{enumerate}
-
-\end{frame}
-
-
-\begin{frame}
-\frametitle{Reconstruction error and PCA}
-
-  \begin{block}{PCA Model}
-    Linear model assumption
-    \begin{equation*}
-        \bx \simeq \bmu + \mathbf{F}_{1:d'} \bU_{1:d'}^\top
-      \end{equation*}
-      with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
-    \end{block}
-    
-  \begin{block}{Reconstruction error}
-    In the case of PCA, then
-    \begin{gather*}
-      \Phi(\bx) = (\bx-\bmu)^\top \bU  \quad \text{and} \quad \tilde{\Phi}(\mathbf{F})= \bmu + \mathbf{F} \bU^\top  \\
-      \frac{1}{n} \sum_{i=1}^n \| \bx_i  - ( \bmu + ( \bx_i -\bmu) \bU \bU^\top \|^2
-    \end{gather*}
-  \alert{Explicit solution:} $\bmu = \bar{x}$ the empirical mean
- and $\bU$ is an orthonormal basis of the space spanned by the $d'$
- first eigenvectors of the empirical covariance matrix
-  \end{block}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Non linear extensions}
-
-  Two directions
-  \begin{enumerate}
-    \item Non linear transformation of $\bx$ before PCA: kernel-PCA
-    \item Other constrains on weigths $\bU$ or loadings $\mathbf{F}$: ICA, NMF, \dots
-  \end{enumerate}
-
-  \begin{block}{Kernel PCA}
-    Linear assumption after transformation, with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
-    \begin{equation*}
-        \Psi(\bx - \bmu) \simeq  \mathbf{F}_{1:d'} \bU_{1:d'}^\top
-      \end{equation*}
-   \end{block}
-
-  \vfill
-
-  \begin{block}{Non negative Matrix factorisation}
-    Linear model assumption  with $\bU$ non-negative and  $\mathbf{F}$ non-negative
-    \begin{equation*}
-        \bx \simeq \bmu + \mathbf{F}_{1:d'} \bU_{1:d'}^\top
-      \end{equation*}
-  \end{block}
-  
-  \vfill
-
-  \paragraph{Auto-encoders} Find $\Phi$ and $\tilde\Phi$ with a neural-network!
-
-  $\rightsquigarrow$ Fit $\bU, \mathbf{F}$ with some optimization algorithms (much more complex!)
-\end{frame}
-
-
-\subsection{Relation preservation point of view}
-
-\begin{frame}
-    \frametitle{Pairwise Relation}
-  
-    Focus on pairwise relation $\mathcal{R}(\bx_i, \bx_{i'})$.
-
-    \begin{block}{Distance Preservation}
-      \begin{itemize}
-    \item  Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
-      \begin{align*}
-      \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
-               & \bx \mapsto \Phi(\bx)
-      \end{align*}
-      \begin{equation*}
-      \text{such that} \quad \mathcal{R}(\bx_i, \bx_{i'}) \sim\mathcal{R'}(\bx'_i, \bx'_{i'})
-      \end{equation*}
-    \end{itemize}
-  \end{block}
-
-  \begin{block}{Multidimensional scaling}
-    Try to preserve inner product related to the distance (e.g. Euclidean)
-  \end{block}
-
-  \vfill
-  
-  \begin{block}{t-SNE -- Stochastic Neighborhood Embedding}
-    Try to preserve relations with close neighbors with Gaussian kernel
-  \end{block}
-
-\end{frame}
+% %% ==========================================================================
+% \section{Beyond linear methods}
+% %% ==========================================================================
+% 
+% \subsection{Reconstruction error point of view}
+% 
+% \begin{frame}
+%   \frametitle{Reconstruction error approach}
+% 
+%   \begin{enumerate}
+%     \item  Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
+%       \begin{align*}
+%       \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
+%                & \bx \mapsto \Phi(\bx)
+%       \end{align*}
+%     \item Construct $\widetilde{\Phi}$ from $\Rset^{d'}$ to $\Rset^d$ (\alert{reconstruction formula})
+%      \item Control an error between $\bx$ and its reconstruction $\tilde{\Phi}(\Phi(\bx))$, e.g
+%       \begin{equation*}
+%         \sum_{i=1}^n \left\| \bx_i - \tilde{\Phi}(\Phi(\bx_i)) \right\|^2
+%       \end{equation*}
+%   \end{enumerate}
+% 
+% \end{frame}
+% 
+% 
+% \begin{frame}
+% \frametitle{Reconstruction error and PCA}
+% 
+%   \begin{block}{PCA Model}
+%     Linear model assumption
+%     \begin{equation*}
+%         \bx \simeq \bmu + \mathbf{F}_{1:d'} \bU_{1:d'}^\top
+%       \end{equation*}
+%       with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
+%     \end{block}
+%     
+%   \begin{block}{Reconstruction error}
+%     In the case of PCA, then
+%     \begin{gather*}
+%       \Phi(\bx) = (\bx-\bmu)^\top \bU  \quad \text{and} \quad \tilde{\Phi}(\mathbf{F})= \bmu + \mathbf{F} \bU^\top  \\
+%       \frac{1}{n} \sum_{i=1}^n \| \bx_i  - ( \bmu + ( \bx_i -\bmu) \bU \bU^\top \|^2
+%     \end{gather*}
+%   \alert{Explicit solution:} $\bmu = \bar{x}$ the empirical mean
+%  and $\bU$ is an orthonormal basis of the space spanned by the $d'$
+%  first eigenvectors of the empirical covariance matrix
+%   \end{block}
+% \end{frame}
+% 
+% \begin{frame}
+%   \frametitle{Non linear extensions}
+% 
+%   Two directions
+%   \begin{enumerate}
+%     \item Non linear transformation of $\bx$ before PCA: kernel-PCA
+%     \item Other constrains on weigths $\bU$ or loadings $\mathbf{F}$: ICA, NMF, \dots
+%   \end{enumerate}
+% 
+%   \begin{block}{Kernel PCA}
+%     Linear assumption after transformation, with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
+%     \begin{equation*}
+%         \Psi(\bx - \bmu) \simeq  \mathbf{F}_{1:d'} \bU_{1:d'}^\top
+%       \end{equation*}
+%    \end{block}
+% 
+%   \vfill
+% 
+%   \begin{block}{Non negative Matrix factorisation}
+%     Linear model assumption  with $\bU$ non-negative and  $\mathbf{F}$ non-negative
+%     \begin{equation*}
+%         \bx \simeq \bmu + \mathbf{F}_{1:d'} \bU_{1:d'}^\top
+%       \end{equation*}
+%   \end{block}
+%   
+%   \vfill
+% 
+%   \paragraph{Auto-encoders} Find $\Phi$ and $\tilde\Phi$ with a neural-network!
+% 
+%   $\rightsquigarrow$ Fit $\bU, \mathbf{F}$ with some optimization algorithms (much more complex!)
+% \end{frame}
+% 
+% 
+% \subsection{Relation preservation point of view}
+% 
+% \begin{frame}
+%     \frametitle{Pairwise Relation}
+%   
+%     Focus on pairwise relation $\mathcal{R}(\bx_i, \bx_{i'})$.
+% 
+%     \begin{block}{Distance Preservation}
+%       \begin{itemize}
+%     \item  Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
+%       \begin{align*}
+%       \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
+%                & \bx \mapsto \Phi(\bx)
+%       \end{align*}
+%       \begin{equation*}
+%       \text{such that} \quad \mathcal{R}(\bx_i, \bx_{i'}) \sim\mathcal{R'}(\bx'_i, \bx'_{i'})
+%       \end{equation*}
+%     \end{itemize}
+%   \end{block}
+% 
+%   \begin{block}{Multidimensional scaling}
+%     Try to preserve inner product related to the distance (e.g. Euclidean)
+%   \end{block}
+% 
+%   \vfill
+%   
+%   \begin{block}{t-SNE -- Stochastic Neighborhood Embedding}
+%     Try to preserve relations with close neighbors with Gaussian kernel
+%   \end{block}
+% 
+% \end{frame}
 
 
 

@@ -54,8 +54,7 @@
 \def\currentInstitute{MAP 573, 2020 -- Julien Chiquet}
 \def\currentLogo{../common_figs/logo_X}
 \def\currentDate{\'Ecole Polytechnique, Autumn semester, 2020}
-\def\currentChapter{Dimensionality Reduction: PCA an linear methods}
-\def\web{https://jchiquet.github.io/MAP573}
+\def\currentChapter{Dimensionality Reduction: PCA}
 
 
 % THEME BEAMER
@@ -114,7 +113,7 @@
     \titlepage
     \vfill
     \begin{center}
-        \scriptsize\url{https://github.com/jchiquet/CourseUnsupervisedLearningX}
+        \scriptsize\url{https://jchiquet.github.io/MAP573}
     \end{center}
     \vfill
     \includegraphics[width=2cm]{\currentLogo}\hfill
@@ -161,40 +160,6 @@
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-
-\end{frame}
-
-\begin{frame}
-	\frametitle{Machine Learning}
-
-	\begin{center}
-		\includegraphics[width=\textwidth]{Learning+Types}
-	\end{center}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Supervised vs Unsupervised Learning}
-
-  \begin{block}{Supervised Learning}
-    \begin{itemize}
-    \item Training data $\mathcal{D}_n = \{(\bx_1, y_1), \ldots, (\bx_n, y_n)\}, X_i \sim^{\text{i.i.d}} \mathbb{P}$
-    \item Construct a predictor $\hat f : \mathcal{X} \rightarrow \mathcal{Y}$ using $\mathcal{D}_n$
-    \item Loss $\ell(y, f(x))$ measures how well $f(x)$ predicts $y$
-    \item Aim: minimize the generalization error
-    \item Task: Regression, Classification
-    \end{itemize}
-    $\rightsquigarrow$ The goal is clear: predict $y$ based on $x$ (regression, classification)
-  \end{block}
-
-  \begin{block}{Unsupervised Learning}
-  \begin{itemize}
-    \item Training data $\mathcal{D} = \{\bx_1, \ldots, \bx_n\}$
-    \item Loss? , Aim?
-    \item Task: \alert{\bf Dimension reduction}, Clustering
-  \end{itemize}
-  $\rightsquigarrow$ The goal is less well defined, and \emph{validation} is questionable
-  \end{block}
 
 \end{frame}
 
@@ -364,7 +329,7 @@ body\_depth & 0.988 & 0.889 & 0.983 & 0.968 & 1.000\\
  \item much redundancy?
  \item hidden factor?
 \end{itemize}
-$\rightsquigarrow$ dimension reduction might hem
+$\rightsquigarrow$ dimension reduction might help
 \end{frame}
 
 \begin{frame}[fragile]
@@ -429,28 +394,28 @@ O\left(\sqrt{\frac{\log n}{d}}\right).
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Dimension reduction: goals summary}
+\begin{frame}[label=DimensionReduction]
+  \frametitle{Dimension reduction: general goals}
 
   \paragraph{Main objective:} find a \alert{\bf low-dimensional representation} that captures the "essence" of (high-dimensional) data
 
   \vfill
 
   \begin{block}{Application in Machine Learning}
-  Preprocessing, Regularization
+  \alert{Preprocessing, Regularization}
   \begin{itemize}
-    \item compression, denoising,  anomaly detection
-    \item Reduce overfitting in supervised learning (improve performances)
+    \item Compression, denoising,  anomaly detection
+    \item Reduce overfitting in supervised learning
   \end{itemize}
   \end{block}
 
 \vfill
 
-  \begin{block}{Application in statistics and data analysis}
-    Better understand the data 
+  \begin{block}{Application in Statistics/Data analysis}
+    \alert{Better understanding of the data}
     \begin{itemize}
       \item descriptive/exploratory methods
-      \item visualization: difficult to plot and interpret $> 3d$!
+      \item visualization (difficult to plot and interpret $> 3d$!)
     \end{itemize}
   \end{block}
 
@@ -545,7 +510,7 @@ O\left(\sqrt{\frac{\log n}{d}}\right).
     \item Multiple correspondence analysis (MCA): categorical data \medskip
     \item Multiple factor analysis (MFA): multi-table, array data 
   \end{itemize}
-  $\rightsquigarrow$ Basic \alert{adaptation that build on PCA} to deal with non-continuous data\\
+  $\rightsquigarrow$ Basic \alert{adaptations that build on PCA} to deal with non-continuous data\\
   $\rightsquigarrow$ smart encoding of non-continuous data to continuous ones
   \end{block}
 
@@ -630,7 +595,7 @@ B & M & 10.8 & 9.0 & 23.0 & 26.5 & 9.8\\
 %% ==========================================================================
 %% Background: high-school algebra
 %% ==========================================================================
-\input{background_algebra}
+%% \input{background_algebra}
 
 %% ==========================================================================
 %% Geometric point of View
@@ -2081,118 +2046,118 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
 
 \end{frame}
 
-%% ==========================================================================
-\section{Beyond linear methods}
-%% ==========================================================================
-
-\subsection{Reconstruction error point of view}
-
-\begin{frame}
-  \frametitle{Reconstruction error approach}
-
-  \begin{enumerate}
-    \item  Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
-      \begin{align*}
-      \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
-               & \bx \mapsto \Phi(\bx)
-      \end{align*}
-    \item Construct $\widetilde{\Phi}$ from $\Rset^{d'}$ to $\Rset^d$ (\alert{reconstruction formula})
-     \item Control an error between $\bx$ and its reconstruction $\tilde{\Phi}(\Phi(\bx))$, e.g
-      \begin{equation*}
-        \sum_{i=1}^n \left\| \bx_i - \tilde{\Phi}(\Phi(\bx_i)) \right\|^2
-      \end{equation*}
-  \end{enumerate}
-
-\end{frame}
-
-
-\begin{frame}
-\frametitle{Reconstruction error and PCA}
-
-  \begin{block}{PCA Model}
-    Linear model assumption
-    \begin{equation*}
-        \bx \simeq \bmu + \mathbf{F}_{1:d'} \bU_{1:d'}^\top
-      \end{equation*}
-      with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
-    \end{block}
-    
-  \begin{block}{Reconstruction error}
-    In the case of PCA, then
-    \begin{gather*}
-      \Phi(\bx) = (\bx-\bmu)^\top \bU  \quad \text{and} \quad \tilde{\Phi}(\mathbf{F})= \bmu + \mathbf{F} \bU^\top  \\
-      \frac{1}{n} \sum_{i=1}^n \| \bx_i  - ( \bmu + ( \bx_i -\bmu) \bU \bU^\top \|^2
-    \end{gather*}
-  \alert{Explicit solution:} $\bmu = \bar{x}$ the empirical mean
- and $\bU$ is an orthonormal basis of the space spanned by the $d'$
- first eigenvectors of the empirical covariance matrix
-  \end{block}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Non linear extensions}
-
-  Two directions
-  \begin{enumerate}
-    \item Non linear transformation of $\bx$ before PCA: kernel-PCA
-    \item Other constrains on weigths $\bU$ or loadings $\mathbf{F}$: ICA, NMF, \dots
-  \end{enumerate}
-
-  \begin{block}{Kernel PCA}
-    Linear assumption after transformation, with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
-    \begin{equation*}
-        \Psi(\bx - \bmu) \simeq  \mathbf{F}_{1:d'} \bU_{1:d'}^\top
-      \end{equation*}
-   \end{block}
-
-  \vfill
-
-  \begin{block}{Non negative Matrix factorisation}
-    Linear model assumption  with $\bU$ non-negative and  $\mathbf{F}$ non-negative
-    \begin{equation*}
-        \bx \simeq \bmu + \mathbf{F}_{1:d'} \bU_{1:d'}^\top
-      \end{equation*}
-  \end{block}
-  
-  \vfill
-
-  \paragraph{Auto-encoders} Find $\Phi$ and $\tilde\Phi$ with a neural-network!
-
-  $\rightsquigarrow$ Fit $\bU, \mathbf{F}$ with some optimization algorithms (much more complex!)
-\end{frame}
-
-
-\subsection{Relation preservation point of view}
-
-\begin{frame}
-    \frametitle{Pairwise Relation}
-  
-    Focus on pairwise relation $\mathcal{R}(\bx_i, \bx_{i'})$.
-
-    \begin{block}{Distance Preservation}
-      \begin{itemize}
-    \item  Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
-      \begin{align*}
-      \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
-               & \bx \mapsto \Phi(\bx)
-      \end{align*}
-      \begin{equation*}
-      \text{such that} \quad \mathcal{R}(\bx_i, \bx_{i'}) \sim\mathcal{R'}(\bx'_i, \bx'_{i'})
-      \end{equation*}
-    \end{itemize}
-  \end{block}
-
-  \begin{block}{Multidimensional scaling}
-    Try to preserve inner product related to the distance (e.g. Euclidean)
-  \end{block}
-
-  \vfill
-  
-  \begin{block}{t-SNE -- Stochastic Neighborhood Embedding}
-    Try to preserve relations with close neighbors with Gaussian kernel
-  \end{block}
-
-\end{frame}
+% %% ==========================================================================
+% \section{Beyond linear methods}
+% %% ==========================================================================
+% 
+% \subsection{Reconstruction error point of view}
+% 
+% \begin{frame}
+%   \frametitle{Reconstruction error approach}
+% 
+%   \begin{enumerate}
+%     \item  Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
+%       \begin{align*}
+%       \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
+%                & \bx \mapsto \Phi(\bx)
+%       \end{align*}
+%     \item Construct $\widetilde{\Phi}$ from $\Rset^{d'}$ to $\Rset^d$ (\alert{reconstruction formula})
+%      \item Control an error between $\bx$ and its reconstruction $\tilde{\Phi}(\Phi(\bx))$, e.g
+%       \begin{equation*}
+%         \sum_{i=1}^n \left\| \bx_i - \tilde{\Phi}(\Phi(\bx_i)) \right\|^2
+%       \end{equation*}
+%   \end{enumerate}
+% 
+% \end{frame}
+% 
+% 
+% \begin{frame}
+% \frametitle{Reconstruction error and PCA}
+% 
+%   \begin{block}{PCA Model}
+%     Linear model assumption
+%     \begin{equation*}
+%         \bx \simeq \bmu + \mathbf{F}_{1:d'} \bU_{1:d'}^\top
+%       \end{equation*}
+%       with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
+%     \end{block}
+%     
+%   \begin{block}{Reconstruction error}
+%     In the case of PCA, then
+%     \begin{gather*}
+%       \Phi(\bx) = (\bx-\bmu)^\top \bU  \quad \text{and} \quad \tilde{\Phi}(\mathbf{F})= \bmu + \mathbf{F} \bU^\top  \\
+%       \frac{1}{n} \sum_{i=1}^n \| \bx_i  - ( \bmu + ( \bx_i -\bmu) \bU \bU^\top \|^2
+%     \end{gather*}
+%   \alert{Explicit solution:} $\bmu = \bar{x}$ the empirical mean
+%  and $\bU$ is an orthonormal basis of the space spanned by the $d'$
+%  first eigenvectors of the empirical covariance matrix
+%   \end{block}
+% \end{frame}
+% 
+% \begin{frame}
+%   \frametitle{Non linear extensions}
+% 
+%   Two directions
+%   \begin{enumerate}
+%     \item Non linear transformation of $\bx$ before PCA: kernel-PCA
+%     \item Other constrains on weigths $\bU$ or loadings $\mathbf{F}$: ICA, NMF, \dots
+%   \end{enumerate}
+% 
+%   \begin{block}{Kernel PCA}
+%     Linear assumption after transformation, with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
+%     \begin{equation*}
+%         \Psi(\bx - \bmu) \simeq  \mathbf{F}_{1:d'} \bU_{1:d'}^\top
+%       \end{equation*}
+%    \end{block}
+% 
+%   \vfill
+% 
+%   \begin{block}{Non negative Matrix factorisation}
+%     Linear model assumption  with $\bU$ non-negative and  $\mathbf{F}$ non-negative
+%     \begin{equation*}
+%         \bx \simeq \bmu + \mathbf{F}_{1:d'} \bU_{1:d'}^\top
+%       \end{equation*}
+%   \end{block}
+%   
+%   \vfill
+% 
+%   \paragraph{Auto-encoders} Find $\Phi$ and $\tilde\Phi$ with a neural-network!
+% 
+%   $\rightsquigarrow$ Fit $\bU, \mathbf{F}$ with some optimization algorithms (much more complex!)
+% \end{frame}
+% 
+% 
+% \subsection{Relation preservation point of view}
+% 
+% \begin{frame}
+%     \frametitle{Pairwise Relation}
+%   
+%     Focus on pairwise relation $\mathcal{R}(\bx_i, \bx_{i'})$.
+% 
+%     \begin{block}{Distance Preservation}
+%       \begin{itemize}
+%     \item  Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
+%       \begin{align*}
+%       \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
+%                & \bx \mapsto \Phi(\bx)
+%       \end{align*}
+%       \begin{equation*}
+%       \text{such that} \quad \mathcal{R}(\bx_i, \bx_{i'}) \sim\mathcal{R'}(\bx'_i, \bx'_{i'})
+%       \end{equation*}
+%     \end{itemize}
+%   \end{block}
+% 
+%   \begin{block}{Multidimensional scaling}
+%     Try to preserve inner product related to the distance (e.g. Euclidean)
+%   \end{block}
+% 
+%   \vfill
+%   
+%   \begin{block}{t-SNE -- Stochastic Neighborhood Embedding}
+%     Try to preserve relations with close neighbors with Gaussian kernel
+%   \end{block}
+% 
+% \end{frame}
 
 
 
