@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Julien Chiquet" />
+
+<meta name="date" content="2020-10-07" />
+
+<title>Tutorial: PCA on State Budget</title>
+
+<script src="site_libs/header-attrs-2.4/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<script src="resources/hideOutput.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+      pre > code.sourceCode { white-space: pre; position: relative; }
+      pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+      pre > code.sourceCode > span:empty { height: 1.2em; }
+      code.sourceCode > span { color: inherit; text-decoration: inherit; }
+      div.sourceCode { margin: 1em 0; }
+      pre.sourceCode { margin: 0; }
+      @media screen {
+      div.sourceCode { overflow: auto; }
+      }
+      @media print {
+      pre > code.sourceCode { white-space: pre-wrap; }
+      pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+      }
+      pre.numberSource code
+        { counter-reset: source-line 0; }
+      pre.numberSource code > span
+        { position: relative; left: -4em; counter-increment: source-line; }
+      pre.numberSource code > span > a:first-child::before
+        { content: counter(source-line);
+          position: relative; left: -1em; text-align: right; vertical-align: baseline;
+          border: none; display: inline-block;
+          -webkit-touch-callout: none; -webkit-user-select: none;
+          -khtml-user-select: none; -moz-user-select: none;
+          -ms-user-select: none; user-select: none;
+          padding: 0 4px; width: 4em;
+          color: #aaaaaa;
+        }
+      pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+      div.sourceCode
+        {  background-color: #f8f8f8; }
+      @media screen {
+      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+      }
+      code span.al { color: #ef2929; } /* Alert */
+      code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+      code span.at { color: #c4a000; } /* Attribute */
+      code span.bn { color: #0000cf; } /* BaseN */
+      code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+      code span.ch { color: #4e9a06; } /* Char */
+      code span.cn { color: #000000; } /* Constant */
+      code span.co { color: #8f5902; font-style: italic; } /* Comment */
+      code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+      code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+      code span.dt { color: #204a87; } /* DataType */
+      code span.dv { color: #0000cf; } /* DecVal */
+      code span.er { color: #a40000; font-weight: bold; } /* Error */
+      code span.ex { } /* Extension */
+      code span.fl { color: #0000cf; } /* Float */
+      code span.fu { color: #000000; } /* Function */
+      code span.im { } /* Import */
+      code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+      code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+      code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+      code span.ot { color: #8f5902; } /* Other */
+      code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+      code span.sc { color: #000000; } /* SpecialChar */
+      code span.ss { color: #4e9a06; } /* SpecialString */
+      code span.st { color: #4e9a06; } /* String */
+      code span.va { color: #000000; } /* Variable */
+      code span.vs { color: #4e9a06; } /* VerbatimString */
+      code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="resources/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 45px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h2 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h3 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h4 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h5 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h6 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">MAP573</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="https://github.com/jchiquet/CourseUnsupervisedLearningX">
+    <span class="fa fa-github"></span>
+     
+    
+  </a>
+</li>
+<li>
+  <a href="https://moodle.polytechnique.fr/enrol/index.php?id=9404">
+    <span class="fa fa-server"></span>
+     
+    Moodle
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="instructions.html">
+    <span class="fas fa fas fa-gear"></span>
+     
+    Setup
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-chalkboard-teacher"></span>
+     
+    Lectures/Slides
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="resources/introMAP573.pdf">General introduction</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="https://github.com/jchiquet/CourseAdvancedR/raw/master/2020_MAP573/R_intro.pdf">An introduction to R</a>
+    </li>
+    <li>
+      <a href="https://github.com/jchiquet/CourseAdvancedR/raw/master/2020_MAP573/R_intro_tidyverse.pdf">Manipulation, representation: a Tour of the tidyverse</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Dimensionality Reduction</li>
+    <li>
+      <a href="resources/DimensionReductionPCA.pdf">Linear methods: PCA</a>
+    </li>
+    <li class="dropdown-header">Non linear methods: Kernel PCA, t-SNE, VAE</li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Clustering</li>
+    <li class="dropdown-header">Partitioning: HAC, k-means, Spectral clustering</li>
+    <li class="dropdown-header">Model-based clustering: Gaussian mixture model and EM</li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-laptop"></span>
+     
+    Tutorials
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="tutorials_R.html">R tutorials</a>
+    </li>
+    <li>
+      <a href="tutorial_PCA.html">PCA</a>
+    </li>
+    <li class="dropdown-header">MDS, kernek-PCA</li>
+    <li class="dropdown-header">Clustering</li>
+    <li class="dropdown-header">GGM and EM</li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-keyboard"></span>
+     
+    Homework
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="homework_1_reporting_correction.html">#1: Swirl, Rmarkdown, R basics - correction</a>
+    </li>
+    <li>
+      <a href="homework_2_data_manipulation_representation_correction.html">Data manipulation and representation - correction</a>
+    </li>
+    <li class="dropdown-header">Data analysis with PCA</li>
+    <li class="dropdown-header">Report for lab #2</li>
+    <li class="dropdown-header">Spectral Clustering for graphs</li>
+    <li class="dropdown-header">Handling Missing Values</li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-chart-bar"></span>
+     
+    Projects
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Subject 1:</li>
+    <li class="dropdown-header">Subject 2:</li>
+    <li class="dropdown-header">Subject 3:</li>
+    <li class="dropdown-header">Subject 4:</li>
+    <li class="dropdown-header">Subject 5:</li>
+    <li class="dropdown-header">Subject 6:</li>
+    <li class="dropdown-header">Subject 7:</li>
+    <li class="dropdown-header">Subject 8:</li>
+    <li class="dropdown-header">Subject 9:</li>
+    <li class="dropdown-header">Subject 10:</li>
+  </ul>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Tutorial: PCA on State Budget</h1>
+<h4 class="author">Julien Chiquet</h4>
+<h4 class="date">2020-10-07</h4>
+
+</div>
+
+
+<div id="preliminaries" class="section level1">
+<h1>Preliminaries</h1>
+<div id="package-requirements" class="section level2">
+<h2>Package requirements</h2>
+<p>We start by loading a couple of packages for data manipulation, dimension reduction and fancy representations.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(tidyverse)   <span class="co"># advanced data manipulation and vizualisation</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(knitr)       <span class="co"># R notebook export and formatting </span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">library</span>(FactoMineR)  <span class="co"># Factor analysis</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="kw">library</span>(factoextra)  <span class="co"># Fancy plotting of FactoMineR outputs</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a><span class="kw">library</span>(corrplot)    <span class="co"># Fancy plotting of matrices </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a><span class="kw">library</span>(GGally)      <span class="co"># Easy-to-use ggplot2 extensions</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a><span class="kw">theme_set</span>(<span class="kw">theme_bw</span>()) <span class="co"># set default ggplot2 theme to black and white</span></span></code></pre></div>
+</div>
+<div id="importing-the-data-set" class="section level2">
+<h2>Importing the Data set</h2>
+<div id="data-description" class="section level3">
+<h3>Data description</h3>
+<p>We consider a data set inherited from the classical ‘French school’ of data analysis. This data set is taken from <span class="citation">Bouroche and Saporta (1980)</span> and has been analyzed e.g. in <span class="citation">Duby and Robin (2006)</span>. The data matrix <span class="math inline">\(\mathbf{X} = (x_{ij})_{i=1,\dots,n; j=1,\dots,p}\)</span> contains the distribution of the French State budget between <span class="math inline">\(p = 11\)</span> different items between <span class="math inline">\(n = 24\)</span> years sampled between 1872 and 1971.</p>
+<p>The values are given as a percentage of the overall budget and the different items are</p>
+<ul>
+<li>Government</li>
+<li>Agriculture</li>
+<li>Business and Industry</li>
+<li>Employment</li>
+<li>Housing</li>
+<li>Education</li>
+<li>Welfare</li>
+<li>Veterans</li>
+<li>Defence</li>
+<li>Debt Interest</li>
+<li>Others</li>
+</ul>
+</div>
+<div id="data-loading" class="section level3">
+<h3>Data loading</h3>
+<p>The file <code>budget.csv</code> is available in comma separated format, with <code>;</code> as separator and <code>,</code> as decimal (SOME cumbersome French formatting).</p>
+<p><strong>Load the data into a data frame and name the columns appropriately.</strong></p>
+<div class="hiddensolution">
+<p>The function <code>read_csv2</code> from the <code>readr</code> package, part of the <a href="https://www.tidyverse.org/">tidyverse</a> can hande this automatically. We also specify the column names, corresponding to the budgetary items, plus the corresponding year, while loading the data set into <code>R</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>state_budget &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw">read_csv2</span>(<span class="st">&quot;data/budget.csv&quot;</span>,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>  <span class="dt">col_names =</span> <span class="kw">c</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>      <span class="st">&quot;Year&quot;</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>      <span class="st">&quot;Governments&quot;</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>      <span class="st">&quot;Agriculture&quot;</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>      <span class="st">&quot;Business and Industry&quot;</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>      <span class="st">&quot;Employment&quot;</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>      <span class="st">&quot;Housing&quot;</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a>      <span class="st">&quot;Education&quot;</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>      <span class="st">&quot;Welfare&quot;</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>      <span class="st">&quot;Veterans&quot;</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a>      <span class="st">&quot;Defence&quot;</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a>      <span class="st">&quot;Debt Interest&quot;</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a>      <span class="st">&quot;Others&quot;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true"></a>    ))</span></code></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div id="basic-descriptive-analysis" class="section level1">
+<h1>Basic descriptive analysis</h1>
+<div id="data-table-summary" class="section level2">
+<h2>Data table summary</h2>
+<p><strong>Have a look at the head of the data table <span class="math inline">\(\mathbf{X}\)</span></strong></p>
+<div class="hiddensolution">
+<p><code>kable</code> is used adapt the formatting to the type of output: HTML, screen, PDF</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>state_budget <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>() <span class="op">%&gt;%</span><span class="st"> </span>knitr<span class="op">::</span><span class="kw">kable</span>()</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">
+Year
+</th>
+<th style="text-align:right;">
+Governments
+</th>
+<th style="text-align:right;">
+Agriculture
+</th>
+<th style="text-align:right;">
+Business and Industry
+</th>
+<th style="text-align:right;">
+Employment
+</th>
+<th style="text-align:right;">
+Housing
+</th>
+<th style="text-align:right;">
+Education
+</th>
+<th style="text-align:right;">
+Welfare
+</th>
+<th style="text-align:right;">
+Veterans
+</th>
+<th style="text-align:right;">
+Defence
+</th>
+<th style="text-align:right;">
+Debt Interest
+</th>
+<th style="text-align:right;">
+Others
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1872
+</td>
+<td style="text-align:right;">
+18.0
+</td>
+<td style="text-align:right;">
+0.5
+</td>
+<td style="text-align:right;">
+0.1
+</td>
+<td style="text-align:right;">
+6.7
+</td>
+<td style="text-align:right;">
+0.5
+</td>
+<td style="text-align:right;">
+2.1
+</td>
+<td style="text-align:right;">
+2.0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+26.4
+</td>
+<td style="text-align:right;">
+41.5
+</td>
+<td style="text-align:right;">
+2.1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1880
+</td>
+<td style="text-align:right;">
+14.1
+</td>
+<td style="text-align:right;">
+0.8
+</td>
+<td style="text-align:right;">
+0.1
+</td>
+<td style="text-align:right;">
+15.3
+</td>
+<td style="text-align:right;">
+1.9
+</td>
+<td style="text-align:right;">
+3.7
+</td>
+<td style="text-align:right;">
+0.5
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+29.8
+</td>
+<td style="text-align:right;">
+31.3
+</td>
+<td style="text-align:right;">
+2.5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1890
+</td>
+<td style="text-align:right;">
+13.6
+</td>
+<td style="text-align:right;">
+0.7
+</td>
+<td style="text-align:right;">
+0.7
+</td>
+<td style="text-align:right;">
+6.8
+</td>
+<td style="text-align:right;">
+0.6
+</td>
+<td style="text-align:right;">
+7.1
+</td>
+<td style="text-align:right;">
+0.7
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+33.8
+</td>
+<td style="text-align:right;">
+34.4
+</td>
+<td style="text-align:right;">
+1.7
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1900
+</td>
+<td style="text-align:right;">
+14.3
+</td>
+<td style="text-align:right;">
+1.7
+</td>
+<td style="text-align:right;">
+1.7
+</td>
+<td style="text-align:right;">
+6.9
+</td>
+<td style="text-align:right;">
+1.2
+</td>
+<td style="text-align:right;">
+7.4
+</td>
+<td style="text-align:right;">
+0.8
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+37.7
+</td>
+<td style="text-align:right;">
+26.2
+</td>
+<td style="text-align:right;">
+2.2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1903
+</td>
+<td style="text-align:right;">
+10.3
+</td>
+<td style="text-align:right;">
+1.5
+</td>
+<td style="text-align:right;">
+0.4
+</td>
+<td style="text-align:right;">
+9.3
+</td>
+<td style="text-align:right;">
+0.6
+</td>
+<td style="text-align:right;">
+8.5
+</td>
+<td style="text-align:right;">
+0.9
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+38.4
+</td>
+<td style="text-align:right;">
+27.2
+</td>
+<td style="text-align:right;">
+3.0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1906
+</td>
+<td style="text-align:right;">
+13.4
+</td>
+<td style="text-align:right;">
+1.4
+</td>
+<td style="text-align:right;">
+0.5
+</td>
+<td style="text-align:right;">
+8.1
+</td>
+<td style="text-align:right;">
+0.7
+</td>
+<td style="text-align:right;">
+8.6
+</td>
+<td style="text-align:right;">
+1.8
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+38.5
+</td>
+<td style="text-align:right;">
+25.3
+</td>
+<td style="text-align:right;">
+1.9
+</td>
+</tr>
+</tbody>
+</table>
+<p>The following function is useful to have a quick look at a data frame a check types of each variables:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="kw">glimpse</span>(state_budget)</span></code></pre></div>
+<pre><code>## Rows: 24
+## Columns: 12
+## $ Year                    &lt;dbl&gt; 1872, 1880, 1890, 1900, 1903, 1906, 1909, 191…
+## $ Governments             &lt;dbl&gt; 18.0, 14.1, 13.6, 14.3, 10.3, 13.4, 13.5, 12.…
+## $ Agriculture             &lt;dbl&gt; 0.5, 0.8, 0.7, 1.7, 1.5, 1.4, 1.1, 1.4, 0.3, …
+## $ `Business and Industry` &lt;dbl&gt; 0.1, 0.1, 0.7, 1.7, 0.4, 0.5, 0.5, 0.3, 0.1, …
+## $ Employment              &lt;dbl&gt; 6.7, 15.3, 6.8, 6.9, 9.3, 8.1, 9.0, 9.4, 11.9…
+## $ Housing                 &lt;dbl&gt; 0.5, 1.9, 0.6, 1.2, 0.6, 0.7, 0.6, 0.6, 2.4, …
+## $ Education               &lt;dbl&gt; 2.1, 3.7, 7.1, 7.4, 8.5, 8.6, 9.0, 9.3, 3.7, …
+## $ Welfare                 &lt;dbl&gt; 2.0, 0.5, 0.7, 0.8, 0.9, 1.8, 3.4, 4.3, 1.7, …
+## $ Veterans                &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.9, …
+## $ Defence                 &lt;dbl&gt; 26.4, 29.8, 33.8, 37.7, 38.4, 38.5, 36.8, 41.…
+## $ `Debt Interest`         &lt;dbl&gt; 41.5, 31.3, 34.4, 26.2, 27.2, 25.3, 23.5, 19.…
+## $ Others                  &lt;dbl&gt; 2.1, 2.5, 1.7, 2.2, 3.0, 1.9, 2.6, 1.3, 0.2, …</code></pre>
+</div>
+<p>Each variable (i.e. budget item) takes it value in <span class="math inline">\([0,100]\)</span> (proportion of the current budget). <strong>Propose a plot to summarize the distribution of these proportions</strong></p>
+<div class="hiddensolution">
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>state_budget <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>Year) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="kw">everything</span>()) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a><span class="st">    </span><span class="kw">aes</span>(<span class="dt">x =</span> name, <span class="dt">y =</span> value) <span class="op">+</span><span class="st"> </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;budget item&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;value (proportion)&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a><span class="st">    </span><span class="kw">geom_boxplot</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a><span class="st">    </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">90</span>))</span></code></pre></div>
+<p><img src="tutorial_PCA_files/figure-html/boxplot-1.png" width="672" /></p>
+</div>
+<div id="data-transformation" class="section level3">
+<h3>Data transformation</h3>
+<p><strong>Create a categorical variable (factor) with a couple of level to regroup samples by time interval that you find relevant in history of 20th century. Check that these period are balanced.</strong></p>
+<div class="hiddensolution">
+<p>We identify 4 historical periods to regroup the ‘Year’ variable (the id of the sample) into four clusters that might be interesting for interpreting the the PCA. We amend our data frame by adding a column encoding this new descriptive variable (that will <em>not</em> be used in the PCA, of course!).</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a>state_budget &lt;-<span class="st"> </span>state_budget <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Period =</span> <span class="kw">cut</span>(Year, </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a>    <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="op">-</span><span class="ot">Inf</span>, <span class="dv">1900</span>, <span class="dv">1920</span>, <span class="dv">1947</span>, <span class="ot">Inf</span>), <span class="dt">right =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a>    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;&lt;1900&quot;</span>, <span class="st">&quot;[1900, 1920)&quot;</span>, <span class="st">&quot;(1920, 1947]&quot;</span>, <span class="st">&quot;&gt;= 1947&quot;</span>))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a>  )</span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="scatterplotpairs-plot" class="section level2">
+<h2>Scatterplot/pairs plot</h2>
+<p>When only few variables are at play, plotting the scatterplot or (pairs-to-pairs plot) might help in finding obvious relations.</p>
+<p><strong>Use the function <code>scatmat</code> from {GGally} to do that</strong></p>
+<div class="hiddensolution">
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a>  state_budget <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>Year) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate_if</span>(is_double, scale) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a><span class="st">    </span>GGally<span class="op">::</span><span class="kw">scatmat</span>(<span class="dt">color =</span> <span class="st">&quot;Period&quot;</span>)</span></code></pre></div>
+<p><img src="tutorial_PCA_files/figure-html/scatterplot-1.png" width="768" /></p>
+</div>
+<p>When many more continuous variables are observed, a quick glance at the redondancy in information may be explored by representing the correlation matrix, optionally regrouped according to similarity (here, hierarchical clustering).</p>
+<p><strong>Use the package {corrplot} to check correlations between variables. What do you conclude?</strong></p>
+<div class="hiddensolution">
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="kw">par</span>(<span class="dt">mfrow  =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a>state_budget <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>Year, <span class="op">-</span>Period) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a><span class="st">    </span><span class="kw">cor</span>() <span class="op">%&gt;%</span><span class="st"> </span>corrplot<span class="op">::</span><span class="kw">corrplot</span>()</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a>state_budget <span class="op">%&gt;%</span><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>Year, <span class="op">-</span>Period) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a><span class="st">    </span><span class="kw">cor</span>() <span class="op">%&gt;%</span><span class="st"> </span>corrplot<span class="op">::</span><span class="kw">corrplot</span>(<span class="dt">method =</span> <span class="st">&quot;color&quot;</span>, <span class="dt">order =</span> <span class="st">&quot;hclust&quot;</span>)</span></code></pre></div>
+<p><img src="tutorial_PCA_files/figure-html/correlation%20matrix-1.png" width="768" /></p>
+<p>It seems that some variables carry the same information: dimension reduction might help. The data is probably living in a smaller space than <span class="math inline">\(p=11\)</span>.</p>
+</div>
+</div>
+</div>
+<div id="principal-component-anaysis" class="section level1">
+<h1>Principal Component Anaysis</h1>
+<div id="performing-pca" class="section level2">
+<h2>Performing PCA</h2>
+<p>Before performing the PCA, we center (always!) and scale the continuous columns in the data table, in order to give the same weight to items with high or lower percentage.</p>
+<p><strong>Form the matrix <span class="math inline">\(\mathbf{X}\)</span> of continuous scaled variables and perform the PCA with {FactoMineR}</strong></p>
+<div id="quick-recap-on-pca" class="section level3">
+<h3>Quick Recap on PCA</h3>
+<p>Recall that, essentially, a PCA and all important quantities is obtained by computing the eigen decomposition of the empirical covariance matrix: <span class="math display">\[\begin{equation*}
+  \hat{\boldsymbol \Sigma} = \mathbf{X}^\top \mathbf{X} = \mathbf{U} \boldsymbol{\Lambda} \mathbf{U}^\top.
+\end{equation*}\]</span></p>
+<p>Equivalently – and this is how it is computed in most program – PCA is obtained by performing the <em>Singular Value Decomposition</em> of the data matrix <span class="math inline">\(\mathbf{X}\)</span>, i.e., <span class="math display">\[\begin{equation*}
+  \mathbf{X} = \mathbf{V} \boldsymbol{\Lambda}^{1/2} \mathbf{U}^\top.
+\end{equation*}\]</span></p>
+<p>We use the following vocabulary:</p>
+<ul>
+<li>the weights, or rotation matrix, or loadings, is the orthogonal matrix <span class="math inline">\(\mathbf{W} = \mathbf{U}\)</span></li>
+<li>the score matrix, or principal components, is the matrix <span class="math inline">\(\mathbf{F} = \mathbf{X}\mathbf{U} = \mathbf{V}\mathbf{\Lambda}^{1/2}\)</span>.</li>
+<li>the singular values are stack in the diagonal matrix <span class="math inline">\(\mathbf{\Lambda}^{1/2}\)</span>.</li>
+<li>the eigen values <span class="math inline">\(\lambda_j\)</span> of <span class="math inline">\(\boldsymbol\Sigma\)</span> are the square of the singular values of <span class="math inline">\(\mathbf{X}\)</span>.</li>
+</ul>
+<p>All in all, a PCA is a matrix factorisation such that <span class="math display">\[\begin{equation*}
+  \mathbf{F} \mathbf{U}^\top  = \mathbf{X}.
+\end{equation*}\]</span></p>
+</div>
+</div>
+<div id="scree-plot" class="section level2">
+<h2>Scree plot</h2>
+<p>The first diagnostic plot to make is a scree plot, which display the proportion of explained variances by the successive component. Recall that is related to the eigen values of the empirical covariance: <span class="math display">\[\begin{equation*}
+  \mathrm{percent}(\mathrm{var}_{j}) = \frac{\lambda_j}{\sum_{j=1}^p \lambda_j}.
+\end{equation*}\]</span></p>
+<p><strong>Make a scree plot. Comment!</strong></p>
+</div>
+<div id="variables-study" class="section level2">
+<h2>Variables study</h2>
+<p>All information about variables can be reached with <code>get_pca_var</code>.</p>
+<div id="eigen-vector-weights-a.k.a.-loadings" class="section level3">
+<h3>Eigen vector / Weights (a.k.a. loadings)</h3>
+<p>The eigen vectors of the empirical covariance matrix give weights for obtaining the new variables as a linear combinaison of the original ones.</p>
+<p><strong>Check that the right eigen vectors of <span class="math inline">\(\mathbf{X}\)</span>, and the eigen vectors or <span class="math inline">\(\boldsymbol\Sigma\)</span> match with the loadings. Also check that it is orthogonal</strong></p>
+<p>The coordinate of the variables projected on the correlation circle are equal to <span class="math inline">\(\mathbf{U} \sqrt{\mathbf{\Lambda}}\)</span>, the correlation between the new variables and the original ones.</p>
+<p><strong>Check the contribution of the original variables to the new axis. Comment</strong></p>
+</div>
+<div id="correlation-circle" class="section level3">
+<h3>Correlation circle</h3>
+<p>The correlation circle gives a quick representation of how new and original variables are related together.</p>
+<p><strong>Make the plot, comment! Also check the quality of the representation if the variables</strong></p>
+</div>
+</div>
+<div id="indiviual-factor-map" class="section level2">
+<h2>Indiviual Factor Map</h2>
+<p>All information about variables can ge reached with <code>get_pca_ind</code>.</p>
+<div id="the-principal-components-scores" class="section level3">
+<h3>The principal components / Scores</h3>
+<p>The <em>principal components</em> are the the coordinate of the points in the new basis, after rotating the original data by the matrix of eigen vectors <span class="math inline">\(U\)</span>.</p>
+<p><strong>Compute them by yourself and check that it matches the coordinate of the individuals</strong></p>
+<p>The individual factor map is the representation of the principal components/scores in the specified axes.</p>
+<p><strong>Use {factoextra} to represent the individuals in the new basis, on axes (1,2), (1,3), (2,3). Add some color related to the period. Comment</strong></p>
+</div>
+</div>
+<div id="biplot" class="section level2">
+<h2>Biplot</h2>
+<p>When there are only few variables (only tens), it is possible to give an unifying representation of individual and variable factor maps into a single plot, called <em>biplot</em>.</p>
+<p><strong>Make the biplot and comment</strong></p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references hanging-indent">
+<div id="ref-bouroche1980analyse">
+<p>Bouroche, Jean-Marie, and Gilbert Saporta. 1980. <em>L’analyse Des Données</em>. Presses universitaires de France Paris.</p>
+</div>
+<div id="ref-duby2006analyse">
+<p>Duby, Camille, and Stéphane Robin. 2006. “Analyse En Composantes Principales.” <em>Institut National Agronomique, Paris-Grignon</em> 80.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
