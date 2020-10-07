@@ -39,8 +39,8 @@ navbar:
           href: https://github.com/jchiquet/CourseAdvancedR/raw/master/2020_MAP573/R_intro_tidyverse.pdf
         - text: "------------------"
         - text: "Dimensionality Reduction"
-        - text: "Linear methods: PCA and variants"
-#          href: .html
+        - text: "Linear methods: PCA"
+          href: resources/DimensionReductionPCA.pdf
         - text: "Non linear methods: Kernel PCA, t-SNE, VAE"
 #          href: .html
         - text: "------------------"
@@ -55,7 +55,7 @@ navbar:
         - text: "R tutorials"
           href: tutorials_R.html
         - text: "PCA"
-#          href: tutorial_PCA_budget.html
+          href: tutorial_PCA.html
         - text: "auto-encoder"
 #          href: tutorials_VAE.html
         - text: "Clustering"

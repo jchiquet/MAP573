@@ -1,0 +1,252 @@
+---
+title: 'Tutorial: PCA on State Budget'
+author: 'Julien Chiquet'
+date: "`r Sys.Date()`"
+bibliography: resources/MAP573.bib
+---
+
+# Preliminaries
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  rows.print = 5)
+```
+
+## Package requirements
+
+We start by loading a couple of packages for data manipulation, dimension reduction and fancy representations.
+
+```{r packages, message = FALSE, warning = FALSE}
+library(tidyverse)   # advanced data manipulation and vizualisation
+library(knitr)       # R notebook export and formatting 
+library(FactoMineR)  # Factor analysis
+library(factoextra)  # Fancy plotting of FactoMineR outputs
+library(corrplot)    # Fancy plotting of matrices 
+library(GGally)      # Easy-to-use ggplot2 extensions
+theme_set(theme_bw()) # set default ggplot2 theme to black and white
+```
+
+## Importing the Data set
+
+### Data description
+
+We consider a data set inherited from the classical 'French school' of data analysis. This data set is taken from @bouroche1980analyse and has been analyzed e.g. in @duby2006analyse. The data matrix  $\mathbf{X} = (x_{ij})_{i=1,\dots,n; j=1,\dots,p}$ contains the distribution of the French State budget between $p = 11$ different items between $n = 24$ years sampled between 1872 and 1971.
+
+The values are given as a percentage of the overall budget and the different items are
+
+  - Government
+  - Agriculture
+  - Business and Industry
+  - Employment
+  - Housing
+  - Education
+  - Welfare
+  - Veterans
+  - Defence
+  - Debt Interest
+  - Others
+
+
+### Data loading
+
+The file `budget.csv` is available in comma separated format, with `;` as separator and `,` as decimal (SOME cumbersome French formatting). 
+
+**Load the data into a data frame and name the columns appropriately.**
+
+<div class="hiddensolution">
+The function `read_csv2` from the `readr` package, part of the [tidyverse](https://www.tidyverse.org/) can hande this automatically. We also specify the column names, corresponding to the budgetary items, plus the corresponding year, while loading the data set into `R`: 
+
+```{r data_loadings, message = FALSE}
+state_budget <- readr::read_csv2("data/budget.csv",
+  col_names = c(
+      "Year",
+      "Governments",
+      "Agriculture",
+      "Business and Industry",
+      "Employment",
+      "Housing",
+      "Education",
+      "Welfare",
+      "Veterans",
+      "Defence",
+      "Debt Interest",
+      "Others"
+    ))
+```
+
+</div>
+
+# Basic descriptive analysis
+
+## Data table summary
+
+**Have a look at the head of the data table $\mathbf{X}$**
+
+<div class="hiddensolution">
+
+`kable` is used adapt the formatting to the type of output: HTML, screen, PDF
+
+```{r data header}
+state_budget %>% head() %>% knitr::kable()
+```
+
+The following function is useful to have a quick look at a data frame a check types of each variables:
+
+```{r data glimpse}
+glimpse(state_budget)
+```
+</div>
+
+Each variable (i.e. budget item) takes it value in $[0,100]$ (proportion of the current budget). **Propose a plot to summarize the distribution of these proportions**
+
+<div class="hiddensolution">
+
+```{r boxplot}
+state_budget %>% 
+  select(-Year) %>% 
+  pivot_longer(everything()) %>% 
+  ggplot() + 
+    aes(x = name, y = value) + labs(x = "budget item", y = "value (proportion)") + 
+    geom_boxplot() + geom_point(alpha = 0.5) + 
+    theme(axis.text.x = element_text(angle = 90))
+```
+</div>
+
+### Data transformation
+
+**Create a categorical variable (factor) with a couple of level to regroup samples by time interval that you find relevant in history of 20th century. Check that these period are balanced.**
+
+<div class="hiddensolution">
+
+We identify 4 historical periods to regroup the 'Year' variable (the id of the sample) into four clusters that might be interesting for interpreting the the PCA. We amend our data frame by adding a column encoding this new descriptive variable (that will _not_ be used in the PCA, of course!).
+
+```{r period}
+state_budget <- state_budget %>% 
+  mutate(Period = cut(Year, 
+    breaks = c(-Inf, 1900, 1920, 1947, Inf), right = FALSE,
+    labels = c("<1900", "[1900, 1920)", "(1920, 1947]", ">= 1947"))
+  )
+```
+
+</div>
+
+## Scatterplot/pairs plot
+
+When only few variables are at play, plotting the scatterplot or (pairs-to-pairs plot) might help in finding obvious relations.
+
+**Use the function `scatmat` from \{GGally\} to do that**
+
+<div class="hiddensolution">
+
+```{r scatterplot, fig.width = 8, fig.height = 8}
+  state_budget %>% 
+    dplyr::select(-Year) %>% mutate_if(is_double, scale) %>% 
+    GGally::scatmat(color = "Period")
+```
+
+</div>
+
+When many more continuous variables are observed, a quick glance at the redondancy in information may be explored by representing the correlation matrix, optionally regrouped according to similarity (here, hierarchical clustering).
+
+**Use the package \{corrplot\} to check correlations between variables. What do you conclude?**
+
+<div class="hiddensolution">
+
+```{r correlation matrix, fig.width = 8, fig.height = 8}
+par(mfrow  = c(1,2))
+state_budget %>% dplyr::select(-Year, -Period) %>% 
+    cor() %>% corrplot::corrplot()
+state_budget %>%  dplyr::select(-Year, -Period) %>% 
+    cor() %>% corrplot::corrplot(method = "color", order = "hclust")
+```
+
+It seems that some variables carry the same information: dimension reduction might help. The data is probably living in a smaller space than $p=11$.
+</div>
+
+
+# Principal Component Anaysis
+
+## Performing PCA
+
+Before performing the PCA, we center (always!) and scale the continuous columns in the data table, in order to give the same weight to items with high or lower percentage.
+
+**Form the matrix $\mathbf{X}$ of continuous scaled variables and perform the PCA with \{FactoMineR\}**
+
+### Quick Recap on PCA
+
+Recall that, essentially, a PCA and all important quantities is obtained by computing 
+the eigen decomposition of the empirical covariance matrix:
+\begin{equation*}
+  \hat{\boldsymbol \Sigma} = \mathbf{X}^\top \mathbf{X} = \mathbf{U} \boldsymbol{\Lambda} \mathbf{U}^\top.
+\end{equation*}
+
+Equivalently -- and this is how it is computed in most program  -- PCA is obtained by performing the _Singular Value Decomposition_ of the data matrix $\mathbf{X}$, i.e., 
+\begin{equation*}
+  \mathbf{X} = \mathbf{V} \boldsymbol{\Lambda}^{1/2} \mathbf{U}^\top.
+\end{equation*}
+
+We use the following vocabulary: 
+
+  - the weights, or rotation matrix, or loadings, is the orthogonal matrix $\mathbf{W} = \mathbf{U}$ 
+  - the score matrix, or principal components, is the matrix $\mathbf{F} = \mathbf{X}\mathbf{U} = \mathbf{V}\mathbf{\Lambda}^{1/2}$.
+  - the singular values are stack in the diagonal matrix $\mathbf{\Lambda}^{1/2}$.
+  - the eigen values $\lambda_j$ of $\boldsymbol\Sigma$ are the square of the singular values of $\mathbf{X}$.
+  
+All in all, a PCA is a matrix factorisation such that 
+\begin{equation*}
+  \mathbf{F} \mathbf{U}^\top  = \mathbf{X}.
+\end{equation*}
+
+## Scree plot
+
+The first diagnostic plot to make is a scree plot, which display the proportion of explained variances by the successive component. Recall that is related to the eigen values of the empirical covariance:
+\begin{equation*}
+  \mathrm{percent}(\mathrm{var}_{j}) = \frac{\lambda_j}{\sum_{j=1}^p \lambda_j}.
+\end{equation*}
+
+**Make a scree plot. Comment!**
+
+## Variables study
+
+All information about variables can be reached with `get_pca_var`.
+
+### Eigen vector / Weights (a.k.a. loadings)
+
+The eigen vectors of the empirical covariance matrix give weights for obtaining the new variables as a linear combinaison of the original ones.
+
+**Check that the right eigen vectors of $\mathbf{X}$, and the eigen vectors or $\boldsymbol\Sigma$ match with the loadings. Also check that it is orthogonal**
+
+The coordinate of the variables projected on the correlation circle are equal to $\mathbf{U} \sqrt{\mathbf{\Lambda}}$, the correlation between the new variables and the original ones.
+
+**Check the contribution of the original variables to the new axis. Comment**
+
+### Correlation circle
+
+The correlation circle gives a quick representation of how new and original variables are related together. 
+
+**Make the plot, comment! Also check the quality of the representation if the variables**
+
+
+## Indiviual Factor Map
+
+All information about variables can ge reached with `get_pca_ind`.
+
+### The principal components / Scores
+
+The _principal components_ are the the coordinate of the points in the new basis, after rotating the original data by the matrix of eigen vectors $U$.
+
+**Compute them by yourself and check that it matches the coordinate of the individuals**
+
+The individual factor map is the representation of the principal components/scores in the specified axes.
+
+**Use \{factoextra\} to represent the individuals in the new basis, on axes (1,2), (1,3), (2,3). Add some color related to the period. Comment**
+
+## Biplot
+
+When there are only few variables (only tens), it is possible to give an unifying representation of individual and variable factor maps into a single plot, called _biplot_. 
+
+**Make the biplot and comment**
+
+## References
+
