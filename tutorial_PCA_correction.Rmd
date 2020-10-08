@@ -1,7 +1,7 @@
 ---
 title: 'Tutorial: PCA on State Budget'
-author: 'Julien Chiquet'
-date: "`r Sys.Date()`"
+author: 'MAP573 team'
+date: "10/13/2020"
 bibliography: resources/MAP573.bib
 ---
 
