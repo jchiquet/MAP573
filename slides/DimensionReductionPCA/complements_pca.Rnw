@@ -66,7 +66,7 @@ FactoMineR::PCA(select(crabs, -species, -sex), scale.unit = FALSE, graph = FALSE
     \begin{equation*}
       \tilde\bX^c = \mathbf{F}_{\mathcal{S}}\bU_{\mathcal{S}}^\top = \bX^c \bU_{\mathcal{S}} \bU_{\mathcal{S}}^\top
     \end{equation*}
-    $\rightsquigarrow$ This is a rank $K$ approximation of $\bX$ of the data the information capture by the first $K$ axes.
+    $\rightsquigarrow$ This is a rank $K$ approximation of $\bX$ (information captured by the first $K$ axes).
 
 \end{frame}
 
@@ -112,7 +112,8 @@ fviz_eig(crabs_pca_corrected)
 \begin{frame}[fragile]
   \frametitle{PCA on corrected data (2)}
 <<pca crabs corrected ind>>=
-fviz_pca_ind(crabs_pca_corrected, col.ind = paste(crabs_corrected$species, crabs_corrected$sex), palette = pal)
+fviz_pca_ind(crabs_pca_corrected,
+  col.ind = paste(crabs_corrected$species, crabs_corrected$sex), palette = pal)
 @
 \end{frame}
 
@@ -126,7 +127,8 @@ fviz_pca_var(crabs_pca_corrected, col.var = 'cos2')
 \begin{frame}[fragile]
   \frametitle{PCA on corrected data (3)}
 <<pca crabs corrected biplot>>=
-fviz_pca_biplot(crabs_pca_corrected, col.ind = paste(crabs_corrected$species, crabs_corrected$sex), palette = pal)
+fviz_pca_biplot(crabs_pca_corrected,
+  col.ind = paste(crabs_corrected$species, crabs_corrected$sex), palette = pal)
 @
 \end{frame}
 
@@ -179,14 +181,15 @@ qplot(1:length(GCV$criterion), GCV$criterion, geom = "line") + labs("number of a
   \end{itemize}
 
 <<>>=
-crabs_pca_corrected <- crabs_corrected %>% FactoMineR::PCA(graph = FALSE, quanti.sup = 7, quali.sup = c(1,2))
+crabs_pca_corrected <- crabs_corrected %>% 
+  FactoMineR::PCA(graph = FALSE, quanti.sup = 7, quali.sup = c(1,2))
 @
 \end{frame}
 
 \begin{frame}[fragile]
 \frametitle{Supplementary information: example (1)}
 <<>>=
-factoextra::fviz_pca_ind(crabs_pca_corrected, habillage = "species", col.ind.sup = "black", addEllipses = TRUE)
+fviz_pca_ind(crabs_pca_corrected, habillage = "species", col.ind.sup = "black", addEllipses = TRUE)
 @
 
 \end{frame}
@@ -210,7 +213,7 @@ factoextra::fviz_pca_var(crabs_pca_corrected)
   \begin{block}{Using continuous variables}
     \begin{itemize}
       \item correlation between variable and the principal components
-      \item sort correlation coefficients and give significant ones (rought tests)
+      \item sort correlation coefficients and give significant ones (with tests)
     \end{itemize}
   \end{block}
   

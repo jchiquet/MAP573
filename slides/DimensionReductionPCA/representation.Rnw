@@ -37,8 +37,6 @@ crabs_pca <- select(crabs, -species, -sex) %>% FactoMineR::PCA(graph = FALSE)
 fviz_eig(crabs_pca)
 @
 
-$\rightsquigarrow$  We will see during labs why everything is carried by the first axis
-
 \end{frame}
 
 \subsection{Individuals point of view}
@@ -187,7 +185,7 @@ factoextra::get_pca_ind(crabs_pca)$contr %>% head(3) %>% kable("latex")
   \begin{block}{Connection with original variables}
     \begin{itemize}
       \item essential for interpretation
-      \item answer to the question: how reading the axis of the individual map
+      \item answer to the question: how to read the axes of the individual map
       \item use correlation to measure connection to original variable
     \end{itemize}
   \end{block}

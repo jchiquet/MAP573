@@ -37,7 +37,7 @@
 \begin{columns}
   \begin{column}{.5\textwidth}
   \begin{block}{Stating the problem (algebraically)}
-    Find $\bu_1; \|\bu_1 \|=1$ that minimizes
+    Find $\bu_1; \|\bu_1 \|=1$ that maximizes
     \begin{equation*}
       \begin{aligned}
         I_{\Delta_1^\bot} & = \frac{1}{n}\sum_{i=1}^n \distance(\bx_i,\Delta_1^\bot)^2 \\ 
@@ -64,7 +64,7 @@
   We solve a simple constraint maximization problem with the method of Lagrange multipliers:
   
   \begin{equation*}
-    \maximize_{\bu_1: \|\bu_1\| = 1 } \bu_1^\top \hat\bSigma \bu_1 \Leftrightarrow \maximize_{\bu_1\in\Rset^p, \lambda_1 > 0} \bu_1^\top \hat\bSigma \bu_1 - \lambda_1 (\|\bu_1\| - 1)
+    \maximize_{\bu_1: \|\bu_1\| = 1 } \bu_1^\top \hat\bSigma \bu_1 \Leftrightarrow \maximize_{\bu_1\in\Rset^p, \lambda_1 > 0} \bu_1^\top \hat\bSigma \bu_1 - \lambda_1 (\|\bu_1\|^2 - 1)
   \end{equation*}
   
   By straightforward (vector) differentiation, an using that $\bu_1^\top \bu_1 = 1$

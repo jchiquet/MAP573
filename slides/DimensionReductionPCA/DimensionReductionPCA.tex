@@ -380,9 +380,9 @@ $\rightsquigarrow$ dimension reduction might help
 hypercube of dimension $d$  such
 that their coordinates are i.i.d then
 \begin{align*}
-\mspace{-20mu} d^{-1/p} \left( \max \|\bx_i-\bx_{i'}\|_p - \min \|\bx_i-\bx_{i'}\|_p
+\mspace{-20mu} d^{-1/2} \left( \max \|\bx_i-\bx_{i'}\|_2 - \min \|\bx_i-\bx_{i'}\|_2
 \right)  &= 0 + O\left(\sqrt{\frac{\log n}{d}}\right)\\
-\frac{\max \|\bx_i-\bx_{i'}\|_p}{\min \|\bx_i-\bx_{i'}\|_p} &= 1 +
+\frac{\max \|\bx_i-\bx_{i'}\|_2}{\min \|\bx_i-\bx_{i'}\|_2} &= 1 +
 O\left(\sqrt{\frac{\log n}{d}}\right).
 \end{align*}
 \end{itemize}
@@ -813,7 +813,7 @@ B & M & 9.2 & 7.8 & 19.0 & 22.4 & 7.7\\
 \begin{columns}
   \begin{column}{.5\textwidth}
   \begin{block}{Stating the problem (algebraically)}
-    Find $\bu_1; \|\bu_1 \|=1$ that minimizes
+    Find $\bu_1; \|\bu_1 \|=1$ that maximizes
     \begin{equation*}
       \begin{aligned}
         I_{\Delta_1^\bot} & = \frac{1}{n}\sum_{i=1}^n \distance(\bx_i,\Delta_1^\bot)^2 \\ 
@@ -840,7 +840,7 @@ B & M & 9.2 & 7.8 & 19.0 & 22.4 & 7.7\\
   We solve a simple constraint maximization problem with the method of Lagrange multipliers:
   
   \begin{equation*}
-    \maximize_{\bu_1: \|\bu_1\| = 1 } \bu_1^\top \hat\bSigma \bu_1 \Leftrightarrow \maximize_{\bu_1\in\Rset^p, \lambda_1 > 0} \bu_1^\top \hat\bSigma \bu_1 - \lambda_1 (\|\bu_1\| - 1)
+    \maximize_{\bu_1: \|\bu_1\| = 1 } \bu_1^\top \hat\bSigma \bu_1 \Leftrightarrow \maximize_{\bu_1\in\Rset^p, \lambda_1 > 0} \bu_1^\top \hat\bSigma \bu_1 - \lambda_1 (\|\bu_1\|^2 - 1)
   \end{equation*}
   
   By straightforward (vector) differentiation, an using that $\bu_1^\top \bu_1 = 1$
@@ -856,7 +856,7 @@ B & M & 9.2 & 7.8 & 19.0 & 22.4 & 7.7\\
   \end{equation*}
   
   \begin{itemize} 
-     \item $\bu_1$ is the first eigen vector of $\hat{\bSigma}$
+     \item $\bu_1$ is the first (normalized) eigen vector of $\hat{\bSigma}$
      \item $\lambda_1$ is the first eigen value of $\hat{\bSigma}$
    \end{itemize} 
   
@@ -898,7 +898,7 @@ B & M & 9.2 & 7.8 & 19.0 & 22.4 & 7.7\\
 \begin{frame}
   \frametitle{Interpretation in $\Rset^p$}
     
-  $\bV$ describes a new orthogonal basis and a rotation of data in this basis\\
+  $\bU$ describes a new orthogonal basis and a rotation of data in this basis\\
   $\rightsquigarrow$ PCA is an appropriate rotation on axes that maximizes the variance
 
   \begin{equation*}
@@ -961,8 +961,6 @@ B & M & 9.2 & 7.8 & 19.0 & 22.4 & 7.7\\
 \includegraphics[width=.8\textwidth]{figures/pca_crabs_screeplot-1} 
 
 \end{knitrout}
-
-$\rightsquigarrow$  We will see during labs why everything is carried by the first axis
 
 \end{frame}
 
@@ -1158,7 +1156,7 @@ Dim.1 & Dim.2 & Dim.3 & Dim.4 & Dim.5\\
   \begin{block}{Connection with original variables}
     \begin{itemize}
       \item essential for interpretation
-      \item answer to the question: how reading the axis of the individual map
+      \item answer to the question: how to read the axes of the individual map
       \item use correlation to measure connection to original variable
     \end{itemize}
   \end{block}
@@ -1376,7 +1374,7 @@ $\rightsquigarrow$ What do you think of the first axe ?
     \begin{equation*}
       \tilde\bX^c = \mathbf{F}_{\mathcal{S}}\bU_{\mathcal{S}}^\top = \bX^c \bU_{\mathcal{S}} \bU_{\mathcal{S}}^\top
     \end{equation*}
-    $\rightsquigarrow$ This is a rank $K$ approximation of $\bX$ of the data the information capture by the first $K$ axes.
+    $\rightsquigarrow$ This is a rank $K$ approximation of $\bX$ (information captured by the first $K$ axes).
 
 \end{frame}
 
@@ -1440,7 +1438,8 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{fviz_pca_ind}\hlstd{(crabs_pca_corrected,} \hlkwc{col.ind} \hlstd{=} \hlkwd{paste}\hlstd{(crabs_corrected}\hlopt{$}\hlstd{species, crabs_corrected}\hlopt{$}\hlstd{sex),} \hlkwc{palette} \hlstd{= pal)}
+\hlkwd{fviz_pca_ind}\hlstd{(crabs_pca_corrected,}
+  \hlkwc{col.ind} \hlstd{=} \hlkwd{paste}\hlstd{(crabs_corrected}\hlopt{$}\hlstd{species, crabs_corrected}\hlopt{$}\hlstd{sex),} \hlkwc{palette} \hlstd{= pal)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=.8\textwidth]{figures/pca_crabs_corrected_ind-1} 
@@ -1466,7 +1465,8 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{fviz_pca_biplot}\hlstd{(crabs_pca_corrected,} \hlkwc{col.ind} \hlstd{=} \hlkwd{paste}\hlstd{(crabs_corrected}\hlopt{$}\hlstd{species, crabs_corrected}\hlopt{$}\hlstd{sex),} \hlkwc{palette} \hlstd{= pal)}
+\hlkwd{fviz_pca_biplot}\hlstd{(crabs_pca_corrected,}
+  \hlkwc{col.ind} \hlstd{=} \hlkwd{paste}\hlstd{(crabs_corrected}\hlopt{$}\hlstd{species, crabs_corrected}\hlopt{$}\hlstd{sex),} \hlkwc{palette} \hlstd{= pal)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=.8\textwidth]{figures/pca_crabs_corrected_biplot-1} 
@@ -1531,7 +1531,8 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{crabs_pca_corrected} \hlkwb{<-} \hlstd{crabs_corrected} \hlopt{%>%} \hlstd{FactoMineR}\hlopt{::}\hlkwd{PCA}\hlstd{(}\hlkwc{graph} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{quanti.sup} \hlstd{=} \hlnum{7}\hlstd{,} \hlkwc{quali.sup} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{))}
+\hlstd{crabs_pca_corrected} \hlkwb{<-} \hlstd{crabs_corrected} \hlopt{%>%}
+  \hlstd{FactoMineR}\hlopt{::}\hlkwd{PCA}\hlstd{(}\hlkwc{graph} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{quanti.sup} \hlstd{=} \hlnum{7}\hlstd{,} \hlkwc{quali.sup} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{))}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -1542,7 +1543,7 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{factoextra}\hlopt{::}\hlkwd{fviz_pca_ind}\hlstd{(crabs_pca_corrected,} \hlkwc{habillage} \hlstd{=} \hlstr{"species"}\hlstd{,} \hlkwc{col.ind.sup} \hlstd{=} \hlstr{"black"}\hlstd{,} \hlkwc{addEllipses} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\hlkwd{fviz_pca_ind}\hlstd{(crabs_pca_corrected,} \hlkwc{habillage} \hlstd{=} \hlstr{"species"}\hlstd{,} \hlkwc{col.ind.sup} \hlstd{=} \hlstr{"black"}\hlstd{,} \hlkwc{addEllipses} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=.8\textwidth]{figures/unnamed-chunk-3-1} 
@@ -1576,7 +1577,7 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
   \begin{block}{Using continuous variables}
     \begin{itemize}
       \item correlation between variable and the principal components
-      \item sort correlation coefficients and give significant ones (rought tests)
+      \item sort correlation coefficients and give significant ones (with tests)
     \end{itemize}
   \end{block}
   

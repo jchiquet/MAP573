@@ -144,9 +144,9 @@ $\rightsquigarrow$ dimension reduction might help
 hypercube of dimension $d$  such
 that their coordinates are i.i.d then
 \begin{align*}
-\mspace{-20mu} d^{-1/p} \left( \max \|\bx_i-\bx_{i'}\|_p - \min \|\bx_i-\bx_{i'}\|_p
+\mspace{-20mu} d^{-1/2} \left( \max \|\bx_i-\bx_{i'}\|_2 - \min \|\bx_i-\bx_{i'}\|_2
 \right)  &= 0 + O\left(\sqrt{\frac{\log n}{d}}\right)\\
-\frac{\max \|\bx_i-\bx_{i'}\|_p}{\min \|\bx_i-\bx_{i'}\|_p} &= 1 +
+\frac{\max \|\bx_i-\bx_{i'}\|_2}{\min \|\bx_i-\bx_{i'}\|_2} &= 1 +
 O\left(\sqrt{\frac{\log n}{d}}\right).
 \end{align*}
 \end{itemize}

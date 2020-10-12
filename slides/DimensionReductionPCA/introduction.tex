@@ -20,40 +20,6 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{Machine Learning}
-
-	\begin{center}
-		\includegraphics[width=\textwidth]{Learning+Types}
-	\end{center}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Supervised vs Unsupervised Learning}
-
-  \begin{block}{Supervised Learning}
-    \begin{itemize}
-    \item Training data $\mathcal{D}_n = \{(\bx_1, y_1), \ldots, (\bx_n, y_n)\}, X_i \sim^{\text{i.i.d}} \mathbb{P}$
-    \item Construct a predictor $\hat f : \mathcal{X} \rightarrow \mathcal{Y}$ using $\mathcal{D}_n$
-    \item Loss $\ell(y, f(x))$ measures how well $f(x)$ predicts $y$
-    \item Aim: minimize the generalization error
-    \item Task: Regression, Classification
-    \end{itemize}
-    $\rightsquigarrow$ The goal is clear: predict $y$ based on $x$ (regression, classification)
-  \end{block}
-
-  \begin{block}{Unsupervised Learning}
-  \begin{itemize}
-    \item Training data $\mathcal{D} = \{\bx_1, \ldots, \bx_n\}$
-    \item Loss? , Aim?
-    \item Task: \alert{\bf Dimension reduction}, Clustering
-  \end{itemize}
-  $\rightsquigarrow$ The goal is less well defined, and \emph{validation} is questionable
-  \end{block}
-
-\end{frame}
-
-\begin{frame}
 \frametitle{Dimension Reduction?}
 
 \begin{figure}
@@ -219,7 +185,7 @@ body\_depth & 0.988 & 0.889 & 0.983 & 0.968 & 1.000\\
  \item much redundancy?
  \item hidden factor?
 \end{itemize}
-$\rightsquigarrow$ dimension reduction might hem
+$\rightsquigarrow$ dimension reduction might help
 \end{frame}
 
 \begin{frame}[fragile]
@@ -270,9 +236,9 @@ $\rightsquigarrow$ dimension reduction might hem
 hypercube of dimension $d$  such
 that their coordinates are i.i.d then
 \begin{align*}
-\mspace{-20mu} d^{-1/p} \left( \max \|\bx_i-\bx_{i'}\|_p - \min \|\bx_i-\bx_{i'}\|_p
+\mspace{-20mu} d^{-1/2} \left( \max \|\bx_i-\bx_{i'}\|_2 - \min \|\bx_i-\bx_{i'}\|_2
 \right)  &= 0 + O\left(\sqrt{\frac{\log n}{d}}\right)\\
-\frac{\max \|\bx_i-\bx_{i'}\|_p}{\min \|\bx_i-\bx_{i'}\|_p} &= 1 +
+\frac{\max \|\bx_i-\bx_{i'}\|_2}{\min \|\bx_i-\bx_{i'}\|_2} &= 1 +
 O\left(\sqrt{\frac{\log n}{d}}\right).
 \end{align*}
 \end{itemize}
@@ -284,28 +250,28 @@ O\left(\sqrt{\frac{\log n}{d}}\right).
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Dimension reduction: goals summary}
+\begin{frame}[label=DimensionReduction]
+  \frametitle{Dimension reduction: general goals}
 
   \paragraph{Main objective:} find a \alert{\bf low-dimensional representation} that captures the "essence" of (high-dimensional) data
 
   \vfill
 
   \begin{block}{Application in Machine Learning}
-  Preprocessing, Regularization
+  \alert{Preprocessing, Regularization}
   \begin{itemize}
-    \item compression, denoising,  anomaly detection
-    \item Reduce overfitting in supervised learning (improve performances)
+    \item Compression, denoising,  anomaly detection
+    \item Reduce overfitting in supervised learning
   \end{itemize}
   \end{block}
 
 \vfill
 
-  \begin{block}{Application in statistics and data analysis}
-    Better understand the data 
+  \begin{block}{Application in Statistics/Data analysis}
+    \alert{Better understanding of the data}
     \begin{itemize}
       \item descriptive/exploratory methods
-      \item visualization: difficult to plot and interpret $> 3d$!
+      \item visualization (difficult to plot and interpret $> 3d$!)
     \end{itemize}
   \end{block}
 
