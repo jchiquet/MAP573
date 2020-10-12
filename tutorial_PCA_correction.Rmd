@@ -272,7 +272,6 @@ D <- diag(myPCA$svd$vs)
 sum((U %*% D - var$coord)^2)
 ```
 
-
 **Check the contribution of the original variables to the new axis. Comment**
 
 <div class="hiddensolution">
@@ -288,7 +287,7 @@ fviz_contrib(myPCA, choice = "var", axes = 1:2)
 
 The correlation circle gives a quick representation of how new and original variables are related together. 
 
-**Make the plot, comment! Also check the quality of the representation if the variables**
+**Make the plot, comment! Also check the quality of the representation of the variables**
 
 <div class="hiddensolution">
 
@@ -322,7 +321,7 @@ ind
 
 The _principal components_ are the the coordinate of the points in the new basis, after rotating the original data by the matrix of eigen vectors $U$.
 
-**Compute them by yourself and check that it matches the coordinate of the individuals**
+**Compute them by yourself and check that it matches the coordinate of the individuals.**
 
 <div class="hiddensolution">
 
