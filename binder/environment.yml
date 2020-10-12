@@ -7,7 +7,7 @@ dependencies:
 #  - numpy
 #  - matplotlib
   - pandoc
-  - pandoc-citeproc
+  - rb-citeproc
   - r-aricode
   - r-base=3.6.3
   - r-corrplot
