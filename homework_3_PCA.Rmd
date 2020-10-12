@@ -1,6 +1,6 @@
 ---
 title: 'Homework #3'
-subtitle: 'PCA for vizu, compression and exploratory analysis'
+subtitle: 'PCA for visualization, compression and exploratory analyses'
 author: 'MAP573 team'
 date: "`r Sys.Date()`"
 ---
@@ -83,10 +83,11 @@ A sample of 2,000 instances is provided for convenience [mnist_sample]('https://
 
 1. Load an format the data (first column is the label) as a `tibble` or a `data.frame`. Each row is a vector with size 784 (28 x 28) + a column for the label.
 2. Write a function to plot an 28 x 28 image based on a vector, and test it on a row of your data frame.
-3. Make a PCA, choice wether to scale or not.
+3. Make a PCA, choice whether to scale or not.
 4. Make the usual diagnostic plots (screeplot, individual, variable) for the first axes, and comment. Use GCV to select the number of axes.
 5. Write a function to reconstruct an image with two argument: $i$ (an instance) $k$ (the number of component used).
 6. Plot the reconstructed image for various value of $k$
+
 <!-- 7  Bonus: try kernel PCA with package `kernlab` or t-SNE with package `tsne`. -->
 
 <!-- ## Decathlon: analysing performance between athletes {.tabset} -->
