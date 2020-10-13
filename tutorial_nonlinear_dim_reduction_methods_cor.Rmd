@@ -30,49 +30,62 @@ theme_set(theme_bw()) # set default ggplot2 theme to black and white
 ```
 
 
-### Multidimensional scaling (MDS)
+### Reminders on Multidimensional scaling (MDS)
 
-Assuming that we have observations $x_1,\dots,x_n \in \mathbb{R}^p$, and let $d_{i,j}$ be the distance between observations $i$
-and $j$. In most cases, we use Euclidean distance i.e. $d_{i,j} = ||x_i-x_j||$, but other distances may be used. On the contrary, in some applications, we may possess only *dissimilarity* measure $d_{i,j}$. 
-
-Multidimensional scaling seeks values $z_1,\dots,z_n \in \mathbb{R}^k$ ($k<p$) to minimize the so-called *stress-function*
-$$
-S_M (z_1,\dots,z_n) = \sum_{i \neq i^{'}} (d_{ii^{'}} - ||z_i - z_{i^{'}}||)^2.
-$$
-This is known as *least-squares* or *Kruskal-Shephard* scaling. We wish to determine a lower-dimensional representation of the data that preserves the pairwise distances as well as possible i.e. we want to find vector $z_1,\dots,z_n \in \mathbb{R}^k$ such that
-$$
-||z_i - z_{i^{'}} || \approx d_{i,i^{'}} \quad \text{ for all } \quad i,i^{'}=1,\dots,n. 
-$$
-A variation on least squares scaling is the so-called *Sammon mapping* which minimizes 
-$$
-S_{S_m}(z_1,\dots,z_n) = \frac{(d_{ii^{'}} - ||z_i - z_{i^{'}}||)^2}{d_{ii^{'}}},
-$$
-that is more emphasis is put on preserving smaller pariwise distances.
-
-In classical scaling, we instead start with similiraties $s_{i,i^{'}}$: often, we use the centered inner product $s_{i,i^{'}} = \langle x_i - \bar x, x_{i^{'}} - \bar x \rangle$. The problem is then to minimize over $z_1,\dots,z_n \in \mathbb{R}^k$, the following quantity
-$$
-S_C(z_1,\dots,z_n) = \sum_{i,i^{'}} \Bigl( s_{ii^{'}} - \langle z_i - \bar z, z_{i^{'}} - \bar z \rangle \Bigr)^2
-$$
+<!-- Assuming that we have observations $x_1,\dots,x_n \in \mathbb{R}^p$, and let $d_{i,j}$ be the distance between observations $i$ -->
+<!-- and $j$. In most cases, we use Euclidean distance i.e. $d_{i,j} = ||x_i-x_j||$, but other distances may be used. On the contrary, in some applications, we may possess only *dissimilarity* measure $d_{i,j}$. -->
 
 
-## R functions 
+<!-- Multidimensional scaling seeks values $z_1,\dots,z_n \in \mathbb{R}^k$ ($k<p$) to minimize the so-called *stress-function* -->
+<!-- $$ -->
+<!-- S_M (z_1,\dots,z_n) = \sum_{i \neq i^{'}} (d_{ii^{'}} - ||z_i - z_{i^{'}}||)^2. -->
+<!-- $$ -->
+<!-- This is known as *least-squares* or *Kruskal-Shephard* scaling. We wish to determine a lower-dimensional representation of the data that preserves the pairwise distances as well as possible i.e. we want to find vector $z_1,\dots,z_n \in \mathbb{R}^k$ such that -->
+<!-- $$ -->
+<!-- ||z_i - z_{i^{'}} || \approx d_{i,i^{'}} \quad \text{ for all } \quad i,i^{'}=1,\dots,n. -->
+<!-- $$ -->
+<!-- A variation on least squares scaling is the so-called *Sammon mapping* which minimizes -->
+<!-- $$ -->
+<!-- S_{S_m}(z_1,\dots,z_n) = \frac{(d_{ii^{'}} - ||z_i - z_{i^{'}}||)^2}{d_{ii^{'}}}, -->
+<!-- $$ -->
+<!-- that is more emphasis is put on preserving smaller pariwise distances. -->
 
-To perform MDS, we either use:
+<!-- In classical scaling, we instead start with similiraties $s_{i,i^{'}}$: often, we use the centered inner product $s_{i,i^{'}} = \langle x_i - \bar x, x_{i^{'}} - \bar x \rangle$. The problem is then to minimize over $z_1,\dots,z_n \in \mathbb{R}^k$, the following quantity -->
+<!-- $$ -->
+<!-- S_C(z_1,\dots,z_n) = \sum_{i,i^{'}} \Bigl( s_{ii^{'}} - \langle z_i - \bar z, z_{i^{'}} - \bar z \rangle \Bigr)^2 -->
+<!-- $$ -->
+
+There are different types of MDS algorithms, including
+
+**Classical multidimensional scaling**
+Preserves the original distance metric, between points, as well as possible. That is the fitted distances on the MDS map and the original distances are in the same metric. Classic MDS belongs to the so-called metric multidimensional scaling category.
+
+It is also known as principal coordinates analysis. It is suitable for quantitative data.
+
+**Non-metric multidimensional scaling**
+It is also known as ordinal MDS. Here, it is not the metric of a distance value that is important or meaningful, but its value in relation to the distances between other pairs of objects.
+
+Ordinal MDS constructs fitted distances that are in the same rank order as the original distance. For example, if the distance of apart objects $1$ and $5$ rank fifth in the original distance data, then they should also rank fifth in the MDS configuration.
+
+It is suitable for qualitative data.
+
+
+
+## R functions for MDS
+
+To perform MDS, we may either use:
 
 **cmdscale()** [stats package]: Compute classical (metric) multidimensional scaling. 
-
 ```{r}
 ?cmdscale()
 ```
 
 **isoMDS()** [MASS package]: Compute Kruskal's non-metric multidimensional scaling (one form of non-metric MDS). 
-
 ```{r}
 ?isoMDS()
 ```
 
 **sammon()** [MASS package]: Compute Sammon's non-linear mapping (one form of non-metric MDS).
-
 ```{r}
 ?sammon()
 ```
@@ -82,7 +95,8 @@ All of these functions take a distance object as main argument and a number $k$ 
 
 ## Classical MDS
 
-**swiss** data that contains fertility and socio-economic data on 47 French speaking provinces in Switzerland.
+We consider the **swiss** data that contains fertility and socio-economic data 
+on 47 French speaking provinces in Switzerland.
 
 ```{r}
 data("swiss")
@@ -92,7 +106,6 @@ swiss %>% head(15)
 ```{r}
 rownames(swiss)
 ```
-
 
 ```{r}
 # Cmpute MDS
@@ -106,7 +119,6 @@ colnames(mds) <- c("Dim.1", "Dim.2")
 mds %>% head(10)
 ```
 
-
 ```{r}
 # Plot MDS
 ggscatter(mds, x = "Dim.1", y = "Dim.2", 
@@ -114,6 +126,8 @@ ggscatter(mds, x = "Dim.1", y = "Dim.2",
           size = 1,
           repel = TRUE)
 ```
+
+**Create $3$ groups using $k$-means clustering and color points by group.**
 
 ```{r}
 # K-means clustering
@@ -136,7 +150,7 @@ ggscatter(mds, x = "Dim.1", y = "Dim.2",
 
 ## Non-metric MDS 
 
-Kruskal-'s non-metric multidimensional scaling 
+Kruskal's non-metric multidimensional scaling 
 
 ```{r}
 # Cmpute MDS
@@ -177,7 +191,9 @@ ggscatter(mds, x = "Dim.1", y = "Dim.2",
 
 ## Correlation matrix using Multidimensional Scaling 
 
-**mtcars** dataset
+MDS can also be used to detect a hidder pattern in a correlation matrix, but it is easy to transform it to a measure of dissimilarity. Distance between objects can be calculated as 1 - res.cor. 
+
+**Perform a classical MDS on the *mtcars* dataset and comment**
 
 ```{r}
 res.cor <- cor(mtcars, method = "spearman")
@@ -191,27 +207,44 @@ ggscatter(mds.cor, x = "Dim.1", y = "Dim.2",
           repel = TRUE)
 ```
 
+** Perform a PCA on the *mtcars* dataset. Comment the differences with MDS. What are the main differences between MDS and PCA**
 ```{r}
 FactoMineR::PCA(mtcars)
 ```
 
 ## Pairwise distances between American cities
 
-```{r}
-us <- utils::read.csv("us_cities.csv", sep=';') %>% as_tibble()
-us
-```
-
-
+The **UScitiesD** dataset gives 'straight line' distances between $10$ cities in the US.
 
 ```{r}
+?UScitiesD
 cities <- UScitiesD
-#cities <- eurodist 
-#cities <- us
-cities
 ```
 
+Just looking at the table does not provide any information about the underlying structure of the data (i.e. the position of each city on a map). We are going to apply MDS to recover the geographical structure. 
 
+```{r}
+df <- tibble::as_tibble(us.cities)
+df <- df %>% filter(name %in% c("Atlanta GA", "Chicago IL", "Denver CO", "Houston TX", 
+                                "Los Angeles CA", "Miami FL", "New York NY", "San Francisco CA",                                       "Seattle WA", "WASHINGTON DC"))
+
+usa <- map_data("usa")
+gg1 <- ggplot() + 
+  geom_polygon(data = usa, aes(x=long, y = lat, group = group), fill = "NA", color = "blue") + 
+  coord_fixed(1.3)
+
+labs <- data.frame(
+  long = df$long,
+  lat = df$lat,
+  names = df$name,
+  stringsAsFactors = FALSE
+  )  
+
+gg1 + 
+  geom_point(data = labs, aes(x = long, y = lat), color = "black", size = 5) +
+  geom_point(data = labs, aes(x = long, y = lat), color = "yellow", size = 4) + 
+  geom_text_repel(data = labs, aes(x=long , y=lat, label = names), size=3)
+```
 
 ```{r}
 cities_mds <- cities %>%
@@ -228,14 +261,7 @@ cities_mds
 ```
 
 
-
 ```{r}
-euro.cities.name <- c("Athens", "Barcelona", "Brussels", "Calais", 
-                "Cherbourg", "Cologne", "Copenhagen", "Geneva", 
-                "Gibraltar", "Hamburg", 'Hook of Holland', 'Lisbon',
-                'Lyons', 'Madrid', 'Marseilles', 'Milan', 'Munich', 
-                'Paris', 'Rome', 'Stockholm', "Vienna")
-
 us.cities.name <- c("Atlanta", "Chicago", "Denver", "Houston", 
                     "LA", "Miami", "NYC", "SF", "Seattle", "DC")
 
@@ -256,7 +282,7 @@ ggscatter(cities_mds_rev, x = "Dim.1", y = "Dim.2",
 ```
 
 
-** Plot the MDS representation of the pair-wise distances for the 10 US cities Comment on the results. Is this the usual US map? ** 
+** Plot the MDS representation of the pair-wise distances for the 10 US cities. Comment on the results. Is this the usual US map? ** 
 
 ```{r}
 p <- ggplot(data = cities_mds) + geom_point(mapping = aes(x=Dim.1 , y=Dim.2), color="yellow", size=8)
@@ -276,31 +302,203 @@ p <- p + labs(title = "MDS representation of pair-wise distances of 21 European 
 p
 ```
 
-```{r}
-df <- tibble::as_tibble(us.cities)
-df <- df %>% filter(name %in% c("Atlanta GA", "Chicago IL", "Denver CO", "Houston TX", 
-                    "Los Angeles CA", "Miami FL", "New York NY", "San Francisco CA", "Seattle WA", "WASHINGTON DC"))
-```
-
-
-```{r}
-usa <- map_data("usa")
-gg1 <- ggplot() + 
-  geom_polygon(data = usa, aes(x=long, y = lat, group = group), fill = "NA", color = "blue") + 
-  coord_fixed(1.3)
-
-labs <- data.frame(
-  long = df$long,
-  lat = df$lat,
-  names = df$name,
-  stringsAsFactors = FALSE
-  )  
-
-gg1 + 
-  geom_point(data = labs, aes(x = long, y = lat), color = "black", size = 5) +
-  geom_point(data = labs, aes(x = long, y = lat), color = "yellow", size = 4) + 
-  geom_text_repel(data = labs, aes(x=long , y=lat, label = names), size=3)
-```
-
 
 ### Kernel PCA 
+
+## Reminders 
+
+Recall that the principal components variables $Z$ of a data matrix $X$ can be computed from the inner-product (gram) matrix $K=XX^\top$. In detail, we compute the eigen-decomposition of the double-centered version of the gram matrix 
+$$
+\tilde{K} = (I-M) K (I-M) = U D^2 U^\top,
+$$
+where $M = \frac 1n \mathbf{1}\mathbf{1}^\top$ and $Z = UD$. Kernel PCA mimics this proceduren interpreting the kernel matrix $\mathbf K = (K(x_i,x_{i^{'}}))_{1 \leq i,i^{'} \leq n}$ as an inner-product matrix of the implicit features $\langle \phi(x_i), \phi(x_{i^{'}}) \rangle$ and finding its eigen vectors.
+
+## With Python using reticulate in R
+```{r}
+library(reticulate) 
+use_python("/usr/local/bin/python") 
+reticulate::py_config()
+
+py_install("sklearn", pip=TRUE) # install package sklearn 
+py_install("matplotlib", pip=TRUE) # install matplotlib
+```
+
+
+Let us start with a simple example of 2 half-moon shapes generated by the [make_moons](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_moons.html)
+functions from [sklearn_learn](https://scikit-learn.org/stable/index.html). 
+
+```{python}
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_moons
+
+X, y = make_moons(n_samples=100, random_state=123)
+
+plt.figure(figsize=(8,6))
+
+plt.scatter(X[y==0, 0], X[y==0, 1], color='red', alpha=0.5)
+plt.scatter(X[y==1, 0], X[y==1, 1], color='blue', alpha=0.5)
+
+plt.title('A nonlinear 2Ddataset')
+plt.ylabel('y coordinate')
+plt.xlabel('x coordinate')
+
+plt.show()
+```
+
+
+**Are the two half-moon shapes linearly separable? Do you expect PCA to give satisfactory results? Perform a [PCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html) using sklearn with *n_components*= $1$ and $2$. Comment.** 
+
+
+```{python}
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_moons
+import numpy as np
+
+X, y = make_moons(n_samples=100, random_state=123)
+scikit_pca = PCA(n_components=1)
+X_spca = scikit_pca.fit_transform(X)
+
+plt.figure(figsize=(8,6))
+plt.scatter(X_spca[y==0, 0], np.zeros((50,1)), color='red', alpha=0.5)
+plt.scatter(X_spca[y==1, 0], np.zeros((50,1)), color='blue', alpha=0.5)
+
+plt.title('First principal component after Linear PCA')
+plt.xlabel('PC1')
+
+plt.show()
+```
+
+Since the two half-moon shapes are linearly inseparable, we expect that the 'classic' PCA will fail to give us a 'good' representation of the data in 1D space.
+As we can see, the resulting principal components do not yield a subspace where the data is linearly separated well.
+
+**Perform a KernelPCA using the [KernelPCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.KernelPCA.html) function from sklearn with the rbf kernel and $\gamma=15$ with both n_components=$1$ and $2$.Comment. Try different values for $\gamma$ and different kernels. Comment.**
+
+```{python}
+from sklearn.decomposition import KernelPCA
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_moons
+import numpy as np
+
+gamma = 15
+X, y = make_moons(n_samples=100, random_state=123)
+X_pc = KernelPCA(gamma=15, n_components=1, kernel='rbf').fit_transform(X)
+
+plt.figure(figsize=(8,6))
+plt.scatter(X_pc[y==0, 0], np.zeros((50,1)), color='red', alpha=0.5)
+plt.scatter(X_pc[y==1, 0], np.zeros((50,1)), color='blue', alpha=0.5)
+
+plt.title('First principal components after RBF Kernel PCA with $\gamma$={}'.format(gamma))
+plt.xlabel('PC1')
+plt.show()
+```
+
+
+
+```{python}
+from sklearn.decomposition import KernelPCA
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_moons
+import numpy as np
+
+gamma = 15
+X, y = make_moons(n_samples=100, random_state=123)
+X_pc = KernelPCA(gamma=15, n_components=2, kernel='rbf').fit_transform(X)
+
+plt.figure(figsize=(8,6))
+plt.scatter(X_pc[y==0, 0], X_pc[y==0, 1], color='red', alpha=0.5)
+plt.scatter(X_pc[y==1, 0], X_pc[y==1, 1], color='blue', alpha=0.5)
+
+plt.title('First 2 principal components after RBF Kernel PCA with $\gamma$={}'.format(gamma))
+plt.xlabel('PC1')
+plt.ylabel('PC2')
+plt.show()
+```
+
+## Concentric circles 
+
+Another well-known example for which linear PCA will fail is the classic case of $2$ concentric circles with random noise produced by scikit-learn???s [make_circles](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html).
+
+```{python}
+from sklearn.datasets import make_circles
+import matplotlib.pyplot as plt
+import numpy as np
+
+X, y = make_circles(n_samples=1000, random_state=123, noise=0.1, factor=0.2)
+
+plt.figure(figsize=(8,6))
+
+plt.scatter(X[y==0, 0], X[y==0, 1], color='red', alpha=0.5)
+plt.scatter(X[y==1, 0], X[y==1, 1], color='blue', alpha=0.5)
+plt.title('Concentric circles')
+plt.ylabel('y coordinate')
+plt.xlabel('x coordinate')
+plt.show()
+```
+
+**Perform both a linear and kernel PCA on the [make_circles](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html) dataset**
+
+## Swiss roll
+
+Unrolling the Swiss roll is a much more challenging task (see [Swiss roll](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_swiss_roll.html)).
+
+```{python}
+from sklearn.datasets import make_swiss_roll
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+
+X, color = make_swiss_roll(n_samples=800, random_state=123)
+
+fig = plt.figure(figsize=(7,7))
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(X[:, 0], X[:, 1], X[:, 2], c=color, cmap=plt.cm.rainbow)
+plt.title('Swiss Roll in 3D')
+plt.show()
+```
+
+**Again, try to perform both linear and kernel PCA on the [Swiss roll](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_swiss_roll.html) dataset. Try with different values of $\gamma$. Are you satisfied with the results?**
+
+```{python}
+from sklearn.datasets import make_swiss_roll
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+from sklearn.decomposition import KernelPCA
+
+gamma = 0.05
+X, color = make_swiss_roll(n_samples=800, random_state=123)
+X_pc = KernelPCA(gamma=gamma, n_components=2, kernel='rbf').fit_transform(X)
+
+plt.figure(figsize=(8,6))
+plt.scatter(X_pc[:, 0], X_pc[:, 1], c=color, cmap=plt.cm.rainbow)
+
+plt.title('First 2 principal components after RBF Kernel PCA with $\gamma$={}'.format(gamma))
+plt.xlabel('PC1')
+plt.ylabel('PC2')
+plt.show()
+```
+
+## Locally Linear Embedding
+
+In 2000, Sam T. Roweis and Lawrence K. Saul [Nonlinear dimensionality reduction by locally linear embedding](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.111.3313) introduced an unsupervised learning algorithm called locally linear embedding (LLE) that is better suited to identify patterns in the high-dimensional feature space and solves our problem of nonlinear dimensionality reduction for the Swiss roll.
+
+Locally linear embedding (LLE) seeks a lower-dimensional projection of the data which preserves distances within local neighborhoods. It can be thought of as a series of local Principal Component Analyses which are globally compared to find the best non-linear embedding.
+
+**Using the [locally_linear_embedding](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.locally_linear_embedding.html) class, 'unroll' the Swiss roll both in $1$ and $2$ dimensions.**
+
+```{python}
+import numpy as np
+from sklearn.datasets import make_swiss_roll
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+from sklearn.manifold import locally_linear_embedding
+
+X, color = make_swiss_roll(n_samples=800, random_state=123)
+X_lle, err = locally_linear_embedding(X, n_neighbors=12, n_components=1)
+
+plt.figure(figsize=(8,6))
+plt.scatter(X_lle, np.zeros((800,1)), c=color, cmap=plt.cm.rainbow)
+
+plt.title('First principal component after Locally Linear Embedding')
+plt.show()
+```
+
