@@ -53,7 +53,7 @@ fviz_eig(crabs_pca)
   \end{block}
 
   \begin{block}{Coordinates of $i$ in the new basis}
-    Coordinates of $i$ in the new basis $\{\bu1, \dots, \bu_d\}$ is thus 
+    Coordinates of $i$ in the new basis $\{\bu_1, \dots, \bu_p\}$ is thus 
     \begin{equation*}
       \bc_i  = (\bU^\top (\bx_i - \bar{\bx}))^\top = (\bx_i - \bar{\bx})^\top \bU = \bX^c_i \bU, \quad \bc_i \in \Rset^p.
     \end{equation*}
@@ -164,15 +164,15 @@ factoextra::get_pca_ind(crabs_pca)$contr %>% head(3) %>% kable("latex")
   \frametitle{Principal Components}
   
   \begin{block}{Dual representation}
-    A symmetric reasoning can be made in $\Rset^n$ for the variables, like with the individuals in $\R^p$.
+    A symmetric reasoning can be made in $\Rset^n$ for the variables, like with the individuals in $\Rset^p$.
     
-    $\rightsquigarrow$ New axes are linear combinason of the original variables, which can be seen as \alert{\bf new variables} in the new latent space
+    $\rightsquigarrow$ New axes are linear combinaison of the original variables, which can be seen as \alert{\bf new variables} in the new latent space
   \end{block}
 
   \begin{block}{Principal component}
-    It is the linear combinason formed by the orginal variables with weights given by the loadings $\bu_k$
+    It is the linear combinasion formed by the orginal variables with weights given by the loadings $\bu_k = (u_{k1}, \dots, u_{kj}, \dots, u_{kp})$
     \begin{equation*}
-      \mathbf{f}_{k}  = \sum_{j=1}^p \bu_k (\bx^{j} - \bar{x}_j) = \bX^c \bu_k, \quad \mathbf{f}_k \in \Rset^n
+      \mathbf{f}_{k}  = \sum_{j=1}^p u_{kj} (\bx^{j} - \bar{x}_j) = \bX^c \bu_k, \quad \mathbf{f}_k \in \Rset^n
     \end{equation*}
     Sometimes called \alert{"factors"} in  factor analysis, as \alert{latent (hidden) variables}. 
   \end{block}

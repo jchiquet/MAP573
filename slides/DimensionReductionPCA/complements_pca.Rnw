@@ -7,10 +7,10 @@
    The full matrix of principal component connects  individual coordinates to latent factors:
     \begin{equation*}
       \mathrm{PC} = \bX^c \bU = \begin{pmatrix}
-      \mathbf{f}_{1} & \mathbf{f}_{2} & \dots & \mathbf{f}_{d}
+      \mathbf{f}_{1} & \mathbf{f}_{2} & \dots & \mathbf{f}_{p}
       \end{pmatrix}
       = \begin{pmatrix} 
-      \bc_{1}^\top \\ \bc_{2}^\top \\\dots \\ \bc_{d}^\top 
+      \bc_{1}^\top \\ \bc_{2}^\top \\\dots \\ \bc_{n}^\top 
       \end{pmatrix}
     \end{equation*}
   \end{block}
@@ -49,7 +49,7 @@ FactoMineR::PCA(select(crabs, -species, -sex), scale.unit = FALSE, graph = FALSE
 \begin{frame}
   \frametitle{Reconstruction formula}
 
-    Recall that $\mathbf{F} = (\mathbf{f}_1, \dots, \mathbf{f}_d) $ is the matrix of Principal components. Then,  
+    Recall that $\mathbf{F} = (\mathbf{f}_1, \dots, \mathbf{f}_p) $ is the matrix of Principal components. Then,  
     \begin{itemize}
       \item  $\mathbf{f}_k = \bX^c \bu_k$ for projection on axis $k$
       \item $\mathbf{F} = \bX^c \bU$ for all axis.
@@ -62,11 +62,11 @@ FactoMineR::PCA(select(crabs, -species, -sex), scale.unit = FALSE, graph = FALSE
     \vfill
     \pause 
     
-    We obtain an approximation $\tilde\bX^c$ (compression) of the data $\bX^c$ by considering a subset $\mathcal{S}$ of PC, typically $\mathcal{S} = {1, \dots,K}$ with $K \ll d$.
+    We obtain an approximation $\tilde\bX^c$ (compression) of the data $\bX^c$ by considering a subset $\mathcal{S}$ of PC, typically $\mathcal{S} = {1, \dots, q}$ with $q \ll p$.
     \begin{equation*}
       \tilde\bX^c = \mathbf{F}_{\mathcal{S}}\bU_{\mathcal{S}}^\top = \bX^c \bU_{\mathcal{S}} \bU_{\mathcal{S}}^\top
     \end{equation*}
-    $\rightsquigarrow$ This is a rank $K$ approximation of $\bX$ (information captured by the first $K$ axes).
+    $\rightsquigarrow$ This is a rank-$q$ approximation of $\bX$ (information captured by the first $q$ axes).
 
 \end{frame}
 
@@ -218,7 +218,7 @@ factoextra::fviz_pca_var(crabs_pca_corrected)
   \end{block}
   
   \begin{block}{Using categorical variables}
-    One-way anova with the coordinates of the observations ($F_{.q}$) explained by the categorical variable
+    One-way anova with the coordinates of the observations explained by the categorical variable
     \begin{itemize}
       \item F-test by variable
       \item for each category, a Student's $T$-test to compare the average of the category with the general mean

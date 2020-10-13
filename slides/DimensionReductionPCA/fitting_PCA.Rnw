@@ -128,7 +128,7 @@
   \begin{equation*}
     \left\{\begin{array}{ccccc}
       \Delta_1 & \oplus & \dots & \oplus & \Delta_p \\
-      \bu_1 & \bot & \dots & \bot & \bu_2 \\
+      \bu_1 & \bot & \dots & \bot & \bu_p \\
       \lambda_1 & > & \dots & > & \lambda_p \\
       I_{\Delta_1^\bot} & > & \dots & > & I_{\Delta_p^\bot} \\
     \end{array}\right.

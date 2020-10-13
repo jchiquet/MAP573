@@ -47,8 +47,6 @@
 {\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in fviz\_eig(crabs\_pca): could not find function "{}fviz\_eig"{}}}\end{kframe}
 \end{knitrout}
 
-$\rightsquigarrow$  We will see during labs why everything is carried by the first axis
-
 \end{frame}
 
 \subsection{Individuals point of view}
@@ -65,7 +63,7 @@ $\rightsquigarrow$  We will see during labs why everything is carried by the fir
   \end{block}
 
   \begin{block}{Coordinates of $i$ in the new basis}
-    Coordinates of $i$ in the new basis $\{\bu1, \dots, \bu_d\}$ is thus 
+    Coordinates of $i$ in the new basis $\{\bu_1, \dots, \bu_p\}$ is thus 
     \begin{equation*}
       \bc_i  = (\bU^\top (\bx_i - \bar{\bx}))^\top = (\bx_i - \bar{\bx})^\top \bU = \bX^c_i \bU, \quad \bc_i \in \Rset^p.
     \end{equation*}
@@ -137,7 +135,7 @@ $\rightsquigarrow$  We will see during labs why everything is carried by the fir
  
      We use the cosine of the angle $\theta_{ik}$ between $\bx_i - \bar{\bx}$ and $\bu_k$ to measure the degree of co-linearity:
      \begin{equation*}
-       \cos 2(\theta_{ik}) = \frac{\bigg(\bu_k^\top (\bx_i - \bar{\bx})\bigg)^2}{\|\bx_i - \bar{\bx} \|^2 \xout{\|\bu_k \|^2}}
+       \cos^2(\theta_{ik}) = \frac{\bigg(\bu_k^\top (\bx_i - \bar{\bx})\bigg)^2}{\|\bx_i - \bar{\bx} \|^2 \xout{\|\bu_k \|^2}}
      \end{equation*}
 
 \begin{knitrout}
@@ -200,15 +198,15 @@ $\rightsquigarrow$  We will see during labs why everything is carried by the fir
   \frametitle{Principal Components}
   
   \begin{block}{Dual representation}
-    A symmetric reasoning can be made in $\Rset^n$ for the variables, like with the individuals in $\R^p$.
+    A symmetric reasoning can be made in $\Rset^n$ for the variables, like with the individuals in $\Rset^p$.
     
-    $\rightsquigarrow$ New axes are linear combinason of the original variables, which can be seen as \alert{\bf new variables} in the new latent space
+    $\rightsquigarrow$ New axes are linear combinaison of the original variables, which can be seen as \alert{\bf new variables} in the new latent space
   \end{block}
 
   \begin{block}{Principal component}
-    It is the linear combinason formed by the orginal variables with weights given by the loadings $\bu_k$
+    It is the linear combinasion formed by the orginal variables with weights given by the loadings $\bu_k = (u_{k1}, \dots, u_{kj}, \dots, u_{kp})$
     \begin{equation*}
-      \mathbf{f}_{k}  = \sum_{j=1}^p \bu_k (\bx^{j} - \bar{x}_j) = \bX^c \bu_k, \quad \mathbf{f}_k \in \Rset^n
+      \mathbf{f}_{k}  = \sum_{j=1}^p u_{kj} (\bx^{j} - \bar{x}_j) = \bX^c \bu_k, \quad \mathbf{f}_k \in \Rset^n
     \end{equation*}
     Sometimes called \alert{"factors"} in  factor analysis, as \alert{latent (hidden) variables}. 
   \end{block}
@@ -221,13 +219,13 @@ $\rightsquigarrow$  We will see during labs why everything is carried by the fir
   \begin{block}{Connection with original variables}
     \begin{itemize}
       \item essential for interpretation
-      \item answer to the question: how reading the axis of the individual map
+      \item answer to the question: how to read the axes of the individual map
       \item use correlation to measure connection to original variable
     \end{itemize}
   \end{block}
 
   \begin{equation*}
-    \var(\mathbf{f}_k) = \var(\bX^c \bu_k) = \bu_k^\top (\bX^c)^\top \bX^c \bu_k = \lambda_k \bu_k^\top  \bu_k = \lambda_k
+    \var(\mathbf{f}_k) = \frac{1}{n}\var(\bX^c \bu_k) = \bu_k^\top \frac{1}{n}(\bX^c)^\top \bX^c \bu_k =  \bu_k^\top \hat{\bSigma} \bu_k = \lambda_k
   \end{equation*}
   
   \begin{equation*}
