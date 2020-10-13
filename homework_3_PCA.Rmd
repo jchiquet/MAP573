@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ### Information
 
-Data sets are available at [](https://github.com/jchiquet/MAP573/tree/master/data). Homework is due Sunday 10/18 23:59 in Rmd (see assignment in Moodle).
+Data sets are available at [https://github.com/jchiquet/MAP573/tree/master/data](https://github.com/jchiquet/MAP573/tree/master/data). Homework is due Sunday 10/18 23:59 in Rmd (see assignment in Moodle).
 
 ### Package requirements
 
