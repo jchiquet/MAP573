@@ -6,7 +6,7 @@ dependencies:
 #  - jupytext
   - numpy
   - matplotlib
-  - sklearn
+  - scikit-learn
   - pandoc
   - r-aricode
   - r-base=3.6.3
