@@ -13,7 +13,7 @@ output:
     includes:
       in_header: resources/hideOutput.script
 mathjax: "http://example.com/MathJax.js"
-exclude: ["slides", "Homework", "labs", "MAP573tutorials", "README", "tutorial_nonlinear_dim_reduction_methods_cor"]
+exclude: ["slides", "Homework", "labs", "MAP573tutorials", "README"]
 navbar:
   title: "MAP573"
   left:
