@@ -5,7 +5,7 @@
 \begin{frame}[fragile]
   \frametitle{The data matrix}
 
-  The data set is a $n\times d$ matrix  $\bX = (x_{ij})$ with values in $\Rset$:
+  The data set is a $n\times p$ matrix  $\bX = (x_{ij})$ with values in $\Rset$:
   \begin{itemize}
     \item each row $\bx_i$ represents an individual/observation
     \item each col $\bx^j$ represents a variable/attribute
@@ -13,13 +13,13 @@
 
   \begin{equation*}
     \bX = \bordermatrix{%
-           ~ & \bx^1  & \bx^2  &  \dots & \bx^j   & \dots & \bx^d  \cr
-    \bx_1  & x_{11} & x_{12} &  \dots & x_{1j} & \dots & x_{1d}  \cr
-    \bx_2  & x_{21} & x_{22} &  \dots & x_{2j} & \dots & x_{2d}  \cr
+           ~ & \bx^1  & \bx^2  &  \dots & \bx^j   & \dots & \bx^p  \cr
+    \bx_1  & x_{11} & x_{12} &  \dots & x_{1j} & \dots & x_{1p}  \cr
+    \bx_2  & x_{21} & x_{22} &  \dots & x_{2j} & \dots & x_{2p}  \cr
     \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots  \cr
-    \bx_i  & x_{i1} & x_{i2} &  \dots x_{ij} & \dots & x_{id} \cr
+    \bx_i  & x_{i1} & x_{i2} &  \dots & x_{ij} & \dots & x_{ip} \cr
     \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots  \cr
-    \bx_n  & x_{n1} & x_{n2} &  \dots x_{nj} & \dots & x_{nd} \cr
+    \bx_n  & x_{n1} & x_{n2} &  \dots & x_{nj} & \dots & x_{np} \cr
     }
   \end{equation*}
 
@@ -30,9 +30,9 @@ crabs %>% head(3) %>% knitr::kable("latex")
 \end{frame}
 
 \begin{frame}
-  \frametitle{Cloud of observation in $\Rset^d$}
+  \frametitle{Cloud of observation in $\Rset^p$}
 
-  Individuals can be represented in the \alert{variable space $\Rset^d$} as a point cloud
+  Individuals can be represented in the \alert{variable space $\Rset^p$} as a point cloud
 
   \begin{columns}
     \begin{column}{.5\textwidth}
@@ -51,7 +51,7 @@ crabs %>% head(3) %>% knitr::kable("latex")
         \sum _{i=1}^n x_{i1}/n \\
         \sum _{i=1}^n x_{i2}/n \\
         \vdots\\
-        \sum _{i=1}^n x_{id} /n
+        \sum _{i=1}^n x_{ip}/n
       \end{pmatrix}
       \]
     \end{block}
@@ -61,11 +61,11 @@ crabs %>% head(3) %>% knitr::kable("latex")
   We center the cloud $\bX$ around $\bx$ denote this by $\bX^c$
   \begin{equation*}
     \bX^c = \begin{pmatrix}
-    x_{11} - \bar{x}_1 &   \dots & x_{1j}  - \bar{x}_j & \dots  & x_{1d} - \bar{x}_d   \cr
+    x_{11} - \bar{x}_1 &   \dots & x_{1j}  - \bar{x}_j & \dots  & x_{1p} - \bar{x}_p   \cr
               \vdots   &  \vdots & \vdots              & \vdots & \vdots  \cr
-    x_{i1} - \bar{x}_1 &   \dots & x_{ij} - \bar{x}_j  & \dots  & x_{id}  - \bar{x}_d \cr
+    x_{i1} - \bar{x}_1 &   \dots & x_{ij} - \bar{x}_j  & \dots  & x_{ip}  - \bar{x}_p \cr
               \vdots   &  \vdots & \vdots              & \vdots & \vdots  \cr
-    x_{n1} - \bar{x}_1 &  \dots  & x_{nj} - \bar{x}_j  & \dots  & x_{nd}  - \bar{x}_d \cr
+    x_{n1} - \bar{x}_1 &  \dots  & x_{nj} - \bar{x}_j  & \dots  & x_{np}  - \bar{x}_p \cr
     \end{pmatrix}
   \end{equation*}
 
@@ -76,7 +76,7 @@ crabs %>% head(3) %>% knitr::kable("latex")
 
 \begin{block}{Total Inertia: \textcolor{black}{distance of the individuals to the center of the cloud}}
   \[
-      I_T = \frac{1}{n}\sum_{i=1}^n \sum_{j=1}^d  (x_{ij}- \bar{x}_{j}) ^2 
+      I_T = \frac{1}{n}\sum_{i=1}^n \sum_{j=1}^p  (x_{ij}- \bar{x}_{j}) ^2 
       = \frac{1}{n}\sum_{i=1}^n \|\bx_i - \bar{\bx} \|^2  
       = \frac{1}{n}\sum_{i=1}^n \distance^2 (\bx_i,\bar{\bx})
     \]
@@ -86,8 +86,8 @@ crabs %>% head(3) %>% knitr::kable("latex")
   Let $\hat{\bSigma}$ be the empirical variance-covariance matrix
 \[
       I_T = \frac{1}{n}\sum_{j=1}^p  \sum_{i=1}^n (x_{ij}- \bar{x}_{j}) ^2 
-      = \sum_{j=1}^n \frac{1}{n}\|\bx^j - \bar{x}_{j} \|^2
-      = \sum_{j=1}^n \var(\bx^j) = \trace{\hat{\bSigma}}
+      = \sum_{j=1}^p \frac{1}{n}\|\bx^j - \bar{x}_{j} \|^2
+      = \sum_{j=1}^p \var(\bx^j) = \trace{\hat{\bSigma}}
 \]
 \end{block}
 
@@ -99,7 +99,7 @@ crabs %>% head(3) %>% knitr::kable("latex")
 \end{frame}
 
 \begin{frame}
-  \frametitle{Inertia with respect to an axix}
+  \frametitle{Inertia with respect to an axis}
 
   The Inertia of the cloud wrt axe $\Delta$ is the sum of the distances between all points and their orthogonal projection on $\Delta$.
   \begin{equation*}
@@ -118,7 +118,7 @@ crabs %>% head(3) %>% knitr::kable("latex")
 \begin{frame}
   \frametitle{Decomposition of total Inertia (1)}
   
-  Let $\Delta^\bot$ the orthogonal subspace $\Delta$  is $\Rset^n$
+  Let $\Delta^\bot$ be the orthogonal subspace of $\Delta$ in $\Rset^p$
 
   \includegraphics[width=.5\textwidth]{supp_spaces}
 

@@ -106,7 +106,7 @@ Each variable (i.e. budget item) takes it value in $[0,100]$ (proportion of the 
 
 ```{r boxplot}
 state_budget %>% 
-  select(-Year) %>% 
+  dplyr::select(-Year) %>% 
   pivot_longer(everything()) %>% 
   ggplot() + 
     aes(x = name, y = value) + labs(x = "budget item", y = "value (proportion)") + 
@@ -180,7 +180,7 @@ Before performing the PCA, we center (always!) and scale the continuous columns 
 ```{r PCA}
 X <- state_budget %>% 
   mutate_if(is_double, scale) %>% 
-  select(-Year, -Period)
+  dplyr::select(-Year, -Period)
 rownames(X) <- state_budget$Year
 myPCA <- FactoMineR::PCA(
           X          = X,     # the data on which PCA is performed 

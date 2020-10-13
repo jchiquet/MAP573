@@ -376,21 +376,17 @@ $\rightsquigarrow$ dimension reduction might help
 \begin{block}{High Dimension Geometry Curse}
 \begin{itemize}
 \item Folks theorem: In high dimension, everyone is alone.
-\item Theorem: If $\bx_1,\ldots, \bx_n$ in the
-hypercube of dimension $d$  such
-that their coordinates are i.i.d then
+\item Theorem: If $\bx_1,\ldots, \bx_n$ in the hypercube of dimension $p$  such that their coordinates are i.i.d then
 \begin{align*}
-\mspace{-20mu} d^{-1/2} \left( \max \|\bx_i-\bx_{i'}\|_2 - \min \|\bx_i-\bx_{i'}\|_2
-\right)  &= 0 + O\left(\sqrt{\frac{\log n}{d}}\right)\\
-\frac{\max \|\bx_i-\bx_{i'}\|_2}{\min \|\bx_i-\bx_{i'}\|_2} &= 1 +
-O\left(\sqrt{\frac{\log n}{d}}\right).
+\mspace{-20mu} p^{-1/2} \left( \max \|\bx_i-\bx_{i'}\|_2 - \min \|\bx_i-\bx_{i'}\|_2 \right)  &= 0 + O\left(\sqrt{\frac{\log n}{p}}\right)\\
+\frac{\max \|\bx_i-\bx_{i'}\|_2}{\min \|\bx_i-\bx_{i'}\|_2} &= 1 + O\left(\sqrt{\frac{\log n}{p}}\right).
 \end{align*}
 \end{itemize}
 \end{block}
 
-  $\rightsquigarrow$ When $d$ is large, all the points are almost equidistant\\
+  $\rightsquigarrow$ When $p$ is large, all the points are almost equidistant\\
 
-  Hopefully, the data \alert{\bf are not really leaving in $d$} dimension (think of the SNP example)
+  Hopefully, the data \alert{\bf are not really leaving in $p$} dimension (think of the SNP example)
 
 \end{frame}
 
@@ -415,7 +411,7 @@ O\left(\sqrt{\frac{\log n}{d}}\right).
     \alert{Better understanding of the data}
     \begin{itemize}
       \item descriptive/exploratory methods
-      \item visualization (difficult to plot and interpret $> 3d$!)
+      \item visualization (difficult to plot and interpret $> 3D$!)
     \end{itemize}
   \end{block}
 
@@ -426,17 +422,17 @@ O\left(\sqrt{\frac{\log n}{d}}\right).
 
     \begin{block}{Settings}
       \begin{itemize}
-        \item \alert{Training data } : $\mathcal{D}=\{\bx_1,\ldots,\bx_n\} \in \Rset^d$,   (i.i.d.)
-        \item Space $\Rset^d$ of possibly high dimension $(n \ll d)$
+        \item \alert{Training data} : $\mathcal{D}=\{\bx_1,\ldots,\bx_n\} \in \Rset^p$,   (i.i.d.)
+        \item Space $\Rset^p$ of possibly high dimension $(n \ll p)$
       \end{itemize}
     \end{block}
 
     \vfill
     
     \begin{block}{Dimension Reduction Map}
-       Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
+       Construct a map $\Phi$ from the space $\Rset^{p}$ into a space $\Rset^{q}$ of \alert{smaller dimension}:
       \begin{align*}
-          \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
+          \Phi:\quad & \Rset^p \to \Rset^{q}, q \ll p\\
                      & \bx \mapsto \Phi(\bx)
       \end{align*}
     \end{block}
@@ -517,7 +513,7 @@ O\left(\sqrt{\frac{\log n}{d}}\right).
   \vfill
   
   \begin{center}
-    \alert{\bf We will focus on PCA}, as the mother or most linear (and non-linear) methods.
+    \alert{\bf We will focus on PCA}, as the mother of most linear (and non-linear) methods.
   \end{center}
   
 \end{frame}
@@ -525,7 +521,7 @@ O\left(\sqrt{\frac{\log n}{d}}\right).
 \begin{frame}[fragile]
   \frametitle{The data matrix}
 
-  The data set is a $n\times d$ matrix  $\bX = (x_{ij})$ with values in $\Rset$:
+  The data set is a $n\times p$ matrix  $\bX = (x_{ij})$ with values in $\Rset$:
   \begin{itemize}
     \item each row $\bx_i$ represents an individual/observation
     \item each col $\bx^j$ represents a variable/attribute
@@ -608,7 +604,7 @@ B & M & 10.8 & 9.0 & 23.0 & 26.5 & 9.8\\
 \begin{frame}[fragile]
   \frametitle{The data matrix}
 
-  The data set is a $n\times d$ matrix  $\bX = (x_{ij})$ with values in $\Rset$:
+  The data set is a $n\times p$ matrix  $\bX = (x_{ij})$ with values in $\Rset$:
   \begin{itemize}
     \item each row $\bx_i$ represents an individual/observation
     \item each col $\bx^j$ represents a variable/attribute
@@ -616,13 +612,13 @@ B & M & 10.8 & 9.0 & 23.0 & 26.5 & 9.8\\
 
   \begin{equation*}
     \bX = \bordermatrix{%
-           ~ & \bx^1  & \bx^2  &  \dots & \bx^j   & \dots & \bx^d  \cr
-    \bx_1  & x_{11} & x_{12} &  \dots & x_{1j} & \dots & x_{1d}  \cr
-    \bx_2  & x_{21} & x_{22} &  \dots & x_{2j} & \dots & x_{2d}  \cr
+           ~ & \bx^1  & \bx^2  &  \dots & \bx^j   & \dots & \bx^p  \cr
+    \bx_1  & x_{11} & x_{12} &  \dots & x_{1j} & \dots & x_{1p}  \cr
+    \bx_2  & x_{21} & x_{22} &  \dots & x_{2j} & \dots & x_{2p}  \cr
     \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots  \cr
-    \bx_i  & x_{i1} & x_{i2} &  \dots x_{ij} & \dots & x_{id} \cr
+    \bx_i  & x_{i1} & x_{i2} &  \dots & x_{ij} & \dots & x_{ip} \cr
     \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots  \cr
-    \bx_n  & x_{n1} & x_{n2} &  \dots x_{nj} & \dots & x_{nd} \cr
+    \bx_n  & x_{n1} & x_{n2} &  \dots & x_{nj} & \dots & x_{np} \cr
     }
   \end{equation*}
 
@@ -650,9 +646,9 @@ B & M & 9.2 & 7.8 & 19.0 & 22.4 & 7.7\\
 \end{frame}
 
 \begin{frame}
-  \frametitle{Cloud of observation in $\Rset^d$}
+  \frametitle{Cloud of observation in $\Rset^p$}
 
-  Individuals can be represented in the \alert{variable space $\Rset^d$} as a point cloud
+  Individuals can be represented in the \alert{variable space $\Rset^p$} as a point cloud
 
   \begin{columns}
     \begin{column}{.5\textwidth}
@@ -671,7 +667,7 @@ B & M & 9.2 & 7.8 & 19.0 & 22.4 & 7.7\\
         \sum _{i=1}^n x_{i1}/n \\
         \sum _{i=1}^n x_{i2}/n \\
         \vdots\\
-        \sum _{i=1}^n x_{id} /n
+        \sum _{i=1}^n x_{ip}/n
       \end{pmatrix}
       \]
     \end{block}
@@ -681,11 +677,11 @@ B & M & 9.2 & 7.8 & 19.0 & 22.4 & 7.7\\
   We center the cloud $\bX$ around $\bx$ denote this by $\bX^c$
   \begin{equation*}
     \bX^c = \begin{pmatrix}
-    x_{11} - \bar{x}_1 &   \dots & x_{1j}  - \bar{x}_j & \dots  & x_{1d} - \bar{x}_d   \cr
+    x_{11} - \bar{x}_1 &   \dots & x_{1j}  - \bar{x}_j & \dots  & x_{1p} - \bar{x}_p   \cr
               \vdots   &  \vdots & \vdots              & \vdots & \vdots  \cr
-    x_{i1} - \bar{x}_1 &   \dots & x_{ij} - \bar{x}_j  & \dots  & x_{id}  - \bar{x}_d \cr
+    x_{i1} - \bar{x}_1 &   \dots & x_{ij} - \bar{x}_j  & \dots  & x_{ip}  - \bar{x}_p \cr
               \vdots   &  \vdots & \vdots              & \vdots & \vdots  \cr
-    x_{n1} - \bar{x}_1 &  \dots  & x_{nj} - \bar{x}_j  & \dots  & x_{nd}  - \bar{x}_d \cr
+    x_{n1} - \bar{x}_1 &  \dots  & x_{nj} - \bar{x}_j  & \dots  & x_{np}  - \bar{x}_p \cr
     \end{pmatrix}
   \end{equation*}
 
@@ -696,7 +692,7 @@ B & M & 9.2 & 7.8 & 19.0 & 22.4 & 7.7\\
 
 \begin{block}{Total Inertia: \textcolor{black}{distance of the individuals to the center of the cloud}}
   \[
-      I_T = \frac{1}{n}\sum_{i=1}^n \sum_{j=1}^d  (x_{ij}- \bar{x}_{j}) ^2 
+      I_T = \frac{1}{n}\sum_{i=1}^n \sum_{j=1}^p  (x_{ij}- \bar{x}_{j}) ^2 
       = \frac{1}{n}\sum_{i=1}^n \|\bx_i - \bar{\bx} \|^2  
       = \frac{1}{n}\sum_{i=1}^n \distance^2 (\bx_i,\bar{\bx})
     \]
@@ -706,8 +702,8 @@ B & M & 9.2 & 7.8 & 19.0 & 22.4 & 7.7\\
   Let $\hat{\bSigma}$ be the empirical variance-covariance matrix
 \[
       I_T = \frac{1}{n}\sum_{j=1}^p  \sum_{i=1}^n (x_{ij}- \bar{x}_{j}) ^2 
-      = \sum_{j=1}^n \frac{1}{n}\|\bx^j - \bar{x}_{j} \|^2
-      = \sum_{j=1}^n \var(\bx^j) = \trace{\hat{\bSigma}}
+      = \sum_{j=1}^p \frac{1}{n}\|\bx^j - \bar{x}_{j} \|^2
+      = \sum_{j=1}^p \var(\bx^j) = \trace{\hat{\bSigma}}
 \]
 \end{block}
 
@@ -719,7 +715,7 @@ B & M & 9.2 & 7.8 & 19.0 & 22.4 & 7.7\\
 \end{frame}
 
 \begin{frame}
-  \frametitle{Inertia with respect to an axix}
+  \frametitle{Inertia with respect to an axis}
 
   The Inertia of the cloud wrt axe $\Delta$ is the sum of the distances between all points and their orthogonal projection on $\Delta$.
   \begin{equation*}
@@ -738,7 +734,7 @@ B & M & 9.2 & 7.8 & 19.0 & 22.4 & 7.7\\
 \begin{frame}
   \frametitle{Decomposition of total Inertia (1)}
   
-  Let $\Delta^\bot$ the orthogonal subspace $\Delta$  is $\Rset^n$
+  Let $\Delta^\bot$ be the orthogonal subspace of $\Delta$ in $\Rset^p$
 
   \includegraphics[width=.5\textwidth]{supp_spaces}
 

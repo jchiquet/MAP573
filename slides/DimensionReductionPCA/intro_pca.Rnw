@@ -43,7 +43,7 @@
   \vfill
   
   \begin{center}
-    \alert{\bf We will focus on PCA}, as the mother or most linear (and non-linear) methods.
+    \alert{\bf We will focus on PCA}, as the mother of most linear (and non-linear) methods.
   \end{center}
   
 \end{frame}
@@ -51,7 +51,7 @@
 \begin{frame}[fragile]
   \frametitle{The data matrix}
 
-  The data set is a $n\times d$ matrix  $\bX = (x_{ij})$ with values in $\Rset$:
+  The data set is a $n\times p$ matrix  $\bX = (x_{ij})$ with values in $\Rset$:
   \begin{itemize}
     \item each row $\bx_i$ represents an individual/observation
     \item each col $\bx^j$ represents a variable/attribute

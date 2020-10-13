@@ -140,21 +140,17 @@ $\rightsquigarrow$ dimension reduction might help
 \begin{block}{High Dimension Geometry Curse}
 \begin{itemize}
 \item Folks theorem: In high dimension, everyone is alone.
-\item Theorem: If $\bx_1,\ldots, \bx_n$ in the
-hypercube of dimension $d$  such
-that their coordinates are i.i.d then
+\item Theorem: If $\bx_1,\ldots, \bx_n$ in the hypercube of dimension $p$  such that their coordinates are i.i.d then
 \begin{align*}
-\mspace{-20mu} d^{-1/2} \left( \max \|\bx_i-\bx_{i'}\|_2 - \min \|\bx_i-\bx_{i'}\|_2
-\right)  &= 0 + O\left(\sqrt{\frac{\log n}{d}}\right)\\
-\frac{\max \|\bx_i-\bx_{i'}\|_2}{\min \|\bx_i-\bx_{i'}\|_2} &= 1 +
-O\left(\sqrt{\frac{\log n}{d}}\right).
+\mspace{-20mu} p^{-1/2} \left( \max \|\bx_i-\bx_{i'}\|_2 - \min \|\bx_i-\bx_{i'}\|_2 \right)  &= 0 + O\left(\sqrt{\frac{\log n}{p}}\right)\\
+\frac{\max \|\bx_i-\bx_{i'}\|_2}{\min \|\bx_i-\bx_{i'}\|_2} &= 1 + O\left(\sqrt{\frac{\log n}{p}}\right).
 \end{align*}
 \end{itemize}
 \end{block}
 
-  $\rightsquigarrow$ When $d$ is large, all the points are almost equidistant\\
+  $\rightsquigarrow$ When $p$ is large, all the points are almost equidistant\\
 
-  Hopefully, the data \alert{\bf are not really leaving in $d$} dimension (think of the SNP example)
+  Hopefully, the data \alert{\bf are not really leaving in $p$} dimension (think of the SNP example)
 
 \end{frame}
 
@@ -179,7 +175,7 @@ O\left(\sqrt{\frac{\log n}{d}}\right).
     \alert{Better understanding of the data}
     \begin{itemize}
       \item descriptive/exploratory methods
-      \item visualization (difficult to plot and interpret $> 3d$!)
+      \item visualization (difficult to plot and interpret $> 3D$!)
     \end{itemize}
   \end{block}
 
@@ -190,17 +186,17 @@ O\left(\sqrt{\frac{\log n}{d}}\right).
 
     \begin{block}{Settings}
       \begin{itemize}
-        \item \alert{Training data } : $\mathcal{D}=\{\bx_1,\ldots,\bx_n\} \in \Rset^d$,   (i.i.d.)
-        \item Space $\Rset^d$ of possibly high dimension $(n \ll d)$
+        \item \alert{Training data} : $\mathcal{D}=\{\bx_1,\ldots,\bx_n\} \in \Rset^p$,   (i.i.d.)
+        \item Space $\Rset^p$ of possibly high dimension $(n \ll p)$
       \end{itemize}
     \end{block}
 
     \vfill
     
     \begin{block}{Dimension Reduction Map}
-       Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
+       Construct a map $\Phi$ from the space $\Rset^{p}$ into a space $\Rset^{q}$ of \alert{smaller dimension}:
       \begin{align*}
-          \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
+          \Phi:\quad & \Rset^p \to \Rset^{q}, q \ll p\\
                      & \bx \mapsto \Phi(\bx)
       \end{align*}
     \end{block}
