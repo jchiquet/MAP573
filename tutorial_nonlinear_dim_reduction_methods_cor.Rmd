@@ -1,0 +1,306 @@
+---
+title: 'Tutorial: nonlinear dimensionality reduction methods'
+author: 'MAP573 team'
+date: "10/20/2020"
+output: html_document
+---
+
+# Preliminaries
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  rows.print = 5)
+```
+
+## Package requirements
+
+We start by loading a couple of packages for data manipulation, dimension reduction and fancy representations.
+
+```{r packages, message = FALSE, warning = FALSE}
+library(tidyverse)   # advanced data manipulation and vizualisation
+library(knitr)       # R notebook export and formatting 
+library(FactoMineR)  # Factor analysis
+library(factoextra)  # Fancy plotting of FactoMineR outputs
+library(corrplot)    # Fancy plotting of matrices 
+library(GGally)      # Easy-to-use ggplot2 extensions
+library(ggpubr)
+library(maps)
+library(ggrepel)
+theme_set(theme_bw()) # set default ggplot2 theme to black and white
+```
+
+
+### Multidimensional scaling (MDS)
+
+Assuming that we have observations $x_1,\dots,x_n \in \mathbb{R}^p$, and let $d_{i,j}$ be the distance between observations $i$
+and $j$. In most cases, we use Euclidean distance i.e. $d_{i,j} = ||x_i-x_j||$, but other distances may be used. On the contrary, in some applications, we may possess only *dissimilarity* measure $d_{i,j}$. 
+
+Multidimensional scaling seeks values $z_1,\dots,z_n \in \mathbb{R}^k$ ($k<p$) to minimize the so-called *stress-function*
+$$
+S_M (z_1,\dots,z_n) = \sum_{i \neq i^{'}} (d_{ii^{'}} - ||z_i - z_{i^{'}}||)^2.
+$$
+This is known as *least-squares* or *Kruskal-Shephard* scaling. We wish to determine a lower-dimensional representation of the data that preserves the pairwise distances as well as possible i.e. we want to find vector $z_1,\dots,z_n \in \mathbb{R}^k$ such that
+$$
+||z_i - z_{i^{'}} || \approx d_{i,i^{'}} \quad \text{ for all } \quad i,i^{'}=1,\dots,n. 
+$$
+A variation on least squares scaling is the so-called *Sammon mapping* which minimizes 
+$$
+S_{S_m}(z_1,\dots,z_n) = \frac{(d_{ii^{'}} - ||z_i - z_{i^{'}}||)^2}{d_{ii^{'}}},
+$$
+that is more emphasis is put on preserving smaller pariwise distances.
+
+In classical scaling, we instead start with similiraties $s_{i,i^{'}}$: often, we use the centered inner product $s_{i,i^{'}} = \langle x_i - \bar x, x_{i^{'}} - \bar x \rangle$. The problem is then to minimize over $z_1,\dots,z_n \in \mathbb{R}^k$, the following quantity
+$$
+S_C(z_1,\dots,z_n) = \sum_{i,i^{'}} \Bigl( s_{ii^{'}} - \langle z_i - \bar z, z_{i^{'}} - \bar z \rangle \Bigr)^2
+$$
+
+
+## R functions 
+
+To perform MDS, we either use:
+
+**cmdscale()** [stats package]: Compute classical (metric) multidimensional scaling. 
+
+```{r}
+?cmdscale()
+```
+
+**isoMDS()** [MASS package]: Compute Kruskal's non-metric multidimensional scaling (one form of non-metric MDS). 
+
+```{r}
+?isoMDS()
+```
+
+**sammon()** [MASS package]: Compute Sammon's non-linear mapping (one form of non-metric MDS).
+
+```{r}
+?sammon()
+```
+
+
+All of these functions take a distance object as main argument and a number $k$ corresponding to the desired number of dimensions in the scaled output.
+
+## Classical MDS
+
+**swiss** data that contains fertility and socio-economic data on 47 French speaking provinces in Switzerland.
+
+```{r}
+data("swiss")
+swiss %>% head(15)
+```
+
+```{r}
+rownames(swiss)
+```
+
+
+```{r}
+# Cmpute MDS
+mds <- swiss %>%
+  dist(method='euclidean') %>%          
+  cmdscale() %>%
+  as_tibble()
+
+colnames(mds) <- c("Dim.1", "Dim.2")
+
+mds %>% head(10)
+```
+
+
+```{r}
+# Plot MDS
+ggscatter(mds, x = "Dim.1", y = "Dim.2", 
+          label = rownames(swiss),
+          size = 1,
+          repel = TRUE)
+```
+
+```{r}
+# K-means clustering
+clust <- kmeans(mds, 3)$cluster %>%
+  as.factor()
+mds <- mds %>%
+  mutate(groups = clust)
+# Plot and color by groups
+ggscatter(mds, x = "Dim.1", y = "Dim.2", 
+          label = rownames(swiss),
+          color = "groups",
+          palette = "jco",
+          size = 1, 
+          ellipse = TRUE,
+          ellipse.type = "convex",
+          repel = TRUE)
+```
+
+
+
+## Non-metric MDS 
+
+Kruskal-'s non-metric multidimensional scaling 
+
+```{r}
+# Cmpute MDS
+library(MASS)
+mds <- swiss %>%
+  dist('euclidean') %>%          
+  isoMDS() %>%
+  .$points %>%
+  as_tibble()
+colnames(mds) <- c("Dim.1", "Dim.2")
+
+
+# Plot MDS
+ggscatter(mds, x = "Dim.1", y = "Dim.2", 
+          label = rownames(swiss),
+          size = 1,
+          repel = TRUE)
+```
+
+Sammon's non-linear mapping:
+
+```{r}
+# Cmpute MDS
+library(MASS)
+mds <- swiss %>%
+  dist() %>%          
+  sammon() %>%
+  .$points %>%
+  as_tibble()
+colnames(mds) <- c("Dim.1", "Dim.2")
+
+# Plot MDS
+ggscatter(mds, x = "Dim.1", y = "Dim.2", 
+          label = rownames(swiss),
+          size = 1,
+          repel = TRUE)
+```
+
+## Correlation matrix using Multidimensional Scaling 
+
+**mtcars** dataset
+
+```{r}
+res.cor <- cor(mtcars, method = "spearman")
+mds.cor <- (1 - res.cor) %>%
+  cmdscale() %>%
+  as_tibble()
+colnames(mds.cor) <- c("Dim.1", "Dim.2")
+ggscatter(mds.cor, x = "Dim.1", y = "Dim.2", 
+          size = 1,
+          label = colnames(res.cor),
+          repel = TRUE)
+```
+
+```{r}
+FactoMineR::PCA(mtcars)
+```
+
+## Pairwise distances between American cities
+
+```{r}
+us <- utils::read.csv("us_cities.csv", sep=';') %>% as_tibble()
+us
+```
+
+
+
+```{r}
+cities <- UScitiesD
+#cities <- eurodist 
+#cities <- us
+cities
+```
+
+
+
+```{r}
+cities_mds <- cities %>%
+  cmdscale() %>%
+  scale() %>% 
+  as_tibble()
+
+colnames(cities_mds) <- c("Dim.1", "Dim.2")
+```
+
+
+```{r}
+cities_mds
+```
+
+
+
+```{r}
+euro.cities.name <- c("Athens", "Barcelona", "Brussels", "Calais", 
+                "Cherbourg", "Cologne", "Copenhagen", "Geneva", 
+                "Gibraltar", "Hamburg", 'Hook of Holland', 'Lisbon',
+                'Lyons', 'Madrid', 'Marseilles', 'Milan', 'Munich', 
+                'Paris', 'Rome', 'Stockholm', "Vienna")
+
+us.cities.name <- c("Atlanta", "Chicago", "Denver", "Houston", 
+                    "LA", "Miami", "NYC", "SF", "Seattle", "DC")
+
+cities_mds_rev <- cities_mds
+cities_mds_rev$Dim.1 <- -cities_mds$Dim.1
+cities_mds_rev$Dim.2 <- -cities_mds$Dim.2
+
+
+ggscatter(cities_mds, x = "Dim.1", y = "Dim.2", 
+          label = us.cities.name,
+          size = 1,
+          repel = TRUE)
+
+ggscatter(cities_mds_rev, x = "Dim.1", y = "Dim.2", 
+          label = us.cities.name,
+          size = 1,
+          repel = TRUE)
+```
+
+
+** Plot the MDS representation of the pair-wise distances for the 10 US cities Comment on the results. Is this the usual US map? ** 
+
+```{r}
+p <- ggplot(data = cities_mds) + geom_point(mapping = aes(x=Dim.1 , y=Dim.2), color="yellow", size=8)
+p <- p + geom_text(data = cities_mds, mapping = aes(x=Dim.1 , y=Dim.2), label = us.cities.name, size=3)
+p <- p + labs(title = "MDS representation of pair-wise distances of 21 European cities")
+p
+```
+
+The cities on the map are not in their expected locations. It seems the map is not only mirrored, but flipped (Australia's point of view in some way). Indeed, this is the proper time to point to this fact that MDS only tries to preserve the inter-object distances,and therefore there is nothing wrong with the map. By operations such as rotation of the map, the distances remain intact. The map must be rotated 180 degrees. It is possible to do so by multiplying the coordinates of each point into -1.
+
+** Solve the issue above by rotating the figure the proper way** 
+
+```{r}
+p <- ggplot(data = cities_mds) + geom_point(mapping = aes(x=-Dim.1 , y=-Dim.2), color="yellow", size=8)
+p <- p + geom_text(data = cities_mds, mapping = aes(x=-Dim.1 , y=-Dim.2), label = us.cities.name, size=3)
+p <- p + labs(title = "MDS representation of pair-wise distances of 21 European cities")
+p
+```
+
+```{r}
+df <- tibble::as_tibble(us.cities)
+df <- df %>% filter(name %in% c("Atlanta GA", "Chicago IL", "Denver CO", "Houston TX", 
+                    "Los Angeles CA", "Miami FL", "New York NY", "San Francisco CA", "Seattle WA", "WASHINGTON DC"))
+```
+
+
+```{r}
+usa <- map_data("usa")
+gg1 <- ggplot() + 
+  geom_polygon(data = usa, aes(x=long, y = lat, group = group), fill = "NA", color = "blue") + 
+  coord_fixed(1.3)
+
+labs <- data.frame(
+  long = df$long,
+  lat = df$lat,
+  names = df$name,
+  stringsAsFactors = FALSE
+  )  
+
+gg1 + 
+  geom_point(data = labs, aes(x = long, y = lat), color = "black", size = 5) +
+  geom_point(data = labs, aes(x = long, y = lat), color = "yellow", size = 4) + 
+  geom_text_repel(data = labs, aes(x=long , y=lat, label = names), size=3)
+```
+
+
+### Kernel PCA 
