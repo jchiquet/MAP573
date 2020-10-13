@@ -316,11 +316,11 @@ where $M = \frac 1n \mathbf{1}\mathbf{1}^\top$ and $Z = UD$. Kernel PCA mimics t
 ## With Python using reticulate in R
 ```{r}
 library(reticulate) 
-use_python("/usr/local/bin/python") 
+use_virtualenv("r-reticulate")
 reticulate::py_config()
 
-py_install("sklearn", pip=TRUE) # install package sklearn 
-py_install("matplotlib", pip=TRUE) # install matplotlib
+#py_install("sklearn", pip=TRUE) # install package sklearn 
+#py_install("matplotlib", pip=TRUE) # install matplotlib
 ```
 
 

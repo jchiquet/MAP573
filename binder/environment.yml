@@ -4,9 +4,10 @@ channels:
 dependencies:
 #  - graph-tool
 #  - jupytext
-#  - numpy
-#  - matplotlib
-#  - pandoc
+  - numpy
+  - matplotlib
+  - sklearn
+  - pandoc
   - r-aricode
   - r-base=3.6.3
   - r-corrplot
@@ -19,6 +20,7 @@ dependencies:
   - r-knitr
   - r-learnr
   - r-matrix
+  - r-maps
   - r-readods
   - r-rcpp
   - r-rcpparmadillo
