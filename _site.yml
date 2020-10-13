@@ -55,7 +55,7 @@ navbar:
         - text: "R tutorials"
           href: tutorials_R.html
         - text: "PCA"
-          href: tutorial_PCA.html
+          href: tutorial_PCA_correction.html
         - text: "MDS, kernek-PCA"
 #          href: tutorials_mds_kernel.html
         - text: "Clustering"
