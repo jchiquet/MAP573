@@ -6,7 +6,7 @@ dependencies:
 #  - jupytext
 #  - numpy
 #  - matplotlib
-  - pandoc
+#  - pandoc
   - r-aricode
   - r-base=3.6.3
   - r-corrplot
