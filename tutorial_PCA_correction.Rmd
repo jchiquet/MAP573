@@ -2,7 +2,7 @@
 title: 'Tutorial: PCA on State Budget'
 author: 'MAP573 team'
 date: "10/13/2020"
-bibliography: resources/MAP573.bib
+# bibliography: resources/MAP573.bib
 ---
 
 # Preliminaries
@@ -31,7 +31,9 @@ theme_set(theme_bw()) # set default ggplot2 theme to black and white
 
 ### Data description
 
-We consider a data set inherited from the classical 'French school' of data analysis. This data set is taken from @bouroche1980analyse and has been analyzed e.g. in @duby2006analyse. The data matrix  $\mathbf{X} = (x_{ij})_{i=1,\dots,n; j=1,\dots,p}$ contains the distribution of the French State budget between $p = 11$ different items between $n = 24$ years sampled between 1872 and 1971.
+We consider a data set inherited from the classical 'French school' of data analysis. 
+<!-- This data set is taken from @bouroche1980analyse and has been analyzed e.g. in @duby2006analyse.  -->
+The data matrix  $\mathbf{X} = (x_{ij})_{i=1,\dots,n; j=1,\dots,p}$ contains the distribution of the French State budget between $p = 11$ different items between $n = 24$ years sampled between 1872 and 1971.
 
 The values are given as a percentage of the overall budget and the different items are
 
