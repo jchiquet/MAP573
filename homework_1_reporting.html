@@ -593,7 +593,9 @@ div.tocify {
     <li>
       <a href="homework_2_data_manipulation_representation_correction.html">Data manipulation and representation - correction</a>
     </li>
-    <li class="dropdown-header">Data analysis with PCA</li>
+    <li>
+      <a href="homework_3_PCA.html">Data analysis with PCA</a>
+    </li>
     <li class="dropdown-header">Report for lab #2</li>
     <li class="dropdown-header">Spectral Clustering for graphs</li>
     <li class="dropdown-header">Handling Missing Values</li>
@@ -654,12 +656,12 @@ div.tocify {
 <h2>Part 1: Swirl</h2>
 <p>The first part of this assignment is to use the <a href="https://github.com/swirldev/R_Programming_E">swirl</a> package to continue your basic R training.</p>
 <p>Install <strong>swirl</strong> as follows:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;swirl&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;swirl&quot;</span>)</span></code></pre></div>
 <p>Download the basic <code>R programming</code> formation as follows:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="kw">library</span>(swirl)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="kw">install_course_github</span>(<span class="st">&quot;swirldev&quot;</span>, <span class="st">&quot;R_Programming_E&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(swirl)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install_course_github</span>(<span class="st">&quot;swirldev&quot;</span>, <span class="st">&quot;R_Programming_E&quot;</span>)</span></code></pre></div>
 <p>To launch this formation, simply run <code>swirl()</code> in the <code>R</code> console (or Rstudio) and follow the instructions</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">swirl</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">swirl</span>()</span></code></pre></div>
 <p>Though less visually appealing than the <strong>learnR</strong> tutorials, <strong>swirl</strong> proved to be efficient to quickly learn R basics.</p>
 <div id="questionsassignment" class="section level3">
 <h3>Questions/assignment</h3>
@@ -703,7 +705,7 @@ div.tocify {
 <li><p>Perform a <em>very</em> basic imputation by replacing <code>NA</code> values in <code>maxO3</code> by the mean value. Create a vector <code>maxO3_NA_mean</code>.</p></li>
 <li><p>We suggest now to perform imputation via the k-nearest neighbor approach (see <a href="https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm">https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm</a> ). Use the package <strong>simputation</strong> to perform knn-imputation of the missing-value in <code>maxO3</code> based on a distance computed with all remaming variable. To do so, use</p></li>
 </ol>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>simputation<span class="op">::</span><span class="kw">impute_knn</span>(ozone, maxO3 <span class="op">~</span><span class="st"> </span>.)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>simputation<span class="sc">::</span><span class="fu">impute_knn</span>(ozone, maxO3 <span class="sc">~</span> .)</span></code></pre></div>
 <p>where <code>ozone</code> is your data frame. The string <code>maxO3 ~ .</code> is a formula explaining that <code>maxO3</code> is the variable on which imputation must be performed, and while <code>~ .</code> says that all remaining variables of the data frame are used to perform the imputation. Create a vector <code>maxO3_NA_knn</code> with the vector with imputed values.</p>
 <ol start="5" style="list-style-type: decimal">
 <li>Compare visually the distributions of the three vectors <code>maxO3</code>,<code>maxO3_NA_mean</code> and <code>maxO3_NA_knn</code>.</li>

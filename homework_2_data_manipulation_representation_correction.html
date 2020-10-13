@@ -11,7 +11,7 @@
 
 <meta name="author" content="MAP573 team" />
 
-<meta name="date" content="2020-10-07" />
+<meta name="date" content="2020-10-13" />
 
 <title>Homework #2: correction</title>
 
@@ -593,7 +593,9 @@ div.tocify {
     <li>
       <a href="homework_2_data_manipulation_representation_correction.html">Data manipulation and representation - correction</a>
     </li>
-    <li class="dropdown-header">Data analysis with PCA</li>
+    <li>
+      <a href="homework_3_PCA.html">Data analysis with PCA</a>
+    </li>
     <li class="dropdown-header">Report for lab #2</li>
     <li class="dropdown-header">Spectral Clustering for graphs</li>
     <li class="dropdown-header">Handling Missing Values</li>
@@ -632,7 +634,7 @@ div.tocify {
 <h1 class="title toc-ignore">Homework #2: correction</h1>
 <h3 class="subtitle">Data manipulaion and representation</h3>
 <h4 class="author">MAP573 team</h4>
-<h4 class="date">2020-10-07</h4>
+<h4 class="date">2020-10-13</h4>
 
 </div>
 
@@ -642,10 +644,10 @@ div.tocify {
 <div id="package-requirements" class="section level3">
 <h3>Package requirements</h3>
 <p>We start by loading a couple of packages for data manipulation and representation. Please install them using install.packages(“name_of_the_pacakge”) if not already done.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(tidyverse)    <span class="co"># advanced data manipulation and vizualisation</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(knitr)        <span class="co"># R notebook export and formatting </span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">library</span>(ggsci)        <span class="co"># Fancy color palettes inspired by scientific journals</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="kw">library</span>(cowplot)      <span class="co"># To combine several plots on the same canvas</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)    <span class="co"># advanced data manipulation and vizualisation</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)        <span class="co"># R notebook export and formatting </span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggsci)        <span class="co"># Fancy color palettes inspired by scientific journals</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot)      <span class="co"># To combine several plots on the same canvas</span></span></code></pre></div>
 </div>
 </div>
 <div id="exercise-1" class="section level2 tabset">
@@ -653,8 +655,8 @@ div.tocify {
 <div id="import-data" class="section level3">
 <h3>Import data</h3>
 <p>This exercise relies on the native R dataset “UCBAdmissions” which stores <strong>student admissions at UC Berkeley</strong> for the six largest departments in 1973 in function of the student gender. Please note that the data is originally stored as a 3-dimensional array, which we convert into a data frame for the rest of the exercise.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="co">#TO RUN </span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>UCBAdmissions <span class="co">#3-dim array</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#TO RUN </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>UCBAdmissions <span class="co">#3-dim array</span></span></code></pre></div>
 <pre><code>## , , Dept = A
 ## 
 ##           Gender
@@ -696,8 +698,8 @@ div.tocify {
 ## Admit      Male Female
 ##   Admitted   22     24
 ##   Rejected  351    317</code></pre>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>UCBAdmissions &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(UCBAdmissions) <span class="co">#Convert into a data frame</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="kw">head</span>(UCBAdmissions)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>UCBAdmissions <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(UCBAdmissions) <span class="co">#Convert into a data frame</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(UCBAdmissions)</span></code></pre></div>
 <pre><code>##      Admit Gender Dept Freq
 ## 1 Admitted   Male    A  512
 ## 2 Rejected   Male    A  313
@@ -706,13 +708,13 @@ div.tocify {
 ## 5 Admitted   Male    B  353
 ## 6 Rejected   Male    B  207</code></pre>
 <p><strong>Question 1</strong> : Have a closer look at the dataset : how many rows? How many variables? How many observations (<em>i.e.</em> number of applications)? How many different college departments are there? Briefly describe the variables.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>UCBAdmissions <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">nrow</span>() <span class="co">#24 rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>UCBAdmissions <span class="sc">%&gt;%</span> <span class="fu">nrow</span>() <span class="co">#24 rows</span></span></code></pre></div>
 <pre><code>## [1] 24</code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a>UCBAdmissions <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ncol</span>() <span class="co">#4 variables</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>UCBAdmissions <span class="sc">%&gt;%</span> <span class="fu">ncol</span>() <span class="co">#4 variables</span></span></code></pre></div>
 <pre><code>## [1] 4</code></pre>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a>UCBAdmissions <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(Dept) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">unique</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">nrow</span>() <span class="co">#Number of departments</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>UCBAdmissions <span class="sc">%&gt;%</span> <span class="fu">select</span>(Dept) <span class="sc">%&gt;%</span> <span class="fu">unique</span>() <span class="sc">%&gt;%</span> <span class="fu">nrow</span>() <span class="co">#Number of departments</span></span></code></pre></div>
 <pre><code>## [1] 6</code></pre>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="kw">sum</span>(UCBAdmissions<span class="op">$</span>Freq) <span class="co">#Total number of observations</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(UCBAdmissions<span class="sc">$</span>Freq) <span class="co">#Total number of observations</span></span></code></pre></div>
 <pre><code>## [1] 4526</code></pre>
 <p><strong>Correction</strong>: The dataset comprises 24 rows and 4 variables : Admit (Admitted or Rejected), Gender (Male or Female), Dept (the university department) and Freq (the number of students). In total 4526 observations are stored (which is the sum of the column Freq). There are 6 different departments whose names go from A to F.</p>
 </div>
@@ -720,11 +722,11 @@ div.tocify {
 <h3>Data description</h3>
 <p><strong>Question 2</strong> : Using what you have learned about tidy data and the dplyr package, compute the total <strong>number</strong> of admissions and rejections per Gender as well as the admission rate (number of admissions divided by number of aplications) per Gender.</p>
 <p>Do you see a difference of admission rates per Gender at Berkeley?</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a>UCBAdmissions <span class="op">%&gt;%</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">group_by</span>(Gender, Admit) <span class="op">%&gt;%</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">sum</span>(Freq)) <span class="op">%&gt;%</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">group_by</span>(Gender) <span class="op">%&gt;%</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">rate_per_gender =</span> count <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(count))</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>UCBAdmissions <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Gender, Admit) <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">sum</span>(Freq)) <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Gender) <span class="sc">%&gt;%</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rate_per_gender =</span> count <span class="sc">/</span> <span class="fu">sum</span>(count))</span></code></pre></div>
 <pre><code>## # A tibble: 4 x 4
 ## # Groups:   Gender [2]
 ##   Gender Admit    count rate_per_gender
@@ -740,13 +742,13 @@ div.tocify {
 <li>Admission/rejection rates per department (without distinction on the gender).</li>
 </ol>
 <p>Are there departments with more applications than others? Do the admission rates differ according to the department?</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a>UCBAdmissions <span class="op">%&gt;%</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">group_by</span>(Dept, Admit) <span class="op">%&gt;%</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">sum</span>(Freq)) <span class="op">%&gt;%</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">group_by</span>(Dept) <span class="op">%&gt;%</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">total_number_applications =</span> <span class="kw">sum</span>(count)) <span class="op">%&gt;%</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">rate_per_dpt =</span> count <span class="op">/</span><span class="st"> </span>total_number_applications) <span class="op">%&gt;%</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(Admit <span class="op">==</span><span class="st"> &quot;Admitted&quot;</span>) <span class="co">#No need to keep the rows for rejection since they do not add more information. </span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>UCBAdmissions <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Dept, Admit) <span class="sc">%&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">sum</span>(Freq)) <span class="sc">%&gt;%</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Dept) <span class="sc">%&gt;%</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_number_applications =</span> <span class="fu">sum</span>(count)) <span class="sc">%&gt;%</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rate_per_dpt =</span> count <span class="sc">/</span> total_number_applications) <span class="sc">%&gt;%</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Admit <span class="sc">==</span> <span class="st">&quot;Admitted&quot;</span>) <span class="co">#No need to keep the rows for rejection since they do not add more information. </span></span></code></pre></div>
 <pre><code>## # A tibble: 6 x 5
 ## # Groups:   Dept [6]
 ##   Dept  Admit    count total_number_applications rate_per_dpt
@@ -760,12 +762,12 @@ div.tocify {
 <p><strong>Correction</strong> The number of applications per departement does not vary much : it goes from 584 (department E) to 933 (department A). There is yet a huge difference in admission rates according to the departments, since it goes from about 6% (department F) to 64% (department A).</p>
 <p><strong>Question 4</strong> : Compute finally the rates of male/female applications per department (without taking into account the admission results).</p>
 <p>Can you draw an hypothesis to explain the difference of rate admissions between male and female (question 2)?</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a>UCBAdmissions <span class="op">%&gt;%</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">group_by</span>(Dept, Gender) <span class="op">%&gt;%</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">sum</span>(Freq)) <span class="op">%&gt;%</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">group_by</span>(Dept) <span class="op">%&gt;%</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">total_number_applications =</span> <span class="kw">sum</span>(count)) <span class="op">%&gt;%</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">gender_rate_per_dpt =</span> count <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(count))</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>UCBAdmissions <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Dept, Gender) <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">sum</span>(Freq)) <span class="sc">%&gt;%</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Dept) <span class="sc">%&gt;%</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_number_applications =</span> <span class="fu">sum</span>(count)) <span class="sc">%&gt;%</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gender_rate_per_dpt =</span> count <span class="sc">/</span> <span class="fu">sum</span>(count))</span></code></pre></div>
 <pre><code>## # A tibble: 12 x 5
 ## # Groups:   Dept [6]
 ##    Dept  Gender count total_number_applications gender_rate_per_dpt
@@ -789,7 +791,7 @@ div.tocify {
 <p>The paradox you have illustrated in the previous part is called the <em>Simpson’s paradox</em>. <a href="https://en.wikipedia.org/wiki/Simpson%27s_paradox">You can read more about it here.</a></p>
 <p>The goal of this section is to illustrate this paradox by plotting the sex admission rate (in percentage) per department.</p>
 <p><strong>Question 5</strong> Please observe the plot thereafter and reproduce it using ggplot2.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true"></a><span class="kw">include_graphics</span>(<span class="st">&quot;resources/sex_admission_rate.png&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">include_graphics</span>(<span class="st">&quot;resources/sex_admission_rate.png&quot;</span>)</span></code></pre></div>
 <p><img src="resources/sex_admission_rate.png" /><!-- --></p>
 <p><em>Hints</em> :</p>
 <ol style="list-style-type: decimal">
@@ -800,14 +802,14 @@ div.tocify {
 <li><p>To ask geom_text to use a dodge position, you can set the argument “position” to the value <em>position_dodge(width =1)</em>.</p></li>
 <li><p>The argument “size” from the function geom_text enables to change the font size.</p></li>
 </ol>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="co">#Step 1 : compute the pourcentage of admission rate per gender and per  departments</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true"></a>UCBAdmissions_sexrate &lt;-<span class="st"> </span>UCBAdmissions <span class="op">%&gt;%</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">group_by</span>(Dept, Gender) <span class="op">%&gt;%</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">percent_admission_sex =</span> <span class="kw">round</span>(<span class="dv">100</span><span class="op">*</span><span class="st"> </span>Freq <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(Freq))) <span class="op">%&gt;%</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">filter</span>(Admit <span class="op">==</span><span class="st"> &quot;Admitted&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">label =</span> <span class="kw">paste0</span>(<span class="st">&quot;n = &quot;</span>, Freq, <span class="st">&quot;</span><span class="ch">\n</span><span class="st">(&quot;</span>, percent_admission_sex,<span class="st">&quot;%)&quot;</span>))</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true"></a></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true"></a><span class="kw">head</span>(UCBAdmissions_sexrate)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Step 1 : compute the pourcentage of admission rate per gender and per  departments</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>UCBAdmissions_sexrate <span class="ot">&lt;-</span> UCBAdmissions <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Dept, Gender) <span class="sc">%&gt;%</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percent_admission_sex =</span> <span class="fu">round</span>(<span class="dv">100</span><span class="sc">*</span> Freq <span class="sc">/</span> <span class="fu">sum</span>(Freq))) <span class="sc">%&gt;%</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Admit <span class="sc">==</span> <span class="st">&quot;Admitted&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">&quot;n = &quot;</span>, Freq, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">(&quot;</span>, percent_admission_sex,<span class="st">&quot;%)&quot;</span>))</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(UCBAdmissions_sexrate)</span></code></pre></div>
 <pre><code>## # A tibble: 6 x 6
 ## # Groups:   Dept, Gender [6]
 ##   Admit    Gender Dept   Freq percent_admission_sex label           
@@ -818,18 +820,18 @@ div.tocify {
 ## 4 Admitted Female B        17                    68 &quot;n = 17\n(68%)&quot; 
 ## 5 Admitted Male   C       120                    37 &quot;n = 120\n(37%)&quot;
 ## 6 Admitted Female C       202                    34 &quot;n = 202\n(34%)&quot;</code></pre>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true"></a><span class="co">#Step 2 : plot</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> UCBAdmissions_sexrate, <span class="kw">aes</span>(<span class="dt">x =</span> Dept, <span class="dt">y =</span> percent_admission_sex, <span class="dt">fill =</span> Gender)) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>,<span class="dt">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="op">+</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">scale_fill_jama</span>() <span class="op">+</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label  =</span> label, <span class="dt">y =</span> percent_admission_sex<span class="op">/</span><span class="dv">2</span>), <span class="dt">position =</span> <span class="kw">position_dodge</span>(<span class="dt">width=</span><span class="dv">1</span>), <span class="dt">color =</span> <span class="st">&quot;white&quot;</span>, <span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">theme_minimal</span>() <span class="op">+</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Department&quot;</span>) <span class="op">+</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Sex admission rate (in percentage)&quot;</span>) <span class="op">+</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="op">+</span></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Admission rate at UC Berkeley in 1993 per sex and per department&quot;</span>, <span class="dt">subtitle =</span> <span class="st">&quot;Illustration of the Simpson&#39;s paradox&quot;</span>, <span class="dt">caption =</span> <span class="st">&quot;Data coming from UCBAdmissions dataset&quot;</span>) <span class="co">#+</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Step 2 : plot</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> UCBAdmissions_sexrate, <span class="fu">aes</span>(<span class="at">x =</span> Dept, <span class="at">y =</span> percent_admission_sex, <span class="at">fill =</span> Gender)) <span class="sc">+</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>,<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="sc">+</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_jama</span>() <span class="sc">+</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label  =</span> label, <span class="at">y =</span> percent_admission_sex<span class="sc">/</span><span class="dv">2</span>), <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width=</span><span class="dv">1</span>), <span class="at">color =</span> <span class="st">&quot;white&quot;</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Department&quot;</span>) <span class="sc">+</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Sex admission rate (in percentage)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Admission rate at UC Berkeley in 1993 per sex and per department&quot;</span>, <span class="at">subtitle =</span> <span class="st">&quot;Illustration of the Simpson&#39;s paradox&quot;</span>, <span class="at">caption =</span> <span class="st">&quot;Data coming from UCBAdmissions dataset&quot;</span>) <span class="co">#+</span></span></code></pre></div>
 <p><img src="homework_2_data_manipulation_representation_correction_files/figure-html/question5_correction-1.png" width="672" /></p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true"></a>  <span class="co">#ggsave(&quot;resources/sex_admission_rate.png&quot;)</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#ggsave(&quot;resources/sex_admission_rate.png&quot;)</span></span></code></pre></div>
 </div>
 </div>
 <div id="exercise-2" class="section level2 tabset">
@@ -837,7 +839,7 @@ div.tocify {
 <div id="import-data-1" class="section level3">
 <h3>Import data</h3>
 <p>Exercise 2 relies on the dataset “relig_income” coming from the tidyverse package. The dataset store the results of a religion vs income survey : number of survey respondents in each category religion/income. The incomes are cut into 10k dollar ranges. Note that there are special categories for “missing” data : “Don’t know/ refused”.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true"></a>relig_income</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>relig_income</span></code></pre></div>
 <pre><code>## # A tibble: 18 x 11
 ##    religion `&lt;$10k` `$10-20k` `$20-30k` `$30-40k` `$40-50k` `$50-75k` `$75-100k`
 ##    &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
@@ -875,53 +877,53 @@ div.tocify {
 <li><p>Compute the rounded percentage of religious affiliations for this income range. Arrange the dataset per decreasing percentage and keep only the 5th top rows (you can use the function head)</p></li>
 <li><p>Plot the distibution of the top 5 religious affiliations as a bar plot. Make sure to rename the y axis label properly as well as to choose a color palette for religion. Use geom_text to write the percentage of each religion for this income range on top of the bars (you can use vjust = 0 to align the text to the top). Remove the x axis text and x axis title since it is redondant with the legend and position the legend at the bottom of the plot. Once done, rename your ggplot object as relig_income_less_10k.</p></li>
 </ol>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true"></a><span class="co">#Step 1 </span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true"></a>relig_income_one_range &lt;-<span class="st"> </span>relig_income <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(religion, <span class="st">`</span><span class="dt">&lt;$10k</span><span class="st">`</span>) <span class="op">%&gt;%</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">percent =</span> <span class="kw">round</span>(<span class="dv">100</span> <span class="op">*</span><span class="st">`</span><span class="dt">&lt;$10k</span><span class="st">`</span> <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(<span class="st">`</span><span class="dt">&lt;$10k</span><span class="st">`</span>))) <span class="op">%&gt;%</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(percent)) <span class="op">%&gt;%</span></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">head</span>(<span class="dv">5</span>)</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true"></a></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true"></a><span class="co">#Step 2</span></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true"></a>relig_income_less_10k =<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> relig_income_one_range, <span class="kw">aes</span>(<span class="dt">x =</span> religion, <span class="dt">y =</span> <span class="st">`</span><span class="dt">&lt;$10k</span><span class="st">`</span>, <span class="dt">fill =</span> religion)) <span class="op">+</span></span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span> <span class="kw">paste0</span>(percent,<span class="st">&quot;%&quot;</span>)), <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">vjust =</span> <span class="dv">0</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>) <span class="op">+</span></span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true"></a><span class="st">  </span><span class="kw">scale_fill_npg</span>(<span class="dt">name =</span> <span class="st">&quot;Religion&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;&quot;</span>) <span class="op">+</span></span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Count&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Distibution of the religous beliefs for &lt;$10k incomes&quot;</span>)<span class="op">+</span><span class="st"> </span></span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>, </span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true"></a>        <span class="dt">axis.text.x =</span> <span class="kw">element_blank</span>())</span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true"></a>relig_income_less_10k</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Step 1 </span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>relig_income_one_range <span class="ot">&lt;-</span> relig_income <span class="sc">%&gt;%</span> </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(religion, <span class="st">`</span><span class="at">&lt;$10k</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percent =</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span><span class="st">`</span><span class="at">&lt;$10k</span><span class="st">`</span> <span class="sc">/</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">&lt;$10k</span><span class="st">`</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(percent)) <span class="sc">%&gt;%</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co">#Step 2</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>relig_income_less_10k <span class="ot">=</span> <span class="fu">ggplot</span>(<span class="at">data =</span> relig_income_one_range, <span class="fu">aes</span>(<span class="at">x =</span> religion, <span class="at">y =</span> <span class="st">`</span><span class="at">&lt;$10k</span><span class="st">`</span>, <span class="at">fill =</span> religion)) <span class="sc">+</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label=</span> <span class="fu">paste0</span>(percent,<span class="st">&quot;%&quot;</span>)), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">vjust =</span> <span class="dv">0</span>) <span class="sc">+</span> </span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>) <span class="sc">+</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_npg</span>(<span class="at">name =</span> <span class="st">&quot;Religion&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;&quot;</span>) <span class="sc">+</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Count&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Distibution of the religous beliefs for &lt;$10k incomes&quot;</span>)<span class="sc">+</span> </span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>, </span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>relig_income_less_10k</span></code></pre></div>
 <p><img src="homework_2_data_manipulation_representation_correction_files/figure-html/question1_ex2_correction-1.png" width="672" /></p>
 <p><strong>Question 2</strong></p>
 <p>Reproduce the code above for data income range “more than 150k dollars”. Call your plot relig_income_more_150k. What issue can you see with the color palette?</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true"></a><span class="co">#Step 1 </span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true"></a>relig_income_one_range &lt;-<span class="st"> </span>relig_income <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(religion, <span class="st">`</span><span class="dt">&gt;150k</span><span class="st">`</span>) <span class="op">%&gt;%</span></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">percent =</span> <span class="kw">round</span>(<span class="dv">100</span> <span class="op">*</span><span class="st">`</span><span class="dt">&gt;150k</span><span class="st">`</span> <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(<span class="st">`</span><span class="dt">&gt;150k</span><span class="st">`</span>))) <span class="op">%&gt;%</span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(percent)) <span class="op">%&gt;%</span></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">head</span>(<span class="dv">5</span>)</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true"></a></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true"></a><span class="co">#Step 2</span></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true"></a>relig_income_more_150k =<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> relig_income_one_range, <span class="kw">aes</span>(<span class="dt">x =</span> religion, <span class="dt">y =</span> <span class="st">`</span><span class="dt">&gt;150k</span><span class="st">`</span>, <span class="dt">fill =</span> religion)) <span class="op">+</span></span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span> <span class="kw">paste0</span>(percent,<span class="st">&quot;%&quot;</span>)), <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">vjust =</span> <span class="dv">0</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>) <span class="op">+</span></span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true"></a><span class="st">  </span><span class="kw">scale_fill_npg</span>(<span class="dt">name =</span> <span class="st">&quot;Religion&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;&quot;</span>) <span class="op">+</span></span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Count&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Distibution of the religous beliefs for &gt;*150k incomes&quot;</span>)<span class="op">+</span><span class="st"> </span></span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>, </span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true"></a>        <span class="dt">axis.text.x =</span> <span class="kw">element_blank</span>())</span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true"></a>relig_income_more_150k</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Step 1 </span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>relig_income_one_range <span class="ot">&lt;-</span> relig_income <span class="sc">%&gt;%</span> </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(religion, <span class="st">`</span><span class="at">&gt;150k</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percent =</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span><span class="st">`</span><span class="at">&gt;150k</span><span class="st">`</span> <span class="sc">/</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">&gt;150k</span><span class="st">`</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(percent)) <span class="sc">%&gt;%</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co">#Step 2</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>relig_income_more_150k <span class="ot">=</span> <span class="fu">ggplot</span>(<span class="at">data =</span> relig_income_one_range, <span class="fu">aes</span>(<span class="at">x =</span> religion, <span class="at">y =</span> <span class="st">`</span><span class="at">&gt;150k</span><span class="st">`</span>, <span class="at">fill =</span> religion)) <span class="sc">+</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label=</span> <span class="fu">paste0</span>(percent,<span class="st">&quot;%&quot;</span>)), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">vjust =</span> <span class="dv">0</span>) <span class="sc">+</span> </span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>) <span class="sc">+</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_npg</span>(<span class="at">name =</span> <span class="st">&quot;Religion&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;&quot;</span>) <span class="sc">+</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Count&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Distibution of the religous beliefs for &gt;*150k incomes&quot;</span>)<span class="sc">+</span> </span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>, </span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>relig_income_more_150k</span></code></pre></div>
 <p><img src="homework_2_data_manipulation_representation_correction_files/figure-html/question2_ex2_correction-1.png" width="672" /></p>
 <p><strong>Correction</strong> The top five religions differ among the two plots. Since the two plots were generated independently with the same color palette, the color affiliation changes : there is no common legend.</p>
 <p><strong>Question 3</strong></p>
 <p>Use the function plot_grid from the cowplot package to gather the two plots into one figure (on the same row). Are you satsified with the results?</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true"></a><span class="co">#?plot_grid</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true"></a><span class="kw">plot_grid</span>(relig_income_less_10k,</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true"></a>          relig_income_more_150k,</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true"></a>          <span class="dt">nrow =</span> <span class="dv">1</span> )</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#?plot_grid</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_grid</span>(relig_income_less_10k,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>          relig_income_more_150k,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">nrow =</span> <span class="dv">1</span> )</span></code></pre></div>
 <p><img src="homework_2_data_manipulation_representation_correction_files/figure-html/question3_ex2_correction-1.png" width="672" /></p>
 <p><strong>Correction : </strong> Plot_grid function is very useful to gather plots (easy to use, automatic alginements). Yet, the plots to gather must be drawn independently. As a result, there is no common legend in the final plot. Though being vey useful to gather plots coming from different sources into one figure, cowplot is less efficient that facet_wrap to stratify studies according to one variable (the income range in this case).</p>
 <p>You have seen how to gather two plots into a single one using plot_grid. Acutually, plot_grid can take as argument a list of plots, meaning that we could have used it to draw bar plots for each level of incomes (using a for loop or a function such as lapply to generate the list of plots).</p>
@@ -932,22 +934,22 @@ div.tocify {
 <p>The relig_income dataset is stored into a wide format. In this section, we are going to convert it into a “long” format meaning that we are going to create a new variable storing income ranges. The dataset in a long format will have only 3 columns (religion, income and count) but more rows than the original dataset in wide format : one row per couple religion/income range.</p>
 <p><strong>Question 4</strong></p>
 <p>Transform relig_income into relig_income_long using the function pivot_longer function from the tidyverse package.</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true"></a>?pivot_longer</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true"></a></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true"></a>relig_income_long &lt;-<span class="st"> </span>relig_income <span class="op">%&gt;%</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="op">!</span>religion,</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true"></a>               <span class="dt">names_to =</span> <span class="st">&quot;income&quot;</span>, </span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true"></a>               <span class="dt">values_to =</span> <span class="st">&quot;count&quot;</span>)</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true"></a></span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true"></a><span class="kw">nrow</span>(relig_income_long) <span class="co">#18 religions * 10 income ranges = 180 </span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>?pivot_longer</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>relig_income_long <span class="ot">&lt;-</span> relig_income <span class="sc">%&gt;%</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span>religion,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;income&quot;</span>, </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;count&quot;</span>)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(relig_income_long) <span class="co">#18 religions * 10 income ranges = 180 </span></span></code></pre></div>
 <pre><code>## [1] 180</code></pre>
 <p><strong>Question 5</strong></p>
 <p>Compute the rounded percentage of people belonging to each religion per income range. Keep only the 5 top religions per income range (you can use group_by and slice_max function).</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true"></a>relig_income_long_top5 &lt;-<span class="st"> </span>relig_income_long <span class="op">%&gt;%</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">group_by</span>(income) <span class="op">%&gt;%</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">percent =</span> <span class="kw">round</span>(<span class="dv">100</span><span class="op">*</span>count<span class="op">/</span><span class="kw">sum</span>(count))) <span class="op">%&gt;%</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">slice_max</span>(<span class="dt">order_by =</span> count, <span class="dt">n =</span> <span class="dv">5</span>)</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true"></a>relig_income_long_top5</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>relig_income_long_top5 <span class="ot">&lt;-</span> relig_income_long <span class="sc">%&gt;%</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(income) <span class="sc">%&gt;%</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">percent =</span> <span class="fu">round</span>(<span class="dv">100</span><span class="sc">*</span>count<span class="sc">/</span><span class="fu">sum</span>(count))) <span class="sc">%&gt;%</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> count, <span class="at">n =</span> <span class="dv">5</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>relig_income_long_top5</span></code></pre></div>
 <pre><code>## # A tibble: 50 x 4
 ## # Groups:   income [10]
 ##    religion                income count percent
@@ -965,33 +967,33 @@ div.tocify {
 ## # … with 40 more rows</code></pre>
 <p><strong>Question 6</strong></p>
 <p>Plot the distribution of top 5 religions <strong>facetted by</strong> income ranges (using facet_wrap). Make sure to rename the y axis label properly as well as to choose a color palette for religion. Use geom_text to write the percentage of each religion for this income range on top of the bars (you can use vjust = 0 to align the text to the top). Remove the x axis text and title since it is redondant with the legend and position the legend at the bottom of the plot.</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> relig_income_long_top5, <span class="kw">aes</span>(<span class="dt">x =</span> religion, <span class="dt">y =</span> percent, <span class="dt">fill =</span> religion)) <span class="op">+</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span> <span class="kw">paste0</span>(percent,<span class="st">&quot;%&quot;</span>)), <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">vjust =</span> <span class="dv">0</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>) <span class="op">+</span></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">scale_fill_npg</span>(<span class="dt">name =</span> <span class="st">&quot;Religion&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;&quot;</span>) <span class="op">+</span></span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Count&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">facet_wrap</span>( .<span class="op">~</span><span class="st"> </span>income) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Distribution of the religious beliefs&quot;</span>)<span class="op">+</span><span class="st"> </span></span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>, </span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true"></a>        <span class="dt">axis.text.x =</span> <span class="kw">element_blank</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> relig_income_long_top5, <span class="fu">aes</span>(<span class="at">x =</span> religion, <span class="at">y =</span> percent, <span class="at">fill =</span> religion)) <span class="sc">+</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label=</span> <span class="fu">paste0</span>(percent,<span class="st">&quot;%&quot;</span>)), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">vjust =</span> <span class="dv">0</span>) <span class="sc">+</span> </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>) <span class="sc">+</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_npg</span>(<span class="at">name =</span> <span class="st">&quot;Religion&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;&quot;</span>) <span class="sc">+</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Count&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>( .<span class="sc">~</span> income) <span class="sc">+</span> </span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Distribution of the religious beliefs&quot;</span>)<span class="sc">+</span> </span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>, </span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
 <p><img src="homework_2_data_manipulation_representation_correction_files/figure-html/question6_ex2_correction-1.png" width="672" /></p>
 <p>You should see that facet_wrap creates a common legend (a religion has the same color in all the plots) and leaves blanks when a religion does stand in the top 5 religion for a given income range.</p>
 <p><strong>Question 7</strong></p>
 <p>We still have an issue concerning the order of the facet wrap plots which seems to follow the alphabetical order, while we would have liked it to be arranged from lower to higher incomes.</p>
 <p>One way to cope with this is to set the levels of the variable income (seen as a factor variable) either by hand or by using regular expressions. In this case, we can use the order defined by the columns of the wide relig_income dataset, which were already in the good order. Re-do the plot after arranging the levels of the variable income.</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true"></a>relig_income_long_top5<span class="op">$</span>income &lt;-<span class="st"> </span><span class="kw">factor</span>(relig_income_long_top5<span class="op">$</span>income, <span class="dt">levels =</span> <span class="kw">setdiff</span>(<span class="kw">colnames</span>(relig_income),<span class="st">&quot;religion&quot;</span>))</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true"></a></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> relig_income_long_top5, <span class="kw">aes</span>(<span class="dt">x =</span> religion, <span class="dt">y =</span> percent, <span class="dt">fill =</span> religion)) <span class="op">+</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span> <span class="kw">paste0</span>(percent,<span class="st">&quot;%&quot;</span>)), <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">vjust =</span> <span class="dv">0</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>) <span class="op">+</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">scale_fill_npg</span>(<span class="dt">name =</span> <span class="st">&quot;Religion&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;&quot;</span>) <span class="op">+</span></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true"></a><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Count&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true"></a><span class="st">  </span><span class="kw">facet_wrap</span>( .<span class="op">~</span><span class="st"> </span>income) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Distribution of the religious beliefs&quot;</span>)<span class="op">+</span><span class="st"> </span></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>, </span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true"></a>        <span class="dt">axis.text.x =</span> <span class="kw">element_blank</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>relig_income_long_top5<span class="sc">$</span>income <span class="ot">&lt;-</span> <span class="fu">factor</span>(relig_income_long_top5<span class="sc">$</span>income, <span class="at">levels =</span> <span class="fu">setdiff</span>(<span class="fu">colnames</span>(relig_income),<span class="st">&quot;religion&quot;</span>))</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> relig_income_long_top5, <span class="fu">aes</span>(<span class="at">x =</span> religion, <span class="at">y =</span> percent, <span class="at">fill =</span> religion)) <span class="sc">+</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label=</span> <span class="fu">paste0</span>(percent,<span class="st">&quot;%&quot;</span>)), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">vjust =</span> <span class="dv">0</span>) <span class="sc">+</span> </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>) <span class="sc">+</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_npg</span>(<span class="at">name =</span> <span class="st">&quot;Religion&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;&quot;</span>) <span class="sc">+</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Count&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>( .<span class="sc">~</span> income) <span class="sc">+</span> </span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Distribution of the religious beliefs&quot;</span>)<span class="sc">+</span> </span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>, </span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
 <p><img src="homework_2_data_manipulation_representation_correction_files/figure-html/question7_ex2_correction-1.png" width="672" /></p>
 </div>
 </div>

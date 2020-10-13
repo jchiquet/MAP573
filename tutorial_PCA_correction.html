@@ -9,9 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Julien Chiquet" />
+<meta name="author" content="MAP573 team" />
 
-<meta name="date" content="2020-10-07" />
+<meta name="date" content="2020-10-13" />
 
 <title>Tutorial: PCA on State Budget</title>
 
@@ -593,7 +593,9 @@ div.tocify {
     <li>
       <a href="homework_2_data_manipulation_representation_correction.html">Data manipulation and representation - correction</a>
     </li>
-    <li class="dropdown-header">Data analysis with PCA</li>
+    <li>
+      <a href="homework_3_PCA.html">Data analysis with PCA</a>
+    </li>
     <li class="dropdown-header">Report for lab #2</li>
     <li class="dropdown-header">Spectral Clustering for graphs</li>
     <li class="dropdown-header">Handling Missing Values</li>
@@ -630,8 +632,8 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Tutorial: PCA on State Budget</h1>
-<h4 class="author">Julien Chiquet</h4>
-<h4 class="date">2020-10-07</h4>
+<h4 class="author">MAP573 team</h4>
+<h4 class="date">10/13/2020</h4>
 
 </div>
 
@@ -641,19 +643,19 @@ div.tocify {
 <div id="package-requirements" class="section level2">
 <h2>Package requirements</h2>
 <p>We start by loading a couple of packages for data manipulation, dimension reduction and fancy representations.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(tidyverse)   <span class="co"># advanced data manipulation and vizualisation</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(knitr)       <span class="co"># R notebook export and formatting </span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">library</span>(FactoMineR)  <span class="co"># Factor analysis</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="kw">library</span>(factoextra)  <span class="co"># Fancy plotting of FactoMineR outputs</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a><span class="kw">library</span>(corrplot)    <span class="co"># Fancy plotting of matrices </span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a><span class="kw">library</span>(GGally)      <span class="co"># Easy-to-use ggplot2 extensions</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a><span class="kw">theme_set</span>(<span class="kw">theme_bw</span>()) <span class="co"># set default ggplot2 theme to black and white</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)   <span class="co"># advanced data manipulation and vizualisation</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)       <span class="co"># R notebook export and formatting </span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)  <span class="co"># Factor analysis</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)  <span class="co"># Fancy plotting of FactoMineR outputs</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)    <span class="co"># Fancy plotting of matrices </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)      <span class="co"># Easy-to-use ggplot2 extensions</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>()) <span class="co"># set default ggplot2 theme to black and white</span></span></code></pre></div>
 </div>
 <div id="importing-the-data-set" class="section level2">
 <h2>Importing the Data set</h2>
 <div id="data-description" class="section level3">
 <h3>Data description</h3>
-<p>We consider a data set inherited from the classical ‘French school’ of data analysis. This data set is taken from <span class="citation">Bouroche and Saporta (1980)</span> and has been analyzed e.g. in <span class="citation">Duby and Robin (2006)</span>. The data matrix <span class="math inline">\(\mathbf{X} = (x_{ij})_{i=1,\dots,n; j=1,\dots,p}\)</span> contains the distribution of the French State budget between <span class="math inline">\(p = 11\)</span> different items between <span class="math inline">\(n = 24\)</span> years sampled between 1872 and 1971.</p>
+<p>We consider a data set inherited from the classical ‘French school’ of data analysis. <!-- This data set is taken from @bouroche1980analyse and has been analyzed e.g. in @duby2006analyse.  --> The data matrix <span class="math inline">\(\mathbf{X} = (x_{ij})_{i=1,\dots,n; j=1,\dots,p}\)</span> contains the distribution of the French State budget between <span class="math inline">\(p = 11\)</span> different items between <span class="math inline">\(n = 24\)</span> years sampled between 1872 and 1971.</p>
 <p>The values are given as a percentage of the overall budget and the different items are</p>
 <ul>
 <li>Government</li>
@@ -675,21 +677,21 @@ div.tocify {
 <p><strong>Load the data into a data frame and name the columns appropriately.</strong></p>
 <div class="hiddensolution">
 <p>The function <code>read_csv2</code> from the <code>readr</code> package, part of the <a href="https://www.tidyverse.org/">tidyverse</a> can hande this automatically. We also specify the column names, corresponding to the budgetary items, plus the corresponding year, while loading the data set into <code>R</code>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>state_budget &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw">read_csv2</span>(<span class="st">&quot;data/budget.csv&quot;</span>,</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>  <span class="dt">col_names =</span> <span class="kw">c</span>(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>      <span class="st">&quot;Year&quot;</span>,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>      <span class="st">&quot;Governments&quot;</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>      <span class="st">&quot;Agriculture&quot;</span>,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>      <span class="st">&quot;Business and Industry&quot;</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>      <span class="st">&quot;Employment&quot;</span>,</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>      <span class="st">&quot;Housing&quot;</span>,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a>      <span class="st">&quot;Education&quot;</span>,</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>      <span class="st">&quot;Welfare&quot;</span>,</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>      <span class="st">&quot;Veterans&quot;</span>,</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a>      <span class="st">&quot;Defence&quot;</span>,</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a>      <span class="st">&quot;Debt Interest&quot;</span>,</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a>      <span class="st">&quot;Others&quot;</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true"></a>    ))</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>state_budget <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv2</span>(<span class="st">&quot;data/budget.csv&quot;</span>,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_names =</span> <span class="fu">c</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Year&quot;</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Governments&quot;</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Agriculture&quot;</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Business and Industry&quot;</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Employment&quot;</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Housing&quot;</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Education&quot;</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Welfare&quot;</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Veterans&quot;</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Defence&quot;</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Debt Interest&quot;</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Others&quot;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    ))</span></code></pre></div>
 </div>
 </div>
 </div>
@@ -701,7 +703,7 @@ div.tocify {
 <p><strong>Have a look at the head of the data table <span class="math inline">\(\mathbf{X}\)</span></strong></p>
 <div class="hiddensolution">
 <p><code>kable</code> is used adapt the formatting to the type of output: HTML, screen, PDF</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>state_budget <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>() <span class="op">%&gt;%</span><span class="st"> </span>knitr<span class="op">::</span><span class="kw">kable</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>state_budget <span class="sc">%&gt;%</span> <span class="fu">head</span>() <span class="sc">%&gt;%</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
 <table>
 <thead>
 <tr>
@@ -975,7 +977,7 @@ Others
 </tbody>
 </table>
 <p>The following function is useful to have a quick look at a data frame a check types of each variables:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="kw">glimpse</span>(state_budget)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(state_budget)</span></code></pre></div>
 <pre><code>## Rows: 24
 ## Columns: 12
 ## $ Year                    &lt;dbl&gt; 1872, 1880, 1890, 1900, 1903, 1906, 1909, 191…
@@ -993,13 +995,13 @@ Others
 </div>
 <p>Each variable (i.e. budget item) takes it value in <span class="math inline">\([0,100]\)</span> (proportion of the current budget). <strong>Propose a plot to summarize the distribution of these proportions</strong></p>
 <div class="hiddensolution">
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>state_budget <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>Year) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="kw">everything</span>()) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a><span class="st">    </span><span class="kw">aes</span>(<span class="dt">x =</span> name, <span class="dt">y =</span> value) <span class="op">+</span><span class="st"> </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;budget item&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;value (proportion)&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a><span class="st">    </span><span class="kw">geom_boxplot</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a><span class="st">    </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">90</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>state_budget <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>Year) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> name, <span class="at">y =</span> value) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;budget item&quot;</span>, <span class="at">y =</span> <span class="st">&quot;value (proportion)&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>))</span></code></pre></div>
 <p><img src="tutorial_PCA_correction_files/figure-html/boxplot-1.png" width="672" /></p>
 </div>
 <div id="data-transformation" class="section level3">
@@ -1007,11 +1009,11 @@ Others
 <p><strong>Create a categorical variable (factor) with a couple of level to regroup samples by time interval that you find relevant in history of 20th century. Check that these period are balanced.</strong></p>
 <div class="hiddensolution">
 <p>We identify 4 historical periods to regroup the ‘Year’ variable (the id of the sample) into four clusters that might be interesting for interpreting the the PCA. We amend our data frame by adding a column encoding this new descriptive variable (that will <em>not</em> be used in the PCA, of course!).</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a>state_budget &lt;-<span class="st"> </span>state_budget <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Period =</span> <span class="kw">cut</span>(Year, </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a>    <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="op">-</span><span class="ot">Inf</span>, <span class="dv">1900</span>, <span class="dv">1920</span>, <span class="dv">1947</span>, <span class="ot">Inf</span>), <span class="dt">right =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a>    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;&lt;1900&quot;</span>, <span class="st">&quot;[1900, 1920)&quot;</span>, <span class="st">&quot;(1920, 1947]&quot;</span>, <span class="st">&quot;&gt;= 1947&quot;</span>))</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>state_budget <span class="ot">&lt;-</span> state_budget <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Period =</span> <span class="fu">cut</span>(Year, </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="dv">1900</span>, <span class="dv">1920</span>, <span class="dv">1947</span>, <span class="cn">Inf</span>), <span class="at">right =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;&lt;1900&quot;</span>, <span class="st">&quot;[1900, 1920)&quot;</span>, <span class="st">&quot;(1920, 1947]&quot;</span>, <span class="st">&quot;&gt;= 1947&quot;</span>))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
 </div>
 </div>
 </div>
@@ -1020,19 +1022,19 @@ Others
 <p>When only few variables are at play, plotting the scatterplot or (pairs-to-pairs plot) might help in finding obvious relations.</p>
 <p><strong>Use the function <code>scatmat</code> from {GGally} to do that</strong></p>
 <div class="hiddensolution">
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a>  state_budget <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>Year) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate_if</span>(is_double, scale) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a><span class="st">    </span>GGally<span class="op">::</span><span class="kw">scatmat</span>(<span class="dt">color =</span> <span class="st">&quot;Period&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>  state_budget <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>Year) <span class="sc">%&gt;%</span> <span class="fu">mutate_if</span>(is_double, scale) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    GGally<span class="sc">::</span><span class="fu">scatmat</span>(<span class="at">color =</span> <span class="st">&quot;Period&quot;</span>)</span></code></pre></div>
 <p><img src="tutorial_PCA_correction_files/figure-html/scatterplot-1.png" width="768" /></p>
 </div>
 <p>When many more continuous variables are observed, a quick glance at the redondancy in information may be explored by representing the correlation matrix, optionally regrouped according to similarity (here, hierarchical clustering).</p>
 <p><strong>Use the package {corrplot} to check correlations between variables. What do you conclude?</strong></p>
 <div class="hiddensolution">
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="kw">par</span>(<span class="dt">mfrow  =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a>state_budget <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>Year, <span class="op">-</span>Period) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a><span class="st">    </span><span class="kw">cor</span>() <span class="op">%&gt;%</span><span class="st"> </span>corrplot<span class="op">::</span><span class="kw">corrplot</span>()</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a>state_budget <span class="op">%&gt;%</span><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>Year, <span class="op">-</span>Period) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a><span class="st">    </span><span class="kw">cor</span>() <span class="op">%&gt;%</span><span class="st"> </span>corrplot<span class="op">::</span><span class="kw">corrplot</span>(<span class="dt">method =</span> <span class="st">&quot;color&quot;</span>, <span class="dt">order =</span> <span class="st">&quot;hclust&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow  =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>state_budget <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>Year, <span class="sc">-</span>Period) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cor</span>() <span class="sc">%&gt;%</span> corrplot<span class="sc">::</span><span class="fu">corrplot</span>()</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>state_budget <span class="sc">%&gt;%</span>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>Year, <span class="sc">-</span>Period) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cor</span>() <span class="sc">%&gt;%</span> corrplot<span class="sc">::</span><span class="fu">corrplot</span>(<span class="at">method =</span> <span class="st">&quot;color&quot;</span>, <span class="at">order =</span> <span class="st">&quot;hclust&quot;</span>)</span></code></pre></div>
 <p><img src="tutorial_PCA_correction_files/figure-html/correlation%20matrix-1.png" width="768" /></p>
 <p>It seems that some variables carry the same information: dimension reduction might help. The data is probably living in a smaller space than <span class="math inline">\(p=11\)</span>.</p>
 </div>
@@ -1045,17 +1047,17 @@ Others
 <p>Before performing the PCA, we center (always!) and scale the continuous columns in the data table, in order to give the same weight to items with high or lower percentage.</p>
 <p><strong>Form the matrix <span class="math inline">\(\mathbf{X}\)</span> of continuous scaled variables and perform the PCA with {FactoMineR}</strong></p>
 <div class="hiddensolution">
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a>X &lt;-<span class="st"> </span>state_budget <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate_if</span>(is_double, scale) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>Year, <span class="op">-</span>Period)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true"></a><span class="kw">rownames</span>(X) &lt;-<span class="st"> </span>state_budget<span class="op">$</span>Year</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> state_budget <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_if</span>(is_double, scale) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>Year, <span class="sc">-</span>Period)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(X) <span class="ot">&lt;-</span> state_budget<span class="sc">$</span>Year</span></code></pre></div>
 <pre><code>## Warning: Setting row names on a tibble is deprecated.</code></pre>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a>myPCA &lt;-<span class="st"> </span>FactoMineR<span class="op">::</span><span class="kw">PCA</span>(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a>          <span class="dt">X          =</span> X,     <span class="co"># the data on which PCA is performed </span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a>          <span class="dt">scale.unit =</span> <span class="ot">FALSE</span>, <span class="co"># scaling has been made &quot;manually&quot;</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true"></a>          <span class="dt">graph      =</span> <span class="ot">FALSE</span>, <span class="co"># to make plot right now</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true"></a>          <span class="dt">ncp        =</span> <span class="dv">11</span>     <span class="co"># keep all component </span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true"></a>    ) </span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>myPCA <span class="ot">&lt;-</span> FactoMineR<span class="sc">::</span><span class="fu">PCA</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">X          =</span> X,     <span class="co"># the data on which PCA is performed </span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">scale.unit =</span> <span class="cn">FALSE</span>, <span class="co"># scaling has been made &quot;manually&quot;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">graph      =</span> <span class="cn">FALSE</span>, <span class="co"># to make plot right now</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">ncp        =</span> <span class="dv">11</span>     <span class="co"># keep all component </span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    ) </span></code></pre></div>
 </div>
 <div id="quick-recap-on-pca" class="section level3">
 <h3>Quick Recap on PCA</h3>
@@ -1084,7 +1086,7 @@ Others
 \end{equation*}\]</span></p>
 <p><strong>Make a scree plot. Comment!</strong></p>
 <div class="hiddensolution">
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a>factoextra<span class="op">::</span><span class="kw">fviz_eig</span>(myPCA, <span class="dt">addlabels =</span> <span class="ot">TRUE</span>, <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>factoextra<span class="sc">::</span><span class="fu">fviz_eig</span>(myPCA, <span class="at">addlabels =</span> <span class="cn">TRUE</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">50</span>))</span></code></pre></div>
 <p><img src="tutorial_PCA_correction_files/figure-html/variances-1.png" width="672" /></p>
 <p>Remark that the last 6 axes (&gt; 50% of the number of variables) explain less than 10% of the total variance: this is an important argument toward dimension reduction.</p>
 </div>
@@ -1092,8 +1094,8 @@ Others
 <div id="variables-study" class="section level2">
 <h2>Variables study</h2>
 <p>All information about variables can be reached as follow:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a>var &lt;-<span class="st"> </span><span class="kw">get_pca_var</span>(myPCA)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a>var</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>var <span class="ot">&lt;-</span> <span class="fu">get_pca_var</span>(myPCA)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>var</span></code></pre></div>
 <pre><code>## Principal Component Analysis Results for variables
 ##  ===================================================
 ##   Name       Description                                    
@@ -1106,9 +1108,9 @@ Others
 <p>The eigen vectors of the empirical covariance matrix give weights for obtaining the new variables as a linear combinaison of the original ones.</p>
 <p><strong>Check that the right eigen vectors of <span class="math inline">\(\mathbf{X}\)</span>, and the eigen vectors or <span class="math inline">\(\boldsymbol\Sigma\)</span> match with the loadings. Also check that it is orthogonal</strong></p>
 <div class="hiddensolution">
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a>U &lt;-<span class="st"> </span><span class="kw">data.frame</span>(myPCA<span class="op">$</span>svd<span class="op">$</span>V) <span class="co">## eigen(cov(X))$vector</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="kw">dimnames</span>(U) &lt;-<span class="st"> </span><span class="kw">dimnames</span>(var<span class="op">$</span>coord)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true"></a><span class="kw">kable</span>(U, <span class="dt">digits =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>U <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(myPCA<span class="sc">$</span>svd<span class="sc">$</span>V) <span class="do">## eigen(cov(X))$vector</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(U) <span class="ot">&lt;-</span> <span class="fu">dimnames</span>(var<span class="sc">$</span>coord)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(U, <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div>
 <table>
 <thead>
 <tr>
@@ -1571,27 +1573,27 @@ Others
 </tbody>
 </table>
 <p>This is a <em>rotation matrix</em>, and thus an orthogonal matrix:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a><span class="kw">sum</span>((<span class="kw">t</span>(U) <span class="op">-</span><span class="st"> </span><span class="kw">solve</span>(U))<span class="op">^</span><span class="dv">2</span>)</span></code></pre></div>
-<pre><code>## [1] 6.345241e-30</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>((<span class="fu">t</span>(U) <span class="sc">-</span> <span class="fu">solve</span>(U))<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
+<pre><code>## [1] 4.258283e-30</code></pre>
 </div>
 <p>The coordinate of the variables projected on the correlation circle are equal to <span class="math inline">\(\mathbf{U} \sqrt{\mathbf{\Lambda}}\)</span>, the correlation between the new variables and the original ones. Indeed,</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true"></a>U &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(U)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true"></a>D &lt;-<span class="st"> </span><span class="kw">diag</span>(myPCA<span class="op">$</span>svd<span class="op">$</span>vs)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true"></a><span class="kw">sum</span>((U <span class="op">%*%</span><span class="st"> </span>D <span class="op">-</span><span class="st"> </span>var<span class="op">$</span>coord)<span class="op">^</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>U <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(U)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="fu">diag</span>(myPCA<span class="sc">$</span>svd<span class="sc">$</span>vs)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>((U <span class="sc">%*%</span> D <span class="sc">-</span> var<span class="sc">$</span>coord)<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
 <pre><code>## [1] 0</code></pre>
 <p><strong>Check the contribution of the original variables to the new axis. Comment</strong></p>
 <div class="hiddensolution">
 <p>The contribution of the original variable to the (e.g first two) components are given in percentage by the field <code>contrib</code>:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="kw">fviz_contrib</span>(myPCA, <span class="dt">choice =</span> <span class="st">&quot;var&quot;</span>, <span class="dt">axes =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_contrib</span>(myPCA, <span class="at">choice =</span> <span class="st">&quot;var&quot;</span>, <span class="at">axes =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span></code></pre></div>
 <p><img src="tutorial_PCA_correction_files/figure-html/contrib%20var-1.png" width="672" /></p>
 </div>
 </div>
 <div id="correlation-circle" class="section level3">
 <h3>Correlation circle</h3>
 <p>The correlation circle gives a quick representation of how new and original variables are related together.</p>
-<p><strong>Make the plot, comment! Also check the quality of the representation if the variables</strong></p>
+<p><strong>Make the plot, comment! Also check the quality of the representation of the variables</strong></p>
 <div class="hiddensolution">
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a><span class="kw">kable</span>(var<span class="op">$</span>cor, <span class="dt">digits =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(var<span class="sc">$</span>cor, <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div>
 <table>
 <thead>
 <tr>
@@ -2053,7 +2055,7 @@ Others
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true"></a><span class="kw">fviz_pca_var</span>(myPCA, <span class="dt">col.var =</span> <span class="st">&quot;cos2&quot;</span>, <span class="dt">axes =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_var</span>(myPCA, <span class="at">col.var =</span> <span class="st">&quot;cos2&quot;</span>, <span class="at">axes =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span></code></pre></div>
 <p><img src="tutorial_PCA_correction_files/figure-html/circle-1.png" width="672" /></p>
 <p>These quantities measure the correlation between the variabes in the new and the original bases.</p>
 <p>The quality of the representation of the original variables by the new ones is measure with the (squared) cosine between them: a high cos2 indicates a good representation of the variable on the principal component.</p>
@@ -2063,8 +2065,8 @@ Others
 <div id="indiviual-factor-map" class="section level2">
 <h2>Indiviual Factor Map</h2>
 <p>All information about variables can ge reached as follow:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true"></a>ind &lt;-<span class="st"> </span><span class="kw">get_pca_ind</span>(myPCA)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true"></a>ind</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ind <span class="ot">&lt;-</span> <span class="fu">get_pca_ind</span>(myPCA)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>ind</span></code></pre></div>
 <pre><code>## Principal Component Analysis Results for individuals
 ##  ===================================================
 ##   Name       Description                       
@@ -2074,10 +2076,10 @@ Others
 <div id="the-principal-components-scores" class="section level3">
 <h3>The principal components / Scores</h3>
 <p>The <em>principal components</em> are the the coordinate of the points in the new basis, after rotating the original data by the matrix of eigen vectors <span class="math inline">\(U\)</span>.</p>
-<p><strong>Compute them by yourself and check that it matches the coordinate of the individuals</strong></p>
+<p><strong>Compute them by yourself and check that it matches the coordinate of the individuals.</strong></p>
 <div class="hiddensolution">
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true"></a>PC &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(X) <span class="op">%*%</span><span class="st"> </span>U</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true"></a><span class="kw">kable</span>(<span class="kw">t</span>(PC[, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]), <span class="dt">digits =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>PC <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(X) <span class="sc">%*%</span> U</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">t</span>(PC[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]), <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div>
 <table>
 <thead>
 <tr>
@@ -2315,7 +2317,7 @@ Dim.2
 </tbody>
 </table>
 <p>This match the coordinate computed by <code>FactoMineR</code>:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true"></a><span class="kw">kable</span>(<span class="kw">t</span>(ind<span class="op">$</span>coord[, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]), <span class="dt">digits =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">t</span>(ind<span class="sc">$</span>coord[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]), <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div>
 <table>
 <thead>
 <tr>
@@ -2557,21 +2559,21 @@ Dim.2
 <p><strong>Use {factoextra} to represent the individuals in the new basis, on axes (1,2), (1,3), (2,3). Add some color related to the period. Comment</strong></p>
 <div class="hiddensolution">
 <p>Here, we change the size of the point according to the quality of their representation (measure with the cosine to the square, just like with variable factor map).</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true"></a><span class="kw">fviz_pca_ind</span> (myPCA, </span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true"></a>    <span class="dt">pointsize =</span> <span class="st">&quot;cos2&quot;</span>,</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true"></a>    <span class="dt">pointshape =</span> <span class="dv">21</span>,</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true"></a>    <span class="dt">fill =</span> <span class="st">&quot;#E7B800&quot;</span>,</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true"></a>    <span class="dt">repel =</span> <span class="ot">TRUE</span> ,</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true"></a>    <span class="dt">axes =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_ind</span> (myPCA, </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">pointsize =</span> <span class="st">&quot;cos2&quot;</span>,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">pointshape =</span> <span class="dv">21</span>,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">&quot;#E7B800&quot;</span>,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">repel =</span> <span class="cn">TRUE</span> ,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span></code></pre></div>
 <p><img src="tutorial_PCA_correction_files/figure-html/ind%20map-1.png" width="672" /></p>
 <p>Let us enrich our plot by the Period, a qualitative variable that we wish related with the budget.</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true"></a><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true"></a><span class="kw">fviz_pca_ind</span> (myPCA, </span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true"></a>    <span class="dt">geom.ind =</span> <span class="st">&quot;point&quot;</span>, </span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true"></a>    <span class="dt">col.ind =</span> state_budget<span class="op">$</span>Period,  </span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true"></a>    <span class="dt">palette =</span> <span class="kw">c</span>(<span class="st">&quot;#00AFBB&quot;</span>, <span class="st">&quot;#E7B800&quot;</span>, <span class="st">&quot;#FC4E07&quot;</span>,<span class="st">&quot;#2E9FDF&quot;</span>, <span class="st">&quot;#000000&quot;</span>), </span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true"></a>    <span class="dt">legend.title =</span> <span class="st">&quot;Period&quot;</span>,</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true"></a>    <span class="dt">axes =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_ind</span> (myPCA, </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">geom.ind =</span> <span class="st">&quot;point&quot;</span>, </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.ind =</span> state_budget<span class="sc">$</span>Period,  </span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">&quot;#00AFBB&quot;</span>, <span class="st">&quot;#E7B800&quot;</span>, <span class="st">&quot;#FC4E07&quot;</span>,<span class="st">&quot;#2E9FDF&quot;</span>, <span class="st">&quot;#000000&quot;</span>), </span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="st">&quot;Period&quot;</span>,</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span></code></pre></div>
 <p><img src="tutorial_PCA_correction_files/figure-html/Period-1.png" width="672" /></p>
 </div>
 </div>
@@ -2581,26 +2583,18 @@ Dim.2
 <p>When there are only few variables (only tens), it is possible to give an unifying representation of individual and variable factor maps into a single plot, called <em>biplot</em>.</p>
 <p><strong>Make the biplot and comment</strong></p>
 <div class="hiddensolution">
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true"></a><span class="kw">fviz_pca_biplot</span> (myPCA, </span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true"></a>    <span class="dt">geom.ind =</span> <span class="st">&quot;point&quot;</span>, </span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true"></a>    <span class="dt">col.ind =</span> state_budget<span class="op">$</span>Period,  </span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true"></a>    <span class="dt">palette =</span> <span class="kw">c</span>(<span class="st">&quot;#00AFBB&quot;</span>, <span class="st">&quot;#E7B800&quot;</span>, <span class="st">&quot;#FC4E07&quot;</span>,<span class="st">&quot;#2E9FDF&quot;</span>, <span class="st">&quot;#000000&quot;</span>), </span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true"></a>    <span class="dt">legend.title =</span> <span class="st">&quot;Period&quot;</span>,</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true"></a>    <span class="dt">axes =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_biplot</span> (myPCA, </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">geom.ind =</span> <span class="st">&quot;point&quot;</span>, </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.ind =</span> state_budget<span class="sc">$</span>Period,  </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">&quot;#00AFBB&quot;</span>, <span class="st">&quot;#E7B800&quot;</span>, <span class="st">&quot;#FC4E07&quot;</span>,<span class="st">&quot;#2E9FDF&quot;</span>, <span class="st">&quot;#000000&quot;</span>), </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="st">&quot;Period&quot;</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span></code></pre></div>
 <p><img src="tutorial_PCA_correction_files/figure-html/biplot-1.png" width="672" /></p>
 <p>This plot is especially helpful to identifiy groups of individuals, how the new components are related to the original variables and finally which group individuals is carrying which part of the information/variables.</p>
 </div>
 </div>
-<div id="references" class="section level2 unnumbered">
-<h2 class="unnumbered">References</h2>
-<div id="refs" class="references hanging-indent">
-<div id="ref-bouroche1980analyse">
-<p>Bouroche, Jean-Marie, and Gilbert Saporta. 1980. <em>L’analyse Des Données</em>. Presses universitaires de France Paris.</p>
-</div>
-<div id="ref-duby2006analyse">
-<p>Duby, Camille, and Stéphane Robin. 2006. “Analyse En Composantes Principales.” <em>Institut National Agronomique, Paris-Grignon</em> 80.</p>
-</div>
-</div>
+<div id="references" class="section level2">
+<h2>References</h2>
 </div>
 </div>
 

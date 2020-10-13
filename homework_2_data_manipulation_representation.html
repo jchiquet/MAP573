@@ -11,7 +11,7 @@
 
 <meta name="author" content="MAP573 team" />
 
-<meta name="date" content="2020-10-07" />
+<meta name="date" content="2020-10-13" />
 
 <title>Homework #2</title>
 
@@ -593,7 +593,9 @@ div.tocify {
     <li>
       <a href="homework_2_data_manipulation_representation_correction.html">Data manipulation and representation - correction</a>
     </li>
-    <li class="dropdown-header">Data analysis with PCA</li>
+    <li>
+      <a href="homework_3_PCA.html">Data analysis with PCA</a>
+    </li>
     <li class="dropdown-header">Report for lab #2</li>
     <li class="dropdown-header">Spectral Clustering for graphs</li>
     <li class="dropdown-header">Handling Missing Values</li>
@@ -632,7 +634,7 @@ div.tocify {
 <h1 class="title toc-ignore">Homework #2</h1>
 <h3 class="subtitle">Data manipulation and representation</h3>
 <h4 class="author">MAP573 team</h4>
-<h4 class="date">2020-10-07</h4>
+<h4 class="date">2020-10-13</h4>
 
 </div>
 
@@ -648,10 +650,10 @@ div.tocify {
 <div id="package-requirements" class="section level3">
 <h3>Package requirements</h3>
 <p>We start by loading a couple of packages for data manipulation and representation. Please install them using install.packages(“name_of_the_pacakge”) if not already done.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(tidyverse)    <span class="co"># advanced data manipulation and vizualisation</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(knitr)        <span class="co"># R notebook export and formatting </span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">library</span>(ggsci)        <span class="co"># Fancy color palettes inspired by scientific journals</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="kw">library</span>(cowplot)      <span class="co"># To combine several plots on the same canvas</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)    <span class="co"># advanced data manipulation and vizualisation</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)        <span class="co"># R notebook export and formatting </span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggsci)        <span class="co"># Fancy color palettes inspired by scientific journals</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot)      <span class="co"># To combine several plots on the same canvas</span></span></code></pre></div>
 </div>
 </div>
 <div id="exercise-1" class="section level2 tabset">
@@ -659,8 +661,8 @@ div.tocify {
 <div id="import-data" class="section level3">
 <h3>Import data</h3>
 <p>This exercise relies on the native R dataset “UCBAdmissions” which stores <strong>student admissions at UC Berkeley</strong> for the six largest departments in 1973 in function of the student gender. Please note that the data is originally stored as a 3-dimensional array, which we convert into a data frame for the rest of the exercise.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="co">#TO RUN </span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>UCBAdmissions <span class="co">#3-dim array</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#TO RUN </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>UCBAdmissions <span class="co">#3-dim array</span></span></code></pre></div>
 <pre><code>##       Admit Gender Dept Freq
 ## 1  Admitted   Male    A  512
 ## 2  Rejected   Male    A  313
@@ -686,8 +688,8 @@ div.tocify {
 ## 22 Rejected   Male    F  351
 ## 23 Admitted Female    F   24
 ## 24 Rejected Female    F  317</code></pre>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>UCBAdmissions &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(UCBAdmissions) <span class="co">#Convert into a data frame</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="kw">head</span>(UCBAdmissions)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>UCBAdmissions <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(UCBAdmissions) <span class="co">#Convert into a data frame</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(UCBAdmissions)</span></code></pre></div>
 <pre><code>##      Admit Gender Dept Freq
 ## 1 Admitted   Male    A  512
 ## 2 Rejected   Male    A  313
@@ -696,14 +698,14 @@ div.tocify {
 ## 5 Admitted   Male    B  353
 ## 6 Rejected   Male    B  207</code></pre>
 <p><strong>Question 1</strong>: Have a closer look at the dataset: how many rows? How many variables? How many observations (<em>i.e.</em> number of applications)? How many different college departments are there? Briefly describe the variables.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="co">#TODO : Your code here</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO : Your code here</span></span></code></pre></div>
 <p><strong>Your answer here</strong></p>
 </div>
 <div id="data-description" class="section level3">
 <h3>Data description</h3>
 <p><strong>Question 2</strong>: Using what you have learned about tidy data and the dplyr package, compute the total <strong>number</strong> of admissions and rejections per Gender as well as the admission rates (number of admissions divided by number of applications) per Gender.</p>
 <p>Do you see a difference in admission rates per Gender at Berkeley?</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="co">#TODO</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO</span></span></code></pre></div>
 <p><strong>Your answer here</strong></p>
 <p><strong>Question 3</strong>: Compute now the number of:</p>
 <ol style="list-style-type: decimal">
@@ -711,11 +713,11 @@ div.tocify {
 <li>Admission/rejection rates per department (without distinction on the gender).</li>
 </ol>
 <p>Are there departments with more applications than others? Do the admission rates differ according to the department?</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="co">#TODO</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO</span></span></code></pre></div>
 <p><strong>Your answer here</strong></p>
 <p><strong>Question 4</strong>: Compute finally the rates of male/female applications per department (without taking into account the admission results).</p>
 <p>Can you draw a hypothesis to explain the difference in rate admissions between males and females (question 2)?</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="co">#TODO</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO</span></span></code></pre></div>
 <p><strong>Your answer here</strong></p>
 </div>
 <div id="fancy-data-representation" class="section level3">
@@ -723,7 +725,7 @@ div.tocify {
 <p>The paradox you have illustrated in the previous part is called the <em>Simpson’s paradox</em>. <a href="https://en.wikipedia.org/wiki/Simpson%27s_paradox">You can read more about it here.</a></p>
 <p>The goal of this section is to illustrate this paradox by plotting the sex admission rate (in percentage) per department.</p>
 <p><strong>Question 5</strong>: Please observe the plot thereafter and reproduce it using ggplot2.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="kw">include_graphics</span>(<span class="st">&quot;resources/sex_admission_rate.png&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">include_graphics</span>(<span class="st">&quot;resources/sex_admission_rate.png&quot;</span>)</span></code></pre></div>
 <p><img src="resources/sex_admission_rate.png" /><!-- --></p>
 <p><em>Hints</em>:</p>
 <ol style="list-style-type: decimal">
@@ -734,7 +736,7 @@ div.tocify {
 <li><p>To ask geom_text to use a dodge position, you can set the argument “position” to the value <em>position_dodge(width =1)</em>.</p></li>
 <li><p>The argument “size” from the function geom_text enables us to change the font size.</p></li>
 </ol>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a><span class="co">#TODO</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO</span></span></code></pre></div>
 </div>
 </div>
 <div id="exercise-2" class="section level2 tabset">
@@ -742,7 +744,7 @@ div.tocify {
 <div id="import-data-1" class="section level3">
 <h3>Import data</h3>
 <p>Exercise 2 relies on the dataset “relig_income” coming from the tidyverse package. The dataset store the results of a religion vs income survey: number of survey respondents in each category religion/income. The incomes are cut into 10k dollar ranges. Note that there are special categories for “missing” data: “Don’t know/ refused”.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a>relig_income</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>relig_income</span></code></pre></div>
 <pre><code>## # A tibble: 18 x 11
 ##    religion `&lt;$10k` `$10-20k` `$20-30k` `$30-40k` `$40-50k` `$50-75k` `$75-100k`
 ##    &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
@@ -780,22 +782,22 @@ div.tocify {
 <li><p>Compute the rounded percentage of religious affiliations for this income range. Arrange the dataset per decreasing percentage and keep only the 5th top rows (you can use the function head).</p></li>
 <li><p>Plot the distribution of the top 5 religious affiliations as a bar plot. Make sure to rename the y-axis label properly as well as to choose a color palette for religion. Use geom_text to write the percentage of each religion for this income range on top of the bars (you can use vjust = 0 to align the text to the top). Remove the x-axis text and x-axis title since it is redundant with the legend and position the legend at the bottom of the plot. Once done, rename your ggplot object as relig_income_less_10k.</p></li>
 </ol>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="co">#Step 1 </span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a>relig_income_less_10k &lt;-<span class="st"> </span>relig_income <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(religion, <span class="st">`</span><span class="dt">&lt;$10k</span><span class="st">`</span>) <span class="co">#%&gt;% #TODO : complete the code </span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a><span class="co">#Step 2</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true"></a><span class="co">#TODO : plot </span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true"></a><span class="co"># relig_income_less_10k = </span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Step 1 </span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>relig_income_less_10k <span class="ot">&lt;-</span> relig_income <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(religion, <span class="st">`</span><span class="at">&lt;$10k</span><span class="st">`</span>) <span class="co">#%&gt;% #TODO : complete the code </span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Step 2</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO : plot </span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># relig_income_less_10k = </span></span></code></pre></div>
 <p><strong>Question 2</strong></p>
 <p>Reproduce the code above for data income range “more than 150k dollars”. Call your plot relig_income_more_150k. What issue can you see with the color palette?</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="co">#TODO </span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true"></a><span class="co">#relig_income_more_150k = </span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO </span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#relig_income_more_150k = </span></span></code></pre></div>
 <p><strong>You answer here</strong></p>
 <p><strong>Question 3</strong></p>
 <p>Use the function plot_grid from the cowplot package to gather the two plots into one figure (on the same row). Are you satisfied with the results?</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="co">#?plot_grid</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="co">#TODO : gather twe two plots into one figure</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#?plot_grid</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO : gather twe two plots into one figure</span></span></code></pre></div>
 <p><strong>Your answer here</strong></p>
 <p>You have seen how to gather two plots into a single one using plot_grid. Actually, plot_grid can take as argument a list of plots, meaning that we could have used it to draw bar plots for each level of income (using a for loop or a function such as lapply to generate the list of plots).</p>
 <p>In the next section, we will focus on another method, much more useful in practice, to plot the distribution of the top 5 religious beliefs per income range.</p>
@@ -805,23 +807,23 @@ div.tocify {
 <p>The relig_income dataset is stored in a wide format. In this section, we are going to convert it into a “long” format meaning that we are going to create a new variable storing income ranges. The dataset in a long format will have only 3 columns (religion, income, and count) but more rows than the original dataset in wide format: one row per couple religion/income range.</p>
 <p><strong>Question 4</strong>:</p>
 <p>Transform relig_income into relig_income_long using the function pivot_longer function from the tidyverse package.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a>?pivot_longer</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true"></a><span class="co">#TODO : convert relig_income to relig_income_long using pivot_longer</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>?pivot_longer</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO : convert relig_income to relig_income_long using pivot_longer</span></span></code></pre></div>
 <p><strong>Question 5</strong>:</p>
 <p>Compute the rounded percentage of people belonging to each religion per income range. Keep only the 5 top religions per income range (you can use group_by and slice_max function).</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a><span class="co">#?slice_max</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true"></a><span class="co">#TODO : question 5 </span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#?slice_max</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO : question 5 </span></span></code></pre></div>
 <p><strong>Question 6</strong>:</p>
 <p>Plot the distribution of the top 5 religions <strong>facetted by</strong> income ranges (using facet_wrap). Make sure to rename the y-axis label properly as well as to choose a color palette for religion. Use geom_text to write the percentage of each religion for this income range on top of the bars (you can use vjust = 0 to align the text to the top). Remove the x-axis text and title since it is redundant with the legend and position the legend at the bottom of the plot.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true"></a><span class="co">#TODO </span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO </span></span></code></pre></div>
 <p>You should see that facet_wrap creates a common legend (a religion has the same color in all the plots) and leaves blanks when a religion does stand in the top 5 religions for a given income range.</p>
 <p><strong>Question 7</strong>:</p>
 <p>We still have an issue concerning the order of the facet wrap plots which seems to follow the alphabetical order, while we would have liked it to be arranged from lower to higher incomes.</p>
 <p>One way to cope with this is to set the levels of the variable income (seen as a factor variable) either by hand or by using regular expressions. In this case, we can use the order defined by the columns of the wide relig_income dataset, which were already in good order. Re-do the plot after arranging the levels of the variable income.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true"></a><span class="co">#Run the line below to re-arrange the income levels</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true"></a><span class="co">#relig_income_long_top5$income &lt;- factor(relig_income_long_top5$income, levels = setdiff(colnames(relig_income),&quot;religion&quot;))</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true"></a></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true"></a><span class="co">#TODO : re-do the facetted plot of question 6</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Run the line below to re-arrange the income levels</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#relig_income_long_top5$income &lt;- factor(relig_income_long_top5$income, levels = setdiff(colnames(relig_income),&quot;religion&quot;))</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO : re-do the facetted plot of question 6</span></span></code></pre></div>
 </div>
 </div>
 

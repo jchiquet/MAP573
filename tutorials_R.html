@@ -591,7 +591,9 @@ div.tocify {
     <li>
       <a href="homework_2_data_manipulation_representation_correction.html">Data manipulation and representation - correction</a>
     </li>
-    <li class="dropdown-header">Data analysis with PCA</li>
+    <li>
+      <a href="homework_3_PCA.html">Data analysis with PCA</a>
+    </li>
     <li class="dropdown-header">Report for lab #2</li>
     <li class="dropdown-header">Spectral Clustering for graphs</li>
     <li class="dropdown-header">Handling Missing Values</li>
@@ -643,35 +645,35 @@ div.tocify {
 <div id="r-package-map573tutorials" class="section level2">
 <h2>R package MAP573tutorials</h2>
 <p>First, you need the <strong>remotes</strong> package to install <code>R</code> packages from other sources than the CRAN (install just once!)</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;remotes&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;remotes&quot;</span>)</span></code></pre></div>
 <p>Then, you can install the <code>R</code> packages that contains the <code>R</code> tutorials of MAP573:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>remotes<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;jchiquet/MAP573&quot;</span>, <span class="dt">subdir =</span> <span class="st">&#39;MAP573tutorials&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;jchiquet/MAP573&quot;</span>, <span class="at">subdir =</span> <span class="st">&#39;MAP573tutorials&#39;</span>)</span></code></pre></div>
 <p>If this fails, check that the following dependencies are correctly installed (it should be done automatically):</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;learn&quot;</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="st">&quot;babynames&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;learn&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;babynames&quot;</span>)</span></code></pre></div>
 <p>Once this package is installed, you can access the tutorials as follows (only one at a time):</p>
 <div id="r-basics" class="section level3">
 <h3>R Basics</h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;basics_prog&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;basics_vis&quot;</span> , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>learnr<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="st">&quot;basics_prog&quot;</span>, <span class="at">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>learnr<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="st">&quot;basics_vis&quot;</span> , <span class="at">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span></code></pre></div>
 </div>
 <div id="data-manipulation" class="section level3">
 <h3>Data manipulation</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;transform_structure&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;transform_extract&quot;</span>  , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;transform_summarise&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>learnr<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="st">&quot;transform_structure&quot;</span>, <span class="at">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>learnr<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="st">&quot;transform_extract&quot;</span>  , <span class="at">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>learnr<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="st">&quot;transform_summarise&quot;</span>, <span class="at">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span></code></pre></div>
 </div>
 <div id="data-visualization" class="section level3">
 <h3>Data visualization</h3>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_01-exploratory-data-analysis&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_02-bar-charts&quot;</span>               , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_03-histograms&quot;</span>               , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_04-boxplots&quot;</span>                 , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_05-scatterplots&quot;</span>             , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_06-line-graphs&quot;</span>              , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_07-overplotting&quot;</span>             , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a>learnr<span class="op">::</span><span class="kw">run_tutorial</span>(<span class="st">&quot;vis_08-customize&quot;</span>                , <span class="dt">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>learnr<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="st">&quot;vis_01-exploratory-data-analysis&quot;</span>, <span class="at">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>learnr<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="st">&quot;vis_02-bar-charts&quot;</span>               , <span class="at">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>learnr<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="st">&quot;vis_03-histograms&quot;</span>               , <span class="at">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>learnr<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="st">&quot;vis_04-boxplots&quot;</span>                 , <span class="at">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>learnr<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="st">&quot;vis_05-scatterplots&quot;</span>             , <span class="at">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>learnr<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="st">&quot;vis_06-line-graphs&quot;</span>              , <span class="at">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>learnr<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="st">&quot;vis_07-overplotting&quot;</span>             , <span class="at">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>learnr<span class="sc">::</span><span class="fu">run_tutorial</span>(<span class="st">&quot;vis_08-customize&quot;</span>                , <span class="at">package =</span> <span class="st">&quot;MAP573tutorials&quot;</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="shiny-server-limited-access" class="section level2">

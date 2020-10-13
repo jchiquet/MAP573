@@ -11,7 +11,7 @@
 
 <meta name="author" content="MAP 573" />
 
-<meta name="date" content="2020-10-07" />
+<meta name="date" content="2020-10-13" />
 
 <title>Homework: Clustering of Network data</title>
 
@@ -593,7 +593,9 @@ div.tocify {
     <li>
       <a href="homework_2_data_manipulation_representation_correction.html">Data manipulation and representation - correction</a>
     </li>
-    <li class="dropdown-header">Data analysis with PCA</li>
+    <li>
+      <a href="homework_3_PCA.html">Data analysis with PCA</a>
+    </li>
     <li class="dropdown-header">Report for lab #2</li>
     <li class="dropdown-header">Spectral Clustering for graphs</li>
     <li class="dropdown-header">Handling Missing Values</li>
@@ -631,7 +633,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Homework: Clustering of Network data</h1>
 <h4 class="author">MAP 573</h4>
-<h4 class="date">2020-10-07</h4>
+<h4 class="date">2020-10-13</h4>
 
 </div>
 
@@ -645,9 +647,9 @@ div.tocify {
 <div id="package-requirements" class="section level3">
 <h3>Package requirements</h3>
 <p>Check that the following packages are available on your computer:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(igraph)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(Matrix)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">library</span>(aricode)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(igraph)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Matrix)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aricode)</span></code></pre></div>
 <!-- If( and only if!!) you have time, you can also play with  -->
 <!-- ```{r, message=FALSE} -->
 <!-- library(ggraph) -->
@@ -668,7 +670,7 @@ div.tocify {
 <div id="analysis-of-the-french-political-blogs-in-2006" class="section level2">
 <h2>Analysis of the French political Blogs in 2006</h2>
 <p>Load the data set from the missSBM package</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>missSBM<span class="op">::</span>frenchblog2007</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>missSBM<span class="sc">::</span>frenchblog2007</span></code></pre></div>
 <pre><code>## IGRAPH 7b93b75 UN-- 196 1432 -- 
 ## + attr: name (v/c), party (v/c)
 ## + edges from 7b93b75 (vertex names):
