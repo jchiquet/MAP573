@@ -85,11 +85,53 @@ state_budget <- readr::read_csv2("data/budget.csv",
 
 **Have a look at the head of the data table $\mathbf{X}$**
 
+<div class="hiddensolution">
+
+`kable` is used adapt the formatting to the type of output: HTML, screen, PDF
+
+```{r data header}
+state_budget %>% head() %>% knitr::kable()
+```
+
+The following function is useful to have a quick look at a data frame a check types of each variables:
+
+```{r data glimpse}
+glimpse(state_budget)
+```
+</div>
+
 Each variable (i.e. budget item) takes it value in $[0,100]$ (proportion of the current budget). **Propose a plot to summarize the distribution of these proportions**
+
+<div class="hiddensolution">
+
+```{r boxplot}
+state_budget %>% 
+  select(-Year) %>% 
+  pivot_longer(everything()) %>% 
+  ggplot() + 
+    aes(x = name, y = value) + labs(x = "budget item", y = "value (proportion)") + 
+    geom_boxplot() + geom_point(alpha = 0.5) + 
+    theme(axis.text.x = element_text(angle = 90))
+```
+</div>
 
 ### Data transformation
 
 **Create a categorical variable (factor) with a couple of level to regroup samples by time interval that you find relevant in history of 20th century. Check that these period are balanced.**
+
+<div class="hiddensolution">
+
+We identify 4 historical periods to regroup the 'Year' variable (the id of the sample) into four clusters that might be interesting for interpreting the the PCA. We amend our data frame by adding a column encoding this new descriptive variable (that will _not_ be used in the PCA, of course!).
+
+```{r period}
+state_budget <- state_budget %>% 
+  mutate(Period = cut(Year, 
+    breaks = c(-Inf, 1900, 1920, 1947, Inf), right = FALSE,
+    labels = c("<1900", "[1900, 1920)", "(1920, 1947]", ">= 1947"))
+  )
+```
+
+</div>
 
 ## Scatterplot/pairs plot
 
@@ -97,9 +139,32 @@ When only few variables are at play, plotting the scatterplot or (pairs-to-pairs
 
 **Use the function `scatmat` from \{GGally\} to do that**
 
+<div class="hiddensolution">
+
+```{r scatterplot, fig.width = 8, fig.height = 8}
+  state_budget %>% 
+    dplyr::select(-Year) %>% mutate_if(is_double, scale) %>% 
+    GGally::scatmat(color = "Period")
+```
+
+</div>
+
 When many more continuous variables are observed, a quick glance at the redondancy in information may be explored by representing the correlation matrix, optionally regrouped according to similarity (here, hierarchical clustering).
 
 **Use the package \{corrplot\} to check correlations between variables. What do you conclude?**
+
+<div class="hiddensolution">
+
+```{r correlation matrix, fig.width = 8, fig.height = 8}
+par(mfrow  = c(1,2))
+state_budget %>% dplyr::select(-Year, -Period) %>% 
+    cor() %>% corrplot::corrplot()
+state_budget %>%  dplyr::select(-Year, -Period) %>% 
+    cor() %>% corrplot::corrplot(method = "color", order = "hclust")
+```
+
+It seems that some variables carry the same information: dimension reduction might help. The data is probably living in a smaller space than $p=11$.
+</div>
 
 # Principal Component Anaysis
 
