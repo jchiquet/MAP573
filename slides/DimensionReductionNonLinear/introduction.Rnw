@@ -1,3 +1,5 @@
+\subsection{Motivations}
+
 \begin{frame}[fragile]
   \partpage
 
@@ -15,46 +17,173 @@ theme_set(theme_bw())
 
 \end{frame}
 
-%% TODO find a fancy small data sets for illustration
-
 \begin{frame}[fragile]
-  \frametitle{Companion data set: '???'}
-  \framesubtitle{the data }
+  \frametitle{Companion data set: 'scRNA'}
+  \framesubtitle{Subsamples of normalized Single-Cell RNAseq}
 
-\begin{block}{Description: \textcolor{black}{\it small data, medium-size}}
-\small .\\
+\begin{block}{Description: \textcolor{black}{\it subsample of a large data set}}
+\small Gene-level expression of 100 representative genes for a collection of 301 cells 
+spreaded in 11 cell-lines. Original transcription data are measured by counts obtained by 
+\textit{RNAseq} and normalized to be close to Gaussian.\\
+
+\begin{scriptsize}
+\begin{thebibliography}{9}
+\bibitem{pollen} Pollen, Alex A., et al. \textcolor{black}{Low-coverage single-cell mRNA sequencing reveals cellular heterogeneity and activated signaling pathways in developing cerebral cortex.} \newblock Nature biotechnology 32.10 (2014): 1053.
+\end{thebibliography}
+\end{scriptsize}
 \end{block}
 
-% \begin{figure}
-%   \includegraphics[width=3cm]{crab}
-%   \caption{A leptograpsus Crab}
-% \end{figure}
+\begin{figure}
+  \includegraphics[width=.9\textwidth]{figures/scRNA-overview}
+  \caption{Single Cell RNA sequnencing data: general principle -- {\tiny source: Stephanie Hicks}}
+\end{figure}
+
 \end{frame}
 
-% \begin{frame}[fragile,allowframebreaks]
-%   \frametitle{Companion data set: '??'}
-%   \framesubtitle{Table header}
-% 
-% <<crabs dataset1>>=
-% crabs <- MASS::crabs %>% select(-index) %>%
-%   rename(sex = sex,
-%          species         = sp,
-%          frontal_lob     = FL,
-%          rear_width      = RW,
-%          carapace_length = CL,
-%          carapace_width  = CW,
-%          body_depth      = BD)
-% crabs %>% select(sex, species) %>% summary() %>% knitr::kable("latex")
-% dim(crabs)
-% @
-% 
-% <<crabs dataset head>>=
-% crabs %>% head(15) %>% knitr::kable("latex")
-% @
-% \end{frame}
+\begin{frame}[fragile]
+  \frametitle{Companion data set: 'scRNA'}
+  \framesubtitle{Brief data summary I}
+
+\paragraph{Data manipulation}
+
+<<scRNA dataset load>>=
+load("../../data/scRNA.RData")
+scRNA <-  pollen$data %>% t() %>% as_tibble() %>% 
+  add_column(cell_type = pollen$celltypes)
+@
+
+\paragraph{Cell types}
+
+<<scRNA dataset celltypes, fig.cap='Natural grouping: cell-types'>>=
+scRNA %>% dplyr::select(cell_type) %>% summary()  %>% knitr::kable()
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set II: 'scRNA'}
+  \framesubtitle{Brief data summary II}
+
+\paragraph{Histogram of normalized expression}
+
+<<scRNA expressions>>=
+scRNA %>% dplyr::select(-cell_type) %>% pivot_longer(everything()) %>% 
+  ggplot() + aes(x = value, fill = name) + geom_histogram(show.legend = FALSE)
+@
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set: 'scRNA'}
+  \framesubtitle{PCA}
+
+<<scRNA PCA>>=
+scRNA %>% FactoMineR::PCA(graph = FALSE, quali.sup = which(colnames(scRNA) == "cell_type")) %>% 
+  factoextra::fviz_pca_biplot(select.var = list(contrib = 30), habillage = "cell_type")
+@
+
+\end{frame}
 
 \begin{frame}
-  \frametitle{Dimension reduction: problem setup}
+  \frametitle{PCA (and linear methods) limitations}
+
+  \begin{block}{Account for complex pattern}
+    \begin{itemize}
+      \item Linear methods are powerful for \alert{\bf planar structures}
+      \item May fail at describing \alert{\bf manifolds}
+    \end{itemize}
+  \end{block}
+  
+  \begin{block}{Preserve local geometry}
+    \begin{itemize}
+      \item High dimensional data are characterized by \alert{\bf multiscale properties} (local / global structures)
+      \item Non Linear projection helps at preserving \alert{\bf local characteristics} of distances
+    \end{itemize}
+  \end{block}
+
+  \vfill
+  
+   \begin{figure}
+     \includegraphics[scale=0.25]{figures/manifold.pdf}
+     \caption{\small Intuition of manifolds and geometry underlying sc-data -- {\tiny source: F. Picard}}
+   \end{figure}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set II: 'mollusk'}
+  \framesubtitle{Abundance table (Species counts spread in various sites)}
+
+\begin{block}{Description: \textcolor{black}{\it small size count data}}
+\small Abundance of 32 mollusk species in 163 samples. For each sample, 4 additional covariates are known. \\
+
+\begin{scriptsize}
+\begin{thebibliography}{9}
+\bibitem{mollusk} Richardot-Coulet, M., Chessel D. and Bournaud M. \textcolor{black}{Typological value of the benthos of old beds of a large river. Methodological approach. Archiv fùr Hydrobiologie, 107.}
+\end{thebibliography}
+\end{scriptsize}
+\end{block}
+
+<<mollusk load data>>=
+mollusk <- PLNmodels::mollusk$Abundance %>% as_tibble() %>% 
+   add_column(site   = PLNmodels::mollusk$Covariate$site,
+              season = PLNmodels::mollusk$Covariate$season)
+@
+
+\paragraph{External Covariates}
+
+<<mollusc dataset covariates, fig.cap='Natural grouping: site and season'>>=
+mollusk %>% dplyr::select(site, season) %>% summary() %>% t() %>% knitr::kable()
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set: 'mollusk'}
+  \framesubtitle{Brief data summary II}
+
+\paragraph{Histogram of raw counts}
+
+<<mollusc abundance>>=
+mollusk %>% dplyr::select(-site, -season) %>% pivot_longer(everything()) %>% 
+  ggplot() + aes(x = value, fill = name) + geom_histogram(show.legend = FALSE)
+@
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set: 'mollusk'}
+  \framesubtitle{PCA}
+
+<<mollusk PCA>>=
+mollusk %>% PCA(graph = FALSE, quali.sup = which(map_lgl(mollusk, is.factor))) %>% 
+  fviz_pca_biplot(select.var = list(contrib = 5), habillage = "site")
+@
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{PCA (and linear methods) limitations}
+
+  \begin{block}{Account for complex data distribution}
+    \begin{itemize}
+      \item Linear methods /PCA are tied to an hidden \alert{\bf Gaussian assumption}
+      \item Fail with \alert{\bf Count data}
+      \item Fail with \alert{\bf Skew data}
+    \end{itemize}
+  \end{block}
+  
+  \vfill
+  
+  \begin{block}{Possible solutions}
+    \begin{itemize}
+      \item Probabilistic (non Gaussian) models
+      \item Need transformed (non-linear) input space
+    \end{itemize}
+  \end{block}
+  
+  \end{frame}
+
+\begin{frame}
+  \frametitle{Dimension reduction: revisiting the problem setup}
 
     \begin{block}{Settings}
       \begin{itemize}
@@ -74,15 +203,15 @@ theme_set(theme_bw())
     \end{block}
     
 \end{frame}
- 
+
 \begin{frame}
   \frametitle{How should we design/construct $\Phi$?}
 
   \paragraph{Criterion}
   \begin{itemize}
-    \item Geometrical approach
-    \item \alert{\bf Reconstruction error}
-    \item \alert{\bf Relationship preservation}
+    \item Geometrical approach (\alert{\bf see slides on PCA})
+    \item Reconstruction error
+    \item Relationship preservation
   \end{itemize}
 
   \vfill
@@ -96,111 +225,5 @@ theme_set(theme_bw())
 
 \end{frame}
 
-\subsection{Reconstruction error point of view}
-
-\begin{frame}
-  \frametitle{Reconstruction error approach}
-
-  \begin{enumerate}
-    \item  Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
-      \begin{align*}
-      \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
-               & \bx \mapsto \Phi(\bx)
-      \end{align*}
-    \item Construct $\widetilde{\Phi}$ from $\Rset^{d'}$ to $\Rset^d$ (\alert{reconstruction formula})
-     \item Control an error between $\bx$ and its reconstruction $\tilde{\Phi}(\Phi(\bx))$, e.g
-      \begin{equation*}
-        \sum_{i=1}^n \left\| \bx_i - \tilde{\Phi}(\Phi(\bx_i)) \right\|^2
-      \end{equation*}
-  \end{enumerate}
-\end{frame}
-
-\begin{frame}
-\frametitle{Reconstruction error and PCA}
-
-  \begin{block}{PCA Model}
-    Linear model assumption
-    \begin{equation*}
-        \bx \simeq \bmu + \mathbf{F}_{1:d'} \bU_{1:d'}^\top
-      \end{equation*}
-      with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
-    \end{block}
-
-  \begin{block}{Reconstruction error}
-    In the case of PCA, then
-    \begin{gather*}
-      \Phi(\bx) = (\bx-\bmu)^\top \bU  \quad \text{and} \quad \tilde{\Phi}(\mathbf{F})= \bmu + \mathbf{F} \bU^\top  \\
-      \frac{1}{n} \sum_{i=1}^n \| \bx_i  - ( \bmu + ( \bx_i -\bmu) \bU \bU^\top \|^2
-    \end{gather*}
-  \alert{Explicit solution:} $\bmu = \bar{x}$ the empirical mean
- and $\bU$ is an orthonormal basis of the space spanned by the $d'$
- first eigenvectors of the empirical covariance matrix
-  \end{block}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Non linear extensions}
-
-  Two directions
-  \begin{enumerate}
-    \item Non linear transformation of $\bx$ before PCA: kernel-PCA
-    \item Other constrains on weigths $\bU$ or loadings $\mathbf{F}$: ICA, NMF, \dots
-  \end{enumerate}
-
-  \begin{block}{Kernel PCA}
-    Linear assumption after transformation, with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
-    \begin{equation*}
-        \Psi(\bx - \bmu) \simeq  \mathbf{F}_{1:d'} \bU_{1:d'}^\top
-      \end{equation*}
-   \end{block}
-
-  \vfill
-
-  \begin{block}{Non negative Matrix factorisation}
-    Linear model assumption with $\bU$ non-negative and  $\mathbf{F}$ non-negative
-    \begin{equation*}
-        \bx \simeq \bmu + \mathbf{F}_{1:d'} \bU_{1:d'}^\top
-      \end{equation*}
-  \end{block}
-
-  \vfill
-
-  \paragraph{Auto-encoders} Find $\Phi$ and $\tilde\Phi$ with a neural-network!
-
-  $\rightsquigarrow$ Fit $\bU, \mathbf{F}$ with some optimization algorithms (much more complex!)
-\end{frame}
-
-
-\subsection{Relation preservation point of view}
-
-\begin{frame}
-    \frametitle{Pairwise Relation}
-
-    Focus on pairwise relation $\mathcal{R}(\bx_i, \bx_{i'})$.
-
-    \begin{block}{Distance Preservation}
-      \begin{itemize}
-    \item  Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
-      \begin{align*}
-      \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
-               & \bx \mapsto \Phi(\bx)
-      \end{align*}
-      \begin{equation*}
-      \text{such that} \quad \mathcal{R}(\bx_i, \bx_{i'}) \sim\mathcal{R'}(\bx'_i, \bx'_{i'})
-      \end{equation*}
-    \end{itemize}
-  \end{block}
-
-  \begin{block}{Multidimensional scaling}
-    Try to preserve inner product related to the distance (e.g. Euclidean)
-  \end{block}
-
-  \vfill
-
-  \begin{block}{t-SNE -- Stochastic Neighborhood Embedding}
-    Try to preserve relations with close neighbors with Gaussian kernel
-  \end{block}
-
-\end{frame}
 
 

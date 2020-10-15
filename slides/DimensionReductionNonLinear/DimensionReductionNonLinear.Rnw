@@ -9,6 +9,7 @@
 <<preamble, child='../common_preamble.Rnw'>>=
 @
 
+
 \graphicspath{{figs/}}
 
 \begin{document}
@@ -21,44 +22,23 @@
 <<introduction, child='introduction.Rnw'>>=
 @
 
-
-%% ====================================================================
-\part{Linear methods beyond PCA}
-%% ====================================================================
-\begin{frame}
-  \partpage
-  
-  Due to non continuous/real data-type
-\end{frame}
-
-%% ==========================================================================
-\section{Categorical data: Correspondance analysis}
-%% ==========================================================================
-
-<<linear noPCA, child='linear_noPCA.Rnw'>>=
-@
-
-%% ==========================================================================
-\section{Mixed data: Multiple Factorial Analysis (MFA)}
-%% ==========================================================================
-
-%% ==========================================================================
-\section{Function data: Functional PCA}
-%% ==========================================================================
-
-%% ==========================================================================
-\section{Non-negative data: NMF}
-%% ==========================================================================
-
-
 %% ====================================================================
 \part{Non-linear methods}
 %% ====================================================================
 \begin{frame}
   \partpage
-  
-  Transformation of the input space
 \end{frame}
+
+\section{Reconstruction error}
+
+<<Reconstruction error, child='reconstruction_error_viewpoint.Rnw'>>=
+@
+
+\section{Relation preservation}
+
+<<Relation preservation, child='relation_preservation_viewpoint.Rnw'>>=
+@
+
 
 %% ==========================================================================
 \section{Multidimensional Scaling/Principal Coordinates analysis}
@@ -72,13 +52,55 @@
 \section{Graph-based Kernel-PCA}
 %% ==========================================================================
 
-%% ==========================================================================
-\section{Embedding: t-SNE, UMAP}
-%% ==========================================================================
+<<tSNE, child='tSNE.Rnw'>>=
+@
+
 
 %% ==========================================================================
 \section{Auto-Encoder}
 %% ==========================================================================
 
 
+
+\begin{frame}[allowframebreaks]
+  \frametitle{References}
+
+ \bibliographystyle{apalike}
+
+\begin{small}
+  \bibliography{{../../resources/MAP573.bib}}
+\end{small}
+
+\end{frame}
+
 \end{document}
+
+
+% %% ====================================================================
+% \part{Linear methods beyond PCA}
+% %% ====================================================================
+% \begin{frame}
+%   \partpage
+%   
+%   Due to non continuous/real data-type
+% \end{frame}
+% 
+% %% ==========================================================================
+% \section{Categorical data: Correspondance analysis}
+% %% ==========================================================================
+% 
+% <<linear noPCA, child='linear_noPCA.Rnw'>>=
+% @
+% 
+% %% ==========================================================================
+% \section{Mixed data: Multiple Factorial Analysis (MFA)}
+% %% ==========================================================================
+% 
+% %% ==========================================================================
+% \section{Function data: Functional PCA}
+% %% ==========================================================================
+% 
+% %% ==========================================================================
+% \section{Non-negative data: NMF}
+% %% ==========================================================================
+% 

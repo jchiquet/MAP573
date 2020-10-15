@@ -1,0 +1,800 @@
+\documentclass{beamer}\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+
+\def\currentCourse{Data anaysis and Unsupervised Learning}
+\def\currentInstitute{MAP 573, 2020 -- Julien Chiquet}
+\def\currentLogo{../common_figs/logo_X}
+\def\currentDate{\'Ecole Polytechnique, Autumn semester, 2020}
+\def\currentChapter{Dimensionality Reduction: Beyond PCA and Non Linear Methods}
+
+
+% THEME BEAMER
+\usepackage{../beamer_theme}
+
+\graphicspath{{figures/},{../common_figs/}}
+
+\usepackage{multirow}
+\usepackage{tikz}
+\usepackage[vlined]{algorithm2e}
+
+\pgfdeclareimage[width=.5cm]{computer}{computer.png}
+
+% \usetikzlibrary{calc,shapes,backgrounds,arrows,automata,shadows,positioning}
+% \tikzstyle{every state}=[fill=red,draw=none,scale=0.7,font=\small,text=white]
+% \tikzstyle{every edge}=[-,shorten >=1pt,auto,thin,draw]
+% \tikzstyle{alertstate}=[fill=bleu]
+% \definecolor{genecolor}{RGB}{94,135,173}
+
+\title{\currentCourse}
+
+\subtitle{\huge\currentChapter\normalsize}
+
+\institute{\currentInstitute}
+
+\date{\currentDate}
+
+
+
+\AtBeginSection{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \framesubtitle{\insertpart}
+    \tableofcontents[currentsection,currentsubsection, subsectionstyle=show/shaded/hide]  
+  \end{frame}
+}
+
+\AtBeginSubsection{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \framesubtitle{\insertpart}
+    \tableofcontents[currentsection,currentsubsection, subsectionstyle=show/shaded/hide]  
+  \end{frame}
+}
+
+\AtBeginSubsubsection{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \framesubtitle{\insertpart}
+    \tableofcontents[currentsection,currentsubsection, subsectionstyle=show/shaded/hide]  
+  \end{frame}
+}
+
+\newcommand{\dotitlepage}{%
+  \begin{frame}
+    \titlepage
+    \vfill
+    \begin{center}
+        \scriptsize\url{https://jchiquet.github.io/MAP573}
+    \end{center}
+    \vfill
+    \includegraphics[width=2cm]{\currentLogo}\hfill
+    \includegraphics[width=2.5cm]{logo_inra}
+  \end{frame}
+  %
+}
+
+\newcommand{\dotoc}{%
+  \begin{frame}
+    \frametitle{Outline}
+    \tableofcontents[currentsection,
+    sectionstyle=show/show,
+    subsectionstyle=hide]
+  \end{frame}
+  %
+}
+
+
+\graphicspath{{figs/}}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+\dotitlepage
+
+%% ====================================================================
+\part{Introduction}
+%% ====================================================================
+
+\subsection{Motivations}
+
+\begin{frame}[fragile]
+  \partpage
+
+\paragraph{Packages required for reproducing the slides}
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(tidyverse)}  \hlcom{# opinionated collection of packages for data manipulation}
+\hlkwd{library}\hlstd{(GGally)}     \hlcom{# extension to ggplot vizualization system}
+\hlkwd{library}\hlstd{(FactoMineR)} \hlcom{# PCA and oter linear method for dimension reduction}
+\hlkwd{library}\hlstd{(factoextra)} \hlcom{# fancy plotting for FactoMineR output}
+\hlcom{# color and plots themes}
+\hlkwd{library}\hlstd{(RColorBrewer)}
+\hlstd{pal} \hlkwb{<-} \hlkwd{brewer.pal}\hlstd{(}\hlnum{10}\hlstd{,} \hlstr{"Set3"}\hlstd{)}
+\hlkwd{theme_set}\hlstd{(}\hlkwd{theme_bw}\hlstd{())}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set: 'scRNA'}
+  \framesubtitle{Subsamples of normalized Single-Cell RNAseq}
+
+\begin{block}{Description: \textcolor{black}{\it subsample of a large data set}}
+\small Gene-level expression of 100 representative genes for a collection of 301 cells 
+spreaded in 11 cell-lines. Original transcription data are measured by counts obtained by 
+\textit{RNAseq} and normalized to be close to Gaussian.\\
+
+\begin{scriptsize}
+\begin{thebibliography}{9}
+\bibitem{pollen} Pollen, Alex A., et al. \textcolor{black}{Low-coverage single-cell mRNA sequencing reveals cellular heterogeneity and activated signaling pathways in developing cerebral cortex.} \newblock Nature biotechnology 32.10 (2014): 1053.
+\end{thebibliography}
+\end{scriptsize}
+\end{block}
+
+\begin{figure}
+  \includegraphics[width=.9\textwidth]{figures/scRNA-overview}
+  \caption{Single Cell RNA sequnencing data: general principle -- {\tiny source: Stephanie Hicks}}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set: 'scRNA'}
+  \framesubtitle{Brief data summary I}
+
+\paragraph{Data manipulation}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{load}\hlstd{(}\hlstr{"../../data/scRNA.RData"}\hlstd{)}
+\hlstd{scRNA} \hlkwb{<-}  \hlstd{pollen}\hlopt{$}\hlstd{data} \hlopt{%>%} \hlkwd{t}\hlstd{()} \hlopt{%>%} \hlkwd{as_tibble}\hlstd{()} \hlopt{%>%}
+  \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= pollen}\hlopt{$}\hlstd{celltypes)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\paragraph{Cell types}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{scRNA} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(cell_type)} \hlopt{%>%} \hlkwd{summary}\hlstd{()}  \hlopt{%>%} \hlstd{knitr}\hlopt{::}\hlkwd{kable}\hlstd{()}
+\end{alltt}
+\end{kframe}
+\begin{tabular}{l|l}
+\hline
+  &   cell\_type\\
+\hline
+ & HL60   :54\\
+\hline
+ & K562   :42\\
+\hline
+ & Kera   :40\\
+\hline
+ & BJ     :37\\
+\hline
+ & GW16   :26\\
+\hline
+ & hiPSC  :24\\
+\hline
+ & (Other):78\\
+\hline
+\end{tabular}
+
+
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set II: 'scRNA'}
+  \framesubtitle{Brief data summary II}
+
+\paragraph{Histogram of normalized expression}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{scRNA} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{cell_type)} \hlopt{%>%} \hlkwd{pivot_longer}\hlstd{(}\hlkwd{everything}\hlstd{())} \hlopt{%>%}
+  \hlkwd{ggplot}\hlstd{()} \hlopt{+} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= value,} \hlkwc{fill} \hlstd{= name)} \hlopt{+} \hlkwd{geom_histogram}\hlstd{(}\hlkwc{show.legend} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/scRNA_expressions-1} 
+
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set: 'scRNA'}
+  \framesubtitle{PCA}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{scRNA} \hlopt{%>%} \hlstd{FactoMineR}\hlopt{::}\hlkwd{PCA}\hlstd{(}\hlkwc{graph} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{quali.sup} \hlstd{=} \hlkwd{which}\hlstd{(}\hlkwd{colnames}\hlstd{(scRNA)} \hlopt{==} \hlstr{"cell_type"}\hlstd{))} \hlopt{%>%}
+  \hlstd{factoextra}\hlopt{::}\hlkwd{fviz_pca_biplot}\hlstd{(}\hlkwc{select.var} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{contrib} \hlstd{=} \hlnum{30}\hlstd{),} \hlkwc{habillage} \hlstd{=} \hlstr{"cell_type"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/scRNA_PCA-1} 
+
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{PCA (and linear methods) limitations}
+
+  \begin{block}{Account for complex pattern}
+    \begin{itemize}
+      \item Linear methods are powerful for \alert{\bf planar structures}
+      \item May fail at describing \alert{\bf manifolds}
+    \end{itemize}
+  \end{block}
+  
+  \begin{block}{Preserve local geometry}
+    \begin{itemize}
+      \item High dimensional data are characterized by \alert{\bf multiscale properties} (local / global structures)
+      \item Non Linear projection helps at preserving \alert{\bf local characteristics} of distances
+    \end{itemize}
+  \end{block}
+
+  \vfill
+  
+   \begin{figure}
+     \includegraphics[scale=0.25]{figures/manifold.pdf}
+     \caption{\small Intuition of manifolds and geometry underlying sc-data -- {\tiny source: F. Picard}}
+   \end{figure}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set II: 'mollusk'}
+  \framesubtitle{Abundance table (Species counts spread in various sites)}
+
+\begin{block}{Description: \textcolor{black}{\it small size count data}}
+\small Abundance of 32 mollusk species in 163 samples. For each sample, 4 additional covariates are known. \\
+
+\begin{scriptsize}
+\begin{thebibliography}{9}
+\bibitem{mollusk} Richardot-Coulet, M., Chessel D. and Bournaud M. \textcolor{black}{Typological value of the benthos of old beds of a large river. Methodological approach. Archiv fùr Hydrobiologie, 107.}
+\end{thebibliography}
+\end{scriptsize}
+\end{block}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mollusk} \hlkwb{<-} \hlstd{PLNmodels}\hlopt{::}\hlstd{mollusk}\hlopt{$}\hlstd{Abundance} \hlopt{%>%} \hlkwd{as_tibble}\hlstd{()} \hlopt{%>%}
+   \hlkwd{add_column}\hlstd{(}\hlkwc{site}   \hlstd{= PLNmodels}\hlopt{::}\hlstd{mollusk}\hlopt{$}\hlstd{Covariate}\hlopt{$}\hlstd{site,}
+              \hlkwc{season} \hlstd{= PLNmodels}\hlopt{::}\hlstd{mollusk}\hlopt{$}\hlstd{Covariate}\hlopt{$}\hlstd{season)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\paragraph{External Covariates}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mollusk} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(site, season)} \hlopt{%>%} \hlkwd{summary}\hlstd{()} \hlopt{%>%} \hlkwd{t}\hlstd{()} \hlopt{%>%} \hlstd{knitr}\hlopt{::}\hlkwd{kable}\hlstd{()}
+\end{alltt}
+\end{kframe}
+\begin{tabular}{l|l|l|l|l|l|l|l}
+\hline
+  &  &  &  &  &  &  & \\
+\hline
+site & Negria1  :24 & Negria2  :24 & Pecheurs1:24 & Pecheurs2:24 & GGravier3:22 & GGravier1:21 & (Other)  :24\\
+\hline
+season & automn:41 & spring:44 & summer:44 & winter:34 & NA & NA & NA\\
+\hline
+\end{tabular}
+
+
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set: 'mollusk'}
+  \framesubtitle{Brief data summary II}
+
+\paragraph{Histogram of raw counts}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mollusk} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%} \hlkwd{pivot_longer}\hlstd{(}\hlkwd{everything}\hlstd{())} \hlopt{%>%}
+  \hlkwd{ggplot}\hlstd{()} \hlopt{+} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= value,} \hlkwc{fill} \hlstd{= name)} \hlopt{+} \hlkwd{geom_histogram}\hlstd{(}\hlkwc{show.legend} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/mollusc_abundance-1} 
+
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set: 'mollusk'}
+  \framesubtitle{PCA}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mollusk} \hlopt{%>%} \hlkwd{PCA}\hlstd{(}\hlkwc{graph} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{quali.sup} \hlstd{=} \hlkwd{which}\hlstd{(}\hlkwd{map_lgl}\hlstd{(mollusk, is.factor)))} \hlopt{%>%}
+  \hlkwd{fviz_pca_biplot}\hlstd{(}\hlkwc{select.var} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{contrib} \hlstd{=} \hlnum{5}\hlstd{),} \hlkwc{habillage} \hlstd{=} \hlstr{"site"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/mollusk_PCA-1} 
+
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{PCA (and linear methods) limitations}
+
+  \begin{block}{Account for complex data distribution}
+    \begin{itemize}
+      \item Linear methods /PCA are tied to an hidden \alert{\bf Gaussian assumption}
+      \item Fail with \alert{\bf Count data}
+      \item Fail with \alert{\bf Skew data}
+    \end{itemize}
+  \end{block}
+  
+  \vfill
+  
+  \begin{block}{Possible solutions}
+    \begin{itemize}
+      \item Probabilistic (non Gaussian) models
+      \item Need transformed (non-linear) input space
+    \end{itemize}
+  \end{block}
+  
+  \end{frame}
+
+\begin{frame}
+  \frametitle{Dimension reduction: revisiting the problem setup}
+
+    \begin{block}{Settings}
+      \begin{itemize}
+        \item \alert{Training data} : $\mathcal{D}=\{\bx_1,\ldots,\bx_n\} \in \Rset^p$,   (i.i.d.)
+        \item Space $\Rset^p$ of possibly high dimension $(n \ll p)$
+      \end{itemize}
+    \end{block}
+
+    \vfill
+    
+    \begin{block}{Dimension Reduction Map}
+       Construct a map $\Phi$ from the space $\Rset^{p}$ into a space $\Rset^{q}$ of \alert{smaller dimension}:
+      \begin{align*}
+          \Phi:\quad & \Rset^p \to \Rset^{q}, q \ll p\\
+                     & \bx \mapsto \Phi(\bx)
+      \end{align*}
+    \end{block}
+    
+\end{frame}
+
+\begin{frame}
+  \frametitle{How should we design/construct $\Phi$?}
+
+  \paragraph{Criterion}
+  \begin{itemize}
+    \item Geometrical approach (\alert{\bf see slides on PCA})
+    \item Reconstruction error
+    \item Relationship preservation
+  \end{itemize}
+
+  \vfill
+  
+  \paragraph{Form of the map $\Phi$}
+  \begin{itemize}
+    \item \alert{\bf Linear} or \alert{\bf non-linear ?}
+    \item tradeoff between  interpretability and \alert{\bf versatility ?}
+    \item tradeoff between  \alert{\bf high} or low computational resource
+  \end{itemize}
+
+\end{frame}
+
+
+
+
+%% ====================================================================
+\part{Non-linear methods}
+%% ====================================================================
+\begin{frame}
+  \partpage
+\end{frame}
+
+\section{Reconstruction error}
+
+
+\begin{frame}
+  \frametitle{Reconstruction error approach}
+
+  \begin{enumerate}
+    \item  Construct a map $\Phi$ from the space $\Rset^{p}$ into a space $\Rset^{q}$ of \alert{smaller dimension}:
+      \begin{align*}
+      \Phi:\quad & \Rset^{p} \to \Rset^{q}, q \ll p\\
+               & \bx \mapsto \Phi(\bx)
+      \end{align*}
+    \item Construct $\widetilde{\Phi}$ from $\Rset^{q}$ to $\Rset^{p}$ (\alert{reconstruction formula})
+     \item Control an error between $\bx$ and its reconstruction $\tilde{\Phi}(\Phi(\bx))$, e.g
+      \begin{equation*}
+        \sum_{i=1}^n \left\| \bx_i - \tilde{\Phi}(\Phi(\bx_i)) \right\|^2
+      \end{equation*}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Reconstruction error and PCA}
+
+  \begin{block}{PCA Model}
+    Linear model assumption
+    \begin{equation*}
+        \bx \simeq \bmu + \mathbf{F}_{1:q} \bU_{1:q}^\top
+      \end{equation*}
+      with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
+    \end{block}
+
+  \begin{block}{Reconstruction error}
+    In the case of PCA, then
+    \begin{gather*}
+      \Phi(\bx) = (\bx-\bmu)^\top \bU  \quad \text{and} \quad \tilde{\Phi}(\mathbf{F})= \bmu + \mathbf{F} \bU^\top  \\
+      \frac{1}{n} \sum_{i=1}^n \| \bx_i  - ( \bmu + ( \bx_i -\bmu) \bU \bU^\top \|^2
+    \end{gather*}
+  \alert{Explicit solution:} $\bmu = \bar{x}$ the empirical mean
+ and $\bU$ is an orthonormal basis of the space spanned by the $q$
+ first eigenvectors of the empirical covariance matrix
+  \end{block}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Non linear extensions}
+
+  Two directions
+  \begin{enumerate}
+    \item Non linear transformation of $\bx$ before PCA: kernel-PCA
+    \item Other constrains on weigths $\bU$ or loadings $\mathbf{F}$: ICA, NMF, \dots
+  \end{enumerate}
+
+  \begin{block}{Kernel PCA}
+    Linear assumption after transformation, with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
+    \begin{equation*}
+        \Psi(\bx - \bmu) \simeq  \mathbf{F}_{1:q} \bU_{1:q}^\top
+      \end{equation*}
+   \end{block}
+
+  \vfill
+
+  \begin{block}{Non negative Matrix factorisation}
+    Linear model assumption with $\bU$ non-negative and  $\mathbf{F}$ non-negative
+    \begin{equation*}
+        \bx \simeq \bmu + \mathbf{F}_{1:q} \bU_{1:q}^\top
+      \end{equation*}
+  \end{block}
+
+  \vfill
+
+  \paragraph{Auto-encoders} Find $\Phi$ and $\tilde\Phi$ with a neural-network!
+
+  $\rightsquigarrow$ Fit $\bU, \mathbf{F}$ with some optimization algorithms (much more complex!)
+\end{frame}
+
+\section{Relation preservation}
+
+
+\subsection{Relation preservation point of view}
+
+\begin{frame}
+    \frametitle{Pairwise Relation}
+
+    Focus on pairwise relation $\mathcal{R}(\bx_i, \bx_{i'})$.
+
+    \begin{block}{Distance Preservation}
+      \begin{itemize}
+    \item  Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
+      \begin{align*}
+      \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
+               & \bx \mapsto \Phi(\bx)
+      \end{align*}
+      \begin{equation*}
+      \text{such that} \quad \mathcal{R}(\bx_i, \bx_{i'}) \sim\mathcal{R'}(\bx'_i, \bx'_{i'})
+      \end{equation*}
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Multidimensional scaling}
+    Try to preserve inner product related to the distance (e.g. Euclidean)
+  \end{block}
+
+  \vfill
+
+  \begin{block}{t-SNE -- Stochastic Neighborhood Embedding}
+    Try to preserve relations with close neighbors with Gaussian kernel
+  \end{block}
+
+\end{frame}
+
+
+
+%% ==========================================================================
+\section{Multidimensional Scaling/Principal Coordinates analysis}
+%% ==========================================================================
+
+%% ==========================================================================
+\section{Kernel-PCA}
+%% ==========================================================================
+
+%% ==========================================================================
+\section{Graph-based Kernel-PCA}
+%% ==========================================================================
+
+
+
+
+%% ==========================================================================
+\section{t-SNE}
+%% ==========================================================================
+
+\begin{frame}{Stochastic Neighbor Embedding \cite{vandermaaten2008} }
+
+\begin{itemize}
+\item $(x_1, \hdots, x_n)$ are the points in the high dimensional space $\mathbb{R}^p$, 
+\item Consider a similarity between points:
+$$			
+p_{i | j} = \frac{ \exp(- \| x_i - x_j \|^2 / 2 \sigma_i^2 ) }{\sum_{k \neq i} \exp(- \| x_k - x_j \|^2 / 2 \sigma_k^2)}, 
+\,\, 			p_{ij} =  (p_{i | j} + p_{j | i})/ 2N
+$$
+\item $\sigma$ smooths the data (linked to the regularity of the target manifold)
+\item $\sigma$ is chosen such that the entropy of $p$ is fixed to a given value of the so-called perplexity
+$$
+\exp\left( - \sum_{ij} p_{ij} \log(p_{ij}) \right)
+$$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The perplexity parameter}
+\begin{itemize}
+\item $\sigma_i$ Should adjust to local densities (neighborhood of point $i$)
+\item Define the Shannon entropy of $p_i=(p_{1|i},\hdots,p_{n|i})$
+$$
+H(p_i) = -\sum_{j=1}^{n} p_{j|i} \log_2 p_{j|i}
+$$
+\item The perplexity is defined by:
+$$
+Perp(p_i) = 2^{H(p_i)}
+$$
+\item Interpreted as the smoothed effective number of neighbors.
+\item SNE performs a binary search for the value of si that produces a $p_i$ with a fixed perplexity that is specified by the user.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{tSNE and Student / Cauchy kernels}
+\begin{itemize}
+\item Consider $(y_1,\hdots,y_n)$ are points in the low dimensional space $\mathbb{R}^2$
+\item Consider a similarity between points in the new representation:
+$$q_{i | j} = \frac{ \exp(- \| y_i - y_j \|^2  ) }{\sum_{k \neq i} \exp(- \| y_k - y_j \|^2 )}$$
+\item Robustify this kernel by using Student(1) kernels (ie Cauchy)
+$$q_{i | j} = \frac{ (1 + \| y_i - y_j \|^2)^{-1}  }{\sum_{k \neq i} (1 + \| y_i - y_k \|^2)^{-1}}$$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Optimizing tSNE}
+\begin{itemize}
+\item Minimize the KL between $p$ and $q$ so that the data representation minimizes:
+$$
+C(y) = \sum_{ij} KL(p_{ij},q_{ij})
+$$
+\item The cost function is not convex 
+$$
+\left[ \frac{\partial C(y)}{\partial y} \right]_i = \sum_{j} (p_{ij}-q_{ij})(y_i - y_j)
+$$
+\item Interpreted as the resultant force created by a set of springs between the map point $y_i$ and all other map points $\left( y_j \right)_j$. All springs exert a force along the direction $(y_i - y_j)$.
+\item $(p_{ij}-q_{ij})$ is viewed as a stiffness of the force exerted by the spring between $y_i$ and $y_j$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Customed Gradient descent}
+\begin{itemize}
+\item Gradient descent initialized by sampling map points randomly from an isotropic Gaussian with small variance centered around the origin
+\item Gradient update using
+$$
+y^{(t)} = y^{(t-1)} + \eta \frac{\partial C(y)}{\partial y} + \alpha(t) (y^{(t-1)}-y^{(t-2)})
+$$
+\item $\eta$ learning rate, $\alpha(t)$ momentum at iteration $t$.
+\item Gaussian noise is added to the map points to perform simulated annealing.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Properties of t-SNE}
+\begin{itemize}
+\item good at preserving local distances (intra-cluster variance)
+\item not so good for global representation (inter-cluster variance)
+\item hence good at creating clusters of points that are close, but bad at positionning clusters wrt each other
+\item preprocessing very important : initialize with PCA and feature selection plus log transform (non linear transform)
+\item percent of explained variance ? interpretation of the $q$ distribution ?
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Example and scRNA} 
+
+\paragraph{Run the fit}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{scRNA_expr} \hlkwb{<-} \hlstd{scRNA} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{cell_type)} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{()}
+
+\hlstd{tSNE_perp2}   \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(scRNA_expr,} \hlkwc{perplexity} \hlstd{=}   \hlnum{2}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{2}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
+
+\hlstd{tSNE_perp10}  \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(scRNA_expr,} \hlkwc{perplexity} \hlstd{=}  \hlnum{10}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{10}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
+
+\hlstd{tSNE_perp100} \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(scRNA_expr,} \hlkwc{perplexity} \hlstd{=} \hlnum{100}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{100}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\paragraph{Compare perplexity}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{rbind}\hlstd{(tSNE_perp2,tSNE_perp10,tSNE_perp100)} \hlopt{%>%}
+  \hlkwd{ggplot}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= V1,} \hlkwc{y} \hlstd{= V2,} \hlkwc{color} \hlstd{= cell_type))} \hlopt{+}
+     \hlkwd{geom_point}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{1.25}\hlstd{)} \hlopt{+}
+     \hlkwd{guides}\hlstd{(}\hlkwc{colour} \hlstd{=} \hlkwd{guide_legend}\hlstd{(}\hlkwc{override.aes} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{6}\hlstd{)))} \hlopt{+}
+  \hlkwd{facet_wrap}\hlstd{(.}\hlopt{~}\hlstd{perplexity,} \hlkwc{scales} \hlstd{=} \hlstr{'free'}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\textwidth]{figures/tSNE_scRNA_perplexity_plot-1} 
+
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Example on 'mollusk'} 
+
+\paragraph{Run the fit}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{duplicated} \hlkwb{<-} \hlkwd{duplicated}\hlstd{(mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season))}
+\hlstd{mollusk_ab} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%} \hlkwd{filter}\hlstd{(}\hlopt{!}\hlstd{duplicated)} \hlopt{%>%}  \hlkwd{as.matrix}\hlstd{()}
+
+\hlstd{tSNE_perp2}   \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(mollusk_ab,} \hlkwc{perplexity} \hlstd{=}   \hlnum{2}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{2}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site[}\hlopt{!}\hlstd{duplicated])}
+
+\hlstd{tSNE_perp10}  \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(}\hlkwd{log}\hlstd{(}\hlnum{1} \hlopt{+} \hlstd{mollusk_ab),} \hlkwc{perplexity} \hlstd{=}  \hlnum{10}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{10}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site[}\hlopt{!}\hlstd{duplicated])}
+
+\hlstd{tSNE_perp50} \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(}\hlkwd{log}\hlstd{(}\hlnum{1} \hlopt{+} \hlstd{mollusk_ab),} \hlkwc{perplexity} \hlstd{=} \hlnum{50}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{50}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site[}\hlopt{!}\hlstd{duplicated])}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\paragraph{Compare perplexity}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{rbind}\hlstd{(tSNE_perp2,tSNE_perp10,tSNE_perp50)} \hlopt{%>%}
+  \hlkwd{ggplot}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= V1,} \hlkwc{y} \hlstd{= V2,} \hlkwc{color} \hlstd{= site))} \hlopt{+}
+     \hlkwd{geom_point}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{1.25}\hlstd{)} \hlopt{+}
+     \hlkwd{guides}\hlstd{(}\hlkwc{colour} \hlstd{=} \hlkwd{guide_legend}\hlstd{(}\hlkwc{override.aes} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{6}\hlstd{)))} \hlopt{+}
+  \hlkwd{facet_wrap}\hlstd{(.}\hlopt{~}\hlstd{perplexity,} \hlkwc{scales} \hlstd{=} \hlstr{'free'}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\textwidth]{figures/tSNE_mollusk_perplexity_plot-1} 
+
+\end{knitrout}
+
+\end{frame}
+
+
+%% ==========================================================================
+\section{Auto-Encoder}
+%% ==========================================================================
+
+
+
+\begin{frame}[allowframebreaks]
+  \frametitle{References}
+
+ \bibliographystyle{apalike}
+
+\begin{small}
+  \bibliography{{../../resources/MAP573.bib}}
+\end{small}
+
+\end{frame}
+
+\end{document}
+
+
+% %% ====================================================================
+% \part{Linear methods beyond PCA}
+% %% ====================================================================
+% \begin{frame}
+%   \partpage
+%   
+%   Due to non continuous/real data-type
+% \end{frame}
+% 
+% %% ==========================================================================
+% \section{Categorical data: Correspondance analysis}
+% %% ==========================================================================
+% 
+% <<linear noPCA, child='linear_noPCA.Rnw'>>=
+% @
+% 
+% %% ==========================================================================
+% \section{Mixed data: Multiple Factorial Analysis (MFA)}
+% %% ==========================================================================
+% 
+% %% ==========================================================================
+% \section{Function data: Functional PCA}
+% %% ==========================================================================
+% 
+% %% ==========================================================================
+% \section{Non-negative data: NMF}
+% %% ==========================================================================
+% 

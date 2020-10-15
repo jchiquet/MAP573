@@ -1,0 +1,32 @@
+\subsection{Relation preservation point of view}
+
+\begin{frame}
+    \frametitle{Pairwise Relation}
+
+    Focus on pairwise relation $\mathcal{R}(\bx_i, \bx_{i'})$.
+
+    \begin{block}{Distance Preservation}
+      \begin{itemize}
+    \item  Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
+      \begin{align*}
+      \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
+               & \bx \mapsto \Phi(\bx)
+      \end{align*}
+      \begin{equation*}
+      \text{such that} \quad \mathcal{R}(\bx_i, \bx_{i'}) \sim\mathcal{R'}(\bx'_i, \bx'_{i'})
+      \end{equation*}
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Multidimensional scaling}
+    Try to preserve inner product related to the distance (e.g. Euclidean)
+  \end{block}
+
+  \vfill
+
+  \begin{block}{t-SNE -- Stochastic Neighborhood Embedding}
+    Try to preserve relations with close neighbors with Gaussian kernel
+  \end{block}
+
+\end{frame}
+

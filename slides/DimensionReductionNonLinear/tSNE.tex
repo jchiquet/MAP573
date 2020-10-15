@@ -1,0 +1,132 @@
+
+
+%% ==========================================================================
+\section{t-SNE}
+%% ==========================================================================
+
+\begin{frame}{Stochastic Neighbor Embedding \cite{vandermaaten2008} }
+
+\begin{itemize}
+\item $(x_1, \hdots, x_n)$ are the points in the high dimensional space $\mathbb{R}^p$, 
+\item Consider a similarity between points:
+$$			
+p_{i | j} = \frac{ \exp(- \| x_i - x_j \|^2 / 2 \sigma_i^2 ) }{\sum_{k \neq i} \exp(- \| x_k - x_j \|^2 / 2 \sigma_k^2)}, 
+\,\, 			p_{ij} =  (p_{i | j} + p_{j | i})/ 2N
+$$
+\item $\sigma$ smooths the data (linked to the regularity of the target manifold)
+\item $\sigma$ is chosen such that the entropy of $p$ is fixed to a given value of the so-called perplexity
+$$
+\exp\left( - \sum_{ij} p_{ij} \log(p_{ij}) \right)
+$$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The perplexity parameter}
+\begin{itemize}
+\item $\sigma_i$ Should adjust to local densities (neighborhood of point $i$)
+\item Define the Shannon entropy of $p_i=(p_{1|i},\hdots,p_{n|i})$
+$$
+H(p_i) = -\sum_{j=1}^{n} p_{j|i} \log_2 p_{j|i}
+$$
+\item The perplexity is defined by:
+$$
+Perp(p_i) = 2^{H(p_i)}
+$$
+\item Interpreted as the smoothed effective number of neighbors.
+\item SNE performs a binary search for the value of si that produces a $p_i$ with a fixed perplexity that is specified by the user.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{tSNE and Student / Cauchy kernels}
+\begin{itemize}
+\item Consider $(y_1,\hdots,y_n)$ are points in the low dimensional space $\mathbb{R}^2$
+\item Consider a similarity between points in the new representation:
+$$q_{i | j} = \frac{ \exp(- \| y_i - y_j \|^2  ) }{\sum_{k \neq i} \exp(- \| y_k - y_j \|^2 )}$$
+\item Robustify this kernel by using Student(1) kernels (ie Cauchy)
+$$q_{i | j} = \frac{ (1 + \| y_i - y_j \|^2)^{-1}  }{\sum_{k \neq i} (1 + \| y_i - y_k \|^2)^{-1}}$$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Optimizing tSNE}
+\begin{itemize}
+\item Minimize the KL between $p$ and $q$ so that the data representation minimizes:
+$$
+C(y) = \sum_{ij} KL(p_{ij},q_{ij})
+$$
+\item The cost function is not convex 
+$$
+\left[ \frac{\partial C(y)}{\partial y} \right]_i = \sum_{j} (p_{ij}-q_{ij})(y_i - y_j)
+$$
+\item Interpreted as the resultant force created by a set of springs between the map point $y_i$ and all other map points $\left( y_j \right)_j$. All springs exert a force along the direction $(y_i - y_j)$.
+\item $(p_{ij}-q_{ij})$ is viewed as a stiffness of the force exerted by the spring between $y_i$ and $y_j$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Customed Gradient descent}
+\begin{itemize}
+\item Gradient descent initialized by sampling map points randomly from an isotropic Gaussian with small variance centered around the origin
+\item Gradient update using
+$$
+y^{(t)} = y^{(t-1)} + \eta \frac{\partial C(y)}{\partial y} + \alpha(t) (y^{(t-1)}-y^{(t-2)})
+$$
+\item $\eta$ learning rate, $\alpha(t)$ momentum at iteration $t$.
+\item Gaussian noise is added to the map points to perform simulated annealing.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Properties of t-SNE}
+\begin{itemize}
+\item good at preserving local distances (intra-cluster variance)
+\item not so good for global representation (inter-cluster variance)
+\item hence good at creating clusters of points that are close, but bad at positionning clusters wrt each other
+\item preprocessing very important : initialize with PCA and feature selection plus log transform (non linear transform)
+\item percent of explained variance ? interpretation of the $q$ distribution ?
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Example and scRNA} 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{scRNA_expr} \hlkwb{<-} \hlstd{scRNA} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{cell_type)} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{()}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in scRNA \%>\% select(-cell\_type) \%>\% as.matrix(): could not find function "{}\%>\%"{}}}\begin{alltt}
+\hlstd{tSNE_perp2}   \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(scRNA_expr,} \hlkwc{perplexity} \hlstd{=}   \hlnum{2}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{2}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in Rtsne(scRNA\_expr, perplexity = 2)\$Y \%>\% as.data.frame() \%>\% add\_column(perplexity = 2) \%>\% : could not find function "{}\%>\%"{}}}\begin{alltt}
+\hlstd{tSNE_perp10}  \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(scRNA_expr,} \hlkwc{perplexity} \hlstd{=}  \hlnum{10}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{10}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in Rtsne(scRNA\_expr, perplexity = 10)\$Y \%>\% as.data.frame() \%>\% : could not find function "{}\%>\%"{}}}\begin{alltt}
+\hlstd{tSNE_perp100} \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(scRNA_expr,} \hlkwc{perplexity} \hlstd{=} \hlnum{100}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{100}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in Rtsne(scRNA\_expr, perplexity = 100)\$Y \%>\% as.data.frame() \%>\% : could not find function "{}\%>\%"{}}}\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{rbind}\hlstd{(tSNE_perp2,tSNE_perp10,tSNE_perp100)} \hlopt{%>%}
+  \hlkwd{ggplot}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= V1,} \hlkwc{y} \hlstd{= V2,} \hlkwc{color} \hlstd{= cell_type))} \hlopt{+}
+     \hlkwd{geom_point}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{1.25}\hlstd{)} \hlopt{+}
+     \hlkwd{guides}\hlstd{(}\hlkwc{colour} \hlstd{=} \hlkwd{guide_legend}\hlstd{(}\hlkwc{override.aes} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{6}\hlstd{)))} \hlopt{+}
+  \hlkwd{facet_wrap}\hlstd{(.}\hlopt{~}\hlstd{perplexity,} \hlkwc{scales} \hlstd{=} \hlstr{'free'}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in rbind(tSNE\_perp2, tSNE\_perp10, tSNE\_perp100) \%>\% ggplot(aes(x = V1, : could not find function "{}\%>\%"{}}}\end{kframe}
+\end{knitrout}
+
+\end{frame}

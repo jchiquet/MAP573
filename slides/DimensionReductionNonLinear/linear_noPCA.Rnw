@@ -1,24 +1,24 @@
-\begin{frame}
-  \frametitle{Some references\dots}
-  \framesubtitle{\dots biased choices!}
-  
-    \begin{thebibliography}{99}
-      \setbeamertemplate{bibliography item}[book]
-    \bibitem[husson]{husson} Exploratory Multivariate Analysis by Example using R,
-    \newblock \textcolor{black}{Husson, Le, Pages, 2017.}
-    \newblock Chapman \& Hall
-
-    \bibitem[pages]{pages} Multiple Factor Analysis by Example using R,
-    \newblock \textcolor{black}{J. Pagès 2015.}
-    \newblock CRC Press
-
-    \bibitem[ELS]{ELS} An Introduction to Statistical Learning
-    \newblock \textcolor{black}{G. James, D. Witten, T. Hastie and R. Tibshirani}
-    \newblock {\tiny\url{http://faculty.marshall.usc.edu/gareth-james/ISL/}}
-
-    \end{thebibliography}
-
-\end{frame}
+% \begin{frame}
+%   \frametitle{Some references\dots}
+%   \framesubtitle{\dots biased choices!}
+%   
+%     \begin{thebibliography}{99}
+%       \setbeamertemplate{bibliography item}[book]
+%     \bibitem[husson]{husson} Exploratory Multivariate Analysis by Example using R,
+%     \newblock \textcolor{black}{Husson, Le, Pages, 2017.}
+%     \newblock Chapman \& Hall
+% 
+%     \bibitem[pages]{pages} Multiple Factor Analysis by Example using R,
+%     \newblock \textcolor{black}{J. Pagès 2015.}
+%     \newblock CRC Press
+% 
+%     \bibitem[ELS]{ELS} An Introduction to Statistical Learning
+%     \newblock \textcolor{black}{G. James, D. Witten, T. Hastie and R. Tibshirani}
+%     \newblock {\tiny\url{http://faculty.marshall.usc.edu/gareth-james/ISL/}}
+% 
+%     \end{thebibliography}
+% 
+% \end{frame}
 
 \begin{frame}
   \frametitle{Linear methods generalizing PCA}

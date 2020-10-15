@@ -1,0 +1,72 @@
+\begin{frame}
+  \frametitle{Reconstruction error approach}
+
+  \begin{enumerate}
+    \item  Construct a map $\Phi$ from the space $\Rset^{p}$ into a space $\Rset^{q}$ of \alert{smaller dimension}:
+      \begin{align*}
+      \Phi:\quad & \Rset^{p} \to \Rset^{q}, q \ll p\\
+               & \bx \mapsto \Phi(\bx)
+      \end{align*}
+    \item Construct $\widetilde{\Phi}$ from $\Rset^{q}$ to $\Rset^{p}$ (\alert{reconstruction formula})
+     \item Control an error between $\bx$ and its reconstruction $\tilde{\Phi}(\Phi(\bx))$, e.g
+      \begin{equation*}
+        \sum_{i=1}^n \left\| \bx_i - \tilde{\Phi}(\Phi(\bx_i)) \right\|^2
+      \end{equation*}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Reconstruction error and PCA}
+
+  \begin{block}{PCA Model}
+    Linear model assumption
+    \begin{equation*}
+        \bx \simeq \bmu + \mathbf{F}_{1:q} \bU_{1:q}^\top
+      \end{equation*}
+      with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
+    \end{block}
+
+  \begin{block}{Reconstruction error}
+    In the case of PCA, then
+    \begin{gather*}
+      \Phi(\bx) = (\bx-\bmu)^\top \bU  \quad \text{and} \quad \tilde{\Phi}(\mathbf{F})= \bmu + \mathbf{F} \bU^\top  \\
+      \frac{1}{n} \sum_{i=1}^n \| \bx_i  - ( \bmu + ( \bx_i -\bmu) \bU \bU^\top \|^2
+    \end{gather*}
+  \alert{Explicit solution:} $\bmu = \bar{x}$ the empirical mean
+ and $\bU$ is an orthonormal basis of the space spanned by the $q$
+ first eigenvectors of the empirical covariance matrix
+  \end{block}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Non linear extensions}
+
+  Two directions
+  \begin{enumerate}
+    \item Non linear transformation of $\bx$ before PCA: kernel-PCA
+    \item Other constrains on weigths $\bU$ or loadings $\mathbf{F}$: ICA, NMF, \dots
+  \end{enumerate}
+
+  \begin{block}{Kernel PCA}
+    Linear assumption after transformation, with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
+    \begin{equation*}
+        \Psi(\bx - \bmu) \simeq  \mathbf{F}_{1:q} \bU_{1:q}^\top
+      \end{equation*}
+   \end{block}
+
+  \vfill
+
+  \begin{block}{Non negative Matrix factorisation}
+    Linear model assumption with $\bU$ non-negative and  $\mathbf{F}$ non-negative
+    \begin{equation*}
+        \bx \simeq \bmu + \mathbf{F}_{1:q} \bU_{1:q}^\top
+      \end{equation*}
+  \end{block}
+
+  \vfill
+
+  \paragraph{Auto-encoders} Find $\Phi$ and $\tilde\Phi$ with a neural-network!
+
+  $\rightsquigarrow$ Fit $\bU, \mathbf{F}$ with some optimization algorithms (much more complex!)
+\end{frame}
