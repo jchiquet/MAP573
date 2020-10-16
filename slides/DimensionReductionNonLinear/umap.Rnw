@@ -1,0 +1,60 @@
+<<echo = FALSE, message=FALSE>>=
+library(umap)
+@
+
+\begin{frame}{Uniform Manifold Approximation and Projection \cite{mcinnes2018umap} }
+
+\end{frame}
+
+\begin{frame}{Properties of UMAP}
+
+\begin{itemize}
+\item
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Example on scRNA} 
+
+\paragraph{Run the fit}
+
+<<UMAP run>>=
+scRNA_expr <- scRNA %>% select(-cell_type) %>% as.matrix()
+umap_fit   <- umap(scRNA_expr)$layout %>% 
+  as.data.frame() %>% add_column(cell_type = scRNA$cell_type)
+@
+
+\paragraph{Visualization}
+
+<<plot, fig.dim=c(8,5), out.width='\\textwidth'>>=
+umap_fit %>% 
+  ggplot(aes(x = V1, y = V2, color = cell_type)) +
+     geom_point(size=1.25) +
+     guides(colour = guide_legend(override.aes = list(size=6)))
+@
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Example on 'mollusk'} 
+
+\paragraph{Run the fit}
+
+<<UMAP mollusk run>>=
+duplicated <- duplicated(mollusk %>% select(-site, -season))
+mollusk_ab <- mollusk %>% select(-site, -season) %>% filter(!duplicated) %>%  as.matrix()
+umap_fit   <- umap(mollusk_ab)$layout %>% 
+  as.data.frame() %>% add_column(site = mollusk$site[!duplicated])
+@
+
+\paragraph{Visualization}
+
+<<UMAP mollusk plot, fig.dim=c(8,5), out.width='\\textwidth'>>=
+umap_fit %>% 
+  ggplot(aes(x = V1, y = V2, color = site)) +
+     geom_point(size=1.25) +
+     guides(colour = guide_legend(override.aes = list(size=6))) 
+@
+
+\end{frame}

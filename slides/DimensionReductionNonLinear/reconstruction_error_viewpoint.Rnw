@@ -16,57 +16,100 @@
 \end{frame}
 
 \begin{frame}
-\frametitle{Reconstruction error and PCA}
+\frametitle{Reinterpretation of PCA}
 
-  \begin{block}{PCA Model}
-    Linear model assumption
-    \begin{equation*}
-        \bx \simeq \bmu + \mathbf{F}_{1:q} \bU_{1:q}^\top
-      \end{equation*}
-      with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
+  \begin{block}{PCA model}
+       Let $\bV$ be a $p\times q$ matrix whose columns are of $q$ orthonormal vectors.
+      \begin{align*}
+        \Phi(\bx) & = \bV^\top(\bx-\bmu)  = \tilde\bx \\  
+        \bx \simeq \tilde{\Phi}(\tilde\bx) & = \bmu + \bV \tilde\bx
+      \end{align*}
+      \rsa Model with \alert{\bf Linear assumption + ortho-normality constraints}
     \end{block}
 
-  \begin{block}{Reconstruction error}
-    In the case of PCA, then
-    \begin{gather*}
-      \Phi(\bx) = (\bx-\bmu)^\top \bU  \quad \text{and} \quad \tilde{\Phi}(\mathbf{F})= \bmu + \mathbf{F} \bU^\top  \\
-      \frac{1}{n} \sum_{i=1}^n \| \bx_i  - ( \bmu + ( \bx_i -\bmu) \bU \bU^\top \|^2
-    \end{gather*}
-  \alert{Explicit solution:} $\bmu = \bar{x}$ the empirical mean
- and $\bU$ is an orthonormal basis of the space spanned by the $q$
- first eigenvectors of the empirical covariance matrix
+  \begin{block}{PCA reconstruction error}<2>
+    \vspace{-.25cm}
+    \begin{equation*}
+      \minimize_{\bmu \in\Rset^p, \bV\in\mathcal{O}_{p,q}} \sum_{i=1}^n \left\| (\bx_i  - \bmu) + \bV^\top\bV ( \bx_i -\bmu)   \right\|^2
+    \end{equation*}
+  
+  \alert{Solution (explicit)} 
+  \begin{itemize}
+  \item $\bmu = \bar{\bx}$ the empirical mean
+  \item $\bV$  an orthonormal basis of the space spanned by the $q$ first eigenvectors of the empirical covariance matrix
+  \end{itemize}
+  
   \end{block}
 \end{frame}
-
 
 \begin{frame}
-  \frametitle{Non linear extensions}
+  \frametitle{Important digression: SVD}
 
-  Two directions
-  \begin{enumerate}
-    \item Non linear transformation of $\bx$ before PCA: kernel-PCA
-    \item Other constrains on weigths $\bU$ or loadings $\mathbf{F}$: ICA, NMF, \dots
-  \end{enumerate}
-
-  \begin{block}{Kernel PCA}
-    Linear assumption after transformation, with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
-    \begin{equation*}
-        \Psi(\bx - \bmu) \simeq  \mathbf{F}_{1:q} \bU_{1:q}^\top
-      \end{equation*}
-   \end{block}
-
-  \vfill
-
-  \begin{block}{Non negative Matrix factorisation}
-    Linear model assumption with $\bU$ non-negative and  $\mathbf{F}$ non-negative
-    \begin{equation*}
-        \bx \simeq \bmu + \mathbf{F}_{1:q} \bU_{1:q}^\top
-      \end{equation*}
+  \begin{block}{Singular Value Decomposition (SVD)}
+    The SVD of $\mathbf{M}$ a $n\times p$ matrix is the factorization given by
+    
+    \[ \mathbf{M} =\mathbf{U}\mathbf{D}\mathbf{V}^\top,\]
+    where $r = \min(n,p)$ and
+    \begin{itemize}
+      \item \(\mathbf{D}_{r \times r} = \text{diag}(\delta_1, ...\delta_r)\) is the diagonal matrix of singular values.
+      \item \(\mathbf{U}\) is orthonormal, whose columns are eigen vectors of (\(\mathbf{M}\mathbf{M}^T\))
+      \item \(\mathbf{V}\) is orthonormal whose columns are eigen vectors of (\(\mathbf{M}^T\mathbf{M}\))
+    \end{itemize}
+    {\small \rsa Time complexity in $\mathcal{O}(n p q r)$ (less when $k\ll r$ components are required)}
   \end{block}
 
   \vfill
+  
+  \begin{block}{Connection with eigen decomposition of the covariance matrix}
+    \vspace{-.5cm}
+    \begin{align*}
+      \mathbf{M}^\top\mathbf{M} & = \mathbf{V} \mathbf{D} \mathbf{U}^\top  \mathbf{U} \mathbf{D} \mathbf{V}^\top \\
+        & = \mathbf{V} \mathbf{D}^2 \mathbf{V}^\top  = \mathbf{V} \boldsymbol{\Lambda} \mathbf{V}^\top\\
+    \end{align*}
+  \end{block}
 
-  \paragraph{Auto-encoders} Find $\Phi$ and $\tilde\Phi$ with a neural-network!
-
-  $\rightsquigarrow$ Fit $\bU, \mathbf{F}$ with some optimization algorithms (much more complex!)
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{PCA solution is given by SVD of the centered data matrix}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[height=4cm]{figures/matrix_factorization}
+\end{figure}
+
+Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA can be rephrased as
+\[ \hat{\mathbf{X}^c} = \mathbf{FV}^\top =  \argmin_{\mathbf{F}\in\mathcal{M}_{p,q},\bV\in\mathcal{O}_{p,q} } \left\| \mathbf{X}^c - \mathbf{FV}^\top \right\|_F^2 \text{ with } \|\mathbf{A}\|_F^2 = \sum_{ij} a_{ij}^2, 
+\]
+\[
+  \left. \tilde\bX \in\Rset^{n\times \textcolor{red}{q}}, \mathbf{V}\in\Rset^{p\times \textcolor{red}{q}} \right\} \ \text{Best linear low-rank representation of $\bX$}
+\]
+
+\end{frame}
+% 
+% \begin{frame}
+%   \frametitle{Non linear extensions}
+% 
+%   \begin{block}{Kernel PCA}
+%     Linear assumption after transformation, with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
+%     \begin{equation*}
+%         \Psi(\bx - \bmu) \simeq  \mathbf{F}_{1:q} \bU_{1:q}^\top
+%       \end{equation*}
+%    \end{block}
+% 
+%   \vfill
+% 
+%   \begin{block}{Non negative Matrix factorisation}
+%     Linear model assumption with $\bU$ non-negative and  $\mathbf{F}$ non-negative
+%     \begin{equation*}
+%         \bx \simeq \bmu + \mathbf{F}_{1:q} \bU_{1:q}^\top
+%       \end{equation*}
+%   \end{block}
+% 
+%   \vfill
+% 
+%   \paragraph{Auto-encoders} Find $\Phi$ and $\tilde\Phi$ with a neural-network!
+% 
+%   $\rightsquigarrow$ Fit $\bU, \mathbf{F}$ with some optimization algorithms (much more complex!)
+% \end{frame}

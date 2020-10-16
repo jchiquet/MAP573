@@ -1,5 +1,3 @@
-\subsection{Relation preservation point of view}
-
 \begin{frame}
     \frametitle{Pairwise Relation}
 

@@ -2,10 +2,6 @@
 library(Rtsne)
 @
 
-%% ==========================================================================
-\section{t-SNE}
-%% ==========================================================================
-
 \begin{frame}{Stochastic Neighbor Embedding \cite{vandermaaten2008} }
 
 \begin{itemize}

@@ -1,0 +1,120 @@
+<<echo = FALSE, warning=FALSE, message=FALSE>>=
+library(kernlab)
+@
+
+\begin{frame}
+  \frametitle{Kernel-PCA}
+
+Other constrains on weigths $\bU$ or loadings $\mathbf{F}$
+  
+  \begin{block}{Principle} 
+    \begin{enumerate}
+      \item Project the data into a higher space where it is linearly separable
+      \item Apply PCA to the transformed data 
+    \end{enumerate}
+  \end{block}
+
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[height=4cm]{figures/kernel_trick2}
+    \caption{$\Psi : \bx \to \Psi(\bx)$}
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Kernel-PCA}
+
+  \begin{block}{Kernel PCA Model}
+    Assume a non linear transformation
+    \[ \Psi(\mathbf{x}_i) \text{ where } \Psi : \mathbb{R}^p \to \mathbb{R}^n, \]
+    
+    Then perform linear PCA, with $\bV$ a $p\times q$ orthonormal matrix
+    \begin{align*}
+      \Phi(\bx) & = \Psi(\bx-\bmu)^\top \bV = \mathbf{f} \\  
+      \bx \simeq \tilde{\Phi}(\mathbf{f}) & = \bmu + \mathbf{f} \bV^\top
+    \end{align*}
+    \rsa Model with \alert{\bf Linear assumption + ortho-normality constraints}
+
+    \begin{equation*}
+        \Psi(\bx - \bmu) \simeq  \bV  \tilde \bx 
+      \end{equation*}
+   \end{block}
+
+\begin{block}{Kernel trick}
+  Assume an underlying transformation
+  \[ \Psi(\mathbf{x}_i) \text{ where } \Psi : \mathbb{R}^p \to \mathbb{R}^n, \]
+    which is never calculated thanks to the kernel trick:
+  \[K = k(\mathbf{x},\mathbf{y}) = (\Psi(\mathbf{x}),\Psi(\mathbf{y})) = \Psi(\mathbf{x})^T\Psi(\mathbf{y})\]
+\end{block}
+
+  Kernel PCA suffers from the choice of the Kernel to correctly
+
+  \begin{block}{PCA model}
+       Let $\bV$ be a $p\times q$ matrix whose columns are of $q$ orthonormal vectors.
+      \begin{align*}
+        \Phi(\bx) & = (\bx-\bmu)^\top \bV = \mathbf{f} \\  
+        \bx \simeq \tilde{\Phi}(\mathbf{f}) & = \bmu + \mathbf{f} \bV^\top
+      \end{align*}
+      \rsa Model with \alert{\bf Linear assumption + ortho-normality constraints}
+    \end{block}
+
+  \begin{block}{Kernel-PCA reconstruction error}
+    \vspace{-.25cm}
+    \begin{equation*}
+      \minimize_{\bmu \in\Rset^p, \bV\in\mathcal{O}_{p,q}} \sum_{i=1}^n \left\| \bx_i  - ( \bmu + ( \bx_i -\bmu) \bV \bV^\top \right\|^2
+    \end{equation*}
+  
+  \alert{Solution} 
+  \begin{itemize}
+  \item $\bmu = \bar{\bx}$ the empirical mean
+  \item $\bV$  an orthonormal basis of the space spanned by the $q$ first eigenvectors of the empirical covariance matrix
+  \end{itemize}
+  
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example on scRNA} 
+  \framesubtitle{Run the fit}
+
+<<kPCA scRNA kernel run>>=
+scRNA_expr <- scRNA %>% select(-cell_type) %>% as.matrix()
+
+kPCA_radial <- 
+  kpca(scRNA_expr, kernel = "rbfdot", features = 2, kpar = list(sigma = 0.5)) %>% 
+  pcv() %>% as.data.frame() %>% 
+  add_column(kernel = "Radial") %>% 
+  add_column(cell_type = scRNA$cell_type)
+
+kPCA_linear <-
+  kpca(scRNA_expr, kernel = "vanilladot", features = 2, kpar = list()) %>% 
+  pcv() %>% as.data.frame() %>% 
+  add_column(kernel = "Linear") %>% 
+  add_column(cell_type = scRNA$cell_type)
+
+kPCA_polydot <- kpca(scRNA_expr, kernel = "polydot", features = 2, kpar = list(degree = 3)) %>% 
+  pcv() %>% as.data.frame() %>% 
+  add_column(kernel = "Polynomial") %>% 
+  add_column(cell_type = scRNA$cell_type)
+
+kPCA_laplacedot <- kpca(scRNA_expr, kernel = "laplacedot", features = 2) %>% 
+  pcv() %>% as.data.frame() %>% 
+  add_column(kernel = "Laplace") %>% 
+  add_column(cell_type = scRNA$cell_type)
+@
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example on scRNA} 
+  \framesubtitle{Compare the projection}
+
+<<kPCA scRNA kernel plot, fig.dim=c(10,6.5), out.width='.8\\textwidth'>>=
+rbind(kPCA_linear, kPCA_polydot, kPCA_radial, kPCA_laplacedot) %>% 
+  ggplot(aes(x = V1, y = V2, color = cell_type)) +
+  geom_point(size=1.25) + guides(colour = guide_legend(override.aes = list(size=6))) +
+  facet_wrap(.~kernel, scales = 'free') + labs(x = '', y = '')
+@
+
+\end{frame}
+
