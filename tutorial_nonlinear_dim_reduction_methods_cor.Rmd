@@ -23,9 +23,9 @@ library(FactoMineR)  # Factor analysis
 library(factoextra)  # Fancy plotting of FactoMineR outputs
 library(corrplot)    # Fancy plotting of matrices 
 library(GGally)      # Easy-to-use ggplot2 extensions
-library(ggpubr)
-library(maps)
-library(ggrepel)
+library(ggpubr)      # Easy-to-use ggplot2 exentesions
+library(maps)        # Draw Geographical Maps
+library(ggrepel)     # Automatically Position Non-Overlapping Text Labels with ggplot
 theme_set(theme_bw()) # set default ggplot2 theme to black and white
 ```
 
@@ -70,7 +70,6 @@ Ordinal MDS constructs fitted distances that are in the same rank order as the o
 It is suitable for qualitative data.
 
 
-
 ## R functions for MDS
 
 To perform MDS, we may either use:
@@ -93,10 +92,14 @@ To perform MDS, we may either use:
 
 All of these functions take a distance object as main argument and a number $k$ corresponding to the desired number of dimensions in the scaled output.
 
-## Classical MDS
+### Classical MDS
 
 We consider the **swiss** data that contains fertility and socio-economic data 
-on 47 French speaking provinces in Switzerland.
+on 47 French speaking provinces in Switzerland. 
+
+
+1) **Start by loading the *swiss* package and have a quick look at it.**
+
 
 ```{r}
 data("swiss")
@@ -106,6 +109,13 @@ swiss %>% head(15)
 ```{r}
 rownames(swiss)
 ```
+
+```{r}
+summary(swiss)
+```
+
+
+2) **Perform classical MDS with $k=2$ and plot the results.**
 
 ```{r}
 # Cmpute MDS
@@ -127,7 +137,7 @@ ggscatter(mds, x = "Dim.1", y = "Dim.2",
           repel = TRUE)
 ```
 
-**Create $3$ groups using $k$-means clustering and color points by group.**
+3) **Create $3$ groups using $k$-means clustering and color points by group.**
 
 ```{r}
 # K-means clustering
@@ -146,9 +156,9 @@ ggscatter(mds, x = "Dim.1", y = "Dim.2",
           repel = TRUE)
 ```
 
+## Non-metric MDS
 
-
-## Non-metric MDS 
+4) **Perform the same analysis with both Kruskal's non-metric MDS and Sammon's non-linear mapping. Can you spot any differences?**
 
 Kruskal's non-metric multidimensional scaling 
 
@@ -189,14 +199,22 @@ ggscatter(mds, x = "Dim.1", y = "Dim.2",
           repel = TRUE)
 ```
 
-## Correlation matrix using Multidimensional Scaling 
+### Correlation matrix using Multidimensional Scaling 
 
-MDS can also be used to detect a hidder pattern in a correlation matrix, but it is easy to transform it to a measure of dissimilarity. Distance between objects can be calculated as 1 - res.cor. 
-
-**Perform a classical MDS on the *mtcars* dataset and comment**
+MDS can also be used to detect a hidden pattern in a correlation matrix.
 
 ```{r}
 res.cor <- cor(mtcars, method = "spearman")
+```
+
+5) **Would you say that correlation is a measure of similarity or dissimilarity? Using correlation, how would you compute distances between objects**
+
+Correlation actually measures similarity, but it is easy to transform it to a measure of dissimilarity.
+Distance between objects can be calculated as 1 - res.cor. 
+
+6) **Perform a classical MDS on the *mtcars* dataset and comment.**
+
+```{r}
 mds.cor <- (1 - res.cor) %>%
   cmdscale() %>%
   as_tibble()
@@ -207,10 +225,20 @@ ggscatter(mds.cor, x = "Dim.1", y = "Dim.2",
           repel = TRUE)
 ```
 
-** Perform a PCA on the *mtcars* dataset. Comment the differences with MDS. What are the main differences between MDS and PCA**
+Positive correlated objects are close together on the same side of the plot.
+
+7) **Perform a PCA on the *mtcars* dataset. Comment on the differences with MDS. Recall what are the main differences between MDS and PCA**
+
 ```{r}
 FactoMineR::PCA(mtcars)
 ```
+
+
+Mathematically and conceptually, there are close correspondences between MDS and other methods used to reduce the dimensionality of complex data, such as Principal components analysis (PCA) and factor analysis.
+
+PCA is more focused on the dimensions themselves, and seek to maximize explained variance, whereas MDS is more focused on relations among the scaled objects.
+
+MDS projects n-dimensional data points to a (commonly) 2-dimensional space such that similar objects in the n-dimensional space will be close together on the two dimensional plot, while PCA projects a multidimensional space to the directions of maximum variability using covariance/correlation matrix to analyze the correlation between data points and variables.
 
 ## Pairwise distances between American cities
 
@@ -219,14 +247,18 @@ The **UScitiesD** dataset gives 'straight line' distances between $10$ cities in
 ```{r}
 ?UScitiesD
 cities <- UScitiesD
+cities
 ```
 
 Just looking at the table does not provide any information about the underlying structure of the data (i.e. the position of each city on a map). We are going to apply MDS to recover the geographical structure. 
 
+1) **Run the following code which displays the US map with the $10$ cities we are considering.**
+
 ```{r}
+names <- c("Atlanta GA", "Chicago IL", "Denver CO", "Houston TX", 
+                    "Los Angeles CA", "Miami FL", "New York NY", "San Francisco CA",                                          "Seattle WA", "WASHINGTON DC")
 df <- tibble::as_tibble(us.cities)
-df <- df %>% filter(name %in% c("Atlanta GA", "Chicago IL", "Denver CO", "Houston TX", 
-                                "Los Angeles CA", "Miami FL", "New York NY", "San Francisco CA",                                       "Seattle WA", "WASHINGTON DC"))
+df <- df %>% filter(name %in% names)
 
 usa <- map_data("usa")
 gg1 <- ggplot() + 
@@ -246,6 +278,8 @@ gg1 +
   geom_text_repel(data = labs, aes(x=long , y=lat, label = names), size=3)
 ```
 
+2) **Plot the MDS representation of the pair-wise distances for the $10$ US cities. Comment on the results. Is this the usual US map? Does this somehow contradict the use of MDS for dimensionality reduction?** 
+
 ```{r}
 cities_mds <- cities %>%
   cmdscale() %>%
@@ -253,18 +287,13 @@ cities_mds <- cities %>%
   as_tibble()
 
 colnames(cities_mds) <- c("Dim.1", "Dim.2")
-```
-
-
-```{r}
-cities_mds
-```
-
-
-```{r}
 us.cities.name <- c("Atlanta", "Chicago", "Denver", "Houston", 
                     "LA", "Miami", "NYC", "SF", "Seattle", "DC")
+```
 
+
+
+```{r}
 cities_mds_rev <- cities_mds
 cities_mds_rev$Dim.1 <- -cities_mds$Dim.1
 cities_mds_rev$Dim.2 <- -cities_mds$Dim.2
@@ -281,19 +310,17 @@ ggscatter(cities_mds_rev, x = "Dim.1", y = "Dim.2",
           repel = TRUE)
 ```
 
-
-** Plot the MDS representation of the pair-wise distances for the 10 US cities. Comment on the results. Is this the usual US map? ** 
-
 ```{r}
+#solution 2 (with ggplot)
 p <- ggplot(data = cities_mds) + geom_point(mapping = aes(x=Dim.1 , y=Dim.2), color="yellow", size=8)
 p <- p + geom_text(data = cities_mds, mapping = aes(x=Dim.1 , y=Dim.2), label = us.cities.name, size=3)
 p <- p + labs(title = "MDS representation of pair-wise distances of 21 European cities")
 p
 ```
 
-The cities on the map are not in their expected locations. It seems the map is not only mirrored, but flipped (Australia's point of view in some way). Indeed, this is the proper time to point to this fact that MDS only tries to preserve the inter-object distances,and therefore there is nothing wrong with the map. By operations such as rotation of the map, the distances remain intact. The map must be rotated 180 degrees. It is possible to do so by multiplying the coordinates of each point into -1.
+The cities on the map are not in their expected locations. It seems the map is not only mirrored, but flipped (Australia's point of view). Indeed, this is the proper time to point to the fact that MDS only tries to preserve the inter-object distances, and therefore there is nothing wrong with the map. By operations such as rotation of the map, the distances remain intact. The map must be rotated 180 degrees. It is possible to do so by multiplying the coordinates of each point into -1.
 
-** Solve the issue above by rotating the figure the proper way** 
+3) **Solve the issue above by rotating the figure the proper way.** 
 
 ```{r}
 p <- ggplot(data = cities_mds) + geom_point(mapping = aes(x=-Dim.1 , y=-Dim.2), color="yellow", size=8)
@@ -315,8 +342,8 @@ where $M = \frac 1n \mathbf{1}\mathbf{1}^\top$ and $Z = UD$. Kernel PCA mimics t
 
 ## With Python using reticulate in R
 ```{r}
-library(reticulate) 
-use_virtualenv("r-reticulate")
+library(reticulate)
+use_python("/usr/local/bin/python") 
 reticulate::py_config()
 
 #py_install("sklearn", pip=TRUE) # install package sklearn 
@@ -324,7 +351,7 @@ reticulate::py_config()
 ```
 
 
-Let us start with a simple example of 2 half-moon shapes generated by the [make_moons](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_moons.html)
+Let us start with a simple example of the two half-moon shapes generated by the [make_moons](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_moons.html)
 functions from [sklearn_learn](https://scikit-learn.org/stable/index.html). 
 
 ```{python}
@@ -346,7 +373,7 @@ plt.show()
 ```
 
 
-**Are the two half-moon shapes linearly separable? Do you expect PCA to give satisfactory results? Perform a [PCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html) using sklearn with *n_components*= $1$ and $2$. Comment.** 
+1) **Are the two half-moon shapes linearly separable? Do you expect PCA to give satisfactory results? Perform a [PCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html) using sklearn with *n_components* $=1$ and $2$. Comment.** 
 
 
 ```{python}
@@ -369,10 +396,10 @@ plt.xlabel('PC1')
 plt.show()
 ```
 
-Since the two half-moon shapes are linearly inseparable, we expect that the 'classic' PCA will fail to give us a 'good' representation of the data in 1D space.
+Since the two half-moon shapes are linearly inseparable, we expect the 'classic' PCA to fail giving us a 'good' representation of the data in 1D space.
 As we can see, the resulting principal components do not yield a subspace where the data is linearly separated well.
 
-**Perform a KernelPCA using the [KernelPCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.KernelPCA.html) function from sklearn with the rbf kernel and $\gamma=15$ with both n_components=$1$ and $2$.Comment. Try different values for $\gamma$ and different kernels. Comment.**
+2) **Perform a KernelPCA using the [KernelPCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.KernelPCA.html) function from sklearn with the rbf kernel and $\gamma=15$ with both n_components $=1$ and $2$. Comment. Try different values for $\gamma$ and different kernels. Comment.**
 
 ```{python}
 from sklearn.decomposition import KernelPCA
@@ -417,7 +444,7 @@ plt.show()
 
 ## Concentric circles 
 
-Another well-known example for which linear PCA will fail is the classic case of $2$ concentric circles with random noise produced by scikit-learn???s [make_circles](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html).
+Another well-known example for which linear PCA will fail is the classic case of two concentric circles with random noise: have a look at [make_circles](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html).
 
 ```{python}
 from sklearn.datasets import make_circles
@@ -436,7 +463,7 @@ plt.xlabel('x coordinate')
 plt.show()
 ```
 
-**Perform both a linear and kernel PCA on the [make_circles](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html) dataset**
+3) **Again, perform both a linear and kernel PCA on the [make_circles](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html) dataset**
 
 ## Swiss roll
 
@@ -456,7 +483,7 @@ plt.title('Swiss Roll in 3D')
 plt.show()
 ```
 
-**Again, try to perform both linear and kernel PCA on the [Swiss roll](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_swiss_roll.html) dataset. Try with different values of $\gamma$. Are you satisfied with the results?**
+4) **Again, try to perform both linear and kernel PCA on the [Swiss roll](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_swiss_roll.html) dataset. Try with different values of $\gamma$. Are you satisfied with the results?**
 
 ```{python}
 from sklearn.datasets import make_swiss_roll
@@ -483,7 +510,7 @@ In 2000, Sam T. Roweis and Lawrence K. Saul [Nonlinear dimensionality reduction 
 
 Locally linear embedding (LLE) seeks a lower-dimensional projection of the data which preserves distances within local neighborhoods. It can be thought of as a series of local Principal Component Analyses which are globally compared to find the best non-linear embedding.
 
-**Using the [locally_linear_embedding](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.locally_linear_embedding.html) class, 'unroll' the Swiss roll both in $1$ and $2$ dimensions.**
+5) **Using the [locally_linear_embedding](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.locally_linear_embedding.html) class, 'unroll' the Swiss roll both in $1$ and $2$ dimensions.**
 
 ```{python}
 import numpy as np
