@@ -8,11 +8,17 @@
                & \bx \mapsto \Phi(\bx)
       \end{align*}
     \item Construct $\widetilde{\Phi}$ from $\Rset^{q}$ to $\Rset^{p}$ (\alert{reconstruction formula})
-     \item Control an error between $\bx$ and its reconstruction $\tilde{\Phi}(\Phi(\bx))$, e.g
-      \begin{equation*}
-        \sum_{i=1}^n \left\| \bx_i - \tilde{\Phi}(\Phi(\bx_i)) \right\|^2
-      \end{equation*}
+     \item Control an error $\epsilon$ between $\bx$ and its reconstruction $\hat \bx = \tilde{\Phi}(\Phi(\bx))$
   \end{enumerate}
+
+\bigskip
+
+\onslide<2>{
+    For instance,  the error measured with th Frobenius between the original data matrix $\bX$ and its approximation:
+      \begin{equation*}
+        \epsilon(\bX, \hat \bX ) = \left\| \bX - \hat \bX \right\|_F^2  = \sum_{i=1}^n \left\| \bx_i - \tilde{\Phi}(\Phi(\bx_i)) \right\|^2 
+      \end{equation*}
+}      
 \end{frame}
 
 \begin{frame}
@@ -60,7 +66,7 @@
 
   \vfill
   
-  \begin{block}{Connection with eigen decomposition of the covariance matrix}
+  \begin{block}{Connection with eigen decomposition of the covariance matrix}<2>
     \vspace{-.5cm}
     \begin{align*}
       \mathbf{M}^\top\mathbf{M} & = \mathbf{V} \mathbf{D} \mathbf{U}^\top  \mathbf{U} \mathbf{D} \mathbf{V}^\top \\
@@ -80,7 +86,7 @@
 \end{figure}
 
 Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA can be rephrased as
-\[ \hat{\mathbf{X}^c} = \mathbf{FV}^\top =  \argmin_{\mathbf{F}\in\mathcal{M}_{p,q},\bV\in\mathcal{O}_{p,q} } \left\| \mathbf{X}^c - \mathbf{FV}^\top \right\|_F^2 \text{ with } \|\mathbf{A}\|_F^2 = \sum_{ij} a_{ij}^2, 
+\[ \hat{\mathbf{X}^c} = \mathbf{FV}^\top =  \argmin_{\mathbf{F}\in\mathcal{M}_{n,q},\bV\in\mathcal{O}_{p,q} } \left\| \mathbf{X}^c - \mathbf{FV}^\top \right\|_F^2 \text{ with } \|\mathbf{A}\|_F^2 = \sum_{ij} a_{ij}^2, 
 \]
 \[
   \left. \tilde\bX \in\Rset^{n\times \textcolor{red}{q}}, \mathbf{V}\in\Rset^{p\times \textcolor{red}{q}} \right\} \ \text{Best linear low-rank representation of $\bX$}

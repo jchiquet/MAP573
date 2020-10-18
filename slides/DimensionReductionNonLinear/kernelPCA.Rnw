@@ -5,7 +5,7 @@ library(kernlab)
 \begin{frame}
   \frametitle{Kernel-PCA}
   
-  \begin{block}{Principle: non linear transformation of $\bx$ before PCA} 
+  \begin{block}{Principle: non linear transformation of $\bx$ prior to linear PCA} 
     \begin{enumerate}
       \item Project the data into a higher space where it is linearly separable
       \item Apply PCA to the transformed data 
@@ -15,7 +15,7 @@ library(kernlab)
   \begin{figure}[ht]
     \centering
     \includegraphics[height=4cm]{figures/kernel_trick2}
-    \caption{$\Psi : \bx \to \Psi(\bx)$}
+    \caption{Transformation $\Psi : \bx \to \Psi(\bx)$ (illustration in presence of existing labels)}
   \end{figure}
 
 \end{frame}
@@ -46,7 +46,7 @@ library(kernlab)
 \begin{frame}[fragile]
   \frametitle{Choice of a kernel} 
 
-  A symmetric positive definite function $k(\mathbf{x},\mathbf{y}) \in \Rset$, which depends on the kind of similarity assumed
+  A symmetric positive definite function $k(\mathbf{x},\mathbf{y}) \in \Rset$, which depends on the kind of \alert{\bf similarity} assumed
 
 \begin{block}{Some common kernels}
 
@@ -57,11 +57,11 @@ library(kernlab)
 
 \item  \alert{\bf Gaussian (radial) kernel}
 
-\[k(\bx_i,\bx_{i'}) = exp{\frac {-\left\|\bx_i - \bx_{i'} \right\|^2}{2\sigma^2}}\]
+\[k(\bx_i,\bx_{i'}) = \exp{\frac {-\left\|\bx_i - \bx_{i'} \right\|^2}{2\sigma^2}}\]
 
 \item  \alert{\bf Laplacian kernel}
 
-\[k(\bx_i,\bx_{i'}) = exp{\frac {-\left\|\bx_i - \bx_{i'} \right\|}{\sigma}}\]
+\[k(\bx_i,\bx_{i'}) = \exp{\frac {-\left\|\bx_i - \bx_{i'} \right\|}{\sigma}}\]
 
 \end{itemize}
 \end{block}
@@ -104,7 +104,7 @@ kPCA_laplacedot <- kpca(scRNA_expr, kernel = "laplacedot", features = 2) %>%
 
 \begin{frame}[fragile]
   \frametitle{Example on scRNA} 
-  \framesubtitle{Compare the projection}
+  \framesubtitle{Compare the projections}
 
 <<kPCA scRNA kernel plot, fig.dim=c(10,6.5), out.width='.8\\textwidth'>>=
 rbind(kPCA_linear, kPCA_polydot, kPCA_radial, kPCA_laplacedot) %>% 

@@ -118,17 +118,16 @@ rbind(tSNE_perp2,tSNE_perp10,tSNE_perp100) %>%
 \paragraph{Run the fit}
 
 <<tSNE mollusk perplexity run>>=
-duplicated <- duplicated(mollusk %>% select(-site, -season))
-mollusk_ab <- mollusk %>% select(-site, -season) %>% filter(!duplicated) %>%  as.matrix()
+mollusk_ab <- mollusk %>% select(-site, -season) %>%  as.matrix()
 
 tSNE_perp2   <- Rtsne(mollusk_ab, perplexity =   2)$Y %>% 
-  as.data.frame() %>% add_column(perplexity = 2) %>% add_column(site = mollusk$site[!duplicated])
+  as.data.frame() %>% add_column(perplexity = 2) %>% add_column(site = mollusk_ab$site)
 
 tSNE_perp10  <- Rtsne(log(1 + mollusk_ab), perplexity =  10)$Y %>% 
-  as.data.frame() %>% add_column(perplexity = 10) %>% add_column(site = mollusk$site[!duplicated])
+  as.data.frame() %>% add_column(perplexity = 10) %>% add_column(site = mollusk_ab$site)
 
 tSNE_perp50 <- Rtsne(log(1 + mollusk_ab), perplexity = 50)$Y %>% 
-  as.data.frame() %>% add_column(perplexity = 50) %>% add_column(site = mollusk$site[!duplicated])
+  as.data.frame() %>% add_column(perplexity = 50) %>% add_column(site = mollusk_ab$site)
 @
 
 \paragraph{Compare perplexity}

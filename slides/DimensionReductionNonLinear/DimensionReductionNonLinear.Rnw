@@ -34,12 +34,12 @@
 <<Reconstruction error, child='reconstruction_error_viewpoint.Rnw'>>=
 @
 
-\subsection{Non-negative matrix factorization}
-%<<NMF PCA, child='NMF.Rnw'>>=
-%@
-
 \subsection{Kernel-PCA}
-<<Kernel PCA, child='kernelPCA.Rnw'>>=
+% <<Kernel PCA, child='kernelPCA.Rnw'>>=
+% @
+
+\subsection{Non-negative matrix factorization}
+<<NMF, child='NMF.Rnw'>>=
 @
 
 %% ==========================================================================

@@ -123,10 +123,12 @@ scRNA %>% FactoMineR::PCA(graph = FALSE, quali.sup = which(colnames(scRNA) == "c
 \end{scriptsize}
 \end{block}
 
-<<mollusk load data>>=
-mollusk <- PLNmodels::mollusk$Abundance %>% as_tibble() %>% 
-   add_column(site   = PLNmodels::mollusk$Covariate$site,
-              season = PLNmodels::mollusk$Covariate$season)
+<<mollusk load data, warning=FALSE>>=
+library(PLNmodels); data(mollusk)
+mollusk <- 
+  prepare_data(mollusk$Abundance, mollusk$Covariate[c("season", "site")]) %>% 
+  as_tibble() %>% 
+  distinct() # remove duplicates
 @
 
 \paragraph{External Covariates}
@@ -144,7 +146,8 @@ mollusk %>% dplyr::select(site, season) %>% summary() %>% t() %>% knitr::kable()
 \paragraph{Histogram of raw counts}
 
 <<mollusc abundance>>=
-mollusk %>% dplyr::select(-site, -season) %>% pivot_longer(everything()) %>% 
+mollusk %>% dplyr::select(-site, -season) %>% 
+  pivot_longer(everything()) %>% 
   ggplot() + aes(x = value, fill = name) + geom_histogram(show.legend = FALSE)
 @
 \end{frame}

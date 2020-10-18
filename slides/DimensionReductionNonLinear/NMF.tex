@@ -1,0 +1,102 @@
+
+
+
+This section gives a formal definition for Nonnegative Matrix Factorization problems, and defines the notations used throughout the vignette. 
+
+Let $X$ be a $n \times p$ non-negative matrix, (i.e with $x_{ij} \geq 0$,
+denoted $X \geq 0$), and $r > 0$ an integer. Non-negative Matrix Factorization (NMF) consists in finding an approximation
+\begin{equation}
+X \approx W H\ , \label{NMFstd}
+\end{equation}
+where $W, H$ are $n\times r$ and $r \times p$ non-negative matrices, respectively. 
+In practice, the factorization rank $r$ is often chosen such that $r \ll \min(n, p)$. 
+The objective behind this choice is to summarize and split the information contained in $X$ into $r$ factors: the columns of $W$. 
+
+Depending on the application field, these factors are given different names: basis images, metagenes, source signals. In this vignette we equivalently and alternatively use the terms 
+\emph{basis matrix} or \emph{metagenes} to refer to matrix $W$, and \emph{mixture coefficient matrix} and \emph{metagene expression profiles} to refer to matrix $H$.
+
+The main approach to NMF is to estimate matrices $W$ and $H$ as a local minimum:
+\begin{equation}
+\min_{W, H \geq 0}\ \underbrace{[D(X, WH) + R(W, H)]}_{=F(W,H)} \label{nmf_min}
+\end{equation}
+where 
+
+\begin{itemize}
+\item $D$ is a loss function that measures the quality of the approximation. 
+Common loss functions are based on either the Frobenius distance 
+$$D: A,B\mapsto \frac{Tr(AB^t)}{2} = \frac{1}{2} \sum_{ij} (a_{ij} - b_{ij})^2,$$
+or the Kullback-Leibler divergence.
+$$D: A,B\mapsto KL(A||B) = \sum_{i,j} a_{ij} \log \frac{a_{ij}}{b_{ij}} - a_{ij} + b_{ij}.$$
+\item $R$ is an optional regularization function, defined to enforce desirable
+properties on matrices $W$ and $H$, such as smoothness or sparsity
+\cite{Cichocki2008}.
+\end{itemize}
+
+\begin{frame}
+  \frametitle{Non-negative Matrix Factorization -- NMF}
+
+  \begin{block}{NMF Model}
+    Assume that $\bX$ contains only non-negative entries (i.e. \geq 0).
+    \begin{align*}
+      \Phi(\bx) & = \bV^\top(\bx-\bmu)  = \tilde\bx \\  
+      \bx \simeq \tilde{\Phi}(\tilde\bx) & = \bmu + \bV \tilde\bx
+    \end{align*}
+    \rsa Model with \alert{\bf Linear assumption + non-negativity constraints on both $\bV$ and $\tilde\bx$}
+  \end{block}
+
+  \begin{block}{NMF reconstruction errors: several choice}
+    \begin{itemize}
+    \item Least-square loss (distance measured by Frobenius norm)
+    \[ \hat{\mathbf{X}}^{\text{ls}} = \mathbf{FV}^\top =  \argmin_{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q},\mathbf{F}\in\mathcal{M}(\Rset_+)_{p,q}} \left\|     \mathbf{X} - \mathbf{FV}^\top \right\|_F^2, 
+\]
+    \item Kullback-Leibler divergence ("distance" between distribution)
+    \[ \hat{\mathbf{X}}^{\text{kl}} = \mathbf{FV}^\top =  \argmin_{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q},\mathbf{F}\in\mathcal{M}(\Rset_+)_{p,q}} \sum_{ij} x_{ij} \log(\frac{x_{ij}{F_{i.}^\top \bV_{.j}}}) - x_{ij} + F_{i.}^\top \bV_{.j}}, 
+\]
+    \end{itemize}
+  \end{block}
+  
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Example on 'mollusk'} 
+
+\paragraph{Run the fit}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{nmf_KL} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}
+  \hlkwd{nmf}\hlstd{(}\hlkwc{rank} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{method} \hlstd{=} \hlstr{'brunet'}\hlstd{)} \hlopt{%>%} \hlkwd{basis}\hlstd{()} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{algo} \hlstd{=} \hlstr{"KL"}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mollusk \%>\% select(-site, -season) \%>\% nmf(rank = 2, method = "{}brunet"{}) \%>\% : could not find function "{}\%>\%"{}}}\begin{alltt}
+\hlstd{nmf_LS} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}
+  \hlkwd{nmf}\hlstd{(}\hlkwc{rank} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{method} \hlstd{=} \hlstr{'lee'}\hlstd{)} \hlopt{%>%} \hlkwd{basis}\hlstd{()} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{algo} \hlstd{=} \hlstr{"LS"}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mollusk \%>\% select(-site, -season) \%>\% nmf(rank = 2, method = "{}lee"{}) \%>\% : could not find function "{}\%>\%"{}}}\end{kframe}
+\end{knitrout}
+
+\paragraph{Compare algorithms}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{rbind}\hlstd{(nmf_KL, nmf_LS)} \hlopt{%>%}
+  \hlkwd{ggplot}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= V1,} \hlkwc{y} \hlstd{= V2,} \hlkwc{color} \hlstd{= site))} \hlopt{+}
+     \hlkwd{geom_point}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{1.25}\hlstd{)} \hlopt{+}
+     \hlkwd{guides}\hlstd{(}\hlkwc{colour} \hlstd{=} \hlkwd{guide_legend}\hlstd{(}\hlkwc{override.aes} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{6}\hlstd{)))} \hlopt{+}
+  \hlkwd{facet_wrap}\hlstd{(.}\hlopt{~}\hlstd{algo,} \hlkwc{scales} \hlstd{=} \hlstr{'free'}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in rbind(nmf\_KL, nmf\_LS) \%>\% ggplot(aes(x = V1, y = V2, color = site)): could not find function "{}\%>\%"{}}}\end{kframe}
+\end{knitrout}
+
+\end{frame}
+
+

@@ -1,120 +1,65 @@
 <<echo = FALSE, warning=FALSE, message=FALSE>>=
-library(kernlab)
+library(NMF)
 @
 
-\begin{frame}
-  \frametitle{Kernel-PCA}
-
-Other constrains on weigths $\bU$ or loadings $\mathbf{F}$
-  
-  \begin{block}{Principle} 
-    \begin{enumerate}
-      \item Project the data into a higher space where it is linearly separable
-      \item Apply PCA to the transformed data 
-    \end{enumerate}
-  \end{block}
-
-  \begin{figure}[ht]
-    \centering
-    \includegraphics[height=4cm]{figures/kernel_trick2}
-    \caption{$\Psi : \bx \to \Psi(\bx)$}
-  \end{figure}
-
-\end{frame}
+% The main approach to NMF is to estimate matrices $W$ and $H$ as a local minimum:
+% \begin{equation}
+% \min_{W, H \geq 0}\ \underbrace{[D(X, WH) + R(W, H)]}_{=F(W,H)} \label{nmf_min}
+% \end{equation}
+% where 
+% \begin{itemize}
+% \item $D$ is a loss function that measures the quality of the approximation. 
+% \end{itemize}
 
 \begin{frame}
-  \frametitle{Kernel-PCA}
+  \frametitle{Non-negative Matrix Factorization -- NMF}
 
-  \begin{block}{Kernel PCA Model}
-    Assume a non linear transformation
-    \[ \Psi(\mathbf{x}_i) \text{ where } \Psi : \mathbb{R}^p \to \mathbb{R}^n, \]
-    
-    Then perform linear PCA, with $\bV$ a $p\times q$ orthonormal matrix
+  \begin{block}{NMF Model}
+    Assume that $\bX$ contains only non-negative entries (i.e. \geq 0).
     \begin{align*}
-      \Phi(\bx) & = \Psi(\bx-\bmu)^\top \bV = \mathbf{f} \\  
-      \bx \simeq \tilde{\Phi}(\mathbf{f}) & = \bmu + \mathbf{f} \bV^\top
+      \Phi(\bx) & = \bV^\top(\bx-\bmu)  = \tilde\bx \\  
+      \bx \simeq \tilde{\Phi}(\tilde\bx) & = \bmu + \bV \tilde\bx
     \end{align*}
-    \rsa Model with \alert{\bf Linear assumption + ortho-normality constraints}
-
-    \begin{equation*}
-        \Psi(\bx - \bmu) \simeq  \bV  \tilde \bx 
-      \end{equation*}
-   \end{block}
-
-\begin{block}{Kernel trick}
-  Assume an underlying transformation
-  \[ \Psi(\mathbf{x}_i) \text{ where } \Psi : \mathbb{R}^p \to \mathbb{R}^n, \]
-    which is never calculated thanks to the kernel trick:
-  \[K = k(\mathbf{x},\mathbf{y}) = (\Psi(\mathbf{x}),\Psi(\mathbf{y})) = \Psi(\mathbf{x})^T\Psi(\mathbf{y})\]
-\end{block}
-
-  Kernel PCA suffers from the choice of the Kernel to correctly
-
-  \begin{block}{PCA model}
-       Let $\bV$ be a $p\times q$ matrix whose columns are of $q$ orthonormal vectors.
-      \begin{align*}
-        \Phi(\bx) & = (\bx-\bmu)^\top \bV = \mathbf{f} \\  
-        \bx \simeq \tilde{\Phi}(\mathbf{f}) & = \bmu + \mathbf{f} \bV^\top
-      \end{align*}
-      \rsa Model with \alert{\bf Linear assumption + ortho-normality constraints}
-    \end{block}
-
-  \begin{block}{Kernel-PCA reconstruction error}
-    \vspace{-.25cm}
-    \begin{equation*}
-      \minimize_{\bmu \in\Rset^p, \bV\in\mathcal{O}_{p,q}} \sum_{i=1}^n \left\| \bx_i  - ( \bmu + ( \bx_i -\bmu) \bV \bV^\top \right\|^2
-    \end{equation*}
-  
-  \alert{Solution} 
-  \begin{itemize}
-  \item $\bmu = \bar{\bx}$ the empirical mean
-  \item $\bV$  an orthonormal basis of the space spanned by the $q$ first eigenvectors of the empirical covariance matrix
-  \end{itemize}
-  
+    \rsa Model with \alert{\bf Linear assumption + non-negativity constraints on both $\bV$ and $\tilde\bx$}
   \end{block}
+
+%   \begin{block}{NMF reconstruction errors: several choice}
+%     \begin{itemize}
+%     \item Least-square loss (distance measured by Frobenius norm)
+%     \[ \hat{\mathbf{X}}^{\text{ls}} = \mathbf{FV}^\top =  \argmin_{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q},\mathbf{F}\in\mathcal{M}(\Rset_+)_{p,q}} \left\|     \mathbf{X} - \mathbf{FV}^\top \right\|_F^2, 
+% \]
+%     \item Kullback-Leibler divergence ("distance" between distribution)
+%     \[ \hat{\mathbf{X}}^{\text{kl}} = \mathbf{FV}^\top =  \argmin_{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q},\mathbf{F}\in\mathcal{M}(\Rset_+)_{p,q}} \sum_{ij} x_{ij} \log(\frac{x_{ij}}{F_{i.}^\top \bV_{.j}}) - x_{ij} + F_{i.}^\top \bV_{.j}, 
+% \]
+%     \end{itemize}
+%   \end{block}
+  
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Example on scRNA} 
-  \framesubtitle{Run the fit}
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Example on 'mollusk'} 
 
-<<kPCA scRNA kernel run>>=
-scRNA_expr <- scRNA %>% select(-cell_type) %>% as.matrix()
+\paragraph{Run the fit}
 
-kPCA_radial <- 
-  kpca(scRNA_expr, kernel = "rbfdot", features = 2, kpar = list(sigma = 0.5)) %>% 
-  pcv() %>% as.data.frame() %>% 
-  add_column(kernel = "Radial") %>% 
-  add_column(cell_type = scRNA$cell_type)
-
-kPCA_linear <-
-  kpca(scRNA_expr, kernel = "vanilladot", features = 2, kpar = list()) %>% 
-  pcv() %>% as.data.frame() %>% 
-  add_column(kernel = "Linear") %>% 
-  add_column(cell_type = scRNA$cell_type)
-
-kPCA_polydot <- kpca(scRNA_expr, kernel = "polydot", features = 2, kpar = list(degree = 3)) %>% 
-  pcv() %>% as.data.frame() %>% 
-  add_column(kernel = "Polynomial") %>% 
-  add_column(cell_type = scRNA$cell_type)
-
-kPCA_laplacedot <- kpca(scRNA_expr, kernel = "laplacedot", features = 2) %>% 
-  pcv() %>% as.data.frame() %>% 
-  add_column(kernel = "Laplace") %>% 
-  add_column(cell_type = scRNA$cell_type)
+<<NMF mollusk fit>>=
+nmf_KL <- mollusk %>% select(-site, -season) %>% 
+  nmf(rank = 2, method = 'brunet') %>% basis() %>%
+  as.data.frame() %>% add_column(algo = "KL") %>% add_column(site = mollusk$site)
+nmf_LS <- mollusk %>% select(-site, -season) %>% 
+  nmf(rank = 2, method = 'lee') %>% basis() %>%
+  as.data.frame() %>% add_column(algo = "LS") %>% add_column(site = mollusk$site)
 @
-\end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Example on scRNA} 
-  \framesubtitle{Compare the projection}
+\paragraph{Compare algorithms}
 
-<<kPCA scRNA kernel plot, fig.dim=c(10,6.5), out.width='.8\\textwidth'>>=
-rbind(kPCA_linear, kPCA_polydot, kPCA_radial, kPCA_laplacedot) %>% 
-  ggplot(aes(x = V1, y = V2, color = cell_type)) +
-  geom_point(size=1.25) + guides(colour = guide_legend(override.aes = list(size=6))) +
-  facet_wrap(.~kernel, scales = 'free') + labs(x = '', y = '')
+<<NMF mollusk algo plot, fig.dim=c(10,5), out.width='\\textwidth'>>=
+rbind(nmf_KL, nmf_LS) %>% 
+  ggplot(aes(x = V1, y = V2, color = site)) +
+     geom_point(size=1.25) +
+     guides(colour = guide_legend(override.aes = list(size=6))) +
+  facet_wrap(.~algo, scales = 'free')
 @
 
 \end{frame}
+
 
