@@ -2,15 +2,6 @@
 library(NMF)
 @
 
-% The main approach to NMF is to estimate matrices $W$ and $H$ as a local minimum:
-% \begin{equation}
-% \min_{W, H \geq 0}\ \underbrace{[D(X, WH) + R(W, H)]}_{=F(W,H)} \label{nmf_min}
-% \end{equation}
-% where 
-% \begin{itemize}
-% \item $D$ is a loss function that measures the quality of the approximation. 
-% \end{itemize}
-
 \begin{frame}
   \frametitle{Non-negative Matrix Factorization -- NMF}
   
@@ -78,7 +69,23 @@ rbind(nmf_KL, nmf_LS) %>%
 
 
 \begin{frame}[fragile,allowframebreaks]
-  \frametitle{NMF: limitation/caveats}
+  \frametitle{NMF: limitation}
+
+  \begin{block}{Caveats}  
+    \begin{itemize}
+      \item Basis $\bV$ formed by standard NMF is not orthogonal!
+      \item Visualization is questionable \dots
+      \item Used to performed matrix factorization rather than exploratory analysis
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Other model-based approaches}
+    Use a probabilistic-based model to better described non-negative data
+    \begin{itemize}
+      \item add Zero-inflation, Poisson-lognormal model, Poisson  
+    \end{itemize}
+  \end{block}
+  
 
 \end{frame}
 

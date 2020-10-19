@@ -30,7 +30,7 @@
 
 \section{Motivated by reconstruction error}
 
-\subsection{General goal}
+\subsection{PCA as a matrix factorization}
 <<Reconstruction error, child='reconstruction_error_viewpoint.Rnw'>>=
 @
 
@@ -42,9 +42,9 @@
 <<NMF, child='NMF.Rnw'>>=
 @
 
-%% ==========================================================================
-\subsection{Auto-Encoder}
-%% ==========================================================================
+\subsection{Other directions}
+<<others reconstruction, child='others_reconstruction.Rnw'>>=
+@
 
 % %% ==========================================================================
 % \subsection{Graph-based Kernel-PCA}
