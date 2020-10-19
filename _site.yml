@@ -72,10 +72,10 @@ navbar:
           href: homework_2_data_manipulation_representation_correction.html
         - text: "Data analysis with PCA"
           href: homework_3_PCA.html
-        - text: "Report for lab #2"
-#          href: .html
+        - text: "Non-linear dimension reduction method"
+          href: homework_4_dim_reduc_non_linear.html
         - text: "Spectral Clustering for graphs"
-#          href: homework_4_GraphPartitioning.html
+#          href: homework_5_GraphPartitioning.html
         - text: "Handling Missing Values"
 #          href: .html
     - text: "Projects"

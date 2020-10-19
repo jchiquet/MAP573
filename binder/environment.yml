@@ -12,8 +12,10 @@ dependencies:
   - r-base=3.6.3
   - r-corrplot
   - r-devtools
+  - r-dimred
   - r-dt
   - r-codetools
+  - r-cluster
   - r-foreign
   - r-ggally
   - r-igraph
@@ -21,6 +23,7 @@ dependencies:
   - r-learnr
   - r-matrix
   - r-maps
+  - r-mnormt
   - r-readods
   - r-rcpp
   - r-rcpparmadillo
