@@ -219,13 +219,13 @@ We will use the R library "reticulate" to articulate Python and R code. We will 
 Please modify the following code in accordance with your configuration and run it. 
 
 ```{r exo2_question2_config_reticulate}
-use_python("/usr/local/bin/python") #TODO : change this line if needed 
+reticulate::use_virtualenv("r-reticulate")
 reticulate::py_config() #Check your config
 ```
 
 Then load the python modules we are going to use. Please install them locally before if you have not done it already. You can use "pip install name_module" in your terminal for instance. 
 
-```{python exo2_question2_import_modules}
+```{python exo2_question2_import_modules, eval = FALSE}
 import torch
 import torch.nn as nn
 import torch.optim as optim
