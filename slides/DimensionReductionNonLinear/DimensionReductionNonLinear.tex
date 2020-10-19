@@ -336,9 +336,9 @@ spreaded in 11 cell-lines. Original transcription data are measured by counts ob
 \hline
   &  &  &  &  &  &  & \\
 \hline
-site & Negria1  :24 & Negria2  :24 & Pecheurs1:24 & Pecheurs2:24 & GGravier3:22 & GGravier1:21 & (Other)  :24\\
+site & Negria1  :24 & Negria2  :24 & Pecheurs1:24 & Pecheurs2:23 & GGravier1:21 & GGravier3:18 & (Other)  :24\\
 \hline
-season & automn:41 & spring:44 & summer:44 & winter:34 & NA & NA & NA\\
+season & automn:41 & spring:43 & summer:44 & winter:30 & NA & NA & NA\\
 \hline
 \end{tabular}
 
@@ -378,9 +378,9 @@ season & automn:41 & spring:44 & summer:44 & winter:34 & NA & NA & NA\\
 \hlstd{mollusk} \hlopt{%>%} \hlkwd{PCA}\hlstd{(}\hlkwc{graph} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{quali.sup} \hlstd{=} \hlkwd{which}\hlstd{(}\hlkwd{map_lgl}\hlstd{(mollusk, is.factor)))} \hlopt{%>%}
   \hlkwd{fviz_pca_biplot}\hlstd{(}\hlkwc{select.var} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{contrib} \hlstd{=} \hlnum{5}\hlstd{),} \hlkwc{habillage} \hlstd{=} \hlstr{"site"}\hlstd{)}
 \end{alltt}
-\end{kframe}
-\includegraphics[width=.8\textwidth]{figures/mollusk_PCA-1} 
 
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in dimnames(x) <- dn: length of 'dimnames' [2] not equal to array extent}}\end{kframe}
 \end{knitrout}
 
 \end{frame}
@@ -605,27 +605,39 @@ Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA ca
 
 \begin{frame}
   \frametitle{Non-negative Matrix Factorization -- NMF}
-
-  \begin{block}{NMF Model}
-    Assume that $\bX$ contains only non-negative entries (i.e. \geq 0).
+  
+  \begin{block}{Setup}
+  Assume that $\bX$ contains only non-negative entries (i.e. $\geq 0$).
+  \end{block}
+  
+  \begin{block}{Model}
+   \alert{\bf Linear assumption + non-negativity constraints on both $\bV$ and $\tilde\bx$}
     \begin{align*}
       \Phi(\bx) & = \bV^\top(\bx-\bmu)  = \tilde\bx \\  
       \bx \simeq \tilde{\Phi}(\tilde\bx) & = \bmu + \bV \tilde\bx
     \end{align*}
-    \rsa Model with \alert{\bf Linear assumption + non-negativity constraints on both $\bV$ and $\tilde\bx$}
   \end{block}
 
-%   \begin{block}{NMF reconstruction errors: several choice}
-%     \begin{itemize}
-%     \item Least-square loss (distance measured by Frobenius norm)
-%     \[ \hat{\mathbf{X}}^{\text{ls}} = \mathbf{FV}^\top =  \argmin_{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q},\mathbf{F}\in\mathcal{M}(\Rset_+)_{p,q}} \left\|     \mathbf{X} - \mathbf{FV}^\top \right\|_F^2, 
-% \]
-%     \item Kullback-Leibler divergence ("distance" between distribution)
-%     \[ \hat{\mathbf{X}}^{\text{kl}} = \mathbf{FV}^\top =  \argmin_{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q},\mathbf{F}\in\mathcal{M}(\Rset_+)_{p,q}} \sum_{ij} x_{ij} \log(\frac{x_{ij}}{F_{i.}^\top \bV_{.j}}) - x_{ij} + F_{i.}^\top \bV_{.j}, 
-% \]
-%     \end{itemize}
-%   \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{NMF reconstruction errors}
   
+  Build $\hat{\mathbf{X}} = \mathbf{FV}^\top$ to minimize a distance $D(\hat{\mathbf{X}}, \mathbf{X})$.
+  
+  \begin{block}{Several choice}
+    \begin{itemize}
+    \item Least-square loss (distance measured by Frobenius norm)
+    \[ \hat{\mathbf{X}}^{\text{ls}} =  \argmin_{\substack{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q}\\\mathbf{V}\in\mathcal{M}(\Rset_+)_{p,q}}} \left\|     \mathbf{X} - \mathbf{FV}^\top \right\|_F^2,
+\]
+    \item Kullback-Leibler divergence ("distance" between distribution)
+    \begin{align*}
+    \hat{\mathbf{X}}^{\text{kl}} & =  \argmin_{\substack{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q}\\ \mathbf{V}\in\mathcal{M}(\Rset_+)_{p,q}}} \sum_{i,j} x_{ij} \log(\frac{x_{ij}}{(\bF\bV^\top)_{ij}) + (\bF\bV^\top)_{ij} \\
+    & = \argmax_{\substack{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q}\\ \mathbf{V}\in\mathcal{M}(\Rset_+)_{p,q}}} \sum_{i,j} x_{ij} \log((\bF\bV^\top)_{ij}) - (\bF\bV^\top)_{ij},
+    \end{align*}
+  the latter expression corresponding to the log-likelihood of a Poisson distribution with mean $(\bF\bV^\top)_{ij}$.
+    \end{itemize}
+  \end{block}
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]
@@ -810,22 +822,14 @@ $$
 
 \hlstd{tSNE_perp2}   \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(scRNA_expr,} \hlkwc{perplexity} \hlstd{=}   \hlnum{2}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
   \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{2}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
-\end{alltt}
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in Rtsne(scRNA\_expr, perplexity = 2): could not find function "{}Rtsne"{}}}\begin{alltt}
 \hlstd{tSNE_perp10}  \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(scRNA_expr,} \hlkwc{perplexity} \hlstd{=}  \hlnum{10}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
   \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{10}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
-\end{alltt}
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in Rtsne(scRNA\_expr, perplexity = 10): could not find function "{}Rtsne"{}}}\begin{alltt}
 \hlstd{tSNE_perp100} \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(scRNA_expr,} \hlkwc{perplexity} \hlstd{=} \hlnum{100}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
   \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{100}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in Rtsne(scRNA\_expr, perplexity = 100): could not find function "{}Rtsne"{}}}\end{kframe}
+\end{kframe}
 \end{knitrout}
 
 \paragraph{Compare perplexity}
@@ -839,9 +843,9 @@ $$
      \hlkwd{guides}\hlstd{(}\hlkwc{colour} \hlstd{=} \hlkwd{guide_legend}\hlstd{(}\hlkwc{override.aes} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{6}\hlstd{)))} \hlopt{+}
   \hlkwd{facet_wrap}\hlstd{(.}\hlopt{~}\hlstd{perplexity,} \hlkwc{scales} \hlstd{=} \hlstr{'free'}\hlstd{)}
 \end{alltt}
+\end{kframe}
+\includegraphics[width=\textwidth]{figures/tSNE_scRNA_perplexity_plot-1} 
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in rbind(tSNE\_perp2, tSNE\_perp10, tSNE\_perp100): object 'tSNE\_perp2' not found}}\end{kframe}
 \end{knitrout}
 
 \end{frame}
@@ -861,19 +865,19 @@ $$
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in Rtsne(mollusk\_ab, perplexity = 2): could not find function "{}Rtsne"{}}}\begin{alltt}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mollusk\_ab\$site: \$ operator is invalid for atomic vectors}}\begin{alltt}
 \hlstd{tSNE_perp10}  \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(}\hlkwd{log}\hlstd{(}\hlnum{1} \hlopt{+} \hlstd{mollusk_ab),} \hlkwc{perplexity} \hlstd{=}  \hlnum{10}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
   \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{10}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk_ab}\hlopt{$}\hlstd{site)}
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in Rtsne(log(1 + mollusk\_ab), perplexity = 10): could not find function "{}Rtsne"{}}}\begin{alltt}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mollusk\_ab\$site: \$ operator is invalid for atomic vectors}}\begin{alltt}
 \hlstd{tSNE_perp50} \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(}\hlkwd{log}\hlstd{(}\hlnum{1} \hlopt{+} \hlstd{mollusk_ab),} \hlkwc{perplexity} \hlstd{=} \hlnum{50}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
   \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{50}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk_ab}\hlopt{$}\hlstd{site)}
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in Rtsne(log(1 + mollusk\_ab), perplexity = 50): could not find function "{}Rtsne"{}}}\end{kframe}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mollusk\_ab\$site: \$ operator is invalid for atomic vectors}}\end{kframe}
 \end{knitrout}
 
 \paragraph{Compare perplexity}
@@ -889,19 +893,14 @@ $$
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in rbind(tSNE\_perp2, tSNE\_perp10, tSNE\_perp50): object 'tSNE\_perp2' not found}}\end{kframe}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(quote(list(...)), env): object 'tSNE\_perp50' not found}}\end{kframe}
 \end{knitrout}
 
 \end{frame}
 
 \subsection{UMAP}
 
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in library(umap): there is no package called 'umap'}}\end{kframe}
-\end{knitrout}
 
 \begin{frame}{Uniform Manifold Approximation and Projection \cite{mcinnes2018umap} }
 
@@ -927,9 +926,7 @@ $$
 \hlstd{umap_fit}   \hlkwb{<-} \hlkwd{umap}\hlstd{(scRNA_expr)}\hlopt{$}\hlstd{layout} \hlopt{%>%}
   \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in umap(scRNA\_expr): could not find function "{}umap"{}}}\end{kframe}
+\end{kframe}
 \end{knitrout}
 
 \paragraph{Visualization}
@@ -942,9 +939,9 @@ $$
      \hlkwd{geom_point}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{1.25}\hlstd{)} \hlopt{+}
      \hlkwd{guides}\hlstd{(}\hlkwc{colour} \hlstd{=} \hlkwd{guide_legend}\hlstd{(}\hlkwc{override.aes} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{6}\hlstd{)))}
 \end{alltt}
+\end{kframe}
+\includegraphics[width=\textwidth]{figures/plot-1} 
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(lhs, parent, parent): object 'umap\_fit' not found}}\end{kframe}
 \end{knitrout}
 
 \end{frame}
@@ -959,12 +956,16 @@ $$
 \begin{alltt}
 \hlstd{duplicated} \hlkwb{<-} \hlkwd{duplicated}\hlstd{(mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season))}
 \hlstd{mollusk_ab} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%} \hlkwd{filter}\hlstd{(}\hlopt{!}\hlstd{duplicated)} \hlopt{%>%}  \hlkwd{as.matrix}\hlstd{()}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: Problem with `filter()` input `..1`.\\\#\# x Input `..1` must be of size 158 or 1, not size 5056.\\\#\# i Input `..1` is `!duplicated`.}}\begin{alltt}
 \hlstd{umap_fit}   \hlkwb{<-} \hlkwd{umap}\hlstd{(mollusk_ab)}\hlopt{$}\hlstd{layout} \hlopt{%>%}
   \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site[}\hlopt{!}\hlstd{duplicated])}
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in umap(mollusk\_ab): could not find function "{}umap"{}}}\end{kframe}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: New columns must be compatible with `.data`.\\\#\# x New column has 575 rows.\\\#\# i `.data` has 158 rows.}}\end{kframe}
 \end{knitrout}
 
 \paragraph{Visualization}
@@ -979,7 +980,9 @@ $$
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(lhs, parent, parent): object 'umap\_fit' not found}}\end{kframe}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in FUN(X[[i]], ...): object 'site' not found}}\end{kframe}
+\includegraphics[width=\textwidth]{figures/UMAP_mollusk_plot-1} 
+
 \end{knitrout}
 
 \end{frame}
