@@ -2,7 +2,7 @@
 title: 'Homework #3'
 subtitle: 'PCA for visualization, compression and exploratory analyses'
 author: 'MAP573 team'
-date: "`r Sys.Date()`"
+date: "13/20/2020"
 ---
 
 ```{r setup, include=FALSE}

@@ -2,8 +2,7 @@
 title: 'Homework #2'
 subtitle: 'Data manipulation and representation'
 author: "MAP573 team"
-date: "`r Sys.Date()`"
-output: html_document
+date: "09/29/2020"
 ---
 
 ```{r setup, include=FALSE}

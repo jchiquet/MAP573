@@ -2,7 +2,6 @@
 title: 'Tutorial: nonlinear dimensionality reduction methods'
 author: 'MAP573 team'
 date: "10/20/2020"
-output: html_document
 ---
 
 # Preliminaries

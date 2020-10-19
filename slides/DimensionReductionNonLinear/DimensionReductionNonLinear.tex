@@ -616,6 +616,11 @@ Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA ca
       \Phi(\bx) & = \bV^\top(\bx-\bmu)  = \tilde\bx \\  
       \bx \simeq \tilde{\Phi}(\tilde\bx) & = \bmu + \bV \tilde\bx
     \end{align*}
+
+  For the whole data matrix $\bX$,
+  \[
+    \hat{\bX} = \mathbf{1}_n \bmu^\top   + \underbrace{\tilde\bX}_{\mathbf{F}, \text{ the factors}} \bV^\top 
+  \]
   \end{block}
 
 \end{frame}
@@ -623,21 +628,18 @@ Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA ca
 \begin{frame}[fragile]
   \frametitle{NMF reconstruction errors}
   
-  Build $\hat{\mathbf{X}} = \mathbf{FV}^\top$ to minimize a distance $D(\hat{\mathbf{X}}, \mathbf{X})$.
-  
-  \begin{block}{Several choice}
+  Build $\hat{\mathbf{X}} = \mathbf{FV}^\top$ to minimize a distance $D(\hat{\mathbf{X}}, \mathbf{X})$! \alert{Several choice, e.g:}
     \begin{itemize}
     \item Least-square loss (distance measured by Frobenius norm)
     \[ \hat{\mathbf{X}}^{\text{ls}} =  \argmin_{\substack{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q}\\\mathbf{V}\in\mathcal{M}(\Rset_+)_{p,q}}} \left\|     \mathbf{X} - \mathbf{FV}^\top \right\|_F^2,
 \]
     \item Kullback-Leibler divergence ("distance" between distribution)
     \begin{align*}
-    \hat{\mathbf{X}}^{\text{kl}} & =  \argmin_{\substack{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q}\\ \mathbf{V}\in\mathcal{M}(\Rset_+)_{p,q}}} \sum_{i,j} x_{ij} \log(\frac{x_{ij}}{(\bF\bV^\top)_{ij}) + (\bF\bV^\top)_{ij} \\
-    & = \argmax_{\substack{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q}\\ \mathbf{V}\in\mathcal{M}(\Rset_+)_{p,q}}} \sum_{i,j} x_{ij} \log((\bF\bV^\top)_{ij}) - (\bF\bV^\top)_{ij},
+    \hat{\mathbf{X}}^{\text{kl}} & =  \argmin_{\substack{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q}\\ \mathbf{V}\in\mathcal{M}(\Rset_+)_{p,q}}} \sum_{i,j} x_{ij} \log(\frac{x_{ij}}{(\mathbf{F}\bV^\top)_{ij}}) + (\mathbf{F}\bV^\top)_{ij} \\
+    & = \argmax_{\substack{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q}\\ \mathbf{V}\in\mathcal{M}(\Rset_+)_{p,q}}} \sum_{i,j} x_{ij} \log((\mathbf{F}\bV^\top)_{ij}) - (\mathbf{F}\bV^\top)_{ij},\\
     \end{align*}
-  the latter expression corresponding to the log-likelihood of a Poisson distribution with mean $(\bF\bV^\top)_{ij}$.
+    \rsa log-likelihood of a Poisson distribution with mean $(\mathbf{F}\bV^\top)_{ij}$.
     \end{itemize}
-  \end{block}
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]

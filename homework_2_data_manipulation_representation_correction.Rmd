@@ -2,7 +2,7 @@
 title: 'Homework #2: correction'
 subtitle: 'Data manipulaion and representation'
 author: "MAP573 team"
-date: "`r Sys.Date()`"
+date: "09/29/2020"
 ---
 
 ```{r setup, include=FALSE}
