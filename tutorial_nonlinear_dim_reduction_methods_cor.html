@@ -573,7 +573,9 @@ div.tocify {
     <li>
       <a href="tutorial_PCA_correction.html">PCA</a>
     </li>
-    <li class="dropdown-header">MDS, kernek-PCA</li>
+    <li>
+      <a href="tutorials_nonlinear_dim_reduction_methods.html">MDS, kernel-PCA</a>
+    </li>
     <li class="dropdown-header">Clustering</li>
     <li class="dropdown-header">GGM and EM</li>
   </ul>
@@ -596,7 +598,9 @@ div.tocify {
     <li>
       <a href="homework_3_PCA.html">Data analysis with PCA</a>
     </li>
-    <li class="dropdown-header">Report for lab #2</li>
+    <li>
+      <a href="homework_4_dim_reduc_non_linear.html">Non-linear dimension reduction method</a>
+    </li>
     <li class="dropdown-header">Spectral Clustering for graphs</li>
     <li class="dropdown-header">Handling Missing Values</li>
   </ul>
@@ -649,9 +653,9 @@ div.tocify {
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)  <span class="co"># Fancy plotting of FactoMineR outputs</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)    <span class="co"># Fancy plotting of matrices </span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)      <span class="co"># Easy-to-use ggplot2 extensions</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(maps)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)      <span class="co"># Easy-to-use ggplot2 exentesions</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(maps)        <span class="co"># Draw Geographical Maps</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)     <span class="co"># Automatically Position Non-Overlapping Text Labels with ggplot</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>()) <span class="co"># set default ggplot2 theme to black and white</span></span></code></pre></div>
 <div id="reminders-on-multidimensional-scaling-mds" class="section level3">
 <h3>Reminders on Multidimensional scaling (MDS)</h3>
@@ -692,10 +696,12 @@ div.tocify {
 <p><strong>sammon()</strong> [MASS package]: Compute Sammon’s non-linear mapping (one form of non-metric MDS).</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>?<span class="fu">sammon</span>()</span></code></pre></div>
 <p>All of these functions take a distance object as main argument and a number <span class="math inline">\(k\)</span> corresponding to the desired number of dimensions in the scaled output.</p>
-</div>
-<div id="classical-mds" class="section level2">
-<h2>Classical MDS</h2>
+<div id="classical-mds" class="section level3">
+<h3>Classical MDS</h3>
 <p>We consider the <strong>swiss</strong> data that contains fertility and socio-economic data on 47 French speaking provinces in Switzerland.</p>
+<ol style="list-style-type: decimal">
+<li><strong>Start by loading the <em>swiss</em> package and have a quick look at it.</strong></li>
+</ol>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;swiss&quot;</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>swiss <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">15</span>)</span></code></pre></div>
 <pre><code>##              Fertility Agriculture Examination Education Catholic
@@ -741,18 +747,36 @@ div.tocify {
 ## [36] &quot;St Maurice&quot;   &quot;Sierre&quot;       &quot;Sion&quot;         &quot;Boudry&quot;       &quot;La Chauxdfnd&quot;
 ## [41] &quot;Le Locle&quot;     &quot;Neuchatel&quot;    &quot;Val de Ruz&quot;   &quot;ValdeTravers&quot; &quot;V. De Geneve&quot;
 ## [46] &quot;Rive Droite&quot;  &quot;Rive Gauche&quot;</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cmpute MDS</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>mds <span class="ot">&lt;-</span> swiss <span class="sc">%&gt;%</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist</span>(<span class="at">method=</span><span class="st">&#39;euclidean&#39;</span>) <span class="sc">%&gt;%</span>          </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cmdscale</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(swiss)</span></code></pre></div>
+<pre><code>##    Fertility      Agriculture     Examination      Education    
+##  Min.   :35.00   Min.   : 1.20   Min.   : 3.00   Min.   : 1.00  
+##  1st Qu.:64.70   1st Qu.:35.90   1st Qu.:12.00   1st Qu.: 6.00  
+##  Median :70.40   Median :54.10   Median :16.00   Median : 8.00  
+##  Mean   :70.14   Mean   :50.66   Mean   :16.49   Mean   :10.98  
+##  3rd Qu.:78.45   3rd Qu.:67.65   3rd Qu.:22.00   3rd Qu.:12.00  
+##  Max.   :92.50   Max.   :89.70   Max.   :37.00   Max.   :53.00  
+##     Catholic       Infant.Mortality
+##  Min.   :  2.150   Min.   :10.80   
+##  1st Qu.:  5.195   1st Qu.:18.15   
+##  Median : 15.140   Median :20.00   
+##  Mean   : 41.144   Mean   :19.94   
+##  3rd Qu.: 93.125   3rd Qu.:21.70   
+##  Max.   :100.000   Max.   :26.60</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Perform classical MDS with <span class="math inline">\(k=2\)</span> and plot the results.</strong></li>
+</ol>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cmpute MDS</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>mds <span class="ot">&lt;-</span> swiss <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist</span>(<span class="at">method=</span><span class="st">&#39;euclidean&#39;</span>) <span class="sc">%&gt;%</span>          </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cmdscale</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code></pre></div>
 <pre><code>## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if `.name_repair` is omitted as of tibble 2.0.0.
 ## Using compatibility `.name_repair`.
 ## This warning is displayed once every 8 hours.
 ## Call `lifecycle::last_warnings()` to see where this warning was generated.</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mds) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Dim.1&quot;</span>, <span class="st">&quot;Dim.2&quot;</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>mds <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">10</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mds) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Dim.1&quot;</span>, <span class="st">&quot;Dim.2&quot;</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>mds <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">10</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 10 x 2
 ##     Dim.1  Dim.2
 ##     &lt;dbl&gt;  &lt;dbl&gt;
@@ -766,95 +790,109 @@ div.tocify {
 ##  8 -61.3    1.00
 ##  9 -56.4  -12.3 
 ## 10 -47.5  -19.9</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot MDS</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatter</span>(mds, <span class="at">x =</span> <span class="st">&quot;Dim.1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dim.2&quot;</span>, </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> <span class="fu">rownames</span>(swiss),</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="dv">1</span>,</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<p><strong>Create <span class="math inline">\(3\)</span> groups using <span class="math inline">\(k\)</span>-means clustering and color points by group.</strong></p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># K-means clustering</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(mds, <span class="dv">3</span>)<span class="sc">$</span>cluster <span class="sc">%&gt;%</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.factor</span>()</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>mds <span class="ot">&lt;-</span> mds <span class="sc">%&gt;%</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">groups =</span> clust)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot and color by groups</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatter</span>(mds, <span class="at">x =</span> <span class="st">&quot;Dim.1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dim.2&quot;</span>, </span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> <span class="fu">rownames</span>(swiss),</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">&quot;groups&quot;</span>,</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">palette =</span> <span class="st">&quot;jco&quot;</span>,</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="dv">1</span>, </span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">ellipse =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>          <span class="at">ellipse.type =</span> <span class="st">&quot;convex&quot;</span>,</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot MDS</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatter</span>(mds, <span class="at">x =</span> <span class="st">&quot;Dim.1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dim.2&quot;</span>, </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> <span class="fu">rownames</span>(swiss),</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="dv">1</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Create <span class="math inline">\(3\)</span> groups using <span class="math inline">\(k\)</span>-means clustering and color points by group.</strong></li>
+</ol>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># K-means clustering</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(mds, <span class="dv">3</span>)<span class="sc">$</span>cluster <span class="sc">%&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.factor</span>()</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>mds <span class="ot">&lt;-</span> mds <span class="sc">%&gt;%</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">groups =</span> clust)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot and color by groups</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatter</span>(mds, <span class="at">x =</span> <span class="st">&quot;Dim.1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dim.2&quot;</span>, </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> <span class="fu">rownames</span>(swiss),</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">&quot;groups&quot;</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">palette =</span> <span class="st">&quot;jco&quot;</span>,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="dv">1</span>, </span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">ellipse =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>          <span class="at">ellipse.type =</span> <span class="st">&quot;convex&quot;</span>,</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
 </div>
 <div id="non-metric-mds" class="section level2">
 <h2>Non-metric MDS</h2>
+<ol start="4" style="list-style-type: decimal">
+<li><strong>Perform the same analysis with both Kruskal’s non-metric MDS and Sammon’s non-linear mapping. Can you spot any differences?</strong></li>
+</ol>
 <p>Kruskal’s non-metric multidimensional scaling</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cmpute MDS</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cmpute MDS</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span></code></pre></div>
 <pre><code>## 
 ## Attaching package: &#39;MASS&#39;</code></pre>
 <pre><code>## The following object is masked from &#39;package:dplyr&#39;:
 ## 
 ##     select</code></pre>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>mds <span class="ot">&lt;-</span> swiss <span class="sc">%&gt;%</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist</span>(<span class="st">&#39;euclidean&#39;</span>) <span class="sc">%&gt;%</span>          </span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">isoMDS</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  .<span class="sc">$</span>points <span class="sc">%&gt;%</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>mds <span class="ot">&lt;-</span> swiss <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist</span>(<span class="st">&#39;euclidean&#39;</span>) <span class="sc">%&gt;%</span>          </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">isoMDS</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  .<span class="sc">$</span>points <span class="sc">%&gt;%</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code></pre></div>
 <pre><code>## initial  value 5.463800 
 ## iter   5 value 4.499103
 ## iter   5 value 4.495335
 ## iter   5 value 4.492669
 ## final  value 4.492669 
 ## converged</code></pre>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mds) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Dim.1&quot;</span>, <span class="st">&quot;Dim.2&quot;</span>)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot MDS</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatter</span>(mds, <span class="at">x =</span> <span class="st">&quot;Dim.1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dim.2&quot;</span>, </span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> <span class="fu">rownames</span>(swiss),</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="dv">1</span>,</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mds) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Dim.1&quot;</span>, <span class="st">&quot;Dim.2&quot;</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot MDS</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatter</span>(mds, <span class="at">x =</span> <span class="st">&quot;Dim.1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dim.2&quot;</span>, </span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> <span class="fu">rownames</span>(swiss),</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="dv">1</span>,</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>Sammon’s non-linear mapping:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cmpute MDS</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>mds <span class="ot">&lt;-</span> swiss <span class="sc">%&gt;%</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist</span>() <span class="sc">%&gt;%</span>          </span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sammon</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  .<span class="sc">$</span>points <span class="sc">%&gt;%</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cmpute MDS</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>mds <span class="ot">&lt;-</span> swiss <span class="sc">%&gt;%</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist</span>() <span class="sc">%&gt;%</span>          </span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sammon</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  .<span class="sc">$</span>points <span class="sc">%&gt;%</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code></pre></div>
 <pre><code>## Initial stress        : 0.01959
 ## stress after   0 iters: 0.01959</code></pre>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mds) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Dim.1&quot;</span>, <span class="st">&quot;Dim.2&quot;</span>)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot MDS</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatter</span>(mds, <span class="at">x =</span> <span class="st">&quot;Dim.1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dim.2&quot;</span>, </span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> <span class="fu">rownames</span>(swiss),</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="dv">1</span>,</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-</div>
-<div id="correlation-matrix-using-multidimensional-scaling" class="section level2">
-<h2>Correlation matrix using Multidimensional Scaling</h2>
-<p>MDS can also be used to detect a hidder pattern in a correlation matrix, but it is easy to transform it to a measure of dissimilarity. Distance between objects can be calculated as 1 - res.cor.</p>
-<p><strong>Perform a classical MDS on the <em>mtcars</em> dataset and comment</strong></p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>res.cor <span class="ot">&lt;-</span> <span class="fu">cor</span>(mtcars, <span class="at">method =</span> <span class="st">&quot;spearman&quot;</span>)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>mds.cor <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> res.cor) <span class="sc">%&gt;%</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cmdscale</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mds.cor) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Dim.1&quot;</span>, <span class="st">&quot;Dim.2&quot;</span>)</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatter</span>(mds.cor, <span class="at">x =</span> <span class="st">&quot;Dim.1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dim.2&quot;</span>, </span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="dv">1</span>,</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> <span class="fu">colnames</span>(res.cor),</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mds) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Dim.1&quot;</span>, <span class="st">&quot;Dim.2&quot;</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot MDS</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatter</span>(mds, <span class="at">x =</span> <span class="st">&quot;Dim.1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dim.2&quot;</span>, </span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> <span class="fu">rownames</span>(swiss),</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="dv">1</span>,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>** Perform a PCA on the <em>mtcars</em> dataset. Comment the differences with MDS. What are the main differences between MDS and PCA**</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>FactoMineR<span class="sc">::</span><span class="fu">PCA</span>(mtcars)</span></code></pre></div>
-<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-12-1.png" width="672" /><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-12-2.png" width="672" /></p>
+<div id="correlation-matrix-using-multidimensional-scaling" class="section level3">
+<h3>Correlation matrix using Multidimensional Scaling</h3>
+<p>MDS can also be used to detect a hidden pattern in a correlation matrix.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>res.cor <span class="ot">&lt;-</span> <span class="fu">cor</span>(mtcars, <span class="at">method =</span> <span class="st">&quot;spearman&quot;</span>)</span></code></pre></div>
+<ol start="5" style="list-style-type: decimal">
+<li><strong>Would you say that correlation is a measure of similarity or dissimilarity? Using correlation, how would you compute distances between objects</strong></li>
+</ol>
+<p>Correlation actually measures similarity, but it is easy to transform it to a measure of dissimilarity. Distance between objects can be calculated as 1 - res.cor.</p>
+<ol start="6" style="list-style-type: decimal">
+<li><strong>Perform a classical MDS on the <em>mtcars</em> dataset and comment.</strong></li>
+</ol>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>mds.cor <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> res.cor) <span class="sc">%&gt;%</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cmdscale</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mds.cor) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Dim.1&quot;</span>, <span class="st">&quot;Dim.2&quot;</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatter</span>(mds.cor, <span class="at">x =</span> <span class="st">&quot;Dim.1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dim.2&quot;</span>, </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="dv">1</span>,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> <span class="fu">colnames</span>(res.cor),</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Positive correlated objects are close together on the same side of the plot.</p>
+<ol start="7" style="list-style-type: decimal">
+<li><strong>Perform a PCA on the <em>mtcars</em> dataset. Comment on the differences with MDS. Recall what are the main differences between MDS and PCA</strong></li>
+</ol>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>FactoMineR<span class="sc">::</span><span class="fu">PCA</span>(mtcars)</span></code></pre></div>
+<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-14-1.png" width="672" /><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-14-2.png" width="672" /></p>
 <pre><code>## **Results for the Principal Component Analysis (PCA)**
 ## The analysis was performed on 32 individuals, described by 11 variables
 ## *The results are available in the following objects:
@@ -875,85 +913,104 @@ div.tocify {
 ## 13 &quot;$call$ecart.type&quot; &quot;standard error of the variables&quot;    
 ## 14 &quot;$call$row.w&quot;      &quot;weights for the individuals&quot;        
 ## 15 &quot;$call$col.w&quot;      &quot;weights for the variables&quot;</code></pre>
+<p>Mathematically and conceptually, there are close correspondences between MDS and other methods used to reduce the dimensionality of complex data, such as Principal components analysis (PCA) and factor analysis.</p>
+<p>PCA is more focused on the dimensions themselves, and seek to maximize explained variance, whereas MDS is more focused on relations among the scaled objects.</p>
+<p>MDS projects n-dimensional data points to a (commonly) 2-dimensional space such that similar objects in the n-dimensional space will be close together on the two dimensional plot, while PCA projects a multidimensional space to the directions of maximum variability using covariance/correlation matrix to analyze the correlation between data points and variables.</p>
+</div>
 </div>
 <div id="pairwise-distances-between-american-cities" class="section level2">
 <h2>Pairwise distances between American cities</h2>
 <p>The <strong>UScitiesD</strong> dataset gives ‘straight line’ distances between <span class="math inline">\(10\)</span> cities in the US.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>?UScitiesD</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>cities <span class="ot">&lt;-</span> UScitiesD</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>?UScitiesD</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>cities <span class="ot">&lt;-</span> UScitiesD</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>cities</span></code></pre></div>
+<pre><code>##               Atlanta Chicago Denver Houston LosAngeles Miami NewYork
+## Chicago           587                                                
+## Denver           1212     920                                        
+## Houston           701     940    879                                 
+## LosAngeles       1936    1745    831    1374                         
+## Miami             604    1188   1726     968       2339              
+## NewYork           748     713   1631    1420       2451  1092        
+## SanFrancisco     2139    1858    949    1645        347  2594    2571
+## Seattle          2182    1737   1021    1891        959  2734    2408
+## Washington.DC     543     597   1494    1220       2300   923     205
+##               SanFrancisco Seattle
+## Chicago                           
+## Denver                            
+## Houston                           
+## LosAngeles                        
+## Miami                             
+## NewYork                           
+## SanFrancisco                      
+## Seattle                678        
+## Washington.DC         2442    2329</code></pre>
 <p>Just looking at the table does not provide any information about the underlying structure of the data (i.e. the position of each city on a map). We are going to apply MDS to recover the geographical structure.</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">as_tibble</span>(us.cities)</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Atlanta GA&quot;</span>, <span class="st">&quot;Chicago IL&quot;</span>, <span class="st">&quot;Denver CO&quot;</span>, <span class="st">&quot;Houston TX&quot;</span>, </span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>                                <span class="st">&quot;Los Angeles CA&quot;</span>, <span class="st">&quot;Miami FL&quot;</span>, <span class="st">&quot;New York NY&quot;</span>, <span class="st">&quot;San Francisco CA&quot;</span>,                                       <span class="st">&quot;Seattle WA&quot;</span>, <span class="st">&quot;WASHINGTON DC&quot;</span>))</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>usa <span class="ot">&lt;-</span> <span class="fu">map_data</span>(<span class="st">&quot;usa&quot;</span>)</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>gg1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_polygon</span>(<span class="at">data =</span> usa, <span class="fu">aes</span>(<span class="at">x=</span>long, <span class="at">y =</span> lat, <span class="at">group =</span> group), <span class="at">fill =</span> <span class="st">&quot;NA&quot;</span>, <span class="at">color =</span> <span class="st">&quot;blue&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>(<span class="fl">1.3</span>)</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>labs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">long =</span> df<span class="sc">$</span>long,</span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat =</span> df<span class="sc">$</span>lat,</span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">names =</span> df<span class="sc">$</span>name,</span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>  )  </span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>gg1 <span class="sc">+</span> </span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> labs, <span class="fu">aes</span>(<span class="at">x =</span> long, <span class="at">y =</span> lat), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
-<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> labs, <span class="fu">aes</span>(<span class="at">x =</span> long, <span class="at">y =</span> lat), <span class="at">color =</span> <span class="st">&quot;yellow&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span> </span>
-<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">data =</span> labs, <span class="fu">aes</span>(<span class="at">x=</span>long , <span class="at">y=</span>lat, <span class="at">label =</span> names), <span class="at">size=</span><span class="dv">3</span>)</span></code></pre></div>
-<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>cities_mds <span class="ot">&lt;-</span> cities <span class="sc">%&gt;%</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cmdscale</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(cities_mds) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Dim.1&quot;</span>, <span class="st">&quot;Dim.2&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>cities_mds</span></code></pre></div>
-<pre><code>## # A tibble: 10 x 2
-##     Dim.1   Dim.2
-##     &lt;dbl&gt;   &lt;dbl&gt;
-##  1 -0.697  0.330 
-##  2 -0.370 -0.787 
-##  3  0.467 -0.0584
-##  4 -0.156  1.32  
-##  5  1.17   0.901 
-##  6 -1.10   1.34  
-##  7 -1.04  -1.20  
-##  8  1.38   0.260 
-##  9  1.30  -1.34  
-## 10 -0.949 -0.775</code></pre>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>us.cities.name <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Atlanta&quot;</span>, <span class="st">&quot;Chicago&quot;</span>, <span class="st">&quot;Denver&quot;</span>, <span class="st">&quot;Houston&quot;</span>, </span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;LA&quot;</span>, <span class="st">&quot;Miami&quot;</span>, <span class="st">&quot;NYC&quot;</span>, <span class="st">&quot;SF&quot;</span>, <span class="st">&quot;Seattle&quot;</span>, <span class="st">&quot;DC&quot;</span>)</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>cities_mds_rev <span class="ot">&lt;-</span> cities_mds</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>cities_mds_rev<span class="sc">$</span>Dim<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="sc">-</span>cities_mds<span class="sc">$</span>Dim<span class="fl">.1</span></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>cities_mds_rev<span class="sc">$</span>Dim<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="sc">-</span>cities_mds<span class="sc">$</span>Dim<span class="fl">.2</span></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatter</span>(cities_mds, <span class="at">x =</span> <span class="st">&quot;Dim.1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dim.2&quot;</span>, </span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> us.cities.name,</span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="dv">1</span>,</span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatter</span>(cities_mds_rev, <span class="at">x =</span> <span class="st">&quot;Dim.1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dim.2&quot;</span>, </span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> us.cities.name,</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="dv">1</span>,</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-17-2.png" width="672" /></p>
-<p>** Plot the MDS representation of the pair-wise distances for the 10 US cities. Comment on the results. Is this the usual US map? **</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> cities_mds) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>Dim<span class="fl">.1</span> , <span class="at">y=</span>Dim<span class="fl">.2</span>), <span class="at">color=</span><span class="st">&quot;yellow&quot;</span>, <span class="at">size=</span><span class="dv">8</span>)</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="at">data =</span> cities_mds, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>Dim<span class="fl">.1</span> , <span class="at">y=</span>Dim<span class="fl">.2</span>), <span class="at">label =</span> us.cities.name, <span class="at">size=</span><span class="dv">3</span>)</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;MDS representation of pair-wise distances of 21 European cities&quot;</span>)</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>p</span></code></pre></div>
+<ol style="list-style-type: decimal">
+<li><strong>Run the following code which displays the US map with the <span class="math inline">\(10\)</span> cities we are considering.</strong></li>
+</ol>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Atlanta GA&quot;</span>, <span class="st">&quot;Chicago IL&quot;</span>, <span class="st">&quot;Denver CO&quot;</span>, <span class="st">&quot;Houston TX&quot;</span>, </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;Los Angeles CA&quot;</span>, <span class="st">&quot;Miami FL&quot;</span>, <span class="st">&quot;New York NY&quot;</span>, <span class="st">&quot;San Francisco CA&quot;</span>,                                          <span class="st">&quot;Seattle WA&quot;</span>, <span class="st">&quot;WASHINGTON DC&quot;</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">as_tibble</span>(us.cities)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(name <span class="sc">%in%</span> names)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>usa <span class="ot">&lt;-</span> <span class="fu">map_data</span>(<span class="st">&quot;usa&quot;</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>gg1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_polygon</span>(<span class="at">data =</span> usa, <span class="fu">aes</span>(<span class="at">x=</span>long, <span class="at">y =</span> lat, <span class="at">group =</span> group), <span class="at">fill =</span> <span class="st">&quot;NA&quot;</span>, <span class="at">color =</span> <span class="st">&quot;blue&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>(<span class="fl">1.3</span>)</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>labs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">long =</span> df<span class="sc">$</span>long,</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat =</span> df<span class="sc">$</span>lat,</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">names =</span> df<span class="sc">$</span>name,</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>  )  </span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>gg1 <span class="sc">+</span> </span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> labs, <span class="fu">aes</span>(<span class="at">x =</span> long, <span class="at">y =</span> lat), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> labs, <span class="fu">aes</span>(<span class="at">x =</span> long, <span class="at">y =</span> lat), <span class="at">color =</span> <span class="st">&quot;yellow&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">data =</span> labs, <span class="fu">aes</span>(<span class="at">x=</span>long , <span class="at">y=</span>lat, <span class="at">label =</span> names), <span class="at">size=</span><span class="dv">3</span>)</span></code></pre></div>
+<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Plot the MDS representation of the pair-wise distances for the <span class="math inline">\(10\)</span> US cities. Comment on the results. Is this the usual US map? Does this somehow contradict the use of MDS for dimensionality reduction?</strong></li>
+</ol>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>cities_mds <span class="ot">&lt;-</span> cities <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cmdscale</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(cities_mds) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Dim.1&quot;</span>, <span class="st">&quot;Dim.2&quot;</span>)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>us.cities.name <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Atlanta&quot;</span>, <span class="st">&quot;Chicago&quot;</span>, <span class="st">&quot;Denver&quot;</span>, <span class="st">&quot;Houston&quot;</span>, </span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;LA&quot;</span>, <span class="st">&quot;Miami&quot;</span>, <span class="st">&quot;NYC&quot;</span>, <span class="st">&quot;SF&quot;</span>, <span class="st">&quot;Seattle&quot;</span>, <span class="st">&quot;DC&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>cities_mds_rev <span class="ot">&lt;-</span> cities_mds</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>cities_mds_rev<span class="sc">$</span>Dim<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="sc">-</span>cities_mds<span class="sc">$</span>Dim<span class="fl">.1</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>cities_mds_rev<span class="sc">$</span>Dim<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="sc">-</span>cities_mds<span class="sc">$</span>Dim<span class="fl">.2</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatter</span>(cities_mds, <span class="at">x =</span> <span class="st">&quot;Dim.1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dim.2&quot;</span>, </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> us.cities.name,</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="dv">1</span>,</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
-<p>The cities on the map are not in their expected locations. It seems the map is not only mirrored, but flipped (Australia’s point of view in some way). Indeed, this is the proper time to point to this fact that MDS only tries to preserve the inter-object distances,and therefore there is nothing wrong with the map. By operations such as rotation of the map, the distances remain intact. The map must be rotated 180 degrees. It is possible to do so by multiplying the coordinates of each point into -1.</p>
-<p>** Solve the issue above by rotating the figure the proper way**</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> cities_mds) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span><span class="sc">-</span>Dim<span class="fl">.1</span> , <span class="at">y=</span><span class="sc">-</span>Dim<span class="fl">.2</span>), <span class="at">color=</span><span class="st">&quot;yellow&quot;</span>, <span class="at">size=</span><span class="dv">8</span>)</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="at">data =</span> cities_mds, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span><span class="sc">-</span>Dim<span class="fl">.1</span> , <span class="at">y=</span><span class="sc">-</span>Dim<span class="fl">.2</span>), <span class="at">label =</span> us.cities.name, <span class="at">size=</span><span class="dv">3</span>)</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;MDS representation of pair-wise distances of 21 European cities&quot;</span>)</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>p</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatter</span>(cities_mds_rev, <span class="at">x =</span> <span class="st">&quot;Dim.1&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Dim.2&quot;</span>, </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> us.cities.name,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="dv">1</span>,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-18-2.png" width="672" /></p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">#solution 2 (with ggplot)</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> cities_mds) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>Dim<span class="fl">.1</span> , <span class="at">y=</span>Dim<span class="fl">.2</span>), <span class="at">color=</span><span class="st">&quot;yellow&quot;</span>, <span class="at">size=</span><span class="dv">8</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="at">data =</span> cities_mds, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>Dim<span class="fl">.1</span> , <span class="at">y=</span>Dim<span class="fl">.2</span>), <span class="at">label =</span> us.cities.name, <span class="at">size=</span><span class="dv">3</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;MDS representation of pair-wise distances of 21 European cities&quot;</span>)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>p</span></code></pre></div>
 <p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>The cities on the map are not in their expected locations. It seems the map is not only mirrored, but flipped (Australia’s point of view). Indeed, this is the proper time to point to the fact that MDS only tries to preserve the inter-object distances, and therefore there is nothing wrong with the map. By operations such as rotation of the map, the distances remain intact. The map must be rotated 180 degrees. It is possible to do so by multiplying the coordinates of each point into -1.</p>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Solve the issue above by rotating the figure the proper way.</strong></li>
+</ol>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> cities_mds) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span><span class="sc">-</span>Dim<span class="fl">.1</span> , <span class="at">y=</span><span class="sc">-</span>Dim<span class="fl">.2</span>), <span class="at">color=</span><span class="st">&quot;yellow&quot;</span>, <span class="at">size=</span><span class="dv">8</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">geom_text</span>(<span class="at">data =</span> cities_mds, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span><span class="sc">-</span>Dim<span class="fl">.1</span> , <span class="at">y=</span><span class="sc">-</span>Dim<span class="fl">.2</span>), <span class="at">label =</span> us.cities.name, <span class="at">size=</span><span class="dv">3</span>)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;MDS representation of pair-wise distances of 21 European cities&quot;</span>)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>p</span></code></pre></div>
+<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <div id="kernel-pca" class="section level3">
 <h3>Kernel PCA</h3>
 </div>
@@ -966,169 +1023,180 @@ div.tocify {
 </div>
 <div id="with-python-using-reticulate-in-r" class="section level2">
 <h2>With Python using reticulate in R</h2>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reticulate) </span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">use_virtualenv</span>(<span class="st">&quot;r-reticulate&quot;</span>)</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>reticulate<span class="sc">::</span><span class="fu">py_config</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reticulate)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>reticulate<span class="sc">::</span><span class="fu">use_virtualenv</span>(<span class="st">&quot;r-reticulate&quot;</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>reticulate<span class="sc">::</span><span class="fu">py_config</span>()</span></code></pre></div>
 <pre><code>## python:         /usr/share/miniconda/envs/MAP573/bin/python3
 ## libpython:      /usr/share/miniconda/envs/MAP573/lib/libpython3.8.so
 ## pythonhome:     /usr/share/miniconda/envs/MAP573:/usr/share/miniconda/envs/MAP573
 ## version:        3.8.6 | packaged by conda-forge | (default, Oct  7 2020, 19:08:05)  [GCC 7.5.0]
 ## numpy:          /usr/share/miniconda/envs/MAP573/lib/python3.8/site-packages/numpy
 ## numpy_version:  1.19.2
+## umap:           [NOT FOUND]
 ## 
 ## python versions found: 
 ##  /usr/share/miniconda/envs/MAP573/bin/python3
 ##  /usr/bin/python3
 ##  /usr/bin/python</code></pre>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">#py_install(&quot;sklearn&quot;, pip=TRUE) # install package sklearn </span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co">#py_install(&quot;matplotlib&quot;, pip=TRUE) # install matplotlib</span></span></code></pre></div>
-<p>Let us start with a simple example of 2 half-moon shapes generated by the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_moons.html">make_moons</a> functions from <a href="https://scikit-learn.org/stable/index.html">sklearn_learn</a>.</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_moons</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(n_samples<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">0</span>], X[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;red&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">0</span>], X[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;A nonlinear 2Ddataset&#39;</span>)</span>
-<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;y coordinate&#39;</span>)</span>
-<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;x coordinate&#39;</span>)</span>
-<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
-<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-21-1.png" /><!-- --></p>
-<p><strong>Are the two half-moon shapes linearly separable? Do you expect PCA to give satisfactory results? Perform a <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html">PCA</a> using sklearn with <em>n_components</em>= <span class="math inline">\(1\)</span> and <span class="math inline">\(2\)</span>. Comment.</strong></p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_moons</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(n_samples<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>scikit_pca <span class="op">=</span> PCA(n_components<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>X_spca <span class="op">=</span> scikit_pca.fit_transform(X)</span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_spca[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">0</span>], np.zeros((<span class="dv">50</span>,<span class="dv">1</span>)), color<span class="op">=</span><span class="st">&#39;red&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_spca[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">0</span>], np.zeros((<span class="dv">50</span>,<span class="dv">1</span>)), color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;First principal component after Linear PCA&#39;</span>)</span>
-<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;PC1&#39;</span>)</span>
-<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
-<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-22-1.png" /><!-- --></p>
-<p>Since the two half-moon shapes are linearly inseparable, we expect that the ‘classic’ PCA will fail to give us a ‘good’ representation of the data in 1D space. As we can see, the resulting principal components do not yield a subspace where the data is linearly separated well.</p>
-<p><strong>Perform a KernelPCA using the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.KernelPCA.html">KernelPCA</a> function from sklearn with the rbf kernel and <span class="math inline">\(\gamma=15\)</span> with both n_components=<span class="math inline">\(1\)</span> and <span class="math inline">\(2\)</span>.Comment. Try different values for <span class="math inline">\(\gamma\)</span> and different kernels. Comment.</strong></p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> KernelPCA</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_moons</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># py_install(&quot;sklearn&quot;   , pip=TRUE) # you need to install package sklearn first time</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="co"># py_install(&quot;matplotlib&quot;, pip=TRUE) # you need to install install matplotlib first time</span></span></code></pre></div>
+<p>Let us start with a simple example of the two half-moon shapes generated by the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_moons.html">make_moons</a> functions from <a href="https://scikit-learn.org/stable/index.html">sklearn_learn</a>.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_moons</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(n_samples<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
 <span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>gamma <span class="op">=</span> <span class="dv">15</span></span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(n_samples<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>X_pc <span class="op">=</span> KernelPCA(gamma<span class="op">=</span><span class="dv">15</span>, n_components<span class="op">=</span><span class="dv">1</span>, kernel<span class="op">=</span><span class="st">&#39;rbf&#39;</span>).fit_transform(X)</span>
-<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
-<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_pc[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">0</span>], np.zeros((<span class="dv">50</span>,<span class="dv">1</span>)), color<span class="op">=</span><span class="st">&#39;red&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_pc[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">0</span>], np.zeros((<span class="dv">50</span>,<span class="dv">1</span>)), color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;First principal components after RBF Kernel PCA with $\gamma$=</span><span class="sc">{}</span><span class="st">&#39;</span>.<span class="bu">format</span>(gamma))</span>
-<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;PC1&#39;</span>)</span>
-<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
-<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-23-1.png" /><!-- --></p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> KernelPCA</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">0</span>], X[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;red&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">0</span>], X[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;A nonlinear 2Ddataset&#39;</span>)</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;y coordinate&#39;</span>)</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;x coordinate&#39;</span>)</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-21-1.png" /><!-- --></p>
+<ol style="list-style-type: decimal">
+<li><strong>Are the two half-moon shapes linearly separable? Do you expect PCA to give satisfactory results? Perform a <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html">PCA</a> using sklearn with <em>n_components</em> <span class="math inline">\(=1\)</span> and <span class="math inline">\(2\)</span>. Comment.</strong></li>
+</ol>
+<div class="sourceCode" id="cb42"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_moons</span>
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>gamma <span class="op">=</span> <span class="dv">15</span></span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(n_samples<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>X_pc <span class="op">=</span> KernelPCA(gamma<span class="op">=</span><span class="dv">15</span>, n_components<span class="op">=</span><span class="dv">2</span>, kernel<span class="op">=</span><span class="st">&#39;rbf&#39;</span>).fit_transform(X)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(n_samples<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>scikit_pca <span class="op">=</span> PCA(n_components<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>X_spca <span class="op">=</span> scikit_pca.fit_transform(X)</span>
 <span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_pc[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">0</span>], X_pc[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;red&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_pc[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">0</span>], X_pc[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_spca[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">0</span>], np.zeros((<span class="dv">50</span>,<span class="dv">1</span>)), color<span class="op">=</span><span class="st">&#39;red&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_spca[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">0</span>], np.zeros((<span class="dv">50</span>,<span class="dv">1</span>)), color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
 <span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;First 2 principal components after RBF Kernel PCA with $\gamma$=</span><span class="sc">{}</span><span class="st">&#39;</span>.<span class="bu">format</span>(gamma))</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;First principal component after Linear PCA&#39;</span>)</span>
 <span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;PC1&#39;</span>)</span>
-<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;PC2&#39;</span>)</span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-22-1.png" /><!-- --></p>
+<p>Since the two half-moon shapes are linearly inseparable, we expect the ‘classic’ PCA to fail giving us a ‘good’ representation of the data in 1D space. As we can see, the resulting principal components do not yield a subspace where the data is linearly separated well.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Perform a KernelPCA using the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.KernelPCA.html">KernelPCA</a> function from sklearn with the rbf kernel and <span class="math inline">\(\gamma=15\)</span> with both n_components <span class="math inline">\(=1\)</span> and <span class="math inline">\(2\)</span>. Comment. Try different values for <span class="math inline">\(\gamma\)</span> and different kernels. Comment.</strong></li>
+</ol>
+<div class="sourceCode" id="cb43"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> KernelPCA</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_moons</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>gamma <span class="op">=</span> <span class="dv">15</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(n_samples<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>X_pc <span class="op">=</span> KernelPCA(gamma<span class="op">=</span><span class="dv">15</span>, n_components<span class="op">=</span><span class="dv">1</span>, kernel<span class="op">=</span><span class="st">&#39;rbf&#39;</span>).fit_transform(X)</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_pc[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">0</span>], np.zeros((<span class="dv">50</span>,<span class="dv">1</span>)), color<span class="op">=</span><span class="st">&#39;red&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_pc[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">0</span>], np.zeros((<span class="dv">50</span>,<span class="dv">1</span>)), color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;First principal components after RBF Kernel PCA with $\gamma$=</span><span class="sc">{}</span><span class="st">&#39;</span>.<span class="bu">format</span>(gamma))</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;PC1&#39;</span>)</span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-23-1.png" /><!-- --></p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> KernelPCA</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_moons</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>gamma <span class="op">=</span> <span class="dv">15</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(n_samples<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>X_pc <span class="op">=</span> KernelPCA(gamma<span class="op">=</span><span class="dv">15</span>, n_components<span class="op">=</span><span class="dv">2</span>, kernel<span class="op">=</span><span class="st">&#39;rbf&#39;</span>).fit_transform(X)</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_pc[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">0</span>], X_pc[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;red&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_pc[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">0</span>], X_pc[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;First 2 principal components after RBF Kernel PCA with $\gamma$=</span><span class="sc">{}</span><span class="st">&#39;</span>.<span class="bu">format</span>(gamma))</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;PC1&#39;</span>)</span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;PC2&#39;</span>)</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-24-1.png" /><!-- --></p>
 </div>
 <div id="concentric-circles" class="section level2">
 <h2>Concentric circles</h2>
-<p>Another well-known example for which linear PCA will fail is the classic case of <span class="math inline">\(2\)</span> concentric circles with random noise produced by scikit-learn???s <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html">make_circles</a>.</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_circles</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_circles(n_samples<span class="op">=</span><span class="dv">1000</span>, random_state<span class="op">=</span><span class="dv">123</span>, noise<span class="op">=</span><span class="fl">0.1</span>, factor<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">0</span>], X[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;red&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">0</span>], X[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Concentric circles&#39;</span>)</span>
-<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;y coordinate&#39;</span>)</span>
-<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;x coordinate&#39;</span>)</span>
-<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p>Another well-known example for which linear PCA will fail is the classic case of two concentric circles with random noise: have a look at <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html">make_circles</a>.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_circles</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_circles(n_samples<span class="op">=</span><span class="dv">1000</span>, random_state<span class="op">=</span><span class="dv">123</span>, noise<span class="op">=</span><span class="fl">0.1</span>, factor<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">0</span>], X[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;red&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">0</span>], X[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Concentric circles&#39;</span>)</span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;y coordinate&#39;</span>)</span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;x coordinate&#39;</span>)</span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-25-1.png" /><!-- --></p>
-<p><strong>Perform both a linear and kernel PCA on the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html">make_circles</a> dataset</strong></p>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Again, perform both a linear and kernel PCA on the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html">make_circles</a> dataset</strong></li>
+</ol>
 </div>
 <div id="swiss-roll" class="section level2">
 <h2>Swiss roll</h2>
 <p>Unrolling the Swiss roll is a much more challenging task (see <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_swiss_roll.html">Swiss roll</a>).</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_swiss_roll</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mpl_toolkits.mplot3d <span class="im">import</span> Axes3D</span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>X, color <span class="op">=</span> make_swiss_roll(n_samples<span class="op">=</span><span class="dv">800</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">7</span>,<span class="dv">7</span>))</span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>, projection<span class="op">=</span><span class="st">&#39;3d&#39;</span>)</span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>ax.scatter(X[:, <span class="dv">0</span>], X[:, <span class="dv">1</span>], X[:, <span class="dv">2</span>], c<span class="op">=</span>color, cmap<span class="op">=</span>plt.cm.rainbow)</span>
-<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Swiss Roll in 3D&#39;</span>)</span>
-<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_swiss_roll</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mpl_toolkits.mplot3d <span class="im">import</span> Axes3D</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>X, color <span class="op">=</span> make_swiss_roll(n_samples<span class="op">=</span><span class="dv">800</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">7</span>,<span class="dv">7</span>))</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>, projection<span class="op">=</span><span class="st">&#39;3d&#39;</span>)</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>ax.scatter(X[:, <span class="dv">0</span>], X[:, <span class="dv">1</span>], X[:, <span class="dv">2</span>], c<span class="op">=</span>color, cmap<span class="op">=</span>plt.cm.rainbow)</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Swiss Roll in 3D&#39;</span>)</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-26-1.png" /><!-- --></p>
-<p><strong>Again, try to perform both linear and kernel PCA on the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_swiss_roll.html">Swiss roll</a> dataset. Try with different values of <span class="math inline">\(\gamma\)</span>. Are you satisfied with the results?</strong></p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_swiss_roll</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mpl_toolkits.mplot3d <span class="im">import</span> Axes3D</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> KernelPCA</span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>gamma <span class="op">=</span> <span class="fl">0.05</span></span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>X, color <span class="op">=</span> make_swiss_roll(n_samples<span class="op">=</span><span class="dv">800</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
-<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>X_pc <span class="op">=</span> KernelPCA(gamma<span class="op">=</span>gamma, n_components<span class="op">=</span><span class="dv">2</span>, kernel<span class="op">=</span><span class="st">&#39;rbf&#39;</span>).fit_transform(X)</span>
-<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
-<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_pc[:, <span class="dv">0</span>], X_pc[:, <span class="dv">1</span>], c<span class="op">=</span>color, cmap<span class="op">=</span>plt.cm.rainbow)</span>
-<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;First 2 principal components after RBF Kernel PCA with $\gamma$=</span><span class="sc">{}</span><span class="st">&#39;</span>.<span class="bu">format</span>(gamma))</span>
-<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;PC1&#39;</span>)</span>
-<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;PC2&#39;</span>)</span>
-<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<ol start="4" style="list-style-type: decimal">
+<li><strong>Again, try to perform both linear and kernel PCA on the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_swiss_roll.html">Swiss roll</a> dataset. Try with different values of <span class="math inline">\(\gamma\)</span>. Are you satisfied with the results?</strong></li>
+</ol>
+<div class="sourceCode" id="cb47"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_swiss_roll</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mpl_toolkits.mplot3d <span class="im">import</span> Axes3D</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> KernelPCA</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>gamma <span class="op">=</span> <span class="fl">0.05</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>X, color <span class="op">=</span> make_swiss_roll(n_samples<span class="op">=</span><span class="dv">800</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>X_pc <span class="op">=</span> KernelPCA(gamma<span class="op">=</span>gamma, n_components<span class="op">=</span><span class="dv">2</span>, kernel<span class="op">=</span><span class="st">&#39;rbf&#39;</span>).fit_transform(X)</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_pc[:, <span class="dv">0</span>], X_pc[:, <span class="dv">1</span>], c<span class="op">=</span>color, cmap<span class="op">=</span>plt.cm.rainbow)</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;First 2 principal components after RBF Kernel PCA with $\gamma$=</span><span class="sc">{}</span><span class="st">&#39;</span>.<span class="bu">format</span>(gamma))</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;PC1&#39;</span>)</span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;PC2&#39;</span>)</span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-27-1.png" /><!-- --></p>
 </div>
 <div id="locally-linear-embedding" class="section level2">
 <h2>Locally Linear Embedding</h2>
 <p>In 2000, Sam T. Roweis and Lawrence K. Saul <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.111.3313">Nonlinear dimensionality reduction by locally linear embedding</a> introduced an unsupervised learning algorithm called locally linear embedding (LLE) that is better suited to identify patterns in the high-dimensional feature space and solves our problem of nonlinear dimensionality reduction for the Swiss roll.</p>
 <p>Locally linear embedding (LLE) seeks a lower-dimensional projection of the data which preserves distances within local neighborhoods. It can be thought of as a series of local Principal Component Analyses which are globally compared to find the best non-linear embedding.</p>
-<p><strong>Using the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.manifold.locally_linear_embedding.html">locally_linear_embedding</a> class, ‘unroll’ the Swiss roll both in <span class="math inline">\(1\)</span> and <span class="math inline">\(2\)</span> dimensions.</strong></p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_swiss_roll</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mpl_toolkits.mplot3d <span class="im">import</span> Axes3D</span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.manifold <span class="im">import</span> locally_linear_embedding</span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>X, color <span class="op">=</span> make_swiss_roll(n_samples<span class="op">=</span><span class="dv">800</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
-<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>X_lle, err <span class="op">=</span> locally_linear_embedding(X, n_neighbors<span class="op">=</span><span class="dv">12</span>, n_components<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
-<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_lle, np.zeros((<span class="dv">800</span>,<span class="dv">1</span>)), c<span class="op">=</span>color, cmap<span class="op">=</span>plt.cm.rainbow)</span>
-<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;First principal component after Locally Linear Embedding&#39;</span>)</span>
-<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<ol start="5" style="list-style-type: decimal">
+<li><strong>Using the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.manifold.locally_linear_embedding.html">locally_linear_embedding</a> class, ‘unroll’ the Swiss roll both in <span class="math inline">\(1\)</span> and <span class="math inline">\(2\)</span> dimensions.</strong></li>
+</ol>
+<div class="sourceCode" id="cb48"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_swiss_roll</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mpl_toolkits.mplot3d <span class="im">import</span> Axes3D</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.manifold <span class="im">import</span> locally_linear_embedding</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>X, color <span class="op">=</span> make_swiss_roll(n_samples<span class="op">=</span><span class="dv">800</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>X_lle, err <span class="op">=</span> locally_linear_embedding(X, n_neighbors<span class="op">=</span><span class="dv">12</span>, n_components<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_lle, np.zeros((<span class="dv">800</span>,<span class="dv">1</span>)), c<span class="op">=</span>color, cmap<span class="op">=</span>plt.cm.rainbow)</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;First principal component after Locally Linear Embedding&#39;</span>)</span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
 <p><img src="tutorial_nonlinear_dim_reduction_methods_cor_files/figure-html/unnamed-chunk-28-1.png" /><!-- --></p>
 </div>
 </div>

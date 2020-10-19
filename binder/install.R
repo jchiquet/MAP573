@@ -16,3 +16,6 @@ install.packages("ggpubr")      # fancy plotting
 install.packages("ggrepel")     # fancy plotting
 install.packages("cowplot")     # more fancy plotting
 install.packages("simputation") # imputation
+install.packages("Rtsne")       # tSNE implementation in R
+install.packages("umap")        # umap implementation in R
+
