@@ -95,7 +95,7 @@ library(Rtsne)
 \paragraph{Run the fit}
 
 <<MDS mollusk run>>=
-mollusk_ab <- mollusk %>% select(-site, -season) %>%  as.matrix()
+mollusk_ab <- mollusk %>% dplyr::select(-site, -season) %>%  as.matrix()
 
 mmds_euclidean <- cmdscale(dist(mollusk_ab)) %>% 
   as.data.frame() %>% add_column(type = "mMDS, Euclidean") %>% add_column(site = mollusk$site)

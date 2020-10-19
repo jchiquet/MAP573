@@ -47,10 +47,10 @@ library(NMF)
 \paragraph{Run the fit}
 
 <<NMF mollusk fit>>=
-nmf_KL <- mollusk %>% select(-site, -season) %>% 
+nmf_KL <- mollusk %>% dplyr::select(-site, -season) %>% 
   nmf(rank = 2, method = 'brunet') %>% basis() %>%
   as.data.frame() %>% add_column(algo = "KL") %>% add_column(site = mollusk$site)
-nmf_LS <- mollusk %>% select(-site, -season) %>% 
+nmf_LS <- mollusk %>% dplyr::select(-site, -season) %>% 
   nmf(rank = 2, method = 'lee') %>% basis() %>%
   as.data.frame() %>% add_column(algo = "LS") %>% add_column(site = mollusk$site)
 @

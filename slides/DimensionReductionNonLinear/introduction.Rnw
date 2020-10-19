@@ -6,10 +6,12 @@
 library(tidyverse)  # opinionated collection of packages for data manipulation
 library(GGally)     # extension to ggplot vizualization system
 library(FactoMineR) # PCA and oter linear method for dimension reduction
-library(factoextra) # fancy plotting for FactoMineR output
-# color and plots themes
-library(RColorBrewer)
-pal <- brewer.pal(10, "Set3")
+library(factoextra) # fancy plotting for FactoMineR output 
+library(NMF)        # Non-Negative Matrix factorisation
+library(kernlab)    # Kernel PCA
+library(MASS)       # Various statistical too, including MDS
+library(Rtsne)      # tSNE implementation in R 
+library(umap)       # Uniform Manifold Approximation and Projection
 theme_set(theme_bw())
 @
 
@@ -22,7 +24,7 @@ theme_set(theme_bw())
 \begin{block}{Description: \textcolor{black}{\it subsample of a large data set}}
 \small Gene-level expression of 100 representative genes for a collection of 301 cells 
 spreaded in 11 cell-lines. Original transcription data are measured by counts obtained by 
-\textit{RNAseq} and normalized to be close to Gaussian.\\
+\textit{RNAseq} and normalized to be close to a Gaussian distribution.\\
 
 \begin{scriptsize}
 \begin{thebibliography}{9}
@@ -125,9 +127,10 @@ scRNA %>% FactoMineR::PCA(graph = FALSE, quali.sup = which(colnames(scRNA) == "c
 library(PLNmodels); data(mollusk)
 mollusk <- 
   prepare_data(mollusk$Abundance, mollusk$Covariate[c("season", "site")]) %>% 
-  select(-Offset) %>% 
+  dplyr::select(-Offset) %>% 
   as_tibble() %>% 
   distinct() # remove duplicates
+mollusk <- cbind(mollusk$Abundance, mollusk[c("season", "site")])
 @
 
 \paragraph{External Covariates}

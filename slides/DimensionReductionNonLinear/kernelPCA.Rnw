@@ -76,7 +76,7 @@ library(kernlab)
   \framesubtitle{Run the fit}
 
 <<kPCA scRNA kernel run>>=
-scRNA_expr <- scRNA %>% select(-cell_type) %>% as.matrix()
+scRNA_expr <- scRNA %>% dplyr::select(-cell_type) %>% as.matrix()
 
 kPCA_radial <- 
   kpca(scRNA_expr, kernel = "rbfdot", features = 2, kpar = list(sigma = 0.5)) %>% 

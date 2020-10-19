@@ -152,10 +152,12 @@
 \hlkwd{library}\hlstd{(tidyverse)}  \hlcom{# opinionated collection of packages for data manipulation}
 \hlkwd{library}\hlstd{(GGally)}     \hlcom{# extension to ggplot vizualization system}
 \hlkwd{library}\hlstd{(FactoMineR)} \hlcom{# PCA and oter linear method for dimension reduction}
-\hlkwd{library}\hlstd{(factoextra)} \hlcom{# fancy plotting for FactoMineR output}
-\hlcom{# color and plots themes}
-\hlkwd{library}\hlstd{(RColorBrewer)}
-\hlstd{pal} \hlkwb{<-} \hlkwd{brewer.pal}\hlstd{(}\hlnum{10}\hlstd{,} \hlstr{"Set3"}\hlstd{)}
+\hlkwd{library}\hlstd{(factoextra)} \hlcom{# fancy plotting for FactoMineR output }
+\hlkwd{library}\hlstd{(NMF)}        \hlcom{# Non-Negative Matrix factorisation}
+\hlkwd{library}\hlstd{(kernlab)}    \hlcom{# Kernel PCA}
+\hlkwd{library}\hlstd{(MASS)}       \hlcom{# Various statistical too, including MDS}
+\hlkwd{library}\hlstd{(Rtsne)}      \hlcom{# tSNE implementation in R }
+\hlkwd{library}\hlstd{(umap)}       \hlcom{# Uniform Manifold Approximation and Projection}
 \hlkwd{theme_set}\hlstd{(}\hlkwd{theme_bw}\hlstd{())}
 \end{alltt}
 \end{kframe}
@@ -170,7 +172,7 @@
 \begin{block}{Description: \textcolor{black}{\it subsample of a large data set}}
 \small Gene-level expression of 100 representative genes for a collection of 301 cells 
 spreaded in 11 cell-lines. Original transcription data are measured by counts obtained by 
-\textit{RNAseq} and normalized to be close to Gaussian.\\
+\textit{RNAseq} and normalized to be close to a Gaussian distribution.\\
 
 \begin{scriptsize}
 \begin{thebibliography}{9}
@@ -316,9 +318,10 @@ spreaded in 11 cell-lines. Original transcription data are measured by counts ob
 \hlkwd{library}\hlstd{(PLNmodels);} \hlkwd{data}\hlstd{(mollusk)}
 \hlstd{mollusk} \hlkwb{<-}
   \hlkwd{prepare_data}\hlstd{(mollusk}\hlopt{$}\hlstd{Abundance, mollusk}\hlopt{$}\hlstd{Covariate[}\hlkwd{c}\hlstd{(}\hlstr{"season"}\hlstd{,} \hlstr{"site"}\hlstd{)])} \hlopt{%>%}
-  \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{Offset)} \hlopt{%>%}
+  \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{Offset)} \hlopt{%>%}
   \hlkwd{as_tibble}\hlstd{()} \hlopt{%>%}
   \hlkwd{distinct}\hlstd{()} \hlcom{# remove duplicates}
+\hlstd{mollusk} \hlkwb{<-} \hlkwd{cbind}\hlstd{(mollusk}\hlopt{$}\hlstd{Abundance, mollusk[}\hlkwd{c}\hlstd{(}\hlstr{"season"}\hlstd{,} \hlstr{"site"}\hlstd{)])}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -359,9 +362,7 @@ season & automn:41 & spring:43 & summer:44 & winter:30 & NA & NA & NA\\
   \hlkwd{pivot_longer}\hlstd{(}\hlkwd{everything}\hlstd{())} \hlopt{%>%}
   \hlkwd{ggplot}\hlstd{()} \hlopt{+} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= value,} \hlkwc{fill} \hlstd{= name)} \hlopt{+} \hlkwd{geom_histogram}\hlstd{(}\hlkwc{show.legend} \hlstd{=} \hlnum{FALSE}\hlstd{)}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: Aesthetics must be either length 1 or the same as the data (158): x}}\end{kframe}
+\end{kframe}
 \includegraphics[width=.8\textwidth]{figures/mollusc_abundance-1} 
 
 \end{knitrout}
@@ -377,9 +378,9 @@ season & automn:41 & spring:43 & summer:44 & winter:30 & NA & NA & NA\\
 \hlstd{mollusk} \hlopt{%>%} \hlkwd{PCA}\hlstd{(}\hlkwc{graph} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{quali.sup} \hlstd{=} \hlkwd{which}\hlstd{(}\hlkwd{map_lgl}\hlstd{(mollusk, is.factor)))} \hlopt{%>%}
   \hlkwd{fviz_pca_biplot}\hlstd{(}\hlkwc{select.var} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{contrib} \hlstd{=} \hlnum{5}\hlstd{),} \hlkwc{habillage} \hlstd{=} \hlstr{"site"}\hlstd{)}
 \end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/mollusk_PCA-1} 
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in dimnames(x) <- dn: length of 'dimnames' [2] not equal to array extent}}\end{kframe}
 \end{knitrout}
 
 \end{frame}
@@ -640,7 +641,7 @@ Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA ca
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{scRNA_expr} \hlkwb{<-} \hlstd{scRNA} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{cell_type)} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{()}
+\hlstd{scRNA_expr} \hlkwb{<-} \hlstd{scRNA} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{cell_type)} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{()}
 
 \hlstd{kPCA_radial} \hlkwb{<-}
   \hlkwd{kpca}\hlstd{(scRNA_expr,} \hlkwc{kernel} \hlstd{=} \hlstr{"rbfdot"}\hlstd{,} \hlkwc{features} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{kpar} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{sigma} \hlstd{=} \hlnum{0.5}\hlstd{))} \hlopt{%>%}
@@ -739,10 +740,10 @@ Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA ca
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{nmf_KL} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}
+\hlstd{nmf_KL} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}
   \hlkwd{nmf}\hlstd{(}\hlkwc{rank} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{method} \hlstd{=} \hlstr{'brunet'}\hlstd{)} \hlopt{%>%} \hlkwd{basis}\hlstd{()} \hlopt{%>%}
   \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{algo} \hlstd{=} \hlstr{"KL"}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site)}
-\hlstd{nmf_LS} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}
+\hlstd{nmf_LS} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}
   \hlkwd{nmf}\hlstd{(}\hlkwc{rank} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{method} \hlstd{=} \hlstr{'lee'}\hlstd{)} \hlopt{%>%} \hlkwd{basis}\hlstd{()} \hlopt{%>%}
   \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{algo} \hlstd{=} \hlstr{"LS"}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site)}
 \end{alltt}
@@ -1006,7 +1007,7 @@ Some Python equivalents of (torch, pytorch, tensorflow):
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{mollusk_ab} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}  \hlkwd{as.matrix}\hlstd{()}
+\hlstd{mollusk_ab} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}  \hlkwd{as.matrix}\hlstd{()}
 
 \hlstd{mmds_euclidean} \hlkwb{<-} \hlkwd{cmdscale}\hlstd{(}\hlkwd{dist}\hlstd{(mollusk_ab))} \hlopt{%>%}
   \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{type} \hlstd{=} \hlstr{"mMDS, Euclidean"}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site)}
@@ -1152,7 +1153,7 @@ $$
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{scRNA_expr} \hlkwb{<-} \hlstd{scRNA} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{cell_type)} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{()}
+\hlstd{scRNA_expr} \hlkwb{<-} \hlstd{scRNA} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{cell_type)} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{()}
 
 \hlstd{tSNE_perp2}   \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(scRNA_expr,} \hlkwc{perplexity} \hlstd{=}   \hlnum{2}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
   \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{2}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
@@ -1192,7 +1193,7 @@ $$
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{mollusk_ab} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}  \hlkwd{as.matrix}\hlstd{()}
+\hlstd{mollusk_ab} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}  \hlkwd{as.matrix}\hlstd{()}
 
 \hlstd{tSNE_perp2}   \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(mollusk_ab,} \hlkwc{perplexity} \hlstd{=}   \hlnum{2}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
   \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{2}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site)}
@@ -1259,11 +1260,6 @@ Formally, consider a neighborhood $\mathcal{N}_i$ for each point, then
 % 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Uniform Manifold Approximation and Projection }
-
-\end{frame}
-
 \begin{frame}[fragile,allowframebreaks]
   \frametitle{Uniform Manifold Approximation and Projection}
 
@@ -1277,7 +1273,7 @@ Formally, consider a neighborhood $\mathcal{N}_i$ for each point, then
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{scRNA_expr} \hlkwb{<-} \hlstd{scRNA} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{cell_type)} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{()}
+\hlstd{scRNA_expr} \hlkwb{<-} \hlstd{scRNA} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{cell_type)} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{()}
 \hlstd{umap_fit}   \hlkwb{<-} \hlkwd{umap}\hlstd{(scRNA_expr)}\hlopt{$}\hlstd{layout} \hlopt{%>%}
   \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
 \end{alltt}
@@ -1309,7 +1305,7 @@ Formally, consider a neighborhood $\mathcal{N}_i$ for each point, then
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{mollusk_ab} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}  \hlkwd{as.matrix}\hlstd{()}
+\hlstd{mollusk_ab} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}  \hlkwd{as.matrix}\hlstd{()}
 \hlstd{umap_fit}   \hlkwb{<-} \hlkwd{umap}\hlstd{(}\hlkwd{log}\hlstd{(}\hlnum{1} \hlopt{+} \hlstd{mollusk_ab))}\hlopt{$}\hlstd{layout} \hlopt{%>%}
   \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site)}
 \end{alltt}
