@@ -2,7 +2,6 @@
 title: 'Tutorial: nonlinear dimensionality reduction methods'
 author: 'MAP573 team'
 date: "10/20/2020"
-output: html_document
 ---
 
 # Preliminaries
@@ -32,28 +31,6 @@ theme_set(theme_bw()) # set default ggplot2 theme to black and white
 
 ### Reminders on Multidimensional scaling (MDS)
 
-<!-- Assuming that we have observations $x_1,\dots,x_n \in \mathbb{R}^p$, and let $d_{i,j}$ be the distance between observations $i$ -->
-<!-- and $j$. In most cases, we use Euclidean distance i.e. $d_{i,j} = ||x_i-x_j||$, but other distances may be used. On the contrary, in some applications, we may possess only *dissimilarity* measure $d_{i,j}$. -->
-
-
-<!-- Multidimensional scaling seeks values $z_1,\dots,z_n \in \mathbb{R}^k$ ($k<p$) to minimize the so-called *stress-function* -->
-<!-- $$ -->
-<!-- S_M (z_1,\dots,z_n) = \sum_{i \neq i^{'}} (d_{ii^{'}} - ||z_i - z_{i^{'}}||)^2. -->
-<!-- $$ -->
-<!-- This is known as *least-squares* or *Kruskal-Shephard* scaling. We wish to determine a lower-dimensional representation of the data that preserves the pairwise distances as well as possible i.e. we want to find vector $z_1,\dots,z_n \in \mathbb{R}^k$ such that -->
-<!-- $$ -->
-<!-- ||z_i - z_{i^{'}} || \approx d_{i,i^{'}} \quad \text{ for all } \quad i,i^{'}=1,\dots,n. -->
-<!-- $$ -->
-<!-- A variation on least squares scaling is the so-called *Sammon mapping* which minimizes -->
-<!-- $$ -->
-<!-- S_{S_m}(z_1,\dots,z_n) = \frac{(d_{ii^{'}} - ||z_i - z_{i^{'}}||)^2}{d_{ii^{'}}}, -->
-<!-- $$ -->
-<!-- that is more emphasis is put on preserving smaller pariwise distances. -->
-
-<!-- In classical scaling, we instead start with similiraties $s_{i,i^{'}}$: often, we use the centered inner product $s_{i,i^{'}} = \langle x_i - \bar x, x_{i^{'}} - \bar x \rangle$. The problem is then to minimize over $z_1,\dots,z_n \in \mathbb{R}^k$, the following quantity -->
-<!-- $$ -->
-<!-- S_C(z_1,\dots,z_n) = \sum_{i,i^{'}} \Bigl( s_{ii^{'}} - \langle z_i - \bar z, z_{i^{'}} - \bar z \rangle \Bigr)^2 -->
-<!-- $$ -->
 
 There are different types of MDS algorithms, including
 
@@ -199,13 +176,21 @@ ggscatter(mds, x = "Dim.1", y = "Dim.2",
           repel = TRUE)
 ```
 
+Here, there does not seem to be much difference between all methods. This is probably due to the fact that we are always using the 'Euclidian' distance.   
+
 ### Correlation matrix using Multidimensional Scaling 
 
 MDS can also be used to detect a hidden pattern in a correlation matrix.
 
 ```{r}
 res.cor <- cor(mtcars, method = "spearman")
+res.cor
 ```
+
+```{r}
+head(mtcars)
+```
+
 
 5) **Would you say that correlation is a measure of similarity or dissimilarity? Using correlation, how would you compute distances between objects**
 
@@ -224,15 +209,16 @@ ggscatter(mds.cor, x = "Dim.1", y = "Dim.2",
           label = colnames(res.cor),
           repel = TRUE)
 ```
-
+Observe here that we are performing the MDS on the variables rather on the individuals. 
 Positive correlated objects are close together on the same side of the plot.
 
 7) **Perform a PCA on the *mtcars* dataset. Comment on the differences with MDS. Recall what are the main differences between MDS and PCA**
 
 ```{r}
-FactoMineR::PCA(mtcars)
+pca <- FactoMineR::PCA(mtcars)
 ```
 
+MDS and PCA are equivalent when considering classical scaling and Euclidean distances.
 
 Mathematically and conceptually, there are close correspondences between MDS and other methods used to reduce the dimensionality of complex data, such as Principal components analysis (PCA) and factor analysis.
 
@@ -382,6 +368,8 @@ from sklearn.datasets import make_moons
 import numpy as np
 
 X, y = make_moons(n_samples=100, random_state=123)
+
+#PCA with n_components = 1
 scikit_pca = PCA(n_components=1)
 X_spca = scikit_pca.fit_transform(X)
 
@@ -391,6 +379,20 @@ plt.scatter(X_spca[y==1, 0], np.zeros((50,1)), color='blue', alpha=0.5)
 
 plt.title('First principal component after Linear PCA')
 plt.xlabel('PC1')
+
+plt.show()
+
+#PCA with n_components = 2
+scikit_pca = PCA(n_components=2)
+X_spca = scikit_pca.fit_transform(X)
+
+plt.figure(figsize=(8,6))
+plt.scatter(X_spca[y==0, 0], X_spca[y==0, 1], color='red', alpha=0.5)
+plt.scatter(X_spca[y==1, 0], X_spca[y==1, 1], color='blue', alpha=0.5)
+
+plt.title('First 2 principal component after Linear PCA')
+plt.xlabel('PC1')
+plt.ylabel('PC2')
 
 plt.show()
 ```
@@ -406,6 +408,8 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import make_moons
 import numpy as np
 
+#kernel PCA with n_components = 1
+
 gamma = 15
 X, y = make_moons(n_samples=100, random_state=123)
 X_pc = KernelPCA(gamma=15, n_components=1, kernel='rbf').fit_transform(X)
@@ -417,18 +421,10 @@ plt.scatter(X_pc[y==1, 0], np.zeros((50,1)), color='blue', alpha=0.5)
 plt.title('First principal components after RBF Kernel PCA with $\gamma$={}'.format(gamma))
 plt.xlabel('PC1')
 plt.show()
-```
+
+#kernel PCA with n_components = 2
 
 
-
-```{python}
-from sklearn.decomposition import KernelPCA
-import matplotlib.pyplot as plt
-from sklearn.datasets import make_moons
-import numpy as np
-
-gamma = 15
-X, y = make_moons(n_samples=100, random_state=123)
 X_pc = KernelPCA(gamma=15, n_components=2, kernel='rbf').fit_transform(X)
 
 plt.figure(figsize=(8,6))
@@ -439,7 +435,10 @@ plt.title('First 2 principal components after RBF Kernel PCA with $\gamma$={}'.f
 plt.xlabel('PC1')
 plt.ylabel('PC2')
 plt.show()
+
 ```
+
+
 
 ## Concentric circles 
 
@@ -463,6 +462,67 @@ plt.show()
 ```
 
 3) **Again, perform both a linear and kernel PCA on the [make_circles](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html) dataset**
+
+```{python}
+from sklearn.datasets import make_circles
+from sklearn.decomposition import PCA, KernelPCA
+import matplotlib.pyplot as plt
+import numpy as np
+
+X, y = make_circles(n_samples=1000, random_state=123, noise=0.1, factor=0.2)
+
+#linear PCA 
+scikit_pca = PCA(n_components=1)
+X_spca = scikit_pca.fit_transform(X)
+
+plt.figure(figsize=(8,6))
+plt.scatter(X[y==0, 0], np.zeros((500,1))+0.1, color='red', alpha=0.5)
+plt.scatter(X[y==1, 0], np.zeros((500,1))-0.1, color='blue', alpha=0.5)
+plt.ylim([-15,15])
+plt.title('First principal component after Linear PCA')
+plt.xlabel('PC1')
+plt.show()
+
+
+scikit_pca = PCA(n_components=2)
+X_spca = scikit_pca.fit_transform(X)
+
+plt.figure(figsize=(8,6))
+plt.scatter(X[y==0, 0], X[y==0, 1], color='red', alpha=0.5)
+plt.scatter(X[y==1, 0], X[y==1, 1], color='blue', alpha=0.5)
+plt.ylim([-15,15])
+plt.title('First 2 principal component after Linear PCA')
+plt.xlabel('PC1')
+plt.ylabel('PC2')
+plt.show()
+
+#kernel PCA with n_components=1
+gamma = 15
+X_pc = KernelPCA(gamma=15, n_components=1, kernel='rbf').fit_transform(X)
+
+plt.figure(figsize=(8,6))
+plt.scatter(X_pc[y==0, 0], np.zeros((500,1)), color='red', alpha=0.5)
+plt.scatter(X_pc[y==1, 0], np.zeros((500,1)), color='blue', alpha=0.5)
+
+plt.title('First principal components after RBF Kernel PCA with $\gamma$={}'.format(gamma))
+plt.xlabel('PC1')
+plt.show()
+
+#kernel PCA with n-components=2
+gamma = 15
+X_pc = KernelPCA(gamma=gamma, n_components=2, kernel='rbf').fit_transform(X)
+
+plt.figure(figsize=(8,6))
+plt.scatter(X_pc[y==0, 0], X_pc[y==0, 1], color='red', alpha=0.5)
+plt.scatter(X_pc[y==1, 0], X_pc[y==1, 1], color='blue', alpha=0.5)
+
+plt.title('First 2 principal components after RBF Kernel PCA with $\gamma$={}'.format(gamma))
+plt.xlabel('PC1')
+plt.ylabel('PC2')
+plt.show()
+```
+
+
 
 ## Swiss roll
 
@@ -519,12 +579,25 @@ import matplotlib.pyplot as plt
 from sklearn.manifold import locally_linear_embedding
 
 X, color = make_swiss_roll(n_samples=800, random_state=123)
+
+# lle with n_components = 1
+
 X_lle, err = locally_linear_embedding(X, n_neighbors=12, n_components=1)
 
 plt.figure(figsize=(8,6))
 plt.scatter(X_lle, np.zeros((800,1)), c=color, cmap=plt.cm.rainbow)
 
 plt.title('First principal component after Locally Linear Embedding')
+plt.show()
+
+# lle with n_components = 2
+
+X_lle, err = locally_linear_embedding(X, n_neighbors=12, n_components=2)
+
+plt.figure(figsize=(8,6))
+plt.scatter(X_lle[:,0], X_lle[:,1], c=color, cmap=plt.cm.rainbow)
+
+plt.title('First 2 principal component after Locally Linear Embedding')
 plt.show()
 ```
 
