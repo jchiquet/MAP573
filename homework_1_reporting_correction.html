@@ -551,7 +551,9 @@ div.tocify {
     <li>
       <a href="resources/DimensionReductionPCA.pdf">Linear methods: PCA</a>
     </li>
-    <li class="dropdown-header">Non linear methods: Kernel PCA, t-SNE, VAE</li>
+    <li>
+      <a href="resources/DimensionReductionNonLinear.pdf">Non linear methods: Kernel PCA, t-SNE, VAE</a>
+    </li>
     <li class="divider"></li>
     <li class="dropdown-header">Clustering</li>
     <li class="dropdown-header">Partitioning: HAC, k-means, Spectral clustering</li>
@@ -1011,7 +1013,8 @@ div.tocify {
 <p>The first column, which contains no header in the <code>csv</code> file, is an id from the date of sampling. We do not need it so we remove it just after reading the data:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ozone <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/ozoneNA.csv&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>X1)</span></code></pre></div>
 <pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
-<pre><code>## Parsed with column specification:
+<pre><code>## 
+## ── Column specification ────────────────────────────────────────────────────────
 ## cols(
 ##   X1 = col_double(),
 ##   maxO3 = col_double(),
