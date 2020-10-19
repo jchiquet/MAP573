@@ -24,9 +24,9 @@ library(kernlab)
   \frametitle{Kernel-PCA}
 
   \begin{block}{Kernel PCA Model}
-    Assume a non linear transformation $ \Psi(\mathbf{x}_i) \text{ where } \Psi : \mathbb{R}^p \to \mathbb{R}^n$,  then perform linear PCA, with $\bV$ a \alert{\bf $n\times q$} orthonormal matrix
+    Assume a non linear transformation $ \Psi(\mathbf{x}_i) \text{ where } \Psi : \mathbb{R}^p \to \mathbb{R}^n$,  then perform linear PCA, with $\bU$ a \alert{\bf $n\times q$} orthonormal matrix
     \[
-      \Phi(\bx) = \bV^\top \Psi(\bx-\bmu) = \tilde\bx
+      \Phi(\bx) = \bU^\top \Psi(\bx-\bmu) = \tilde\bx
     \]
   \end{block}
 
@@ -38,7 +38,7 @@ library(kernlab)
   \begin{block}{Solution}
     Eigen-decomposition of the doubly centered kernel matrix $\mathbf{K} = k(\bx_i, \bx_{i'})$ 
     \[\tilde{\mathbf{K}} = 
-    (\bI - \mathbf{1}\mathbf{1}^\top/n) \mathbf{K} (\bI - \mathbf{1}\mathbf{1}^\top/n) = \bV {\boldsymbol\Lambda} \bV^\top \]
+    (\bI - \mathbf{1}\mathbf{1}^\top/n) \mathbf{K} (\bI - \mathbf{1}\mathbf{1}^\top/n) = \bU {\boldsymbol\Lambda} \bU^\top \]
   \end{block}
 
 \end{frame}

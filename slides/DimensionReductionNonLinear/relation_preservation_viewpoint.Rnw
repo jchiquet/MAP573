@@ -5,13 +5,13 @@
 
     \begin{block}{Distance Preservation}
       \begin{itemize}
-    \item  Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
+    \item  Construct a map $\Phi$ from the space $\Rset^{p}$ into a space $\Rset^{q}$ of \alert{smaller dimension}:
       \begin{align*}
-      \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
+      \Phi:\quad & \Rset^p \to \Rset^{q}, q \ll p\\
                & \bx \mapsto \Phi(\bx)
       \end{align*}
       \begin{equation*}
-      \text{such that} \quad \mathcal{R}(\bx_i, \bx_{i'}) \sim\mathcal{R'}(\bx'_i, \bx'_{i'})
+      \text{such that} \quad \mathcal{R}(\bx_i, \bx_{i'}) \sim\mathcal{R'}(\tilde\bx_i, \tilde\bx_{i'})
       \end{equation*}
     \end{itemize}
   \end{block}

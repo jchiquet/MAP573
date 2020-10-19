@@ -1,5 +1,3 @@
-\subsection{Motivations}
-
 \begin{frame}[fragile]
   \partpage
 
@@ -127,6 +125,7 @@ scRNA %>% FactoMineR::PCA(graph = FALSE, quali.sup = which(colnames(scRNA) == "c
 library(PLNmodels); data(mollusk)
 mollusk <- 
   prepare_data(mollusk$Abundance, mollusk$Covariate[c("season", "site")]) %>% 
+  select(-Offset) %>% 
   as_tibble() %>% 
   distinct() # remove duplicates
 @

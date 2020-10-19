@@ -42,7 +42,7 @@ navbar:
         - text: "Linear methods: PCA"
           href: resources/DimensionReductionPCA.pdf
         - text: "Non linear methods: Kernel PCA, t-SNE, VAE"
-#          href: .html
+          href: resources/DimensionReductionNonLinear.pdf
         - text: "------------------"
         - text: "Clustering"
         - text: "Partitioning: HAC, k-means, Spectral clustering"

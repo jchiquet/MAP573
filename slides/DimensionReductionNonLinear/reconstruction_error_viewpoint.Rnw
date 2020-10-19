@@ -93,29 +93,4 @@ Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA ca
 \]
 
 \end{frame}
-% 
-% \begin{frame}
-%   \frametitle{Non linear extensions}
-% 
-%   \begin{block}{Kernel PCA}
-%     Linear assumption after transformation, with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
-%     \begin{equation*}
-%         \Psi(\bx - \bmu) \simeq  \mathbf{F}_{1:q} \bU_{1:q}^\top
-%       \end{equation*}
-%    \end{block}
-% 
-%   \vfill
-% 
-%   \begin{block}{Non negative Matrix factorisation}
-%     Linear model assumption with $\bU$ non-negative and  $\mathbf{F}$ non-negative
-%     \begin{equation*}
-%         \bx \simeq \bmu + \mathbf{F}_{1:q} \bU_{1:q}^\top
-%       \end{equation*}
-%   \end{block}
-% 
-%   \vfill
-% 
-%   \paragraph{Auto-encoders} Find $\Phi$ and $\tilde\Phi$ with a neural-network!
-% 
-%   $\rightsquigarrow$ Fit $\bU, \mathbf{F}$ with some optimization algorithms (much more complex!)
-% \end{frame}
+ 

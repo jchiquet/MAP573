@@ -35,8 +35,8 @@
 @
 
 \subsection{Kernel-PCA}
-% <<Kernel PCA, child='kernelPCA.Rnw'>>=
-% @
+<<Kernel PCA, child='kernelPCA.Rnw'>>=
+@
 
 \subsection{Non-negative matrix factorization}
 <<NMF, child='NMF.Rnw'>>=
@@ -46,43 +46,47 @@
 <<others reconstruction, child='others_reconstruction.Rnw'>>=
 @
 
-% %% ==========================================================================
-% \subsection{Graph-based Kernel-PCA}
-% %% ==========================================================================
-% 
-
 %% ==========================================================================
-\section{Relation preservation}
+\section{Motivated by relation preservation}
 %% ==========================================================================
 
-\subsection{General goal}
 <<Relation preservation, child='relation_preservation_viewpoint.Rnw'>>=
 @
 
-\subsection{MDS}
+\subsection{Multidimensional Scaling}
+<<MDS, child='MDS.Rnw'>>=
+@
 
-\subsection{t-SNE}
+\subsection{Stochastic Neighborhood Embedding}
 <<tSNE, child='tSNE.Rnw'>>=
 @
 
-\subsection{UMAP}
-<<UMAP, child='umap.Rnw'>>=
+\subsection{Other methods}
+<<others relation, child='others_relation.Rnw'>>=
 @
 
 %% ==========================================================================
 \part{Conlusion}
 %% ==========================================================================
-
-\begin{frame}[allowframebreaks]
-  \frametitle{References}
-
- \bibliographystyle{apalike}
-
-\begin{small}
-  \bibliography{{../../resources/MAP573.bib}}
-\end{small}
-
+\begin{frame}
+  \frametitle{To conclude}
+  
+  \begin{center}
+      You can play online on \href{https://projector.tensorflow.org/}{https://projector.tensorflow.org/}
+  \end{center}
+  
 \end{frame}
+
+% \begin{frame}[allowframebreaks]
+%   \frametitle{References}
+% 
+%  \bibliographystyle{apalike}
+% 
+% \begin{small}
+%   \bibliography{{../../resources/MAP573.bib}}
+% \end{small}
+% 
+% \end{frame}
 
 \end{document}
 

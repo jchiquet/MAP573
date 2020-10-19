@@ -1,0 +1,120 @@
+<<echo = FALSE, message=FALSE>>=
+library(Rtsne)
+@
+
+\begin{frame}{Multidimensional scaling}
+  \framesubtitle{a.k.a Principale Coordinates Analysis}
+
+  \begin{block}{Problem setup}
+  Consider a collection of points $\bx_i\in\Rset^p$ and assume either 
+  \begin{itemize}
+  \item $D = d_{ii'}$ a $n\times n$ dissimilarity matrix, or
+  \item $S = s_{ii'}$ a $n\times n$ similarity matrix, or
+  \end{itemize}
+  \rsa \alert{\bf Goal:} find $\tilde\bx_i\in\Rset^q$ while preserving S/D in the latent space\\
+  
+  \rsa we don't need access to the original position in $\Rset^p$ (only $D$ or $S$).
+  \end{block}
+  
+  \begin{block}{Classical MDS model}
+    Measure similarities with the (centered) \alert{\bf inner product} and minimize 
+    \begin{equation*}
+      \sum_{i\neq i'} \left( (\bx_i - \bmu)^\top (\bx_i - \bmu) - \tilde\bx_i^\top \tilde\bx_{i'} \right)^2,
+    \end{equation*}
+    while assuming a linear model $\tilde\bx = \Phi(\bx) = \bV^\top (\bx_i - \bmu)$, with $\bV$ a $p \times q$ orthonormal matrix.
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Classical MDS: solution}
+
+  With the linear model $\tilde\bx = \Phi(\bx) = \bV^\top (\bx_i - \bmu)$, we waim at minimizing
+  \begin{align*}
+    \textrm{Stress}(\tilde\bx_i) = & \sum_{i\neq i'}  \left( (\bx_i - \bmu)^\top (\bx_{i'} - \bmu) - \tilde\bx_i^\top \tilde\bx_{i'} \right)^2, \\
+    = & \sum_{i\neq i'} \left( (\bx_i - \bmu)^\top (\bx_{i'} - \bmu) -  (\bx_i - \bmu)^\top \bV \bV^\top (\bx_{i'} - \bmu) \right)^2,
+    \end{align*}
+
+  It can be showed that  $\displaystyle \minimize_{\bmu\in\Rset^p, \bV\in\mathcal{O}_{pq}} \textrm{Stress}(\tilde\bx_i)$ is dual to principal component analysis and leads to
+  \[
+    \tilde\bX = \bX^c \bV = \bU\bD\bV^\top \bV = \bU\bD.
+  \]
+  
+  \alert{\rsa The principal coordinates in $\Rset^q$ correspond to the scores of $n$ individual projected on the first $q$ principal components.}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Metric Dimension Scalings}
+  
+  \paragraph{Idea to generalize classical MDS:} preserving similarities in term of \alert{\bf inner product} amounts to preserve dissimilarity in terms of Euclidean distance
+
+  \begin{block}{Least-square/Kruskal-Shephard scaling}<2->
+      Use a distance base formulation with the following loss (Stress) function:
+      \begin{equation*}
+        \text{Stress}^{SK} = \sum_{i\neq i'} \left(d_{ii'} - \|\tilde\bx_i - \tilde\bx_{i'}\| \right)^2,
+      \end{equation*}
+      \begin{itemize}
+        \item[\rsa] Almost equivalent to classical MDS when $d$ is the Euclidean distance
+        \item[\rsa] Generalize to any \alert{\bf quantitative} dissimilarity/distance $d$
+      \end{itemize}
+  \end{block}
+
+  \begin{block}{Sammong mapping - \textcolor{black}{Variant of the loss (Stress) function}}<3>
+    \vspace{-.5cm}
+      \begin{equation*}
+        \text{Stress}^{SM} = \sum_{i\neq i'} \frac{\left(d_{ii'} - \|\tilde\bx_i - \tilde\bx_{i'}\| \right)^2}{d_{ii'}}.
+      \end{equation*}
+  \end{block}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Non-Metric Dimension Scalings}
+  
+  \paragraph{Idea:} dissimilarities are often only knows by their rank order
+
+  \begin{block}{Shephard-Kruskal non-metric scaling}
+      \begin{equation*}
+        \text{Stress}^{NM} = \sum_{i\neq i'} \frac{\left(d_{ii'} - f(d_{ii'}) \right)^2}{\sum_{i\neq i'} d_{ii'}^2},
+      \end{equation*}
+      where $f$ is an arbitrary increasing function preserving the order
+      \begin{itemize}
+        \item[\rsa] Only the order it required
+        \item[\rsa] $f$ act a isotonic regression curve for the $d_{ii'}$. 
+      \end{itemize}
+  \end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Example on 'mollusk'} 
+
+\paragraph{Run the fit}
+
+<<MDS mollusk run>>=
+mollusk_ab <- mollusk %>% select(-site, -season) %>%  as.matrix()
+
+mmds_euclidean <- cmdscale(dist(mollusk_ab)) %>% 
+  as.data.frame() %>% add_column(type = "mMDS, Euclidean") %>% add_column(site = mollusk$site)
+
+mmds_canberra <- cmdscale(dist(mollusk_ab, method = "canberra")) %>% 
+  as.data.frame() %>% add_column(type = "mMDS, Canberra") %>% add_column(site = mollusk$site)
+
+nmds <- MASS::isoMDS(dist(mollusk_ab, "canberra"))$points %>% 
+  as.data.frame() %>% add_column(type = "nmMDS") %>% add_column(site = mollusk$site)
+@
+
+\paragraph{Compare type of MDS}
+
+<<MDS mollusk plot, fig.dim=c(10,5), out.width='.9\\textwidth'>>=
+rbind(mmds_euclidean, mmds_canberra, nmds) %>% 
+  ggplot(aes(x = V1, y = V2, color = site)) +
+     geom_point(size=1.25) +
+     guides(colour = guide_legend(override.aes = list(size=6))) +
+  facet_wrap(.~type, scales = 'free')
+@
+
+\end{frame}

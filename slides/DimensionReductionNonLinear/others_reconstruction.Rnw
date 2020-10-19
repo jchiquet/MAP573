@@ -1,0 +1,61 @@
+\begin{frame}
+  \frametitle{Other approaches}
+  \framesubtitle{Linear model with other constraints}
+    
+    Let $\bV$ be a $p\times q$ matrix and $\tilde \bx \in \Rset^q$
+    \begin{equation*}
+      \bx \simeq  \bmu + \sum_{j=1}^q \tilde x^j \bV^j = \bmu + \bV \tilde\bx
+    \end{equation*}
+  
+    Apply other constraints on $\bV$ and or the factor/representation $\tilde\bx$
+    \begin{itemize}
+      \item $\bV$ sparse, possibly orthogonal: \alert{\bf sparse PCA}\\
+<<eval = FALSE>>=
+library(sparsepca)
+@
+      \item $\tilde \bx$ sparse : \alert{\bf Dictionary learning}
+<<eval = FALSE>>=
+library(SPAMS)
+@
+      \item ($\tilde X^j, \tilde X^\ell$) independent : \alert{\bf Independent Component Anaysis}
+<<eval = FALSE>>=
+library(fastICA)
+@
+    \end{itemize}
+
+\end{frame}
+ 
+\begin{frame}
+   \frametitle{Auto-encoders}
+   
+   \begin{block}{Highly non-linear model}
+
+      Find $\Phi$ and $\tilde\Phi$ with \alert{\bf two} neural-networks, controlling the error.
+
+      \begin{equation*}
+        \epsilon(\bX, \hat \bX ) = \sum_{i=1}^n \left\| \bx_i - \tilde{\Phi}(\Phi(\bx_i)) \right\|^2 \alert{\bf + \text{regularization}(\Phi, \tilde\Phi)}
+      \end{equation*}
+
+      \begin{itemize}
+         \item \# layers and neurons determine the \alert{\bf model complexity}
+         \item Need regularization to avoid \alert{\bf overfitting}
+         \item  Fitted with optimization tools like stochastic gradient descent
+         \item Require much \alert{more data} and more computational \alert{resources}
+         \item \alert{\bf Interpretation questionable}
+      \end{itemize}
+
+   \end{block}
+
+Some Python equivalents of (torch, pytorch, tensorflow):
+ 
+<<eval = FALSE>>=
+
+library(keras)
+
+library(torch)
+@
+
+\rsa First rudimentary steps with auto-encoders during next homework
+
+\end{frame}
+

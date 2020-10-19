@@ -142,8 +142,6 @@
 \part{Introduction}
 %% ====================================================================
 
-\subsection{Motivations}
-
 \begin{frame}[fragile]
   \partpage
 
@@ -318,6 +316,7 @@ spreaded in 11 cell-lines. Original transcription data are measured by counts ob
 \hlkwd{library}\hlstd{(PLNmodels);} \hlkwd{data}\hlstd{(mollusk)}
 \hlstd{mollusk} \hlkwb{<-}
   \hlkwd{prepare_data}\hlstd{(mollusk}\hlopt{$}\hlstd{Abundance, mollusk}\hlopt{$}\hlstd{Covariate[}\hlkwd{c}\hlstd{(}\hlstr{"season"}\hlstd{,} \hlstr{"site"}\hlstd{)])} \hlopt{%>%}
+  \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{Offset)} \hlopt{%>%}
   \hlkwd{as_tibble}\hlstd{()} \hlopt{%>%}
   \hlkwd{distinct}\hlstd{()} \hlcom{# remove duplicates}
 \end{alltt}
@@ -362,7 +361,7 @@ season & automn:41 & spring:43 & summer:44 & winter:30 & NA & NA & NA\\
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: Aesthetics must be either length 1 or the same as the data (316): x}}\end{kframe}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: Aesthetics must be either length 1 or the same as the data (158): x}}\end{kframe}
 \includegraphics[width=.8\textwidth]{figures/mollusc_abundance-1} 
 
 \end{knitrout}
@@ -462,7 +461,7 @@ season & automn:41 & spring:43 & summer:44 & winter:30 & NA & NA & NA\\
 
 \section{Motivated by reconstruction error}
 
-\subsection{General goal}
+\subsection{PCA as a matrix factorization}
 
 \begin{frame}
   \frametitle{Reconstruction error approach}
@@ -559,49 +558,139 @@ Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA ca
 \]
 
 \end{frame}
-% 
-% \begin{frame}
-%   \frametitle{Non linear extensions}
-% 
-%   \begin{block}{Kernel PCA}
-%     Linear assumption after transformation, with $\bU$ orthonormal and no  constraint on $\mathbf{F}$
-%     \begin{equation*}
-%         \Psi(\bx - \bmu) \simeq  \mathbf{F}_{1:q} \bU_{1:q}^\top
-%       \end{equation*}
-%    \end{block}
-% 
-%   \vfill
-% 
-%   \begin{block}{Non negative Matrix factorisation}
-%     Linear model assumption with $\bU$ non-negative and  $\mathbf{F}$ non-negative
-%     \begin{equation*}
-%         \bx \simeq \bmu + \mathbf{F}_{1:q} \bU_{1:q}^\top
-%       \end{equation*}
-%   \end{block}
-% 
-%   \vfill
-% 
-%   \paragraph{Auto-encoders} Find $\Phi$ and $\tilde\Phi$ with a neural-network!
-% 
-%   $\rightsquigarrow$ Fit $\bU, \mathbf{F}$ with some optimization algorithms (much more complex!)
-% \end{frame}
+ 
 
 \subsection{Kernel-PCA}
-% <<Kernel PCA, child='kernelPCA.Rnw'>>=
-% @
+
+
+
+\begin{frame}
+  \frametitle{Kernel-PCA}
+  
+  \begin{block}{Principle: non linear transformation of $\bx$ prior to linear PCA} 
+    \begin{enumerate}
+      \item Project the data into a higher space where it is linearly separable
+      \item Apply PCA to the transformed data 
+    \end{enumerate}
+  \end{block}
+
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[height=4cm]{figures/kernel_trick2}
+    \caption{Transformation $\Psi : \bx \to \Psi(\bx)$ (illustration in presence of existing labels)}
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Kernel-PCA}
+
+  \begin{block}{Kernel PCA Model}
+    Assume a non linear transformation $ \Psi(\mathbf{x}_i) \text{ where } \Psi : \mathbb{R}^p \to \mathbb{R}^n$,  then perform linear PCA, with $\bU$ a \alert{\bf $n\times q$} orthonormal matrix
+    \[
+      \Phi(\bx) = \bU^\top \Psi(\bx-\bmu) = \tilde\bx
+    \]
+  \end{block}
+
+  \begin{block}{Kernel trick}
+    Never calculate  $\Psi(\bx_i)$ thanks to the kernel trick:
+    \[K = k(\mathbf{x},\mathbf{y}) = (\Psi(\mathbf{x}),\Psi(\mathbf{y})) = \Psi(\mathbf{x})^T\Psi(\mathbf{y}) \]
+  \end{block}
+
+  \begin{block}{Solution}
+    Eigen-decomposition of the doubly centered kernel matrix $\mathbf{K} = k(\bx_i, \bx_{i'})$ 
+    \[\tilde{\mathbf{K}} = 
+    (\bI - \mathbf{1}\mathbf{1}^\top/n) \mathbf{K} (\bI - \mathbf{1}\mathbf{1}^\top/n) = \bU {\boldsymbol\Lambda} \bU^\top \]
+  \end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Choice of a kernel} 
+
+  A symmetric positive definite function $k(\mathbf{x},\mathbf{y}) \in \Rset$, which depends on the kind of \alert{\bf similarity} assumed
+
+\begin{block}{Some common kernels}
+
+\begin{itemize}
+\item \alert{\bf Polynormial Kernel }
+
+\[ k(\bx_i,\bx_{i'}) = (\bx_{i}^\top \bx_{i'} + c)^d \]
+
+\item  \alert{\bf Gaussian (radial) kernel}
+
+\[k(\bx_i,\bx_{i'}) = \exp{\frac {-\left\|\bx_i - \bx_{i'} \right\|^2}{2\sigma^2}}\]
+
+\item  \alert{\bf Laplacian kernel}
+
+\[k(\bx_i,\bx_{i'}) = \exp{\frac {-\left\|\bx_i - \bx_{i'} \right\|}{\sigma}}\]
+
+\end{itemize}
+\end{block}
+
+\rsa Kernel PCA suffers from the choice of the Kernel to correctly
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Example on scRNA} 
+  \framesubtitle{Run the fit}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{scRNA_expr} \hlkwb{<-} \hlstd{scRNA} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{cell_type)} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{()}
+
+\hlstd{kPCA_radial} \hlkwb{<-}
+  \hlkwd{kpca}\hlstd{(scRNA_expr,} \hlkwc{kernel} \hlstd{=} \hlstr{"rbfdot"}\hlstd{,} \hlkwc{features} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{kpar} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{sigma} \hlstd{=} \hlnum{0.5}\hlstd{))} \hlopt{%>%}
+  \hlkwd{pcv}\hlstd{()} \hlopt{%>%} \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%}
+  \hlkwd{add_column}\hlstd{(}\hlkwc{kernel} \hlstd{=} \hlstr{"Radial"}\hlstd{)} \hlopt{%>%}
+  \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
+
+\hlstd{kPCA_linear} \hlkwb{<-}
+  \hlkwd{kpca}\hlstd{(scRNA_expr,} \hlkwc{kernel} \hlstd{=} \hlstr{"vanilladot"}\hlstd{,} \hlkwc{features} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{kpar} \hlstd{=} \hlkwd{list}\hlstd{())} \hlopt{%>%}
+  \hlkwd{pcv}\hlstd{()} \hlopt{%>%} \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%}
+  \hlkwd{add_column}\hlstd{(}\hlkwc{kernel} \hlstd{=} \hlstr{"Linear"}\hlstd{)} \hlopt{%>%}
+  \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
+
+\hlstd{kPCA_polydot} \hlkwb{<-} \hlkwd{kpca}\hlstd{(scRNA_expr,} \hlkwc{kernel} \hlstd{=} \hlstr{"polydot"}\hlstd{,} \hlkwc{features} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{kpar} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{degree} \hlstd{=} \hlnum{3}\hlstd{))} \hlopt{%>%}
+  \hlkwd{pcv}\hlstd{()} \hlopt{%>%} \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%}
+  \hlkwd{add_column}\hlstd{(}\hlkwc{kernel} \hlstd{=} \hlstr{"Polynomial"}\hlstd{)} \hlopt{%>%}
+  \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
+
+\hlstd{kPCA_laplacedot} \hlkwb{<-} \hlkwd{kpca}\hlstd{(scRNA_expr,} \hlkwc{kernel} \hlstd{=} \hlstr{"laplacedot"}\hlstd{,} \hlkwc{features} \hlstd{=} \hlnum{2}\hlstd{)} \hlopt{%>%}
+  \hlkwd{pcv}\hlstd{()} \hlopt{%>%} \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%}
+  \hlkwd{add_column}\hlstd{(}\hlkwc{kernel} \hlstd{=} \hlstr{"Laplace"}\hlstd{)} \hlopt{%>%}
+  \hlkwd{add_column}\hlstd{(}\hlkwc{cell_type} \hlstd{= scRNA}\hlopt{$}\hlstd{cell_type)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example on scRNA} 
+  \framesubtitle{Compare the projections}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{rbind}\hlstd{(kPCA_linear, kPCA_polydot, kPCA_radial, kPCA_laplacedot)} \hlopt{%>%}
+  \hlkwd{ggplot}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= V1,} \hlkwc{y} \hlstd{= V2,} \hlkwc{color} \hlstd{= cell_type))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{1.25}\hlstd{)} \hlopt{+} \hlkwd{guides}\hlstd{(}\hlkwc{colour} \hlstd{=} \hlkwd{guide_legend}\hlstd{(}\hlkwc{override.aes} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{6}\hlstd{)))} \hlopt{+}
+  \hlkwd{facet_wrap}\hlstd{(.}\hlopt{~}\hlstd{kernel,} \hlkwc{scales} \hlstd{=} \hlstr{'free'}\hlstd{)} \hlopt{+} \hlkwd{labs}\hlstd{(}\hlkwc{x} \hlstd{=} \hlstr{''}\hlstd{,} \hlkwc{y} \hlstd{=} \hlstr{''}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/kPCA_scRNA_kernel_plot-1} 
+
+\end{knitrout}
+
+\end{frame}
+
 
 \subsection{Non-negative matrix factorization}
 
 
-
-% The main approach to NMF is to estimate matrices $W$ and $H$ as a local minimum:
-% \begin{equation}
-% \min_{W, H \geq 0}\ \underbrace{[D(X, WH) + R(W, H)]}_{=F(W,H)} \label{nmf_min}
-% \end{equation}
-% where 
-% \begin{itemize}
-% \item $D$ is a loss function that measures the quality of the approximation. 
-% \end{itemize}
 
 \begin{frame}
   \frametitle{Non-negative Matrix Factorization -- NMF}
@@ -679,21 +768,113 @@ Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA ca
 \end{frame}
 
 
+\begin{frame}
+  \frametitle{NMF: limitations}
+
+  \begin{block}{Caveats}  
+    \begin{itemize}
+      \item Basis $\bV$ formed by standard NMF is not orthogonal!
+      \item Visualization is questionable \dots
+      \item Used to performed matrix factorization rather than exploratory analysis
+    \end{itemize}
+  \end{block}
+
+  \bigskip
+
+  \begin{block}{Other model-based approaches}
+    Use a probabilistic-based model to better described non-negative data
+    \begin{itemize}
+      \item[\rsa] add Zero-inflation, surdispersion (Poisson-lognormal model, Poisson-Gamma, etc)
+    \end{itemize}
+  \end{block}
+  
+\end{frame}
+
+
+
+\subsection{Other directions}
+
+\begin{frame}
+  \frametitle{Other approaches}
+  \framesubtitle{Linear model with other constraints}
+    
+    Let $\bV$ be a $p\times q$ matrix and $\tilde \bx \in \Rset^q$
+    \begin{equation*}
+      \bx \simeq  \bmu + \sum_{j=1}^q \tilde x^j \bV^j = \bmu + \bV \tilde\bx
+    \end{equation*}
+  
+    Apply other constraints on $\bV$ and or the factor/representation $\tilde\bx$
+    \begin{itemize}
+      \item $\bV$ sparse, possibly orthogonal: \alert{\bf sparse PCA}\\
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(sparsepca)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+      \item $\tilde \bx$ sparse : \alert{\bf Dictionary learning}
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(SPAMS)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+      \item ($\tilde X^j, \tilde X^\ell$) independent : \alert{\bf Independent Component Anaysis}
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(fastICA)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+    \end{itemize}
+
+\end{frame}
+ 
+\begin{frame}
+   \frametitle{Auto-encoders}
+   
+   \begin{block}{Highly non-linear model}
+
+      Find $\Phi$ and $\tilde\Phi$ with \alert{\bf two} neural-networks, controlling the error.
+
+      \begin{equation*}
+        \epsilon(\bX, \hat \bX ) = \sum_{i=1}^n \left\| \bx_i - \tilde{\Phi}(\Phi(\bx_i)) \right\|^2 \alert{\bf + \text{regularization}(\Phi, \tilde\Phi)}
+      \end{equation*}
+
+      \begin{itemize}
+         \item \# layers and neurons determine the \alert{\bf model complexity}
+         \item Need regularization to avoid \alert{\bf overfitting}
+         \item  Fitted with optimization tools like stochastic gradient descent
+         \item Require much \alert{more data} and more computational \alert{resources}
+         \item \alert{\bf Interpretation questionable}
+      \end{itemize}
+
+   \end{block}
+
+Some Python equivalents of (torch, pytorch, tensorflow):
+ 
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(keras)}
+
+\hlkwd{library}\hlstd{(torch)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\rsa First rudimentary steps with auto-encoders during next homework
+
+\end{frame}
+
 
 %% ==========================================================================
-\subsection{Auto-Encoder}
+\section{Motivated by relation preservation}
 %% ==========================================================================
 
-% %% ==========================================================================
-% \subsection{Graph-based Kernel-PCA}
-% %% ==========================================================================
-% 
-
-%% ==========================================================================
-\section{Relation preservation}
-%% ==========================================================================
-
-\subsection{General goal}
 
 \begin{frame}
     \frametitle{Pairwise Relation}
@@ -702,13 +883,13 @@ Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA ca
 
     \begin{block}{Distance Preservation}
       \begin{itemize}
-    \item  Construct a map $\Phi$ from the space $\Rset^{d}$ into a space $\Rset^{d'}$ of \alert{smaller dimension}:
+    \item  Construct a map $\Phi$ from the space $\Rset^{p}$ into a space $\Rset^{q}$ of \alert{smaller dimension}:
       \begin{align*}
-      \Phi:\quad & \Rset^d \to \Rset^{d'}, d' \ll d\\
+      \Phi:\quad & \Rset^p \to \Rset^{q}, q \ll p\\
                & \bx \mapsto \Phi(\bx)
       \end{align*}
       \begin{equation*}
-      \text{such that} \quad \mathcal{R}(\bx_i, \bx_{i'}) \sim\mathcal{R'}(\bx'_i, \bx'_{i'})
+      \text{such that} \quad \mathcal{R}(\bx_i, \bx_{i'}) \sim\mathcal{R'}(\tilde\bx_i, \tilde\bx_{i'})
       \end{equation*}
     \end{itemize}
   \end{block}
@@ -726,52 +907,194 @@ Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA ca
 \end{frame}
 
 
-\subsection{MDS}
-
-\subsection{t-SNE}
+\subsection{Multidimensional Scaling}
 
 
 
-\begin{frame}{Stochastic Neighbor Embedding \cite{vandermaaten2008} }
+\begin{frame}{Multidimensional scaling}
+  \framesubtitle{a.k.a Principale Coordinates Analysis}
+
+  \begin{block}{Problem setup}
+  Consider a collection of points $\bx_i\in\Rset^p$ and assume either 
+  \begin{itemize}
+  \item $D = d_{ii'}$ a $n\times n$ dissimilarity matrix, or
+  \item $S = s_{ii'}$ a $n\times n$ similarity matrix, or
+  \end{itemize}
+  \rsa \alert{\bf Goal:} find $\tilde\bx_i\in\Rset^q$ while preserving S/D in the latent space\\
+  
+  \rsa we don't need access to the original position in $\Rset^p$ (only $D$ or $S$).
+  \end{block}
+  
+  \begin{block}{Classical MDS model}
+    Measure similarities with the (centered) \alert{\bf inner product} and minimize 
+    \begin{equation*}
+      \sum_{i\neq i'} \left( (\bx_i - \bmu)^\top (\bx_i - \bmu) - \tilde\bx_i^\top \tilde\bx_{i'} \right)^2,
+    \end{equation*}
+    while assuming a linear model $\tilde\bx = \Phi(\bx) = \bV^\top (\bx_i - \bmu)$, with $\bV$ a $p \times q$ orthonormal matrix.
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Classical MDS: solution}
+
+  With the linear model $\tilde\bx = \Phi(\bx) = \bV^\top (\bx_i - \bmu)$, we waim at minimizing
+  \begin{align*}
+    \textrm{Stress}(\tilde\bx_i) = & \sum_{i\neq i'}  \left( (\bx_i - \bmu)^\top (\bx_{i'} - \bmu) - \tilde\bx_i^\top \tilde\bx_{i'} \right)^2, \\
+    = & \sum_{i\neq i'} \left( (\bx_i - \bmu)^\top (\bx_{i'} - \bmu) -  (\bx_i - \bmu)^\top \bV \bV^\top (\bx_{i'} - \bmu) \right)^2,
+    \end{align*}
+
+  It can be showed that  $\displaystyle \minimize_{\bmu\in\Rset^p, \bV\in\mathcal{O}_{pq}} \textrm{Stress}(\tilde\bx_i)$ is dual to principal component analysis and leads to
+  \[
+    \tilde\bX = \bX^c \bV = \bU\bD\bV^\top \bV = \bU\bD.
+  \]
+  
+  \alert{\rsa The principal coordinates in $\Rset^q$ correspond to the scores of $n$ individual projected on the first $q$ principal components.}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Metric Dimension Scalings}
+  
+  \paragraph{Idea to generalize classical MDS:} preserving similarities in term of \alert{\bf inner product} amounts to preserve dissimilarity in terms of Euclidean distance
+
+  \begin{block}{Least-square/Kruskal-Shephard scaling}<2->
+      Use a distance base formulation with the following loss (Stress) function:
+      \begin{equation*}
+        \text{Stress}^{SK} = \sum_{i\neq i'} \left(d_{ii'} - \|\tilde\bx_i - \tilde\bx_{i'}\| \right)^2,
+      \end{equation*}
+      \begin{itemize}
+        \item[\rsa] Almost equivalent to classical MDS when $d$ is the Euclidean distance
+        \item[\rsa] Generalize to any \alert{\bf quantitative} dissimilarity/distance $d$
+      \end{itemize}
+  \end{block}
+
+  \begin{block}{Sammong mapping - \textcolor{black}{Variant of the loss (Stress) function}}<3>
+    \vspace{-.5cm}
+      \begin{equation*}
+        \text{Stress}^{SM} = \sum_{i\neq i'} \frac{\left(d_{ii'} - \|\tilde\bx_i - \tilde\bx_{i'}\| \right)^2}{d_{ii'}}.
+      \end{equation*}
+  \end{block}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Non-Metric Dimension Scalings}
+  
+  \paragraph{Idea:} dissimilarities are often only knows by their rank order
+
+  \begin{block}{Shephard-Kruskal non-metric scaling}
+      \begin{equation*}
+        \text{Stress}^{NM} = \sum_{i\neq i'} \frac{\left(d_{ii'} - f(d_{ii'}) \right)^2}{\sum_{i\neq i'} d_{ii'}^2},
+      \end{equation*}
+      where $f$ is an arbitrary increasing function preserving the order
+      \begin{itemize}
+        \item[\rsa] Only the order it required
+        \item[\rsa] $f$ act a isotonic regression curve for the $d_{ii'}$. 
+      \end{itemize}
+  \end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Example on 'mollusk'} 
+
+\paragraph{Run the fit}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mollusk_ab} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}  \hlkwd{as.matrix}\hlstd{()}
+
+\hlstd{mmds_euclidean} \hlkwb{<-} \hlkwd{cmdscale}\hlstd{(}\hlkwd{dist}\hlstd{(mollusk_ab))} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{type} \hlstd{=} \hlstr{"mMDS, Euclidean"}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site)}
+
+\hlstd{mmds_canberra} \hlkwb{<-} \hlkwd{cmdscale}\hlstd{(}\hlkwd{dist}\hlstd{(mollusk_ab,} \hlkwc{method} \hlstd{=} \hlstr{"canberra"}\hlstd{))} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{type} \hlstd{=} \hlstr{"mMDS, Canberra"}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site)}
+
+\hlstd{nmds} \hlkwb{<-} \hlstd{MASS}\hlopt{::}\hlkwd{isoMDS}\hlstd{(}\hlkwd{dist}\hlstd{(mollusk_ab,} \hlstr{"canberra"}\hlstd{))}\hlopt{$}\hlstd{points} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{type} \hlstd{=} \hlstr{"nmMDS"}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site)}
+\end{alltt}
+\begin{verbatim}
+## initial  value 39.689470 
+## iter   5 value 32.736128
+## final  value 32.587709 
+## converged
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\paragraph{Compare type of MDS}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{rbind}\hlstd{(mmds_euclidean, mmds_canberra, nmds)} \hlopt{%>%}
+  \hlkwd{ggplot}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= V1,} \hlkwc{y} \hlstd{= V2,} \hlkwc{color} \hlstd{= site))} \hlopt{+}
+     \hlkwd{geom_point}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{1.25}\hlstd{)} \hlopt{+}
+     \hlkwd{guides}\hlstd{(}\hlkwc{colour} \hlstd{=} \hlkwd{guide_legend}\hlstd{(}\hlkwc{override.aes} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{6}\hlstd{)))} \hlopt{+}
+  \hlkwd{facet_wrap}\hlstd{(.}\hlopt{~}\hlstd{type,} \hlkwc{scales} \hlstd{=} \hlstr{'free'}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.9\textwidth]{figures/MDS_mollusk_plot-1} 
+
+\end{knitrout}
+
+\end{frame}
+
+\subsection{Stochastic Neighborhood Embedding}
+
+
+
+\begin{frame}{Stochastic Neighbor Embedding}
+
+Let $(\bx_1, \hdots, \bx_n)$ be the original points in $\mathbb{R}^p$, and consider a similarities:
+
+\[p_{i{i'}} =  (p_{i | {i'}} + p_{{i'} | i})/ 2n\]
+where
+\begin{align*}
+  p_{i | {i'}} & = \frac{ \exp(- \| \bx_i - \bx_{i'} \|^2 / 2 \sigma_i^2 ) }{\sum_{k \neq i} \exp(- \| \bx_k - \bx_{i'} \|^2 / 2 \sigma_k^2)}, \\
+  & = \frac{ \exp(- d_{ii'}^2 / 2 \sigma_i^2 ) }{\sum_{k \neq i} \exp(- d_{ki'}^2 / 2 \sigma_k^2)}
+\end{align*}
+
+\vfill
 
 \begin{itemize}
-\item $(x_1, \hdots, x_n)$ are the points in the high dimensional space $\mathbb{R}^p$, 
-\item Consider a similarity between points:
-$$			
-p_{i | j} = \frac{ \exp(- \| x_i - x_j \|^2 / 2 \sigma_i^2 ) }{\sum_{k \neq i} \exp(- \| x_k - x_j \|^2 / 2 \sigma_k^2)}, 
-\,\, 			p_{ij} =  (p_{i | j} + p_{j | i})/ 2N
-$$
-\item $\sigma$ smooths the data (linked to the regularity of the target manifold)
-\item $\sigma$ is chosen such that the entropy of $p$ is fixed to a given value of the so-called perplexity
-$$
-\exp\left( - \sum_{ij} p_{ij} \log(p_{ij}) \right)
-$$
+\item[\rsa] SNE to preserve relations with close neighbors with Gaussian kernel
+\item[\rsa] $\sigma$ smooths the data (linked to the regularity of the target manifold)
 \end{itemize}
+
 \end{frame}
 
 \begin{frame}{The perplexity parameter}
-\begin{itemize}
-\item $\sigma_i$ Should adjust to local densities (neighborhood of point $i$)
-\item Define the Shannon entropy of $p_i=(p_{1|i},\hdots,p_{n|i})$
+
+The variance $\sigma_i^2$ should adjust to local densities (neighborhood of point $i$)
+
+\begin{block}{Perplexity: a smoothed effective number of neighbors}
+The perplexity is defined by
 $$
-H(p_i) = -\sum_{j=1}^{n} p_{j|i} \log_2 p_{j|i}
+  Perp(p_i) = 2^{H(p_i)}, \qquad H(p_i) = -\sum_{j=1}^{n} p_{j|i} \log_2 p_{j|i}
 $$
-\item The perplexity is defined by:
-$$
-Perp(p_i) = 2^{H(p_i)}
-$$
-\item Interpreted as the smoothed effective number of neighbors.
-\item SNE performs a binary search for the value of si that produces a $p_i$ with a fixed perplexity that is specified by the user.
-\end{itemize}
+where $H$ is the Shannon entropy of $p_i=(p_{1|i},\hdots,p_{n|i})$.\\
+\end{block}
+
+\vfill
+
+\rsa SNE performs a binary search for the value of $\sigma_i$ that produces a $p_i$ with a fixed perplexity that is specified by the user.
+
 \end{frame}
 
 \begin{frame}{tSNE and Student / Cauchy kernels}
+
+Consider $(\tilde\bx_1,\hdots,\tilde\bx_n)$ are points in the low dimensional space $\mathbb{R}^{q=2}$
+
 \begin{itemize}
-\item Consider $(y_1,\hdots,y_n)$ are points in the low dimensional space $\mathbb{R}^2$
 \item Consider a similarity between points in the new representation:
-$$q_{i | j} = \frac{ \exp(- \| y_i - y_j \|^2  ) }{\sum_{k \neq i} \exp(- \| y_k - y_j \|^2 )}$$
+$$q_{i | j} = \frac{ \exp(- \| \tilde\bx_i - \tilde\bx_j \|^2  ) }{\sum_{k \neq i} \exp(- \| \tilde\bx_k - \tilde\bx_j \|^2 )}$$
 \item Robustify this kernel by using Student(1) kernels (ie Cauchy)
-$$q_{i | j} = \frac{ (1 + \| y_i - y_j \|^2)^{-1}  }{\sum_{k \neq i} (1 + \| y_i - y_k \|^2)^{-1}}$$
+$$q_{i | j} = \frac{ (1 + \| \tilde\bx_i - \tilde\bx_j \|^2)^{-1}  }{\sum_{k \neq i} (1 + \| \tilde\bx_i - \tilde\bx_k \|^2)^{-1}}$$
 \end{itemize}
 \end{frame}
 
@@ -790,26 +1113,35 @@ $$
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Customed Gradient descent}
-\begin{itemize}
-\item Gradient descent initialized by sampling map points randomly from an isotropic Gaussian with small variance centered around the origin
-\item Gradient update using
-$$
-y^{(t)} = y^{(t-1)} + \eta \frac{\partial C(y)}{\partial y} + \alpha(t) (y^{(t-1)}-y^{(t-2)})
-$$
-\item $\eta$ learning rate, $\alpha(t)$ momentum at iteration $t$.
-\item Gaussian noise is added to the map points to perform simulated annealing.
-\end{itemize}
-\end{frame}
+% \begin{frame}{Customed Gradient descent}
+% \begin{itemize}
+% \item Gradient descent initialized by sampling map points randomly from an isotropic Gaussian with small variance centered around the origin
+% \item Gradient update using
+% $$
+% y^{(t)} = y^{(t-1)} + \eta \frac{\partial C(y)}{\partial y} + \alpha(t) (y^{(t-1)}-y^{(t-2)})
+% $$
+% \item $\eta$ learning rate, $\alpha(t)$ momentum at iteration $t$.
+% \item Gaussian noise is added to the map points to perform simulated annealing.
+% \end{itemize}
+% \end{frame}
 
-\begin{frame}{Properties of t-SNE}
+\begin{frame}{t-SNE: pros/cons}
+
+\begin{block}{Properties}
 \begin{itemize}
 \item good at preserving local distances (intra-cluster variance)
 \item not so good for global representation (inter-cluster variance)
-\item hence good at creating clusters of points that are close, but bad at positionning clusters wrt each other
-\item preprocessing very important : initialize with PCA and feature selection plus log transform (non linear transform)
+\item good at creating clusters of close points, bad at positioning clusters wrt each other
+\end{itemize}
+\end{block}
+
+\begin{block}{Limitations}
+\begin{itemize}
+  \item importance of preprocessing: initialize with PCA and feature selection plus log transform (non linear transform)
 \item percent of explained variance ? interpretation of the $q$ distribution ?
 \end{itemize}
+\end{block}
+
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]
@@ -863,23 +1195,15 @@ $$
 \hlstd{mollusk_ab} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}  \hlkwd{as.matrix}\hlstd{()}
 
 \hlstd{tSNE_perp2}   \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(mollusk_ab,} \hlkwc{perplexity} \hlstd{=}   \hlnum{2}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
-  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{2}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk_ab}\hlopt{$}\hlstd{site)}
-\end{alltt}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{2}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site)}
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mollusk\_ab\$site: \$ operator is invalid for atomic vectors}}\begin{alltt}
 \hlstd{tSNE_perp10}  \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(}\hlkwd{log}\hlstd{(}\hlnum{1} \hlopt{+} \hlstd{mollusk_ab),} \hlkwc{perplexity} \hlstd{=}  \hlnum{10}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
-  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{10}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk_ab}\hlopt{$}\hlstd{site)}
-\end{alltt}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{10}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site)}
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mollusk\_ab\$site: \$ operator is invalid for atomic vectors}}\begin{alltt}
 \hlstd{tSNE_perp50} \hlkwb{<-} \hlkwd{Rtsne}\hlstd{(}\hlkwd{log}\hlstd{(}\hlnum{1} \hlopt{+} \hlstd{mollusk_ab),} \hlkwc{perplexity} \hlstd{=} \hlnum{50}\hlstd{)}\hlopt{$}\hlstd{Y} \hlopt{%>%}
-  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{50}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk_ab}\hlopt{$}\hlstd{site)}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{perplexity} \hlstd{=} \hlnum{50}\hlstd{)} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site)}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mollusk\_ab\$site: \$ operator is invalid for atomic vectors}}\end{kframe}
+\end{kframe}
 \end{knitrout}
 
 \paragraph{Compare perplexity}
@@ -893,33 +1217,62 @@ $$
      \hlkwd{guides}\hlstd{(}\hlkwc{colour} \hlstd{=} \hlkwd{guide_legend}\hlstd{(}\hlkwc{override.aes} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{6}\hlstd{)))} \hlopt{+}
   \hlkwd{facet_wrap}\hlstd{(.}\hlopt{~}\hlstd{perplexity,} \hlkwc{scales} \hlstd{=} \hlstr{'free'}\hlstd{)}
 \end{alltt}
+\end{kframe}
+\includegraphics[width=\textwidth]{figures/tSNE_mollusk_perplexity_plot-1} 
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(quote(list(...)), env): object 'tSNE\_perp50' not found}}\end{kframe}
 \end{knitrout}
 
 \end{frame}
 
-\subsection{UMAP}
+\subsection{Other methods}
 
 
 
-\begin{frame}{Uniform Manifold Approximation and Projection \cite{mcinnes2018umap} }
-
+\begin{frame}
+   \frametitle{Isomap}
+ 
+   \begin{block}{Basic idea}
+     \begin{itemize}
+       \item MMDS performs embedding based on the pairwise Euclidean-based distance distance
+       \item Isomap uses a distance induced by a neighborhood graph embedded
+     \end{itemize}
+   \end{block}
+ 
+Formally, consider a neighborhood $\mathcal{N}_i$ for each point, then
+\begin{equation*}
+  d_{ii'} = \left\{
+    \begin{array}{cc}
+    + \infty & \text{ if }j \notin \mathcal{N}_i\\
+    \| \bx_i - \bx_{i'} \|& \\
+    \end{array}
+  \right.,
+\end{equation*}
+ and compute the shortest path distance for each pair prior to MDS.
+ 
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(vegan)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+% 
 \end{frame}
 
-\begin{frame}{Properties of UMAP}
-
-\begin{itemize}
-\item
-\end{itemize}
+\begin{frame}
+  \frametitle{Uniform Manifold Approximation and Projection }
 
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]
-  \frametitle{Example on scRNA} 
+  \frametitle{Uniform Manifold Approximation and Projection}
 
-\paragraph{Run the fit}
+  \begin{itemize}
+    \item Use another distance based of $k-$neighborhood graph
+    \item  tends to preserve both local and glocal 
+  \end{itemize}
+  
+\paragraph{Run the fit on scRNA}
 
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -956,18 +1309,11 @@ $$
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{duplicated} \hlkwb{<-} \hlkwd{duplicated}\hlstd{(mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season))}
-\hlstd{mollusk_ab} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%} \hlkwd{filter}\hlstd{(}\hlopt{!}\hlstd{duplicated)} \hlopt{%>%}  \hlkwd{as.matrix}\hlstd{()}
+\hlstd{mollusk_ab} \hlkwb{<-} \hlstd{mollusk} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}  \hlkwd{as.matrix}\hlstd{()}
+\hlstd{umap_fit}   \hlkwb{<-} \hlkwd{umap}\hlstd{(}\hlkwd{log}\hlstd{(}\hlnum{1} \hlopt{+} \hlstd{mollusk_ab))}\hlopt{$}\hlstd{layout} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site)}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: Problem with `filter()` input `..1`.\\\#\# x Input `..1` must be of size 158 or 1, not size 5056.\\\#\# i Input `..1` is `!duplicated`.}}\begin{alltt}
-\hlstd{umap_fit}   \hlkwb{<-} \hlkwd{umap}\hlstd{(mollusk_ab)}\hlopt{$}\hlstd{layout} \hlopt{%>%}
-  \hlkwd{as.data.frame}\hlstd{()} \hlopt{%>%} \hlkwd{add_column}\hlstd{(}\hlkwc{site} \hlstd{= mollusk}\hlopt{$}\hlstd{site[}\hlopt{!}\hlstd{duplicated])}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: New columns must be compatible with `.data`.\\\#\# x New column has 575 rows.\\\#\# i `.data` has 158 rows.}}\end{kframe}
+\end{kframe}
 \end{knitrout}
 
 \paragraph{Visualization}
@@ -980,9 +1326,7 @@ $$
      \hlkwd{geom_point}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{1.25}\hlstd{)} \hlopt{+}
      \hlkwd{guides}\hlstd{(}\hlkwc{colour} \hlstd{=} \hlkwd{guide_legend}\hlstd{(}\hlkwc{override.aes} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{6}\hlstd{)))}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in FUN(X[[i]], ...): object 'site' not found}}\end{kframe}
+\end{kframe}
 \includegraphics[width=\textwidth]{figures/UMAP_mollusk_plot-1} 
 
 \end{knitrout}
@@ -992,46 +1336,27 @@ $$
 %% ==========================================================================
 \part{Conlusion}
 %% ==========================================================================
-
-\begin{frame}[allowframebreaks]
-  \frametitle{References}
-
- \bibliographystyle{apalike}
-
-\begin{small}
-  \bibliography{{../../resources/MAP573.bib}}
-\end{small}
-
+\begin{frame}
+  \frametitle{To conclude}
+  
+  \begin{center}
+      You can play online on \href{https://projector.tensorflow.org/}{https://projector.tensorflow.org/}
+  \end{center}
+  
 \end{frame}
+
+% \begin{frame}[allowframebreaks]
+%   \frametitle{References}
+% 
+%  \bibliographystyle{apalike}
+% 
+% \begin{small}
+%   \bibliography{{../../resources/MAP573.bib}}
+% \end{small}
+% 
+% \end{frame}
 
 \end{document}
 
 
-% %% ====================================================================
-% \part{Linear methods beyond PCA}
-% %% ====================================================================
-% \begin{frame}
-%   \partpage
-%   
-%   Due to non continuous/real data-type
-% \end{frame}
-% 
-% %% ==========================================================================
-% \section{Categorical data: Correspondance analysis}
-% %% ==========================================================================
-% 
-% <<linear noPCA, child='linear_noPCA.Rnw'>>=
-% @
-% 
-% %% ==========================================================================
-% \section{Mixed data: Multiple Factorial Analysis (MFA)}
-% %% ==========================================================================
-% 
-% %% ==========================================================================
-% \section{Function data: Functional PCA}
-% %% ==========================================================================
-% 
-% %% ==========================================================================
-% \section{Non-negative data: NMF}
-% %% ==========================================================================
-% 
+

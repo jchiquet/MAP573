@@ -1,0 +1,84 @@
+<<echo = FALSE, message=FALSE>>=
+library(umap)
+@
+
+\begin{frame}
+   \frametitle{Isomap}
+ 
+   \begin{block}{Basic idea}
+     \begin{itemize}
+       \item MMDS performs embedding based on the pairwise Euclidean-based distance distance
+       \item Isomap uses a distance induced by a neighborhood graph embedded
+     \end{itemize}
+   \end{block}
+ 
+Formally, consider a neighborhood $\mathcal{N}_i$ for each point, then
+\begin{equation*}
+  d_{ii'} = \left\{
+    \begin{array}{cc}
+    + \infty & \text{ if }j \notin \mathcal{N}_i\\
+    \| \bx_i - \bx_{i'} \|& \\
+    \end{array}
+  \right.,
+\end{equation*}
+ and compute the shortest path distance for each pair prior to MDS.
+ 
+ <<eval = FALSE>>=
+ library(vegan)
+ @
+% 
+\end{frame}
+
+\begin{frame}
+  \frametitle{Uniform Manifold Approximation and Projection }
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Uniform Manifold Approximation and Projection}
+
+  \begin{itemize}
+    \item Use another distance based of $k-$neighborhood graph
+    \item  tends to preserve both local and glocal 
+  \end{itemize}
+  
+\paragraph{Run the fit on scRNA}
+
+<<UMAP run>>=
+scRNA_expr <- scRNA %>% select(-cell_type) %>% as.matrix()
+umap_fit   <- umap(scRNA_expr)$layout %>% 
+  as.data.frame() %>% add_column(cell_type = scRNA$cell_type)
+@
+
+\paragraph{Visualization}
+
+<<plot, fig.dim=c(8,5), out.width='\\textwidth'>>=
+umap_fit %>% 
+  ggplot(aes(x = V1, y = V2, color = cell_type)) +
+     geom_point(size=1.25) +
+     guides(colour = guide_legend(override.aes = list(size=6)))
+@
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Example on 'mollusk'} 
+
+\paragraph{Run the fit}
+
+<<UMAP mollusk run>>=
+mollusk_ab <- mollusk %>% select(-site, -season) %>%  as.matrix()
+umap_fit   <- umap(log(1 + mollusk_ab))$layout %>% 
+  as.data.frame() %>% add_column(site = mollusk$site)
+@
+
+\paragraph{Visualization}
+
+<<UMAP mollusk plot, fig.dim=c(8,5), out.width='\\textwidth'>>=
+umap_fit %>% 
+  ggplot(aes(x = V1, y = V2, color = site)) +
+     geom_point(size=1.25) +
+     guides(colour = guide_legend(override.aes = list(size=6))) 
+@
+
+\end{frame}
