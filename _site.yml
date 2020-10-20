@@ -41,7 +41,7 @@ navbar:
         - text: "Dimensionality Reduction"
         - text: "Linear methods: PCA"
           href: resources/DimensionReductionPCA.pdf
-        - text: "Non linear methods: Kernel PCA, t-SNE, VAE"
+        - text: "Non linear methods: MDS, Kernel PCA, t-SNE and others"
           href: resources/DimensionReductionNonLinear.pdf
         - text: "------------------"
         - text: "Clustering"
@@ -70,8 +70,8 @@ navbar:
           href: homework_1_reporting_correction.html
         - text: "Data manipulation and representation - correction"
           href: homework_2_data_manipulation_representation_correction.html
-        - text: "Data analysis with PCA"
-          href: homework_3_PCA.html
+        - text: "Data analysis with PCA -- correction"
+          href: homework_3_PCA_correction.html
         - text: "Non-linear dimension reduction method"
           href: homework_4_dim_reduc_non_linear.html
         - text: "Spectral Clustering for graphs"

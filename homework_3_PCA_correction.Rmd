@@ -1,0 +1,394 @@
+---
+title: 'Homework #3: correction'
+subtitle: 'PCA for visualization, compression and exploratory analyses'
+author: 'MAP573 team'
+date: "13/20/2020"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  cache = TRUE,
+  echo  = TRUE,
+  rows.print = 5)
+```
+
+### Information
+
+Data sets are available at [https://github.com/jchiquet/MAP573/tree/master/data](https://github.com/jchiquet/MAP573/tree/master/data). Homework is due Sunday 10/18 23:59 in Rmd (see assignment in Moodle).
+
+### Package requirements
+
+We start by loading a couple of packages for data manipulation, dimension reduction and fancy representations.
+
+```{r packages, message = FALSE, warning = FALSE}
+library(tidyverse)    # advanced data manipulation and vizualisation
+library(knitr)        # R notebook export and formatting 
+library(FactoMineR)   # Factor analysis
+library(factoextra)   # Fancy plotting of FactoMineR outputs
+library(kableExtra)   # integration of table in Rmarkdown
+theme_set(theme_bw()) # set default ggplot2 theme to black and white
+```
+
+## SNP data: genotyping of various population {.tabset}
+
+### Data description
+
+A single-nucleotide polymorphism is a substitution of a single nucleotide that occurs at a specific position in the genome, where each variation is present at a level of 0.5% from person to person in the population. They are coded as 0, 1 or 2 (meaning 0, 1 or 2 allels different regarding the reference population)
+
+[See the great wikipedia page for detail!](https://en.wikipedia.org/wiki/Single-nucleotide_polymorphism)
+
+We can measure SNP for individuals with high trhoughput technology and SNP array. SNP chips for human contains more than 1 million variables! We only suggest to analyse a sample of a data set containing the 5500 most variant SNP for 728 individuals with various origin, with the following descriptors:
+
+- CEU: Utah residents with Northern and Western European ancestry from the CEPH collection
+- GIH: Gujarati Indians in Houston, Texas
+- LWK: Luhya in Webuye, Kenya
+- MKK: Maasai in Kinyawa, Kenya
+- TSI: Toscani in Italia
+- YRI: Yoruba in Ibadan, Nigeria
+
+The data are imported as follows: 
+
+```{r import load SNP}
+load("data/SNP.RData")
+snp  <- data$Geno %>% as_tibble() %>%
+  add_column(origin = data$origin, .before = 1) 
+```
+
+### Questions
+
+0. Have a look at the data a make some brief descriptive plot/summary
+1. Fit a PCA on these data. Justify the scaling or not.
+2. Represent the scree plot for the 100 first axes. Comment. Estimate the number of axis with `estim_npc`
+3. Plot individual factor maps on axes 1, 2 and 3. Add colors and ellipses associated with the factor 'origin'
+4. Check who are the first, say, 250 most contributive individuals to these axes. Show them in the projection. Have a look at the cosine of the most influent guys.
+5. Plot the correlation circle. Only retain variables based on the quality of their representation and/or degree of contribution to the axes represented.
+6. Summarize the above analyses in biplots. Add fancy colors and whatever.
+7. Indicate a group of individual as supplementary (i.e., not use to fit the PC). Show how excluding a group influence (or not) the fit and the projection, by exploring several groups. Explain.
+
+### Solution
+
+0. Have a look at the data a make some brief descriptive plot/summary
+
+The first column is a categorical variable describing the orgin of each individual, with details on the acronyme given above 
+
+```{r origin}
+barplot(table(snp$origin), las = 3, main = 'distribution of origin')
+```
+
+1. Fit a PCA on these data. Justify the scaling or not.
+
+I do not scale, since SNP value are suppose to live on the same scale (values in $\{0, 1, 2\}$).
+
+```{r pca snp, cache = TRUE}
+acp <- PCA(snp, quali.sup = 1, scale.unit = FALSE, graph = FALSE, ncp = 500)
+```
+
+2. Represent the scree plot for the 100 first axes. Comment
+
+First axes are more informative than the other, and then the information is generally well spread.
+
+```{r scree snp}
+fviz_eig(acp, ncp = 100)
+```
+
+```{r GCV snp}
+npc <- select(snp, -origin) %>% replace(is.na(.), 0) %>% 
+    as.matrix() %>% scale(TRUE, FALSE) %>% 
+    estim_ncp(ncp.max = 15, scale = FALSE) 
+plot(npc$criterion, type = "b", xlab = 'number of component', ylab = 'GCV')
+```
+
+3. Plot individual factor maps on axes 1, 2 and 3. Add color and ellipse associated with the origin
+
+Argument `habillage` or `col.ind` will have the same effect, but the first will be more useful later.
+
+**Impressive how the population are well separated!**
+
+```{r snp ind}
+fviz_pca_ind(acp, habillage = "origin", addEllipses = TRUE)
+fviz_pca_ind(acp, habillage =  "origin", axes = c(1,3), addEllipses = TRUE)
+fviz_pca_ind(acp, habillage = "origin", axes = c(2,3), addEllipses = TRUE)
+```
+
+4. Check who are the first, say, 250 most contributive individual to these axes. Show them in the projection. Have a look at the cosine of the most influent guys.
+
+```{r snp ind contribution}
+fviz_contrib(acp, "ind", axes = 1:3, top = 250)
+fviz_pca_ind(acp, habillage = "origin", select.ind = list(contrib = 250))
+fviz_pca_ind(acp, axes = c(2,3),  habillage = "origin", select.ind = list(contrib = 250))
+fviz_pca_ind(acp, habillage = "origin", select.ind = list(contrib = 250))
+fviz_pca_ind(acp, habillage = "origin", select.ind = list(contrib = 250))
+```
+
+5. Plot the correlation circle. Only retain variables based on the quality of their representation and/or degree of contribution to the axes represented.
+
+```{r snp var contrib}
+fviz_contrib(acp, "var", axes = 1:3, top = 500)
+fviz_pca_var(acp, select.var = list(contrib = 50), col.var = 'cos2')
+```
+
+6. Summarize the above analyses in biplots. Add fancy colors
+
+Just example, you can do better/different than that!
+
+```{r snp biplot}
+fviz_pca_biplot(acp, axes = c(1,3), habillage = "origin", addEllipses = TRUE, select.var = list(contrib = 40))
+fviz_pca_biplot(acp, axes = c(1,3), habillage = "origin", addEllipses = TRUE, select.var = list(contrib = 40))
+fviz_pca_biplot(acp, axes = c(2,3), habillage = "origin", addEllipses = TRUE, select.var = list(contrib = 40))
+```
+
+7. Indicate a group of individual as supplmentary (i.e., not use to fit the PC). Show how excluding a group influence (or not) the fit and the projection, by 
+exploring several groups. Explain
+
+Depending on the proximity of the group to the cloud and to some particular existing groups, the fit is more or less altered.
+
+```{r snp ind sup}
+acp_noMKK <- PCA(snp, quali.sup = 1, ind.sup = which(snp$origin == "MKK"), scale.unit = FALSE, graph = FALSE, ncp = 500)
+fviz_pca_biplot(acp, habillage = "origin", addEllipses = TRUE, select.var = list(contrib = 40), col.ind.sup = "black")
+
+acp_noTSI <- PCA(snp, quali.sup = 1, ind.sup = which(snp$origin == "TSI"), scale.unit = FALSE, graph = FALSE, ncp = 500)
+fviz_pca_biplot(acp, habillage = "origin", addEllipses = TRUE, select.var = list(contrib = 40), col.ind.sup = "black")
+
+acp_noGIH <- PCA(snp, quali.sup = 1, ind.sup = which(snp$origin == "GIH"), scale.unit = FALSE, graph = FALSE, ncp = 500)
+fviz_pca_biplot(acp, habillage = "origin", addEllipses = TRUE, select.var = list(contrib = 25), col.ind.sup = "black")
+fviz_pca_biplot(acp, axes = c(2,3), habillage = "origin", addEllipses = TRUE, select.var = list(contrib = 25), col.ind.sup = "black")
+```
+
+## MNIST data: handwritten digit data {.tabset}
+
+### Data description
+
+The MNIST dataset is an acronym that stands for the Modified National Institute of Standards and Technology dataset. It is a dataset of 60,000 small square 28×28 pixel grayscale images of handwritten single digits between 0 and 9. It is commonly used for training various image processing systems. The database is also widely used for training and testing in the field of machine learning.
+
+The full data set is [available here](mnist_raw <- read_csv("https://pjreddie.com/media/files/mnist_train.csv", col_names = FALSE)).
+
+**But careful!!, it weigths more than 100 Mo so check your internet connection**
+
+A sample of 2,000 instances is provided for convenience [mnist_sample]('https://jchiquet.github.io/MAP573/data/mnist_sample.csv').
+
+### Questions
+
+1. Load an format the data (first column is the label) as a `tibble` or a `data.frame`. Each row is a vector with size 784 (28 x 28) + a column for the label.
+2. Write a function to plot an 28 x 28 image based on a vector, and test it on a row of your data frame.
+3. Make a PCA, choice whether to scale or not.
+4. Make the usual diagnostic plots (screeplot, individual, variable) for the first axes, and comment. Use GCV to select the number of axes.
+5. Write a function to reconstruct an image with two argument: $i$ (an instance) $k$ (the number of component used).
+6. Plot the reconstructed image for various value of $k$
+
+### Solution
+
+1. Load an format the data (first column is the label) as a `tibble` or a `data.frame`. Each row is a vector with size 784 (28 x 28) + a column for the label.
+
+```{r mnist load}
+mnist_raw <- read_csv("data/mnist_sample.csv", col_names = FALSE, n_max = 2000)
+
+mnist <- mnist_raw %>%
+  rename(label = X1) %>%
+  mutate(instance = row_number())
+mnist %>% head() %>% kable() %>% kable_styling() %>%
+  scroll_box(width = "100%")
+```
+
+2. Write a function to plot an 28 x 28 image based on a vector, and test it on a row of your data frame.
+
+```{r plot_image, fig.width=3,fig.height=3}
+plot_picture <- function(x) {
+  x %>% 
+    as.numeric() %>% 
+    matrix(28, 28, byrow = TRUE) %>% 
+    apply(2, rev) %>% 
+    t() %>% image()
+}
+
+par(mar = c(0.1,0.1,0.1,0.1))
+mnist %>% select(-instance, -label) %>% slice(33) %>% plot_picture()
+```
+
+
+3. Make a PCA, choice wether to scale or not.
+
+```{r mnist PCA}
+myPCA <- select(mnist, -instance) %>% 
+  PCA(graph = FALSE, scale.unit = FALSE, quali.sup = 1, ncp = 500)
+```
+
+4. Make the usual diagnostic plots (screeplot, individual, variable) for the first axes, and comment.
+
+Be careful with the biplot on unscaled PCA.
+
+```{r mnist plot PCA}
+fviz_eig(myPCA, ncp = 50)
+fviz_pca_ind(myPCA, habillage = "label")
+fviz_pca_ind(myPCA, habillage = "label", axes = c(1,3))
+fviz_pca_ind(myPCA, habillage = "label", axes = c(2,3))
+fviz_pca_var(myPCA, col.var = 'cos2', select.var = list(contrib = 30))
+```
+
+```{r GCV MNIST}
+npc <- select(mnist, -instance, -label) %>% replace(is.na(.), 0) %>% 
+    as.matrix() %>% scale(TRUE, FALSE) %>% 
+    estim_ncp(ncp.max = 500, scale = FALSE) 
+plot(npc$criterion, type = "l", xlab = 'number of component', ylab = 'GCV')
+```
+
+5. Write a function to reconstruct an image with two argument: $i$ (an instance) $k$ (the number of component used).
+
+```{r reconstruction}
+## Continuous attributes
+X <- select(mnist, -label, -instance) %>%  scale(TRUE, FALSE)
+
+## Loadings/rotation matrix
+U <- eigen(cov(X))$vectors
+
+## Function for projection
+proj_data <- function(k, i) {
+  X[i, , drop = FALSE] %*% U[, 1:k, drop = FALSE] %*% t(U[, 1:k, drop = FALSE]) %>% 
+    as.numeric()
+}
+```
+
+6. Plot the reconstructed image for various value of $k$
+
+Let us pick 9 pictures randomly, and define a sequence for the number of axes used to perform the reconstruction (up to a perfect reconstruction).
+
+```{r parameters}
+nb_samples <- 9
+samples <- sample.int(1000, nb_samples)
+nb_axis <- c(1, 2, 10, 20, 100, ncol(X))
+```
+
+Now here is a solution in 'base' `R`
+
+```{r plot base R}
+cases <- expand.grid(nb_axis, samples)
+## list of approximated images (stored as vectors)
+approx <- mapply(proj_data, cases[, 1], cases[, 2], SIMPLIFY = FALSE)
+
+  
+par(mfrow=c(nb_samples, length(nb_axis)), mar = c(0.1,0.1,0.1,0.1))
+silent <- utils::capture.output(lapply(approx, plot_picture))
+```
+
+
+And another solution using {ggplot}.
+
+```{r plot tidytruc}
+## fancy ggplot output
+labels <- mnist %>% dplyr::filter(instance %in% samples) %>% pull(label)
+instances <- mnist %>% dplyr::filter(instance %in% samples) %>% pull(instance)
+approx_tibble <- do.call(rbind, approx) %>% as_tibble() %>% 
+  add_column(nb_axis = rep(nb_axis, length(samples)), .before = 1) %>% 
+  add_column(label = rep(labels, each = length(nb_axis)), .before = 1) %>% 
+  add_column(instance = rep(instances, each = length(nb_axis)), .before = 1)
+
+approx_tibble %>% 
+   gather(pixel, value, -label, -instance, -nb_axis) %>%
+   tidyr::extract(pixel, "pixel", "(\\d+)", convert = TRUE) %>%
+   mutate(pixel = pixel - 2,
+          x = pixel %% 28,
+          y = 28 - pixel %/% 28) %>% 
+   ggplot(aes(x, y, fill = value)) +
+   geom_tile() +
+   facet_grid(label ~ nb_axis)
+```
+
+
+<!-- ## Decathlon: analysing performance between athletes {.tabset} -->
+
+<!-- _Courtesy of [Julie Josse](http://juliejosse.com/), thanks!_ -->
+
+<!-- ### Data description -->
+
+<!-- This dataset contains the results of decathlon events during two athletic meetings which took place one month apart in 2004: the Olympic Games in Athens (23 and 24 August), and the Decastar 2004 (25 and 26 September). For both competitions, the following information is available for each athlete: performance for each of the 10 events, total number of points (for each event, an athlete earns points based on performance; here the sum of points scored) and final ranking. The events took place in the following order: 100 meters, long jump, shot put, high jump, 400 meters (first day) and 110 meter hurdles, discus, pole vault, javelin, 1500 meters (second day). Nine athletes participated to both competitions. We would like to obtain a typology of the performance profiles. -->
+
+<!-- The data are distributed with {FactoMineR} -->
+
+<!-- ```{r data set} -->
+<!-- library(FactoMineR) -->
+<!-- data("decathlon") -->
+<!-- ``` -->
+
+<!-- ### Questions -->
+
+<!-- 1. Inspect the data set with the following commands: -->
+<!-- 2. Explain the interest of centering and scaling the data. Could you spotlight outstanding athletes ? Which inequality are you using? -->
+<!-- 3. Explain your choices for the active and illustrative variables/individuals and perform the PCA on this data set. -->
+<!-- 4. Comment -->
+<!-- - the correlation between the 100 m and long.jump -->
+<!-- - the correlation between long.jump and Pole.vault -->
+<!-- - can you describe the athlete Casarsa?  -->
+<!-- - the proximity between Sebrle and Clay  -->
+<!-- - the proximity between Schoenbeck and Barras -->
+<!-- 5. In which trials those who win the decathlon perform the best? Could we say that the decathlon trials are well selected?  -->
+<!-- 6. Compare and comment the performances during both events: Decastar and Olympic. Could we conclude on the differences?  Plot Confidence ellipses -->
+<!-- 7. Select the number of dimensions with the function `estim_npc`.  -->
+
+<!-- ### Solution (compulsive click forbidden!) -->
+
+<!-- 1. Inspect the data set with the following commands: -->
+<!-- 2. Explain the interest of centering and scaling the data. Could you spotlight outstanding athletes? -->
+
+<!-- When the data are standardized, it is possible to compare two variables with different units and to say sentences such as "Paul is more remarkable by his height than John is by is weight". When looking at the standardized data, we can look for the values greater or smaller than 2 for instance. We are refering to Bienaymé-Tchebychev which states that 25% of the observations will be at 2 standard deviation from their means. If we consider Gaussian data, we can refine this inequality and consider know that 4.5 % of the observations are greater than 2 in absolute value. Sebrle value for Javeline is 2.528251350 meaning that he is far above average.  -->
+
+<!-- The aim of conducting PCA on this dataset is to determine profiles for similar performances: are there any athletes who are better at endurance events or those requiring short bursts of energy, etc? And are some of the events similar? If an athlete performs well in one event, will he necessarily perform well in another? -->
+
+
+<!-- 3. Explain your choices for the active and illustrative variables/individuals and perform the PCA on this data set. -->
+
+<!-- ```{r PCA decathlon} -->
+<!-- decathlon_PCA <- PCA(decathlon, quanti.sup = c(11,12) , quali.sup = 13) -->
+<!-- fviz_eig(decathlon_PCA) -->
+<!-- fviz_pca_ind(decathlon_PCA, axes = c(3, 4)) -->
+<!-- fviz_pca_var(decathlon_PCA, axes = c(3, 4)) -->
+<!-- ``` -->
+
+<!-- To obtain a typology of the athletes based on their performances for the 10 -->
+<!-- decathlon events, such as "two athletes are close as they have similar -->
+<!-- performance profiles", the distances between two athletes are defined on the -->
+<!-- basis of their performances in the 10 events. Thus, only the performance -->
+<!-- variables are considered active; the other variables (number of points, rank, -->
+<!-- and competition) are supplementary. Here, the athletes are all considered as active -->
+<!-- individuals. -->
+
+<!-- 4. Comment:  -->
+<!--   - the correlation between the 100 m and long.jump -->
+
+<!-- The 100m and long.jump are negatively correlated: therefore, an athlete who runs 100 meters quickly will generally jump a long way. The variables 100m, 400m, and 110m hurdles are positively correlated, that is, some athletes perform well in all four events while others do not. -->
+
+<!--   - the correlation between long.jump and Pole.vault -->
+
+<!-- Since long.jump is well represented in the first plan and Pole.vault is not, we can deduce that long.jump and Pole.vault are approximately orthogonal, meaning that the corresponding variables are roughly uncorrelated. Overall, the variables relating to speed are negatively correlated with the first principal component while the variables shot put and long jump are positively correlated with this component. The coordinates of these active variables can be found in the object  which also gives the representation quality of the variables (cosine squared) and their contributions to the construction of the components. -->
+
+<!-- Bourguignon and Karpov have very different performance profiles since they are opposed according to the main axis of variability.  -->
+
+<!--   - can you describe the athlete Casarsa?  -->
+
+<!-- Casarsa is located on the top left corner. The first dimension is highly correlated with the number of points: this indicates that he does not have a large number of points. The second dimension is correlated with the Shot.put, High.jump and Discus. This indicates that Casarsa had good results in these three sports. Remember that the second dimension is calculated orthogonally to the first. So Casarsa has good results in these three sports compared to other "bad" athletes.   -->
+
+<!--   - the proximity between Sebrle and Clay  -->
+
+<!-- Sebrle and Clay are close to one another and both far from the center of gravity of the cloud of points. The quality of their projection is therefore good, and we can be certain that they are indeed close in the original space. This means that they have similar profiles in their results across all sports events. -->
+
+
+<!--   - the proximity between Schoenbeck and Barras -->
+
+<!-- Schoenbeck and Barras are close to one another but they are also close to the center of gravity of the cloud of points. When looking at their cos2 they are not well projected, We cannot interpret their distance based on this plot only. -->
+
+<!-- 5. In which trials those who win the decathlon perform the best? Could we say that the decathlon trials are well selected?  -->
+
+<!-- The supplementary variable "number of points" is almost collinear to the first principal component. Therefore, the athletes with a high number of points are -->
+<!-- particularly good in the trials correlated with the first principal component. Those who win the decathlon perform the best in 100m, 110m hurdles and long jump. This means that the ranking of the decathlon is governed by those three sports. -->
+
+<!-- 6. Compare and comment the performances during both events: Decastar and Olympic, by ploting confidence ellipses. -->
+
+<!-- ```{r ellipse} -->
+<!-- plotellipses(decathlon_PCA) -->
+<!-- ``` -->
+
+<!-- 7. Select the number of dimensions with the function `estim_npc`.  -->
+
+<!-- ```{r} -->
+<!-- plot(estim_ncp(decathlon[, 1:10])$criterion, type = "l", xlab = "number of axis", ylab = "GCV") -->
+<!-- ``` -->
+
