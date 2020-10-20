@@ -150,15 +150,15 @@
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{library}\hlstd{(tidyverse)}  \hlcom{# opinionated collection of packages for data manipulation}
-\hlkwd{library}\hlstd{(GGally)}     \hlcom{# extension to ggplot vizualization system}
 \hlkwd{library}\hlstd{(FactoMineR)} \hlcom{# PCA and oter linear method for dimension reduction}
 \hlkwd{library}\hlstd{(factoextra)} \hlcom{# fancy plotting for FactoMineR output }
 \hlkwd{library}\hlstd{(NMF)}        \hlcom{# Non-Negative Matrix factorisation}
-\hlkwd{library}\hlstd{(kernlab)}    \hlcom{# Kernel PCA}
-\hlkwd{library}\hlstd{(MASS)}       \hlcom{# Various statistical too, including MDS}
+\hlkwd{library}\hlstd{(kernlab)}    \hlcom{# Kernel-based methods, among which kernel-PCA}
+\hlkwd{library}\hlstd{(MASS)}       \hlcom{# Various statistical tools, including metric MDS}
 \hlkwd{library}\hlstd{(Rtsne)}      \hlcom{# tSNE implementation in R }
 \hlkwd{library}\hlstd{(umap)}       \hlcom{# Uniform Manifold Approximation and Projection}
-\hlkwd{theme_set}\hlstd{(}\hlkwd{theme_bw}\hlstd{())}
+
+\hlkwd{theme_set}\hlstd{(}\hlkwd{theme_bw}\hlstd{())} \hlcom{# my default theme for ggplot2}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -257,13 +257,13 @@ spreaded in 11 cell-lines. Original transcription data are measured by counts ob
 
 \begin{frame}[fragile]
   \frametitle{Companion data set: 'scRNA'}
-  \framesubtitle{PCA}
+  \framesubtitle{Principal Component Analysis}
 
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{scRNA} \hlopt{%>%} \hlstd{FactoMineR}\hlopt{::}\hlkwd{PCA}\hlstd{(}\hlkwc{graph} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{quali.sup} \hlstd{=} \hlkwd{which}\hlstd{(}\hlkwd{colnames}\hlstd{(scRNA)} \hlopt{==} \hlstr{"cell_type"}\hlstd{))} \hlopt{%>%}
-  \hlstd{factoextra}\hlopt{::}\hlkwd{fviz_pca_biplot}\hlstd{(}\hlkwc{select.var} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{contrib} \hlstd{=} \hlnum{30}\hlstd{),} \hlkwc{habillage} \hlstd{=} \hlstr{"cell_type"}\hlstd{)}
+\hlstd{scRNA} \hlopt{%>%} \hlkwd{PCA}\hlstd{(}\hlkwc{graph} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{quali.sup} \hlstd{=} \hlkwd{which}\hlstd{(}\hlkwd{colnames}\hlstd{(scRNA)} \hlopt{==} \hlstr{"cell_type"}\hlstd{))} \hlopt{%>%}
+  \hlkwd{fviz_pca_biplot}\hlstd{(}\hlkwc{select.var} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{contrib} \hlstd{=} \hlnum{30}\hlstd{),} \hlkwc{habillage} \hlstd{=} \hlstr{"cell_type"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=.8\textwidth]{figures/scRNA_PCA-1} 
@@ -275,14 +275,14 @@ spreaded in 11 cell-lines. Original transcription data are measured by counts ob
 \begin{frame}
   \frametitle{PCA (and linear methods) limitations}
 
-  \begin{block}{Account for complex pattern}
+  \begin{block}{Do not account for complex pattern}
     \begin{itemize}
       \item Linear methods are powerful for \alert{\bf planar structures}
       \item May fail at describing \alert{\bf manifolds}
     \end{itemize}
   \end{block}
   
-  \begin{block}{Preserve local geometry}
+  \begin{block}{Fail at preserving local geometry}
     \begin{itemize}
       \item High dimensional data are characterized by \alert{\bf multiscale properties} (local / global structures)
       \item Non Linear projection helps at preserving \alert{\bf local characteristics} of distances
@@ -318,9 +318,7 @@ spreaded in 11 cell-lines. Original transcription data are measured by counts ob
 \hlkwd{library}\hlstd{(PLNmodels);} \hlkwd{data}\hlstd{(mollusk)}
 \hlstd{mollusk} \hlkwb{<-}
   \hlkwd{prepare_data}\hlstd{(mollusk}\hlopt{$}\hlstd{Abundance, mollusk}\hlopt{$}\hlstd{Covariate[}\hlkwd{c}\hlstd{(}\hlstr{"season"}\hlstd{,} \hlstr{"site"}\hlstd{)])} \hlopt{%>%}
-  \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{Offset)} \hlopt{%>%}
-  \hlkwd{as_tibble}\hlstd{()} \hlopt{%>%}
-  \hlkwd{distinct}\hlstd{()} \hlcom{# remove duplicates}
+  \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{Offset)} \hlopt{%>%} \hlkwd{as_tibble}\hlstd{()} \hlopt{%>%}  \hlkwd{distinct}\hlstd{()} \hlcom{# remove duplicates}
 \hlstd{mollusk} \hlkwb{<-} \hlkwd{cbind}\hlstd{(mollusk}\hlopt{$}\hlstd{Abundance, mollusk[}\hlkwd{c}\hlstd{(}\hlstr{"season"}\hlstd{,} \hlstr{"site"}\hlstd{)])}
 \end{alltt}
 \end{kframe}
@@ -358,8 +356,7 @@ season & automn:41 & spring:43 & summer:44 & winter:30 & NA & NA & NA\\
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{mollusk} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%}
-  \hlkwd{pivot_longer}\hlstd{(}\hlkwd{everything}\hlstd{())} \hlopt{%>%}
+\hlstd{mollusk} \hlopt{%>%} \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{site,} \hlopt{-}\hlstd{season)} \hlopt{%>%} \hlkwd{pivot_longer}\hlstd{(}\hlkwd{everything}\hlstd{())} \hlopt{%>%}
   \hlkwd{ggplot}\hlstd{()} \hlopt{+} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= value,} \hlkwc{fill} \hlstd{= name)} \hlopt{+} \hlkwd{geom_histogram}\hlstd{(}\hlkwc{show.legend} \hlstd{=} \hlnum{FALSE}\hlstd{)}
 \end{alltt}
 \end{kframe}
@@ -370,7 +367,7 @@ season & automn:41 & spring:43 & summer:44 & winter:30 & NA & NA & NA\\
 
 \begin{frame}[fragile]
   \frametitle{Companion data set: 'mollusk'}
-  \framesubtitle{PCA}
+  \framesubtitle{Principal Component Analysis}
 
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -388,11 +385,11 @@ season & automn:41 & spring:43 & summer:44 & winter:30 & NA & NA & NA\\
 \begin{frame}
   \frametitle{PCA (and linear methods) limitations}
 
-  \begin{block}{Account for complex data distribution}
+  \begin{block}{Do not account for 'complex' data distribution}
     \begin{itemize}
-      \item Linear methods /PCA are tied to an hidden \alert{\bf Gaussian assumption}
-      \item Fail with \alert{\bf Count data}
-      \item Fail with \alert{\bf Skew data}
+      \item PCA is tied to a hidden \alert{\bf Gaussian assumption}
+      \item Fails with \alert{\bf Count data}
+      \item Fails with \alert{\bf Skew data}
     \end{itemize}
   \end{block}
   
@@ -432,18 +429,21 @@ season & automn:41 & spring:43 & summer:44 & winter:30 & NA & NA & NA\\
 \begin{frame}
   \frametitle{How should we design/construct $\Phi$?}
 
-  \paragraph{Criterion}
+  \paragraph{Geometrical approach} (\alert{\bf see slides on PCA})
+  
+  \vfill
+  
+  \paragraph{Idea to go beyond linear approaches}
   \begin{itemize}
-    \item Geometrical approach (\alert{\bf see slides on PCA})
-    \item Reconstruction error
-    \item Relationship preservation
+    \item Modify the model by amending the \alert{\bf reconstruction error}
+    \item Focus on \alert{\bf Relationship preservation}
   \end{itemize}
 
   \vfill
   
   \paragraph{Form of the map $\Phi$}
   \begin{itemize}
-    \item \alert{\bf Linear} or \alert{\bf non-linear ?}
+    \item  Linear or \alert{\bf non-linear ?}
     \item tradeoff between  interpretability and \alert{\bf versatility ?}
     \item tradeoff between  \alert{\bf high} or low computational resource
   \end{itemize}
@@ -471,16 +471,16 @@ season & automn:41 & spring:43 & summer:44 & winter:30 & NA & NA & NA\\
     \item  Construct a map $\Phi$ from the space $\Rset^{p}$ into a space $\Rset^{q}$ of \alert{smaller dimension}:
       \begin{align*}
       \Phi:\quad & \Rset^{p} \to \Rset^{q}, q \ll p\\
-               & \bx \mapsto \Phi(\bx)
+               & \bx \mapsto \Phi(\bx) = \tilde\bx
       \end{align*}
-    \item Construct $\widetilde{\Phi}$ from $\Rset^{q}$ to $\Rset^{p}$ (\alert{reconstruction formula})
+    \item Construct $\tilde{\Phi}$ from $\Rset^{q}$ to $\Rset^{p}$ (\alert{reconstruction formula})
      \item Control an error $\epsilon$ between $\bx$ and its reconstruction $\hat \bx = \tilde{\Phi}(\Phi(\bx))$
   \end{enumerate}
 
 \bigskip
 
 \onslide<2>{
-    For instance,  the error measured with th Frobenius between the original data matrix $\bX$ and its approximation:
+    For instance,  the error measured with the Frobenius between the original data matrix $\bX$ and its approximation:
       \begin{equation*}
         \epsilon(\bX, \hat \bX ) = \left\| \bX - \hat \bX \right\|_F^2  = \sum_{i=1}^n \left\| \bx_i - \tilde{\Phi}(\Phi(\bx_i)) \right\|^2 
       \end{equation*}
@@ -502,7 +502,7 @@ season & automn:41 & spring:43 & summer:44 & winter:30 & NA & NA & NA\\
   \begin{block}{PCA reconstruction error}<2>
     \vspace{-.25cm}
     \begin{equation*}
-      \minimize_{\bmu \in\Rset^p, \bV\in\mathcal{O}_{p,q}} \sum_{i=1}^n \left\| (\bx_i  - \bmu) + \bV^\top\bV ( \bx_i -\bmu)   \right\|^2
+      \minimize_{\bmu \in\Rset^p, \bV\in\mathcal{O}_{p,q}} \sum_{i=1}^n \left\| (\bx_i  - \bmu) - \bV\bV^\top ( \bx_i -\bmu)   \right\|^2 
     \end{equation*}
   
   \alert{Solution (explicit)} 
@@ -629,7 +629,7 @@ Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA ca
 \end{itemize}
 \end{block}
 
-\rsa Kernel PCA suffers from the choice of the Kernel to correctly
+\rsa Kernel PCA suffers from the choice of the Kernel
 
 \end{frame}
 
@@ -703,13 +703,13 @@ Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA ca
   \begin{block}{Model}
    \alert{\bf Linear assumption + non-negativity constraints on both $\bV$ and $\tilde\bx$}
     \begin{align*}
-      \Phi(\bx) & = \bV^\top(\bx-\bmu)  = \tilde\bx \\  
-      \bx \simeq \tilde{\Phi}(\tilde\bx) & = \bmu + \bV \tilde\bx
+      \Phi(\bx) & = \bV^\top \bx  = \tilde\bx \\  
+      \bx \simeq \tilde{\Phi}(\tilde\bx) & = \bV \tilde\bx
     \end{align*}
 
   For the whole data matrix $\bX$,
   \[
-    \hat{\bX} = \mathbf{1}_n \bmu^\top   + \underbrace{\tilde\bX}_{\mathbf{F}, \text{ the factors}} \bV^\top 
+    \hat{\bX} = \underbrace{\tilde\bX}_{\mathbf{F}, \text{ the factors}} \bV^\top 
   \]
   \end{block}
 
@@ -718,12 +718,12 @@ Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA ca
 \begin{frame}[fragile]
   \frametitle{NMF reconstruction errors}
   
-  Build $\hat{\mathbf{X}} = \mathbf{FV}^\top$ to minimize a distance $D(\hat{\mathbf{X}}, \mathbf{X})$! \alert{Several choice, e.g:}
+  Build $\hat{\mathbf{X}} = \mathbf{FV}^\top$ to minimize a distance $D(\hat{\mathbf{X}}, \mathbf{X})$. \alert{Several choice, e.g:}
     \begin{itemize}
     \item Least-square loss (distance measured by Frobenius norm)
     \[ \hat{\mathbf{X}}^{\text{ls}} =  \argmin_{\substack{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q}\\\mathbf{V}\in\mathcal{M}(\Rset_+)_{p,q}}} \left\|     \mathbf{X} - \mathbf{FV}^\top \right\|_F^2,
 \]
-    \item Kullback-Leibler divergence ("distance" between distribution)
+    \item Generalized Kullback-Leibler divergence ("distance" for distributions)
     \begin{align*}
     \hat{\mathbf{X}}^{\text{kl}} & =  \argmin_{\substack{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q}\\ \mathbf{V}\in\mathcal{M}(\Rset_+)_{p,q}}} \sum_{i,j} x_{ij} \log(\frac{x_{ij}}{(\mathbf{F}\bV^\top)_{ij}}) + (\mathbf{F}\bV^\top)_{ij} \\
     & = \argmax_{\substack{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q}\\ \mathbf{V}\in\mathcal{M}(\Rset_+)_{p,q}}} \sum_{i,j} x_{ij} \log((\mathbf{F}\bV^\top)_{ij}) - (\mathbf{F}\bV^\top)_{ij},\\
@@ -785,7 +785,10 @@ Since $\tilde\bX = \mathbf{\bX}^c \bV =  \bU \bD \bV^\top \bV = \bU \bD$, PCA ca
   \begin{block}{Other model-based approaches}
     Use a probabilistic-based model to better described non-negative data
     \begin{itemize}
-      \item[\rsa] add Zero-inflation, surdispersion (Poisson-lognormal model, Poisson-Gamma, etc)
+      \item[\rsa] Look for models handling\alert{\bf surdispersion} \\
+      {\small multivariate Poisson-lognormal model, Poisson-Gamma, etc.}
+      \item[\rsa] look for \alert{\bf zero-inflated} distributions
+      \[\mathbb{P}(\bx_i) =  \pi_0 \ \delta_0 + (1-\pi_0) f(\bx_{i})\]
     \end{itemize}
   \end{block}
   
@@ -921,45 +924,45 @@ Some Python equivalents of (torch, pytorch, tensorflow):
   \item $D = d_{ii'}$ a $n\times n$ dissimilarity matrix, or
   \item $S = s_{ii'}$ a $n\times n$ similarity matrix, or
   \end{itemize}
-  \rsa \alert{\bf Goal:} find $\tilde\bx_i\in\Rset^q$ while preserving S/D in the latent space\\
-  
-  \rsa we don't need access to the original position in $\Rset^p$ (only $D$ or $S$).
+  \alert{Goal:} find $\tilde\bx_i\in\Rset^q$ while preserving S/D in the latent space\\
   \end{block}
   
+  \rsa Don't need access to the position in $\Rset^p$ (only $D$ or $S$ \rsa 'kernel').
+
+
   \begin{block}{Classical MDS model}
     Measure similarities with the (centered) \alert{\bf inner product} and minimize 
     \begin{equation*}
       \sum_{i\neq i'} \left( (\bx_i - \bmu)^\top (\bx_i - \bmu) - \tilde\bx_i^\top \tilde\bx_{i'} \right)^2,
     \end{equation*}
-    while assuming a linear model $\tilde\bx = \Phi(\bx) = \bV^\top (\bx_i - \bmu)$, with $\bV$ a $p \times q$ orthonormal matrix.
-  \end{block}
+    assuming a linear model $\tilde\bx =  \bV^\top (\bx_i - \bmu)$, with $\bV \in \mathcal{O}_{p \times q}$.  \end{block}
 
 \end{frame}
 
 \begin{frame}
   \frametitle{Classical MDS: solution}
 
-  With the linear model $\tilde\bx = \Phi(\bx) = \bV^\top (\bx_i - \bmu)$, we waim at minimizing
+  With the linear model $\tilde\bx = \Phi(\bx) = \bV^\top (\bx_i - \bmu)$, we aim at minimizing
   \begin{align*}
-    \textrm{Stress}(\tilde\bx_i) = & \sum_{i\neq i'}  \left( (\bx_i - \bmu)^\top (\bx_{i'} - \bmu) - \tilde\bx_i^\top \tilde\bx_{i'} \right)^2, \\
+    \text{Stress}^{cMDS} = & \sum_{i\neq i'}  \left( (\bx_i - \bmu)^\top (\bx_{i'} - \bmu) - \tilde\bx_i^\top \tilde\bx_{i'} \right)^2, \\
     = & \sum_{i\neq i'} \left( (\bx_i - \bmu)^\top (\bx_{i'} - \bmu) -  (\bx_i - \bmu)^\top \bV \bV^\top (\bx_{i'} - \bmu) \right)^2,
     \end{align*}
 
-  It can be showed that  $\displaystyle \minimize_{\bmu\in\Rset^p, \bV\in\mathcal{O}_{pq}} \textrm{Stress}(\tilde\bx_i)$ is dual to principal component analysis and leads to
+  It can be showed that  $\displaystyle \minimize_{\bmu\in\Rset^p, \bV\in\mathcal{O}_{pq}} \text{Stress}^{cMDS}(\tilde\bx_i)$ is dual to principal component analysis and leads to
   \[
     \tilde\bX = \bX^c \bV = \bU\bD\bV^\top \bV = \bU\bD.
   \]
   
-  \alert{\rsa The principal coordinates in $\Rset^q$ correspond to the scores of $n$ individual projected on the first $q$ principal components.}
+  \alert{\rsa The principal coordinates in $\Rset^q$ correspond to the scores of the $n$ individuals projected on the first $q$ principal components.}
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{Metric Dimension Scalings}
+  \frametitle{Metric Multidimensional Scalings}
   
   \paragraph{Idea to generalize classical MDS:} preserving similarities in term of \alert{\bf inner product} amounts to preserve dissimilarity in terms of Euclidean distance
 
-  \begin{block}{Least-square/Kruskal-Shephard scaling}<2->
+  \begin{block}{Least-squares/Kruskal-Shephard scaling}<2->
       Use a distance base formulation with the following loss (Stress) function:
       \begin{equation*}
         \text{Stress}^{SK} = \sum_{i\neq i'} \left(d_{ii'} - \|\tilde\bx_i - \tilde\bx_{i'}\| \right)^2,
@@ -981,18 +984,21 @@ Some Python equivalents of (torch, pytorch, tensorflow):
 
 
 \begin{frame}
-  \frametitle{Non-Metric Dimension Scalings}
+  \frametitle{Non-Metric Dimension Scaling}
   
-  \paragraph{Idea:} dissimilarities are often only knows by their rank order
+  \paragraph{Idea:} dissimilarities are often only known by their rank order
 
   \begin{block}{Shephard-Kruskal non-metric scaling}
       \begin{equation*}
         \text{Stress}^{NM} = \sum_{i\neq i'} \frac{\left(d_{ii'} - f(d_{ii'}) \right)^2}{\sum_{i\neq i'} d_{ii'}^2},
       \end{equation*}
       where $f$ is an arbitrary increasing function preserving the order
+      
+      \bigskip
+      
       \begin{itemize}
         \item[\rsa] Only the order it required
-        \item[\rsa] $f$ act a isotonic regression curve for the $d_{ii'}$. 
+        \item[\rsa] $f$ acts as an isotonic regression curve for the $d_{ii'}$. 
       \end{itemize}
   \end{block}
 
@@ -1049,21 +1055,21 @@ Some Python equivalents of (torch, pytorch, tensorflow):
 
 
 
-\begin{frame}{Stochastic Neighbor Embedding}
+\begin{frame}{Stochastic Neighbor Embedding (SNE)}
 
-Let $(\bx_1, \hdots, \bx_n)$ be the original points in $\mathbb{R}^p$, and consider a similarities:
+Let $(\bx_1, \hdots, \bx_n)$ be the original points in $\mathbb{R}^p$, and measure similarities by
 
-\[p_{i{i'}} =  (p_{i | {i'}} + p_{{i'} | i})/ 2n\]
+\[p_{ij} =  (p_{j | {i}} + p_{{i} | j})/ 2n\]
 where
 \begin{align*}
-  p_{i | {i'}} & = \frac{ \exp(- \| \bx_i - \bx_{i'} \|^2 / 2 \sigma_i^2 ) }{\sum_{k \neq i} \exp(- \| \bx_k - \bx_{i'} \|^2 / 2 \sigma_k^2)}, \\
-  & = \frac{ \exp(- d_{ii'}^2 / 2 \sigma_i^2 ) }{\sum_{k \neq i} \exp(- d_{ki'}^2 / 2 \sigma_k^2)}
+  p_{j | {i}} & = \frac{ \exp(- \| \bx_j - \bx_{i} \|^2 / 2 \sigma_i^2 ) }{\sum_{k \neq i} \exp(- \| \bx_k - \bx_{i} \|^2 / 2 \sigma_{i}^2)}, \\
+  & = \frac{ \exp(- d_{ij}^2 / 2 \sigma_i^2 ) }{\sum_{k \neq i} \exp(- d_{ki}^2 / 2 \sigma_i^2)}
 \end{align*}
 
 \vfill
 
 \begin{itemize}
-\item[\rsa] SNE to preserve relations with close neighbors with Gaussian kernel
+\item[\rsa] SNE preserves relations with \alert{\bf close neighbors} with Gaussian kernels
 \item[\rsa] $\sigma$ smooths the data (linked to the regularity of the target manifold)
 \end{itemize}
 

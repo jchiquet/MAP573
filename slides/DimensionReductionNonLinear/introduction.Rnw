@@ -4,15 +4,15 @@
 \paragraph{Packages required for reproducing the slides}
 <<load_packages, cache = FALSE, message=FALSE, warning=FALSE>>=
 library(tidyverse)  # opinionated collection of packages for data manipulation
-library(GGally)     # extension to ggplot vizualization system
 library(FactoMineR) # PCA and oter linear method for dimension reduction
 library(factoextra) # fancy plotting for FactoMineR output 
 library(NMF)        # Non-Negative Matrix factorisation
-library(kernlab)    # Kernel PCA
-library(MASS)       # Various statistical too, including MDS
+library(kernlab)    # Kernel-based methods, among which kernel-PCA
+library(MASS)       # Various statistical tools, including metric MDS
 library(Rtsne)      # tSNE implementation in R 
 library(umap)       # Uniform Manifold Approximation and Projection
-theme_set(theme_bw())
+
+theme_set(theme_bw()) # my default theme for ggplot2
 @
 
 \end{frame}
@@ -74,11 +74,11 @@ scRNA %>% dplyr::select(-cell_type) %>% pivot_longer(everything()) %>%
 
 \begin{frame}[fragile]
   \frametitle{Companion data set: 'scRNA'}
-  \framesubtitle{PCA}
+  \framesubtitle{Principal Component Analysis}
 
 <<scRNA PCA>>=
-scRNA %>% FactoMineR::PCA(graph = FALSE, quali.sup = which(colnames(scRNA) == "cell_type")) %>% 
-  factoextra::fviz_pca_biplot(select.var = list(contrib = 30), habillage = "cell_type")
+scRNA %>% PCA(graph = FALSE, quali.sup = which(colnames(scRNA) == "cell_type")) %>% 
+  fviz_pca_biplot(select.var = list(contrib = 30), habillage = "cell_type")
 @
 
 \end{frame}
@@ -86,14 +86,14 @@ scRNA %>% FactoMineR::PCA(graph = FALSE, quali.sup = which(colnames(scRNA) == "c
 \begin{frame}
   \frametitle{PCA (and linear methods) limitations}
 
-  \begin{block}{Account for complex pattern}
+  \begin{block}{Do not account for complex pattern}
     \begin{itemize}
       \item Linear methods are powerful for \alert{\bf planar structures}
       \item May fail at describing \alert{\bf manifolds}
     \end{itemize}
   \end{block}
   
-  \begin{block}{Preserve local geometry}
+  \begin{block}{Fail at preserving local geometry}
     \begin{itemize}
       \item High dimensional data are characterized by \alert{\bf multiscale properties} (local / global structures)
       \item Non Linear projection helps at preserving \alert{\bf local characteristics} of distances
@@ -127,9 +127,7 @@ scRNA %>% FactoMineR::PCA(graph = FALSE, quali.sup = which(colnames(scRNA) == "c
 library(PLNmodels); data(mollusk)
 mollusk <- 
   prepare_data(mollusk$Abundance, mollusk$Covariate[c("season", "site")]) %>% 
-  dplyr::select(-Offset) %>% 
-  as_tibble() %>% 
-  distinct() # remove duplicates
+  dplyr::select(-Offset) %>% as_tibble() %>%  distinct() # remove duplicates
 mollusk <- cbind(mollusk$Abundance, mollusk[c("season", "site")])
 @
 
@@ -148,15 +146,14 @@ mollusk %>% dplyr::select(site, season) %>% summary() %>% t() %>% knitr::kable()
 \paragraph{Histogram of raw counts}
 
 <<mollusc abundance>>=
-mollusk %>% dplyr::select(-site, -season) %>% 
-  pivot_longer(everything()) %>% 
+mollusk %>% dplyr::select(-site, -season) %>% pivot_longer(everything()) %>% 
   ggplot() + aes(x = value, fill = name) + geom_histogram(show.legend = FALSE)
 @
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Companion data set: 'mollusk'}
-  \framesubtitle{PCA}
+  \framesubtitle{Principal Component Analysis}
 
 <<mollusk PCA>>=
 mollusk %>% PCA(graph = FALSE, quali.sup = which(map_lgl(mollusk, is.factor))) %>% 
@@ -168,11 +165,11 @@ mollusk %>% PCA(graph = FALSE, quali.sup = which(map_lgl(mollusk, is.factor))) %
 \begin{frame}
   \frametitle{PCA (and linear methods) limitations}
 
-  \begin{block}{Account for complex data distribution}
+  \begin{block}{Do not account for 'complex' data distribution}
     \begin{itemize}
-      \item Linear methods /PCA are tied to an hidden \alert{\bf Gaussian assumption}
-      \item Fail with \alert{\bf Count data}
-      \item Fail with \alert{\bf Skew data}
+      \item PCA is tied to a hidden \alert{\bf Gaussian assumption}
+      \item Fails with \alert{\bf Count data}
+      \item Fails with \alert{\bf Skew data}
     \end{itemize}
   \end{block}
   
@@ -212,18 +209,21 @@ mollusk %>% PCA(graph = FALSE, quali.sup = which(map_lgl(mollusk, is.factor))) %
 \begin{frame}
   \frametitle{How should we design/construct $\Phi$?}
 
-  \paragraph{Criterion}
+  \paragraph{Geometrical approach} (\alert{\bf see slides on PCA})
+  
+  \vfill
+  
+  \paragraph{Idea to go beyond linear approaches}
   \begin{itemize}
-    \item Geometrical approach (\alert{\bf see slides on PCA})
-    \item Reconstruction error
-    \item Relationship preservation
+    \item Modify the model by amending the \alert{\bf reconstruction error}
+    \item Focus on \alert{\bf Relationship preservation}
   \end{itemize}
 
   \vfill
   
   \paragraph{Form of the map $\Phi$}
   \begin{itemize}
-    \item \alert{\bf Linear} or \alert{\bf non-linear ?}
+    \item  Linear or \alert{\bf non-linear ?}
     \item tradeoff between  interpretability and \alert{\bf versatility ?}
     \item tradeoff between  \alert{\bf high} or low computational resource
   \end{itemize}

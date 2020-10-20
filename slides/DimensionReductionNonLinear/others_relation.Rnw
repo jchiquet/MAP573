@@ -7,8 +7,8 @@ library(umap)
  
    \begin{block}{Basic idea}
      \begin{itemize}
-       \item MMDS performs embedding based on the pairwise Euclidean-based distance distance
-       \item Isomap uses a distance induced by a neighborhood graph embedded
+       \item Metric  MDS performs embedding based on pairwise Euclidean-based distance
+       \item Isomap embeds a distance induced by a neighborhood graph
      \end{itemize}
    \end{block}
  

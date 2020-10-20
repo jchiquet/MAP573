@@ -11,45 +11,45 @@ library(Rtsne)
   \item $D = d_{ii'}$ a $n\times n$ dissimilarity matrix, or
   \item $S = s_{ii'}$ a $n\times n$ similarity matrix, or
   \end{itemize}
-  \rsa \alert{\bf Goal:} find $\tilde\bx_i\in\Rset^q$ while preserving S/D in the latent space\\
-  
-  \rsa we don't need access to the original position in $\Rset^p$ (only $D$ or $S$).
+  \alert{Goal:} find $\tilde\bx_i\in\Rset^q$ while preserving S/D in the latent space\\
   \end{block}
   
+  \rsa Don't need access to the position in $\Rset^p$ (only $D$ or $S$ \rsa 'kernel').
+
+
   \begin{block}{Classical MDS model}
     Measure similarities with the (centered) \alert{\bf inner product} and minimize 
     \begin{equation*}
       \sum_{i\neq i'} \left( (\bx_i - \bmu)^\top (\bx_i - \bmu) - \tilde\bx_i^\top \tilde\bx_{i'} \right)^2,
     \end{equation*}
-    while assuming a linear model $\tilde\bx = \Phi(\bx) = \bV^\top (\bx_i - \bmu)$, with $\bV$ a $p \times q$ orthonormal matrix.
-  \end{block}
+    assuming a linear model $\tilde\bx =  \bV^\top (\bx_i - \bmu)$, with $\bV \in \mathcal{O}_{p \times q}$.  \end{block}
 
 \end{frame}
 
 \begin{frame}
   \frametitle{Classical MDS: solution}
 
-  With the linear model $\tilde\bx = \Phi(\bx) = \bV^\top (\bx_i - \bmu)$, we waim at minimizing
+  With the linear model $\tilde\bx = \Phi(\bx) = \bV^\top (\bx_i - \bmu)$, we aim at minimizing
   \begin{align*}
-    \textrm{Stress}(\tilde\bx_i) = & \sum_{i\neq i'}  \left( (\bx_i - \bmu)^\top (\bx_{i'} - \bmu) - \tilde\bx_i^\top \tilde\bx_{i'} \right)^2, \\
+    \text{Stress}^{cMDS} = & \sum_{i\neq i'}  \left( (\bx_i - \bmu)^\top (\bx_{i'} - \bmu) - \tilde\bx_i^\top \tilde\bx_{i'} \right)^2, \\
     = & \sum_{i\neq i'} \left( (\bx_i - \bmu)^\top (\bx_{i'} - \bmu) -  (\bx_i - \bmu)^\top \bV \bV^\top (\bx_{i'} - \bmu) \right)^2,
     \end{align*}
 
-  It can be showed that  $\displaystyle \minimize_{\bmu\in\Rset^p, \bV\in\mathcal{O}_{pq}} \textrm{Stress}(\tilde\bx_i)$ is dual to principal component analysis and leads to
+  It can be showed that  $\displaystyle \minimize_{\bmu\in\Rset^p, \bV\in\mathcal{O}_{pq}} \text{Stress}^{cMDS}(\tilde\bx_i)$ is dual to principal component analysis and leads to
   \[
     \tilde\bX = \bX^c \bV = \bU\bD\bV^\top \bV = \bU\bD.
   \]
   
-  \alert{\rsa The principal coordinates in $\Rset^q$ correspond to the scores of $n$ individual projected on the first $q$ principal components.}
+  \alert{\rsa The principal coordinates in $\Rset^q$ correspond to the scores of the $n$ individuals projected on the first $q$ principal components.}
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{Metric Dimension Scalings}
+  \frametitle{Metric Multidimensional Scalings}
   
   \paragraph{Idea to generalize classical MDS:} preserving similarities in term of \alert{\bf inner product} amounts to preserve dissimilarity in terms of Euclidean distance
 
-  \begin{block}{Least-square/Kruskal-Shephard scaling}<2->
+  \begin{block}{Least-squares/Kruskal-Shephard scaling}<2->
       Use a distance base formulation with the following loss (Stress) function:
       \begin{equation*}
         \text{Stress}^{SK} = \sum_{i\neq i'} \left(d_{ii'} - \|\tilde\bx_i - \tilde\bx_{i'}\| \right)^2,
@@ -71,18 +71,21 @@ library(Rtsne)
 
 
 \begin{frame}
-  \frametitle{Non-Metric Dimension Scalings}
+  \frametitle{Non-Metric Dimension Scaling}
   
-  \paragraph{Idea:} dissimilarities are often only knows by their rank order
+  \paragraph{Idea:} dissimilarities are often only known by their rank order
 
   \begin{block}{Shephard-Kruskal non-metric scaling}
       \begin{equation*}
         \text{Stress}^{NM} = \sum_{i\neq i'} \frac{\left(d_{ii'} - f(d_{ii'}) \right)^2}{\sum_{i\neq i'} d_{ii'}^2},
       \end{equation*}
       where $f$ is an arbitrary increasing function preserving the order
+      
+      \bigskip
+      
       \begin{itemize}
         \item[\rsa] Only the order it required
-        \item[\rsa] $f$ act a isotonic regression curve for the $d_{ii'}$. 
+        \item[\rsa] $f$ acts as an isotonic regression curve for the $d_{ii'}$. 
       \end{itemize}
   \end{block}
 

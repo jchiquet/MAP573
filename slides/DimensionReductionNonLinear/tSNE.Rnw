@@ -2,21 +2,21 @@
 library(Rtsne)
 @
 
-\begin{frame}{Stochastic Neighbor Embedding}
+\begin{frame}{Stochastic Neighbor Embedding (SNE)}
 
-Let $(\bx_1, \hdots, \bx_n)$ be the original points in $\mathbb{R}^p$, and consider a similarities:
+Let $(\bx_1, \hdots, \bx_n)$ be the original points in $\mathbb{R}^p$, and measure similarities by
 
-\[p_{i{i'}} =  (p_{i | {i'}} + p_{{i'} | i})/ 2n\]
+\[p_{ij} =  (p_{j | {i}} + p_{{i} | j})/ 2n\]
 where
 \begin{align*}
-  p_{i | {i'}} & = \frac{ \exp(- \| \bx_i - \bx_{i'} \|^2 / 2 \sigma_i^2 ) }{\sum_{k \neq i} \exp(- \| \bx_k - \bx_{i'} \|^2 / 2 \sigma_k^2)}, \\
-  & = \frac{ \exp(- d_{ii'}^2 / 2 \sigma_i^2 ) }{\sum_{k \neq i} \exp(- d_{ki'}^2 / 2 \sigma_k^2)}
+  p_{j | {i}} & = \frac{ \exp(- \| \bx_j - \bx_{i} \|^2 / 2 \sigma_i^2 ) }{\sum_{k \neq i} \exp(- \| \bx_k - \bx_{i} \|^2 / 2 \sigma_{i}^2)}, \\
+  & = \frac{ \exp(- d_{ij}^2 / 2 \sigma_i^2 ) }{\sum_{k \neq i} \exp(- d_{ki}^2 / 2 \sigma_i^2)}
 \end{align*}
 
 \vfill
 
 \begin{itemize}
-\item[\rsa] SNE to preserve relations with close neighbors with Gaussian kernel
+\item[\rsa] SNE preserves relations with \alert{\bf close neighbors} with Gaussian kernels
 \item[\rsa] $\sigma$ smooths the data (linked to the regularity of the target manifold)
 \end{itemize}
 

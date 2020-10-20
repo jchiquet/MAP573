@@ -5,16 +5,16 @@
     \item  Construct a map $\Phi$ from the space $\Rset^{p}$ into a space $\Rset^{q}$ of \alert{smaller dimension}:
       \begin{align*}
       \Phi:\quad & \Rset^{p} \to \Rset^{q}, q \ll p\\
-               & \bx \mapsto \Phi(\bx)
+               & \bx \mapsto \Phi(\bx) = \tilde\bx
       \end{align*}
-    \item Construct $\widetilde{\Phi}$ from $\Rset^{q}$ to $\Rset^{p}$ (\alert{reconstruction formula})
+    \item Construct $\tilde{\Phi}$ from $\Rset^{q}$ to $\Rset^{p}$ (\alert{reconstruction formula})
      \item Control an error $\epsilon$ between $\bx$ and its reconstruction $\hat \bx = \tilde{\Phi}(\Phi(\bx))$
   \end{enumerate}
 
 \bigskip
 
 \onslide<2>{
-    For instance,  the error measured with th Frobenius between the original data matrix $\bX$ and its approximation:
+    For instance,  the error measured with the Frobenius between the original data matrix $\bX$ and its approximation:
       \begin{equation*}
         \epsilon(\bX, \hat \bX ) = \left\| \bX - \hat \bX \right\|_F^2  = \sum_{i=1}^n \left\| \bx_i - \tilde{\Phi}(\Phi(\bx_i)) \right\|^2 
       \end{equation*}
@@ -36,7 +36,7 @@
   \begin{block}{PCA reconstruction error}<2>
     \vspace{-.25cm}
     \begin{equation*}
-      \minimize_{\bmu \in\Rset^p, \bV\in\mathcal{O}_{p,q}} \sum_{i=1}^n \left\| (\bx_i  - \bmu) + \bV^\top\bV ( \bx_i -\bmu)   \right\|^2
+      \minimize_{\bmu \in\Rset^p, \bV\in\mathcal{O}_{p,q}} \sum_{i=1}^n \left\| (\bx_i  - \bmu) - \bV\bV^\top ( \bx_i -\bmu)   \right\|^2 
     \end{equation*}
   
   \alert{Solution (explicit)} 

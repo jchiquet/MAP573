@@ -12,13 +12,13 @@ library(NMF)
   \begin{block}{Model}
    \alert{\bf Linear assumption + non-negativity constraints on both $\bV$ and $\tilde\bx$}
     \begin{align*}
-      \Phi(\bx) & = \bV^\top(\bx-\bmu)  = \tilde\bx \\  
-      \bx \simeq \tilde{\Phi}(\tilde\bx) & = \bmu + \bV \tilde\bx
+      \Phi(\bx) & = \bV^\top \bx  = \tilde\bx \\  
+      \bx \simeq \tilde{\Phi}(\tilde\bx) & = \bV \tilde\bx
     \end{align*}
 
   For the whole data matrix $\bX$,
   \[
-    \hat{\bX} = \mathbf{1}_n \bmu^\top   + \underbrace{\tilde\bX}_{\mathbf{F}, \text{ the factors}} \bV^\top 
+    \hat{\bX} = \underbrace{\tilde\bX}_{\mathbf{F}, \text{ the factors}} \bV^\top 
   \]
   \end{block}
 
@@ -27,12 +27,12 @@ library(NMF)
 \begin{frame}[fragile]
   \frametitle{NMF reconstruction errors}
   
-  Build $\hat{\mathbf{X}} = \mathbf{FV}^\top$ to minimize a distance $D(\hat{\mathbf{X}}, \mathbf{X})$! \alert{Several choice, e.g:}
+  Build $\hat{\mathbf{X}} = \mathbf{FV}^\top$ to minimize a distance $D(\hat{\mathbf{X}}, \mathbf{X})$. \alert{Several choice, e.g:}
     \begin{itemize}
     \item Least-square loss (distance measured by Frobenius norm)
     \[ \hat{\mathbf{X}}^{\text{ls}} =  \argmin_{\substack{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q}\\\mathbf{V}\in\mathcal{M}(\Rset_+)_{p,q}}} \left\|     \mathbf{X} - \mathbf{FV}^\top \right\|_F^2,
 \]
-    \item Kullback-Leibler divergence ("distance" between distribution)
+    \item Generalized Kullback-Leibler divergence ("distance" for distributions)
     \begin{align*}
     \hat{\mathbf{X}}^{\text{kl}} & =  \argmin_{\substack{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q}\\ \mathbf{V}\in\mathcal{M}(\Rset_+)_{p,q}}} \sum_{i,j} x_{ij} \log(\frac{x_{ij}}{(\mathbf{F}\bV^\top)_{ij}}) + (\mathbf{F}\bV^\top)_{ij} \\
     & = \argmax_{\substack{\mathbf{F}\in\mathcal{M}(\Rset_+)_{n,q}\\ \mathbf{V}\in\mathcal{M}(\Rset_+)_{p,q}}} \sum_{i,j} x_{ij} \log((\mathbf{F}\bV^\top)_{ij}) - (\mathbf{F}\bV^\top)_{ij},\\
@@ -84,7 +84,10 @@ rbind(nmf_KL, nmf_LS) %>%
   \begin{block}{Other model-based approaches}
     Use a probabilistic-based model to better described non-negative data
     \begin{itemize}
-      \item[\rsa] add Zero-inflation, surdispersion (Poisson-lognormal model, Poisson-Gamma, etc)
+      \item[\rsa] Look for models handling\alert{\bf surdispersion} \\
+      {\small multivariate Poisson-lognormal model, Poisson-Gamma, etc.}
+      \item[\rsa] look for \alert{\bf zero-inflated} distributions
+      \[\mathbb{P}(\bx_i) =  \pi_0 \ \delta_0 + (1-\pi_0) f(\bx_{i})\]
     \end{itemize}
   \end{block}
   
