@@ -13,7 +13,7 @@
 
 <title>MAP 573 - Data Analysis and Unsupervised Learning</title>
 
-<script src="site_libs/header-attrs-2.4/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="site_libs/jquery-1.12.4/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -24,6 +24,8 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 <script src="site_libs/htmlwidgets-1.5.2/htmlwidgets.js"></script>
 <link href="site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
 <script src="site_libs/datatables-binding-0.16/datatables.js"></script>
@@ -43,7 +45,7 @@
   div.column{display: inline-block; vertical-align: top; width: 50%;}
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
-      </style>
+    </style>
 
 
 
@@ -430,7 +432,7 @@ div.tocify {
       <a href="tutorial_PCA_correction.html">PCA</a>
     </li>
     <li>
-      <a href="tutorial_nonlinear_dim_reduction_methods.html">MDS, kernel-PCA</a>
+      <a href="tutorial_nonlinear_dim_reduction_methods_cor.html">MDS, kernel-PCA</a>
     </li>
     <li class="dropdown-header">Clustering</li>
     <li class="dropdown-header">GGM and EM</li>
@@ -449,13 +451,13 @@ div.tocify {
       <a href="homework_1_reporting_correction.html">#1: Swirl, Rmarkdown, R basics - correction</a>
     </li>
     <li>
-      <a href="homework_2_data_manipulation_representation_correction.html">Data manipulation and representation - correction</a>
+      <a href="homework_2_data_manipulation_representation_correction.html">#2: Data manipulation and representation - correction</a>
     </li>
     <li>
-      <a href="homework_3_PCA_correction.html">Data analysis with PCA -- correction</a>
+      <a href="homework_3_PCA_correction.html">#3: Data analysis with PCA - correction</a>
     </li>
     <li>
-      <a href="homework_4_dim_reduc_non_linear.html">Non-linear dimension reduction method</a>
+      <a href="homework_4_dim_reduc_non_linear.html">#4: Non-linear dimension reduction method</a>
     </li>
     <li class="dropdown-header">Spectral Clustering for graphs</li>
     <li class="dropdown-header">Handling Missing Values</li>
@@ -528,7 +530,7 @@ div.tocify {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
