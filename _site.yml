@@ -57,7 +57,7 @@ navbar:
         - text: "PCA"
           href: tutorial_PCA_correction.html
         - text: "MDS, kernel-PCA"
-          href: tutorial_nonlinear_dim_reduction_methods.html
+          href: tutorial_nonlinear_dim_reduction_methods_cor.html
         - text: "Clustering"
 #          href: tutorials_PCA.html
         - text: "GGM and EM"
@@ -67,11 +67,11 @@ navbar:
       menu:
         - text: "#1: Swirl, Rmarkdown, R basics - correction"
           href: homework_1_reporting_correction.html
-        - text: "Data manipulation and representation - correction"
+        - text: "#2: Data manipulation and representation - correction"
           href: homework_2_data_manipulation_representation_correction.html
-        - text: "Data analysis with PCA -- correction"
+        - text: "#3: Data analysis with PCA - correction"
           href: homework_3_PCA_correction.html
-        - text: "Non-linear dimension reduction method"
+        - text: "#4: Non-linear dimension reduction method"
           href: homework_4_dim_reduc_non_linear.html
         - text: "Spectral Clustering for graphs"
 #          href: homework_5_GraphPartitioning.html
