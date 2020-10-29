@@ -23,12 +23,12 @@ Finally, the third part of the module proposes to the students a series of data 
 ## Schedule
 
 <div class="alert alert-danger">
-  <strong>Information:</strong> From October 2 and for at least two weeks, some teachings are online via zoom (<a href="https://moodle.polytechnique.fr/enrol/index.php?id=9404">link in Moodle</a>). 
+  <strong>Information:</strong> From October 30 and for at least a month weeks, all teachings are online via zoom (<a href="https://moodle.polytechnique.fr/enrol/index.php?id=9404">link in Moodle</a>). 
 </div>
 
   - **Teachers** : Julien Chiquet (coordinator), Florian Bourgey, Élise Dumas
   - **Lectures/tutorials are 100% online** via zoom.  ~~Amphi Gay-Lussac is available if you need~~ 
-  - **Practicals and projects follow-up are hybrid** (face-to-face in PC + zoom)
+  - **Practicals and projects follow-up are 100% online** :'-(
 
 ```{r, echo = FALSE}
 readODS::read_ods(path = "schedule.ods") %>% 

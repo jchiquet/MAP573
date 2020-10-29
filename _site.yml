@@ -73,8 +73,8 @@ navbar:
           href: homework_3_PCA_correction.html
         - text: "#4: Non-linear dimension reduction method"
           href: homework_4_dim_reduc_non_linear.html
-        - text: "Spectral Clustering for graphs"
-#          href: homework_5_GraphPartitioning.html
+        - text: "#5: Spectral Clustering for graphs"
+          href: homework_5_GraphPartitioning.html
         - text: "Handling Missing Values"
 #          href: .html
     - text: "Projects"

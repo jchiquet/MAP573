@@ -1,7 +1,8 @@
 ---
-title: 'Homework: Clustering of Network data'
+title: 'Homework #5'
+subtitle: 'Clustering of Network data'
 author: 'MAP 573'
-date: "`r Sys.Date()`"
+date: "11/03/2020"
 ---
 
 ```{r setup, include=FALSE}
@@ -21,16 +22,12 @@ Homework is due Sunday 11/08 23:59 in Rmd (see assignment in Moodle).
 
 Check that the following packages are available on your computer:
 
-```{r, message=FALSE}
+```{r packages, message = FALSE, warning = FALSE}
 library(igraph)
-library(Matrix)
+library(missSBM)
+library(corrplot)
 library(aricode)
 ```
-
-<!-- If( and only if!!) you have time, you can also play with  -->
-<!-- ```{r, message=FALSE} -->
-<!-- library(ggraph) -->
-<!-- ``` -->
 
 ## Introduction to **igraph**
 
@@ -48,9 +45,11 @@ Load the data set from the missSBM package
 missSBM::frenchblog2007
 ```
 
+Plot this graph and quickly comment.
+
 ### Graph Partitioning
 
-It is time to find some subtle structure in the network by performing graph clustering of the nodes. A commonly seeked structure in networks is the presence of _communities_,  like clusters of friends in social networks.
+It is time to find some subtle structure in this network by performing graph clustering of the nodes. A commonly sought structure is the presence of _communities_,  like clusters of friends in social networks.
 
 The two methods explored today for community detection do not assume any underlying model on the graph. The first one is based on a generalization of hierarchical clustering for graphs using the concept of _modularity_ to define an appropriate dissimilarity measure between clusters. The second is the normalized spectral clustering.
 
@@ -64,32 +63,17 @@ where $f_{kk}^\star$  is the expected value of $f_{kk}$ under some model of rand
 
 Use this function to extract a possible clustering of the nodes for the French blogosophere. Use the plot function for object with class `communities` outputing from `igraph::fastgreedy.community`. Compare this clustering with the political labels of the nodes (use for instance confusion tables with `table` or adjusted Rand-Index with `aricode::ARI`).
 
-Explore the results offered by other clustering methods for community detection (e.g. `igraph::cluster_edge_betweenness`), or the ones obtained by a simple hierarchical clustering on dissimilarity measured on the adjacency matrix.
+Explore the results offered by other clustering methods for community detection (e.g. `igraph::cluster_edge_betweenness`), or the ones obtained by a simple hierarchical clustering on dissimilarity measured on the adjacency matrix. Compare the clustering to the "ground-truth". Comment.
 
 #### Spectral Analysis
 
-Here is a reminder of the spectral clustering algorithm presented during course.
+We first used the algorithm introduced by Ng, Jordan and Weiss (2002). Check the course/slides!
 
-\begin{algorithm}[H]
-  \KwIn{Adjacency matrix and number of classes $Q$}
-  \DontPrintSemicolon
-  
-  Compute the normalized graph Laplacian $\mathbf{L}$\;
-  Compute the eigen vectors of $\mathbf{L}$ associated with the $Q$ smallest eigenvalues\;
-  Define $\mathbf{U}$,  the $p\times Q$ matrix  that encompasses these $Q$ vectors \;
-  Define $\tilde{\mathbf{U}}$, the row-wise normalized version of $\mathbf{U}$: $ \tilde{u}_{ij} = \frac{u_{ij}}{\| \mathbf{U}_i\|_2}$\;
-  Apply k-means to $(\tilde{\mathbf{U}}_i)_{i=1,\dots,p}$
-
-  \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^p$, such as  $C_i = q$ if $i\in q$}
-
-  \caption{Spectral Clustering by Ng, Jordan and Weiss (2002)}
-\end{algorithm}
-
-1. Compute the graph Laplacian (normalized of unormalized) by hands or with the `igraph::graph.laplacian` function.
+1. Compute the graph Laplacian with the `igraph::graph.laplacian` function.
 2. Compute its eigen values and represent the scree plot (eigen values by increasing order). Comment.
 3. Compute its eigen vectors and represent the pairs plot between the first 10 eigen vectors with non-null eigen values. Add colors associated to the Political labels of the nodes.  Comment.
 4. Implement the Spectral clustering algorithm and apply it to the French Blogosphere for various numbers of clusters. 
 5. Compare your clustering to the political labels and to the one obtained by hierarchical clustering. Comment, make plots changing node colors, etc.
 6. Redo the analysis with the absolute spectral clustering of Rohe et al (2011).
 
-**Remark:** Another fancy alternative to the **igraph** package is the `Matrix::image` or `corrplot` methods on the adjacency matrix of a graph once rows and columns reordered according to the clustering to represent the clustered network.
+**Remark:** Another fancy alternative to the **igraph** package is the `corrplot` methods on the adjacency matrix of a graph once rows and columns reordered according to the clustering to represent the clustered network.
