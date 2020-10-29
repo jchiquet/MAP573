@@ -1,0 +1,59 @@
+\documentclass{beamer}
+
+\usepackage{animate}
+
+\def\currentCourse{Data anaysis and Unsupervised Learning}
+\def\currentInstitute{MAP 573, 2020 -- Julien Chiquet}
+\def\currentLogo{../common_figs/logo_X}
+\def\currentDate{\'Ecole Polytechnique, Autumn semester, 2020}
+\def\currentChapter{Clustering: distance-based methods}
+
+<<preamble, child='../common_preamble.Rnw'>>=
+@
+
+\usetikzlibrary{calc,shapes,backgrounds,arrows,automata,shadows,positioning}
+
+\graphicspath{{figures/}}
+
+\begin{document}
+
+\dotitlepage
+
+%% ====================================================================
+\part{Introduction}
+%% ====================================================================
+<<introduction, child='introduction.Rnw'>>=
+@
+
+%% ====================================================================
+\part{Distance-based method}
+%% ====================================================================
+\begin{frame}
+  \partpage
+\end{frame}
+
+%% ==========================================================================
+%% Clustering: introduction, vocabulary
+%% ==========================================================================
+<<intro_clustering, child='intro_clustering.Rnw'>>=
+@
+
+%% ==========================================================================
+%% K-means Clustering
+%% ==========================================================================
+<<kmeans, child='kmeans.Rnw'>>=
+@
+
+%% ==========================================================================
+%% Hierarchical Clustering
+%% ==========================================================================
+<<hclust, child='hclust.Rnw'>>=
+@
+
+%% ==========================================================================
+%% Spectral Clustering
+%% ==========================================================================
+<<spclust, child='spclust.Rnw'>>=
+@
+
+\end{document}

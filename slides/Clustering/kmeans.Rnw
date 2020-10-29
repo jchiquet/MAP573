@@ -1,0 +1,174 @@
+\section{The K-means algorithm}
+
+\begin{frame}
+  
+  \frametitle{K-means heuristic}
+  
+  \begin{block}{Idea}
+    \begin{enumerate}
+      \item Clustering is defined by a partition in $K$ classes
+      \item Minimize a criteria of clustering quality
+      \item Use Euclidean distances to measure dissimilarity
+    \end{enumerate}
+  \end{block}
+
+  \begin{block}{Criteria: intra-class variance/ Inertia "within"}
+    Intra-class variance measures \alert{inner} homogeneity
+    \begin{equation*}
+      I_W = \sum_{k=1}^K \sum_{i=1}^n c_{ik} \left\| \bx_i - \bmu_k \right\|_2^2,
+    \end{equation*} 
+    where 
+    \begin{itemize}
+      \item $\bmu_k$ are the centers (prototypes) of classes
+      \item $c_{ik} = \1_{i\in\mathcal{P}_k}$ is a partition matrix
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{K-means algorithm}
+  
+  Ideally, one would solve
+  \begin{equation*}
+    (\hat{\mathbf{c}}, \hat{\bmu}) = \argmin_{(\mathbf{c}, \bmu)}  I_w((\mathbf{c}, \bmu)), \quad \text{s.t \quad $\mathbf{c}$ is a partition matrix}.
+  \end{equation*}
+  
+  This problem is hard to solve but can be optimized locally as follows:
+
+  \vfill
+  
+  \begin{block}{K-means algorithm (Loyds)}
+  \begin{description}
+    \item[\textbf{Initialization}] start by a (pseudo) random choice for the centers $\bmu_k$
+    \item[\textbf{Alternate}] until convergence
+      \begin{enumerate}
+        \item[step 1] given $\bmu$, chose $\mathbf{c}$ minimizing $I_w$ $\equiv$ assign $\bx_i$ to the nearest prototype
+        \item[step 2] given $\mathbf{c}$, chose $\bmu$ minimizing $I_w$ $\equiv$ update $\bmu$ by the new means of classes
+      \end{enumerate}
+    \end{description}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+\frametitle{K-means in action}
+
+<<echo = FALSE>>=
+## set larger 'interval' if the speed is too fast
+ani.options(interval = 1)
+par(mar = c(3, 3, 1, 1.5), mgp = c(1.5, 0.5, 0))
+kmeans.ani()
+@
+
+\end{frame}
+
+\begin{frame}
+\frametitle{K-means: properties}
+  
+  \begin{block}{Other schemes}
+    \begin{itemize}
+      \item \alert{McQueen}: modify the mean each time a sample is assigned to a new cluster.
+      \item \alert{Hartigan}: modify the mean by removing the considered sample, assign it to the nearby center and recompute the new mean after assignment.
+    \end{itemize}
+  \end{block}
+  
+  \begin{block}{Initialization}
+    No guarantee to converge to a global optimum
+    \begin{itemize}
+      \item Repeat and keep the best result
+      \item k-Mean++: try to take them as separated as possible.
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Complexity}
+     $O(n K T)$ where $T$ is the number of step in the algorithm.
+  \end{block}
+  
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{K-means in \texttt{R} on uncorrected data set}
+
+<<kmeans_uncorrected crabs>>=
+uncor_kmeans_res <- crabs %>%
+  select(-species, -sex) %>%
+  kmeans(4, nstart = 10)
+uncor_clusters <- as.factor(uncor_kmeans_res$cluster)
+uncor_centers  <- as_tibble(uncor_kmeans_res$centers)
+classes <- paste(crabs_corrected$species, crabs_corrected$sex, sep = "-")
+
+crabs %>% 
+  ggplot(aes(x = carapace_length, y = carapace_width, color = uncor_clusters)) +
+  geom_point(aes(shape = classes)) +
+  geom_point(data = uncor_centers, color = 'coral', size = 4 , pch = 21) +
+  geom_point(data = uncor_centers, color = 'coral', size = 50, alpha = 0.2)
+@
+  
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{K-means in \texttt{R} on corrected crabs data set}
+  
+<<kmeans_crabs>>=
+kmeans_res <- crabs_corrected %>%
+  select(-species, -sex) %>%
+  kmeans(4, nstart = 10)
+clusters <- as.factor(kmeans_res$cluster)
+centers  <- as.tibble(kmeans_res$centers)
+classes <- paste(crabs_corrected$species, crabs_corrected$sex, sep = "-")
+
+crabs_corrected %>% 
+  ggplot(aes(x = carapace_length, y = carapace_width, color = clusters)) +
+  geom_point(aes(shape = classes)) +
+  geom_point(data = centers, color = 'coral', size = 4 , pch = 21) +
+  geom_point(data = centers, color = 'coral', size = 50, alpha = 0.2)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Clustering comparison}
+
+<<kmeans validation>>=
+aricode::ARI(clusters, classes)
+aricode::ARI(uncor_clusters, classes)
+@
+
+<<contingency_table_kmeans>>=
+knitr::kable(table(clusters, classes),
+caption = "Estimating structure with k-means")
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{How about a "spectral" k-means?}
+  \framesubtitle{PCA + k-means}
+
+<<spectral kmeans crabs>>=
+SVD <- svd(select(crabs_corrected, -species, -sex))
+spec_crabs <- as.tibble(SVD$u[,1:2] %*% diag(SVD$d[1:2]))
+spec_kmeans_res <- spec_crabs %>%
+  kmeans(4, nstart = 10)
+spec_clusters <- as.factor(spec_kmeans_res$cluster)
+spec_centers  <- as.tibble(spec_kmeans_res$centers)
+classes <- paste(crabs_corrected$species, crabs_corrected$sex, sep = "-")
+
+ggplot(spec_crabs, aes(V1, V2, color = spec_clusters)) +
+  geom_point(aes(shape = classes)) +
+  geom_point(data = spec_centers, color = 'coral', size = 4 , pch = 21) +
+  geom_point(data = spec_centers, color = 'coral', size = 50, alpha = 0.2)
+@
+
+<<spectral kmeans validation>>=
+aricode::ARI(spec_clusters, classes)
+@
+
+<<contingency_table_spectral_kmeans>>=
+knitr::kable(table(spec_clusters, classes),
+caption = "Estimating structure with spectral k-means")
+@
+
+\end{frame}

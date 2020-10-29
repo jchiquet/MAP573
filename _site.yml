@@ -45,8 +45,8 @@ navbar:
           href: resources/DimensionReductionNonLinear.pdf
         - text: "------------------"
         - text: "Clustering"
-        - text: "Partitioning: HAC, k-means, Spectral clustering"
-#          href: .html
+        - text: "Distance/Similarity-based: HAC, k-means, Spectral clustering"
+          href: resources/Clustering.pdf
         - text: "Model-based clustering: Gaussian mixture model and EM"
 #          href: .html
     - text: "Tutorials"

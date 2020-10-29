@@ -1,0 +1,206 @@
+\section{Hierarchical Agglomerative Clustering}
+
+\begin{frame}
+  \frametitle{Agglomerative Clustering: Heuristic}
+    
+    \begin{block}{Idea}
+      \begin{enumerate}
+        \item Start with small clusters (\textit{e.g.} one cluster $\equiv$ one individual)
+        \item Merge the most similar clusters sequentially (and greedily)
+        \item Stops when all individuals are in the same groups
+      \end{enumerate}
+    \end{block}
+
+    \begin{block}{Ingredients}
+      \begin{enumerate}
+        \item a dissimilarity measure (distance between individuals)
+        \item a merging criterion $\Delta$ (dissimilarity between clusters)
+      \end{enumerate}
+    \end{block}
+
+    \begin{itemize}
+      \item[+] Generates a hierarchy of clustering instead of a single partition
+      \item[--] Need to select the number of cluster afterwards
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Agglomerative Clustering: general algorithm}
+
+  \begin{block}{Algorithm}
+    \vspace{-.25cm}
+    \begin{enumerate}
+      \item Start with $(\mathcal{C}_k^{(0)})= (\{ \bx_i \})$ the collection of all singletons.
+      \item At step $s$, we have $n-s$ clusters $(\mathcal{C}_{k}^{(s)})$:
+
+      \begin{itemize}
+        \item Find the two most similar clusters according to a criterion $\Delta$:%%\\[-.75cm]
+        \begin{align*}
+          (k,\ell) = \argmin_{(k',\ell')} \Delta(\mathcal{C}_{k'}^{(s)},\mathcal{C}_{_ell'}^{(s)})
+        \end{align*}
+        \item Merge $\mathcal{C}_{k}^{(s)}$ and $\mathcal{C}_{\ell}^{(s)}$ into $\mathcal{C}_{k}^{(s+1)}$
+        \item Update the distances between $\mathcal{C}_{k}^{(s+1)}$ and the remaining clusters
+      \end{itemize}
+  
+      \item Repeat until there is only one cluster.
+    \end{enumerate}
+  \end{block}
+
+  \vfill
+
+  \begin{block}{Complexity}<2>
+    \vspace{-.25cm}
+    \begin{itemize}
+      \item In general $O(n^3)$
+      \item Can be reduced to $O(n^2)$ if boundering the number of merges
+    \end{itemize}
+  \end{block}
+  
+\end{frame}
+
+\begin{frame}
+
+  \begin{center}
+    \includegraphics[width=.3\textwidth]{ex_sautmin}
+    \hspace*{.1\textwidth}
+    \includegraphics[width=.3\textwidth]{ex_sautmax}
+  \end{center}
+
+  \begin{block}{Merging criterion based on the distance between points}
+    \begin{itemize}
+      \item Single linkage (or minimum linkage):
+      \begin{align*}
+        \Delta(\mathcal{C}_k, \mathcal{C}_\ell) = \min_{\bx_i \in \mathcal{C}_k, \bx_j \in \mathcal{C}_\ell} d(\bx_i, \bx_j)
+      \end{align*}
+      \item Complete linkage (or maximum linkage):
+      \begin{align*}
+        \Delta(\mathcal{C}_k, \mathcal{C}_\ell) = \max_{\bx_i \in \mathcal{C}_k} \max_{\bx_j \in \mathcal{C}_\ell}d(\bx_i, \bx_j)
+    \end{align*}
+    \item Average linkage (or group linkage):
+      \begin{align*}
+        \Delta(\mathcal{C}_k, \mathcal{C}_\ell) = \frac{1}{|\mathcal{C}_k||\mathcal{C}_\ell|} \sum_{\bx_i \in \mathcal{C}_k}\sum_{\bx_ \in\mathcal{C}_\ell} d(\bx_i, \bx_j)
+      \end{align*}
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Ward's criteria}
+  
+  \begin{block}{Merging criterion based on distance to the mean}
+    Ward's criterion:
+    \begin{align*}
+      \Delta(\mathcal{C}_k, \mathcal{C}_\ell) 
+        & = \sum_{\bx_i \in \mathcal{C}_k} \left( d^2(\bx_i, \bmu_{\mathcal{C}_k \cup \mathcal{C}_\ell} ) - d^2(\bx_i, \bmu_{\mathcal{C}_k}) \right) \\
+        & \quad + \sum_{\bx_j \in \mathcal{C}_\ell} \left( d^2(\bx_j, \bmu_{\mathcal{C}_j \cup \mathcal{C}_\ell} ) - d^2(\bx_j, \bmu_{\mathcal{C}_\ell}) \right)
+      \end{align*}
+    \end{block}
+
+    \begin{block}{Euclidean case}
+       If $d$ is the Euclidean distance, then
+      \begin{align*}
+        \Delta(\mathcal{C}_k, \mathcal{C}_\ell) = \frac{2|\mathcal{C}_k||\mathcal{C}_\ell|}{|\mathcal{C}_k|+|\mathcal{C}_\ell|}d^2(\bmu_{\mathcal{C}_k}, \bmu_{\mathcal{C}_\ell})
+      \end{align*}
+    \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Ward's criteria: details}
+  
+  Recall that the inertia measures the homogenity of th size-K clustering
+  \begin{equation*}
+    I_W = \sum_{k=1}^K \sum_{\bx_i \in \mathcal{C}_k} \| \bx_i - \bmu_{\mathcal{C}_k}  \|_2^2, \quad I_B = \sum_{k=1}^K n_k \| \bmu_k - \bmu  \|_2^2
+  \end{equation*}
+  
+  \onslide<2->{
+  Consider the following two partitions 
+  \begin{itemize}
+    \item  $\mathcal{P} = (\mathcal{C}_1, \dots,\mathcal{C}_K)$ at one level of the hierarchy $\Omega$
+    \item  $\mathcal{P}'$ is $\mathcal{P}$ once $\mathcal{C}_k, \mathcal{C}_\ell$ merged
+  \end{itemize}
+  Then
+  \begin{equation*}
+    I_B(\mathcal{P}) - I_B(\mathcal{P'}) = \frac{|\mathcal{C}_k||\mathcal{C}_\ell|}{|\mathcal{C}_k|+|\mathcal{C}_\ell|}d^2(\bmu_{\mathcal{C}_k}, \bmu_{\mathcal{C}_\ell}) = \frac{1}{2} \Delta(\mathcal{C}_k, \mathcal{C}_\ell).
+  \end{equation*}
+  }
+
+  \onslide<3>{
+  \begin{itemize}
+    \item[$\rightsquigarrow$] At each step, Ward limits the loss (increase) of the intra (inter) class variance
+    \item[$\rightsquigarrow$] Defines an indexed hierarchy (height of the dendrogram)
+    \item[$\rightsquigarrow$] Same criteria as in the K-means algorithm
+  \end{itemize}
+  }
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Ward agglomerative clustering in \texttt{R}}
+  
+<<Ward>>=
+Ward <- crabs_corrected %>% 
+  select(-sex, -species) %>%
+  dist(method = "euclidean") %>% 
+  hclust(method = "ward.D2")
+plot(Ward)
+@
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Ward agglomerative clustering in \texttt{R}: comparison}
+
+Compare with out reference classification and k-means
+<<Ward_ARI>>=
+aricode::ARI(cutree(Ward, 4), classes)
+aricode::ARI(cutree(Ward, 4), clusters)
+@
+
+<<contingency_table_kmeans_vs_ward>>=
+knitr::kable(table(clusters, cutree(Ward,4)),
+caption = "k-means vs Ward")
+@
+
+
+Optimize over a range of values
+<<Ward_ARIs>>=
+Ward %>%  cutree(k = 1:10) %>%  as.data.frame() %>% as.list() %>% 
+  sapply(aricode::ARI, classes) %>% plot(type = "l")
+@
+
+Look at Ward intra-class variance
+<<criteria>>=
+plot(rev(Ward$height)[1:20], xlab = "number of clusters", ylab = "height")
+@
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Ward agglomerative clustering in \texttt{R}: projection}
+
+<<Ward_projection>>=
+clusters_ward <- as.factor(cutree(Ward, 4))
+centers_ward  <- select(crabs_corrected, -sex, -species) %>% 
+  aggregate(list(cutree(Ward, 4)), mean) %>% as_tibble() %>% select(-Group.1)
+
+crabs_corrected %>% 
+  ggplot(aes(x = carapace_length, y = carapace_width, color = clusters_ward)) +
+  geom_point(aes(shape = classes)) +
+  geom_point(data = centers_ward, color = 'coral', size = 4 , pch = 21) +
+  geom_point(data = centers_ward, color = 'coral', size = 50, alpha = 0.2)
+@
+\end{frame}
+
+% \begin{frame}[fragile]
+%   \frametitle{Reordered correlation matrix between individuals}
+%   
+% <<Ward corrplot>>=
+% C <- cor(t(select(crabs_corrected, -sex, -species)))
+% C <- C[order(clusters_ward),order(clusters_ward)]
+%   corrplot(C, method = "color", tl.pos = "n")
+% @
+%   
+% 
+% \end{frame}

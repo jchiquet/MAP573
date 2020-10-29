@@ -1,0 +1,170 @@
+%% ==========================================================================
+\section{Clustering: introduction}
+%% ==========================================================================
+
+\begin{frame}
+  \frametitle{Dissimilarity and Distance}
+
+  \paragraph{\it Clustering requires a measure of ressemblance between object}
+
+  \begin{definition}[(dis)similarity]
+    Similarity (\textit{resp. Dissimilarity}) measures the ressemblance (\textit{resp. discrepancy}) between objects based on several features. 
+  \end{definition}
+
+  For instance, two objects are similar if 
+  \begin{itemize}
+    \item they share a certain feature
+    \item \alert{their features are close according to a measure of proximity}
+  \end{itemize}
+  
+  \vfill
+  
+  \begin{definition}[distance/metric]<2>
+    Dissimilairty can be measuresd by distances, \textit{i.e.} a function $d_{ij}$ between pairs in \{$\bx_i\}$ s.t.
+    \vspace{-.25cm}
+    \begin{multicols}{2}
+    \begin{itemize}
+      \item $d_{ij} \geq 0$,
+      \item $d_{ij} = 0 \Leftrightarrow \bx_i = \bx_{j}$,
+      \item $d_{ij} = d_{ji}$,
+      \item $d_{ik} \leq d_{ij} + d_{jk}$.
+    \end{itemize}
+    \end{multicols}
+  \end{definition}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Classification structures: Partition}
+
+  \paragraph{\it Clustering leads to a grouping (or classification) of individuals into homogeneous classes} 
+  \bigskip
+  
+  We consider two structures to describe this classification: 
+  \begin{itemize}
+    \item \alert{partitions} and
+    \item \alert{hierarchies}.
+  \end{itemize}
+
+  \vfill
+
+  \begin{definition}[Partition]
+    A partition $\mathcal{P}$ is a decomposition $\mathcal{P} = \{P_1,\dots,P_K\}$ of a finite ensemble $\Omega$ such that
+    \begin{itemize}
+      \item $P_k \cap P_{k'} = \emptyset$ for any $k\neq k'$
+      \item $\bigcup_{k} P_k = \Omega$
+    \end{itemize}
+    In a set $\Omega = (\bx_1, \dots, \bx_n)$ partitioned into $K$ classes, each element of the set belongs to a
+class and only one.
+  \end{definition}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Classification structures: Hierarchy}
+
+  \begin{definition}[Hierarchy]
+    A hierarchy $\mathcal{H}$ is a non empty subset of a finite ensemble $\Omega$ such that
+    \begin{itemize}
+      \item $\Omega \in \mathcal{H}$,
+      \item $\forall \bx \in \Omega, \{\bx\} \in \mathcal{H}$,
+      \item $\forall H, H' \in \mathcal{H}$, then either $H \cap H' = \emptyset$, $H \subset H'$ or $H' \subset H$.
+    \end{itemize}
+  \end{definition}
+
+  \vspace{-.15cm}
+
+  \begin{definition}[Index of a Hierarchy]<2->
+  The index is a function $i: \mathcal{H} \to \mathbb{R}_+$ such that  
+    \begin{itemize}
+      \item if $H \subset H'$ then $i(H) < i(H')$;
+      \item if $\bx \in \Omega$ then $i(\bx) = 0$.
+    \end{itemize}
+  \end{definition}
+
+  \vspace{-.15cm}
+
+  \begin{properties}[Partition and Hierarchy]<3->
+    \vspace{-.25cm}
+    \begin{itemize}
+      \item Each level of an indexed hierarchy is a partition;
+      \item $\{\Omega, P_1, \dots, P_K, \bx_1, \dots, \bx_n\}$ is a hierachy.
+    \end{itemize}
+  \end{properties}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Clusterings Comparison: Contingency table}
+
+  \begin{definition}
+    Consider two clusterings $U$ and $V$ of elements in $\Omega$, into respectively $|U|$ and $|V|$ classes. The $|U| \times |V|$ contingency matrix stores at position $(i,j)$ the number of elements that
+are simultaneously in cluster $i$ of $U$ and  $j$ of $V$.
+
+\begin{center}  
+  \begin{tabular}{c|cccc|c}
+  $\mathbf{U}\backslash \mathbf{V}$ & $V_1$ & $V_2$ & \dots & $V_{|V|}$ & Sums \\ \hline  
+  $U_1$ & $n_{11}$ & $n_{12}$ & \dots & $n_{1|V|}$ & $n_{1.}$ \\ 
+  $U_2$ & $n_{21}$ & $n_{22}$ & \dots & $n_{2|V|}$ & $n_{2.}$ \\ 
+  $\vdots$ & $\vdots$ & $\vdots$ & $\ddots$ & $\vdots$ & $\vdots$ \\
+  $U_{|U|}$ & $n_{|U|1}$ & $n_{|U|2}$ & \dots & $n_{|U| |V|}$ & $n_{|U|.}$ \\ \hline
+  Sums & $n_{.1}$ & $n_{.2}$ & \dots & $n_{.|V|}$ & $n_{..}=n$ \\
+\end{tabular}
+\end{center}  
+
+  \end{definition}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Clusterings Comparison: Measures (I)}
+
+\begin{definition}[Rand index]
+  Given a set $\Omega$ of $n$ elements and two partitions $U$ and $V$ to compare, define the following:
+\begin{itemize}
+\item  $a$, the number of pairs in the same subset in $U$ and in in $V$
+\item  $b$, the number of pairs in different subsets in $U$ and in $V$
+\end{itemize}
+The Rand index, $RI \in[0,1]$ is
+\begin{equation*}
+  RI = \frac {a+b}{{n \choose 2}}
+\end{equation*}
+  \end{definition}
+
+\onslide{
+The Rand index can be viewed as a measure of the percentage of correct decisions:
+\begin{equation*}
+  RI = \frac{TP+TN}{{n \choose 2}},
+\end{equation*}
+where $TP, TN$ are true positive and true negative decisions.
+}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Clusterings Comparison: Measures (II)}
+
+The ARI (most popular) is a version of the RI adjusted for chance grouping of element (i.e., the expected similarity of all pair-wise comparisons).
+
+\begin{definition}[Adjusted Rand-index]
+	\begin{displaymath}
+		ARI(U, V) = 
+			\frac{ 
+			\sum_{i,j} {n_{ij} \choose 2} - 
+			\left[ \sum_i {n_{i.} \choose 2} \sum_j {n_{.j} \choose 2} \right] 
+			/ {n \choose 2} }
+		     	{ 
+			\frac{1}{2} \left[ \sum_i {n_{i.} \choose 2} + \sum_j {n_{.j} \choose 2} \right] -
+			\left[ \sum_i {n_{i.} \choose 2} \sum_j {n_{.j} \choose 2} \right] 
+			/ {n \choose 2} 
+			}
+	\end{displaymath}
+  \end{definition}
+  
+  Other popular measures:
+  \begin{itemize}
+    \item $NVI$, the normalized variation information
+    \item $NID$, the normalized information distance
+    \item $NMI$, the normalized mutual information
+  \end{itemize}
+  
+\end{frame}

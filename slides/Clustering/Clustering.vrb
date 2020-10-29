@@ -1,0 +1,23 @@
+\frametitle{Crabs: Fielder vector and eigenvalue}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{graph_crabs} \hlkwb{<-} \hlstd{crabs} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{species,} \hlopt{-}\hlstd{sex)} \hlopt{%>%}
+  \hlkwd{t}\hlstd{()} \hlopt{%>%} \hlkwd{cor}\hlstd{()} \hlopt{%>%} \hlkwd{graph_from_adjacency_matrix}\hlstd{(}\hlkwc{weighted} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\hlstd{eigen_crabs} \hlkwb{<-} \hlkwd{graph.laplacian}\hlstd{(graph_crabs)} \hlopt{%>%} \hlkwd{eigen}\hlstd{()}
+
+\hlstd{fielder_vector} \hlkwb{<-} \hlstd{eigen_crabs}\hlopt{$}\hlstd{vectors[,} \hlkwd{nrow}\hlstd{(crabs)} \hlopt{-} \hlnum{1}\hlstd{]}
+\hlstd{faction} \hlkwb{<-} \hlkwd{factor}\hlstd{(}\hlkwd{paste}\hlstd{(crabs}\hlopt{$}\hlstd{species, crabs}\hlopt{$}\hlstd{sex,} \hlkwc{sep}\hlstd{=}\hlstr{"-"}\hlstd{))}
+
+\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{))}
+\hlkwd{plot}\hlstd{(eigen_crabs}\hlopt{$}\hlstd{values[}\hlopt{-}\hlkwd{nrow}\hlstd{(crabs)],} \hlkwc{col} \hlstd{=} \hlstr{"blue"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"Eigenvalues of Graph Laplacian"}\hlstd{)}
+\hlkwd{plot}\hlstd{(fielder_vector,} \hlkwc{pch} \hlstd{=} \hlnum{16}\hlstd{,} \hlkwc{xlab} \hlstd{=} \hlstr{"labels"}\hlstd{,}
+   \hlkwc{ylab} \hlstd{=} \hlstr{"Fielder vector entry"}\hlstd{,} \hlkwc{col} \hlstd{= faction)}
+\hlkwd{abline}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlkwc{lwd} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"lightgray"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/laplacian_example-1}
+
+\end{knitrout}
+

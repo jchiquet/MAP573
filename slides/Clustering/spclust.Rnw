@@ -1,0 +1,251 @@
+\section{Spectral Clustering}
+
+\begin{frame} 
+  \frametitle{References}
+
+    \begin{thebibliography}{99}
+      \setbeamertemplate{bibliography item}[book]
+
+    \bibitem{DS}{DS} David Sontag's Lecture
+    \newblock \url{http://people.csail.mit.edu/dsontag/courses/ml13/slides/lecture16.pdf}
+    
+    \bibitem[VLB]{VLB} A Tutorial on Spectral Clustering, 
+    \newblock \textcolor{black}{Ulrike von Luxburg}
+
+    \end{thebibliography}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Spectral Clustering}
+  
+  \begin{block}{Principle: graph-based transformation prior to clustering} 
+    \begin{enumerate}
+      \item Build a similarity with a weighted graph of the data 
+      \item Use the spectral property of this similarity (\rsa kernel)
+      \item Apply clustering (e.g., k-means) to the projected data 
+    \end{enumerate}
+  \end{block}
+
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[height=4cm]{figures/kernel_trick2}
+    \caption{Performing clustering after transformation + dimension reduction of the data }
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Creating the graph}
+  
+  \begin{block}{Many choices}    
+    \begin{itemize}
+      \item K-nearest neighbor graph
+      \item any distance-based similarity (fully connected graph)
+      \item any kernel-based similarity (e.g., Gaussian kernel)
+    \end{itemize}
+  \end{block}
+
+  The connectivity of $\clG = (\clV,\clE)$ is captured by the (weighted) adjacency matrix $\bA$:
+    \[
+      (\bA)_{ij} = \begin{cases}
+      w_{ij} > 0  & \text{ if } i \sim j,\\
+      0  & \text{otherwise}.
+      \end{cases}
+    \]
+
+  \begin{proposition}
+    The degrees of $\clG$ are then simply obtained as the row-wise and/or column-wise sums of $\bA$.
+  \end{proposition}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Incidence matrix}
+
+  \begin{definition}[Incidence matrix]
+    The connectivity of $\clG = (\clV,\clE)$ is captured by the $|\clV|\times |\clE|$ matrix $\bB$:
+    \[
+      (\bB)_{ij} = \begin{cases}
+      \sqrt{w_{ij}}  & \text{ if $i$ is incident to edge $j$},\\
+      0  & \text{otherwise}.
+      \end{cases}
+    \]
+  \end{definition}
+
+  \begin{proposition}[Relationship]
+    Let $\tilde\bB$ be a modified \alert{signed} version of $\bB$ where $\tilde{\! B}_{ij}= +/-\sqrt{w_{ij}}$ if $i$ is incident to $j$ as tail/head. Then
+    \[
+      \tilde \bB \tilde \bB^\intercal = \bD - \bA,
+    \]
+    where $\bD = \diag(\set{d_i, i\in\clV})$ is the diagonal matrix of degrees. 
+  \end{proposition}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Graph Laplacian}
+
+  \begin{definition}[(Un-normalized) Laplacian]
+    The Laplacian matrix $\bL$, resulting from the modified incidence matrix $\tilde\bB$ $\tilde{\! B}_{ij}= 1/-1$ if $i$ is incident to $j$ as tail/head, is defined by 
+    \[
+      \bL = \tilde \bB \tilde \bB^\intercal = \bD - \bA,
+    \]
+    where $\bD = \diag(d_i, i\in\clV)$ is the diagonal matrix of degrees. 
+  \end{definition}
+
+  \begin{block}{Remark}
+    \begin{itemize}
+    \item $\bL$ is called the graph Laplacian (by analogy to continuous Laplacian).
+    \item Spectrum of $\bL$ has much to say about the structure of the graph $\clG$.
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Graph Laplacian: spectrum}
+
+  \begin{proposition}[Spectrum of $\bL$]
+    The $n\times n$ matrix $\bL$ has the following properties:
+    \[
+      \bx^\top \bL \bx = \frac{1}{2} \sum_{i,j} A_{ij} (x_i - x_j)^2, \quad \forall \bx\in\Rset^n .
+    \]
+    \vspace{-.25cm}
+    \begin{itemize}
+      \item $\bL$ is a symmetric, positive semi-definite matrix,
+      \item  the smallest eigenvalue is $0$ with associated eigenvector $\mathbf{1}$.
+      \item $\bL$ has $n$ positive eigenvalues $0=\lambda_1<\dots <\lambda_n$. 
+    \end{itemize}  
+  \end{proposition}
+
+  \begin{corollary}[Spectrum and Graph]
+    \vspace{-.25cm}
+    \begin{itemize}
+      \item The multiplicity of the first eigen value ($0$) of $\bL$ determines the number of connected components in the graph.
+      \item The larger the second non trivial eigenvalue, the higher the connectivity of $\clG$.
+    \end{itemize}  
+  \end{corollary}
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Crabs: Fielder vector and eigenvalue}
+
+<<laplacian example>>=
+graph_crabs <- crabs %>% select(-species, -sex) %>% 
+  t() %>% cor() %>% graph_from_adjacency_matrix(weighted = TRUE)
+eigen_crabs <- graph.laplacian(graph_crabs) %>% eigen()
+
+fielder_vector <- eigen_crabs$vectors[, nrow(crabs) - 1]
+faction <- factor(paste(crabs$species, crabs$sex, sep="-"))
+
+par(mfrow = c(1,2))
+plot(eigen_crabs$values[-nrow(crabs)], col = "blue", ylab = "Eigenvalues of Graph Laplacian")
+plot(fielder_vector, pch = 16, xlab = "labels",
+   ylab = "Fielder vector entry", col = faction)
+abline(0, 0, lwd = 2, col = "lightgray")
+@
+
+\end{frame}
+
+% \begin{frame}[fragile,allowframebreaks]
+% 
+% <<spectral clustering Gaussian kernel>>=
+% sc_res <- crabs_corrected %>% select(-species, -sex) %>%  as.matrix() %>% 
+%   specc(centers = 4, "rbfdot", sigma = 0.05)
+% sc_clusters <- as.factor(sc_res)
+% sc_centers  <- as.tibble(centers(sc_res))
+% colnames(sc_centers)  <- colnames( crabs_corrected %>% select(-species, -sex))
+% classes <- paste(crabs$species, crabs$sex, sep = "-")
+% 
+% crabs_corrected %>% 
+%   ggplot(aes(x = carapace_length, y = carapace_width, color = sc_clusters)) +
+%   geom_point(aes(shape = classes)) +
+%   geom_point(data = sc_centers, color = 'coral', size = 4 , pch = 21) +
+%   geom_point(data = sc_centers, color = 'coral', size = 50, alpha = 0.2)
+% @
+% 
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+%   \frametitle{Clustering comparison}
+% 
+% <<sc validation>>=
+% aricode::ARI(sc_clusters, classes)
+% @
+% 
+% <<contingency_table_sc>>=
+% knitr::kable(table(sc_clusters, classes),
+% caption = "Estimating structure with spectral clustering, Gaussian kernel")
+% @
+% 
+% \end{frame}
+% 
+
+\begin{frame}
+  \frametitle{Some variants}
+
+  \begin{definition}[(Normalized) Laplacian]
+    The normalized Laplacian matrix $\bL$ is defined by 
+    \[
+      \bL_N = \bD^{-1/2}\bL\bD^{-1/2} = \bI - \bD^{-1/2} \bA \bD^{-1/2}.
+    \]
+  \end{definition}
+  
+  \vfill
+
+  \begin{definition}[(Absolute) Graph Laplacian]
+    The absolute Laplacian matrix $\bL_{abs}$ is defined by 
+    \[
+      \bL_{abs} = \bD^{-1/2}\bA\bD^{-1/2} = \bI - \bL_N,
+    \]
+    with eigenvalues $1-\lambda_n \leq \dots \leq 1-\lambda_2 \leq 1-\lambda_1 = 1$, where $0=\lambda_1\leq \dots \leq \lambda_n$ are the eigenvalues of $\bL_N$.
+  \end{definition}
+
+\end{frame}
+
+% \begin{frame}
+%   \frametitle{Normalized Spectral Clustering}
+%   \framesubtitle{by Ng, Jordan and Weiss (2002)}
+% 
+% \begin{algorithm}[H]
+%   \KwIn{Adjacency matrix and number of classes $Q$}
+%   \BlankLine\BlankLine
+%   \DontPrintSemicolon
+%   
+%   Compute the normalized graph Laplacian $\mathbf{L}$\;
+%   Compute the eigen vectors of $\mathbf{L}$ associated with the $Q$ \alert{smallest eigenvalues}\;
+%   Define $\mathbf{U}$,  the $n\times Q$ matrix  that encompasses these $Q$ vectors \;
+%   Define $\tilde{\mathbf{U}}$, the row-wise normalized version of $\mathbf{U}$: $ \tilde{u}_{ij} = \frac{u_{ij}}{\| \mathbf{U}_i\|_2}$\;
+%   Apply k-means to $(\tilde{\mathbf{U}}_i)_{i=1,\dots,n}$
+% 
+%   \BlankLine\BlankLine
+%   \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^n$, such as  $C_i = q$ if $i\in q$}
+% 
+% \end{algorithm}
+
+%\end{frame}
+
+% 
+% \begin{frame}
+%   \frametitle{Absolute Spectral Clustering}
+% 
+% \begin{algorithm}[H]
+%   \KwIn{Adjacency matrix and number of classes $Q$}
+%   \BlankLine\BlankLine
+%   \DontPrintSemicolon
+% 
+%   Compute the graph Laplacian $\mathbf{L}_{abs}$\;
+%   Compute the eigen vectors of $\mathbf{L}_{abs}$ associated with the $Q$ \alert{largest} absolute eigenvalues\;
+%   Define $\mathbf{U}$,  the $p\times Q$ matrix  that encompasses these $Q$ vectors \;
+%   Apply k-means to $(\mathbf{U}_i)_{i=1,\dots,p}$
+% 
+%   \BlankLine\BlankLine
+%   \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^p$, such as  $C_i = q$ if $i\in q$}
+% 
+%   \caption{Spectral Clustering by Rohe et al. (2011)}
+% \end{algorithm}
+% 
+% \end{frame}
+

@@ -1,0 +1,180 @@
+\begin{frame}[fragile]
+  \frametitle{Packages required for reproducing the slides}
+  
+<<load_packages, cache = FALSE, message=FALSE, warning=FALSE>>=
+library(tidyverse)  # opinionated collection of packages for data manipulation
+library(corrplot)   # fancy plots of matrices as images
+library(GGally)     # extension to ggplot vizualization system
+library(FactoMineR) # PCA and oter linear method for dimension reduction
+library(factoextra) # fancy plotting for FactoMineR output
+library(kernlab)    # Kernel-based methods, among which spectral-clustering
+library(aricode)    # fast computation of clustering measures
+library(animation)  # kmeans animation slides
+library(igraph)     # graph manipulation
+theme_set(theme_bw()) # plots themes
+@
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set}
+  \framesubtitle{Morphological Measurements on Leptograpsus Crabs}
+  
+\begin{block}{Description}
+\small The crabs data frame has 200 rows and 8 columns, describing 5 morphological measurements on 50 crabs each of two colour forms and both sexes, of the species \textit{Leptograpsus variegatus} collected at Fremantle, W. Australia.
+\end{block}
+  
+<<crabs dataset >>=
+crabs <- MASS::crabs %>% select(-index) %>% 
+  rename(sex = sex, 
+         species         = sp,
+         frontal_lob     = FL,
+         rear_width      = RW,
+         carapace_length = CL,
+         carapace_width  = CW,
+         body_depth      = BD)
+crabs %>% select(sex, species) %>% summary() %>% knitr::kable("latex")
+@
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set II}
+  \framesubtitle{Pairs plot of attributes}
+
+<<crabs attributes>>=
+ggpairs(crabs, columns = 3:7, aes(colour = paste(crabs$species, crabs$sex)))
+
+@
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Companion data set III}
+  \framesubtitle{PCA on the attributes}
+
+<<pca crabs untransformed>>=
+select(crabs, -species, -sex) %>% PCA(scale.unit = FALSE, graph = FALSE) %>%
+  fviz_pca_biplot(axes = c(1,2), col.ind = paste(crabs$species, crabs$sex))
+@
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Remove size effect}
+  \framesubtitle{Carried by the 1st principal component}
+
+\paragraph{First component}
+\begin{equation*}
+  \mathbf{f}_1 = \mathbf{X}^c \mathbf{u}_1.
+\end{equation*}
+
+We extract the best rank-1 approximation of $\mathbf{X}$ to remove the \textit{size effect}, carried by the first axis, and return to the original space,
+\begin{equation*}
+  \tilde{\mathbf{X}}^{(1)} = \mathbf{f}_1 \mathbf{u}_1^\top.
+\end{equation*}
+
+
+<<remove size effect>>=
+attributes <- select(crabs, -sex, -species) %>% as.matrix()
+u1 <- eigen(cov(attributes))$vectors[, 1, drop = FALSE]
+attributes_rank1 <- attributes %*% u1 %*% t(u1)
+crabs_corrected <- crabs
+crabs_corrected[, 3:7] <- attributes - attributes_rank1
+@
+
+$\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at hand, common to all attributes.
+
+<<pairs plot corrected>>=
+ggpairs(crabs_corrected, columns = 3:7, aes(colour = paste(crabs$species, crabs$sex)))
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{PCA on corrected data}
+<<pca crabs corrected biplot>>=
+select(crabs_corrected, -species, -sex) %>% FactoMineR::PCA(graph = FALSE) %>% 
+fviz_pca_biplot(col.ind = paste(crabs_corrected$species, crabs_corrected$sex))
+@
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Questions}
+  \begin{center}
+    \begin{enumerate}
+      \item Could we automatically identify some grouping (\alert{clustering}) between samples? \medskip
+      \item Would this clustering correspond to some known labels (sex, species)? \medskip
+      \item Do we need to transform the data before we perform clustering? \medskip
+    \end{enumerate}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}[label=Clustering1]
+  \frametitle{Clustering: general goals}
+
+  \paragraph{Objective}: construct a map 
+  \[
+    f : \mathcal{D} = \{1,\dots,n\} \mapsto  \{1,\ldots,K\}
+  \]
+  where $K$ is a fixed number of clusters.
+    
+  \vfill
+    
+  \paragraph{Careful! classification $\neq$ clustering}
+      \begin{itemize}
+      \item Classification presupposes the existence of classes
+      \item Clustering labels only elements of the dataset
+      \begin{itemize}
+      \item[$\rightsquigarrow$] no ground truth (no given labels)
+      \item[$\rightsquigarrow$] discovers a structure "natural" to the data
+      \item[$\rightsquigarrow$] not necessarily related to a known classification
+      \end{itemize}
+      \end{itemize}
+  
+  \vfill
+
+  \paragraph{Motivations}
+    \begin{itemize}
+    \item describe large masses of data in a simplified way,
+    \item structure a set of knowledge,
+    \item reveal structures, hidden causes,
+    \item use of the groups in further processing, 
+    \item \dots
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[label=Clustering2]
+
+  \frametitle{Clustering: challenges}
+
+    \begin{block}{Clustering quality}
+      No obvious measure to define the \alert{quality} of the clusters. Ideas:
+      \begin{itemize}
+        \item \alert{Inner} homogeneity: samples in the same group should be similar
+        \item \alert{Outer} inhomogeneity: samples in different groups should be different
+      \end{itemize}
+    \end{block}
+
+    \vspace{-.25cm}
+
+    \begin{block}{Number of clusters}
+      Choice of the number of clusters $K$ often complex
+      \begin{itemize}
+        \item No ground truth in unsupervised learning!
+        \item Several solutions might be equally good
+      \end{itemize}
+    \end{block}
+
+    \vspace{-.25cm}
+
+    \begin{block}{Two general approaches}
+      \vspace{-.25cm}
+      \begin{itemize}
+        \item \alert{distance-based}: require a distance/dissimilarity between $\{\bx_i\}$
+        \item \alert{model-based}: require assumptions on the distribution $\mathbb{P}$
+      \end{itemize}
+    \end{block}
+    
+\end{frame}
+
