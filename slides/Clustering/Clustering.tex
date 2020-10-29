@@ -1313,49 +1313,49 @@ Look at Ward intra-class variance
 
 \end{frame}
 
-% \begin{frame}
-%   \frametitle{Normalized Spectral Clustering}
-%   \framesubtitle{by Ng, Jordan and Weiss (2002)}
-% 
-% \begin{algorithm}[H]
-%   \KwIn{Adjacency matrix and number of classes $Q$}
-%   \BlankLine\BlankLine
-%   \DontPrintSemicolon
-%   
-%   Compute the normalized graph Laplacian $\mathbf{L}$\;
-%   Compute the eigen vectors of $\mathbf{L}$ associated with the $Q$ \alert{smallest eigenvalues}\;
-%   Define $\mathbf{U}$,  the $n\times Q$ matrix  that encompasses these $Q$ vectors \;
-%   Define $\tilde{\mathbf{U}}$, the row-wise normalized version of $\mathbf{U}$: $ \tilde{u}_{ij} = \frac{u_{ij}}{\| \mathbf{U}_i\|_2}$\;
-%   Apply k-means to $(\tilde{\mathbf{U}}_i)_{i=1,\dots,n}$
-% 
-%   \BlankLine\BlankLine
-%   \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^n$, such as  $C_i = q$ if $i\in q$}
-% 
-% \end{algorithm}
+\begin{frame}
+  \frametitle{Normalized Spectral Clustering}
+  \framesubtitle{by Ng, Jordan and Weiss (2002)}
 
-%\end{frame}
+\begin{algorithm}[H]
+  \KwIn{Adjacency matrix and number of classes $Q$}
+  \BlankLine\BlankLine
+  \DontPrintSemicolon
 
-% 
-% \begin{frame}
-%   \frametitle{Absolute Spectral Clustering}
-% 
-% \begin{algorithm}[H]
-%   \KwIn{Adjacency matrix and number of classes $Q$}
-%   \BlankLine\BlankLine
-%   \DontPrintSemicolon
-% 
-%   Compute the graph Laplacian $\mathbf{L}_{abs}$\;
-%   Compute the eigen vectors of $\mathbf{L}_{abs}$ associated with the $Q$ \alert{largest} absolute eigenvalues\;
-%   Define $\mathbf{U}$,  the $p\times Q$ matrix  that encompasses these $Q$ vectors \;
-%   Apply k-means to $(\mathbf{U}_i)_{i=1,\dots,p}$
-% 
-%   \BlankLine\BlankLine
-%   \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^p$, such as  $C_i = q$ if $i\in q$}
-% 
-%   \caption{Spectral Clustering by Rohe et al. (2011)}
-% \end{algorithm}
-% 
-% \end{frame}
+  Compute the normalized graph Laplacian $\mathbf{L}$\;
+  Compute the eigen vectors of $\mathbf{L}$ associated with the $Q$ \alert{smallest eigenvalues}\;
+  Define $\mathbf{U}$,  the $n\times Q$ matrix  that encompasses these $Q$ vectors \;
+  Define $\tilde{\mathbf{U}}$, the row-wise normalized version of $\mathbf{U}$: $ \tilde{u}_{ij} = \frac{u_{ij}}{\| \mathbf{U}_i\|_2}$\;
+  Apply k-means to $(\tilde{\mathbf{U}}_i)_{i=1,\dots,n}$
+
+  \BlankLine\BlankLine
+  \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^n$, such as  $C_i = q$ if $i\in q$}
+
+\end{algorithm}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Absolute Spectral Clustering}
+
+\begin{algorithm}[H]
+  \KwIn{Adjacency matrix and number of classes $Q$}
+  \BlankLine\BlankLine
+  \DontPrintSemicolon
+
+  Compute the graph Laplacian $\mathbf{L}_{abs}$\;
+  Compute the eigen vectors of $\mathbf{L}_{abs}$ associated with the $Q$ \alert{largest} absolute eigenvalues\;
+  Define $\mathbf{U}$,  the $p\times Q$ matrix  that encompasses these $Q$ vectors \;
+  Apply k-means to $(\mathbf{U}_i)_{i=1,\dots,p}$
+
+  \BlankLine\BlankLine
+  \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^p$, such as  $C_i = q$ if $i\in q$}
+
+  \caption{Spectral Clustering by Rohe et al. (2011)}
+\end{algorithm}
+
+\end{frame}
 
 
 \end{document}
