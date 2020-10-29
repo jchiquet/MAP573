@@ -11,9 +11,9 @@
 
 <meta name="author" content="MAP 573" />
 
-<meta name="date" content="2020-10-29" />
+<meta name="date" content="2020-11-03" />
 
-<title>Homework: Clustering of Network data</title>
+<title>Homework #5</title>
 
 <script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -546,7 +546,9 @@ div.tocify {
     <li>
       <a href="homework_4_dim_reduc_non_linear.html">#4: Non-linear dimension reduction method</a>
     </li>
-    <li class="dropdown-header">Spectral Clustering for graphs</li>
+    <li>
+      <a href="homework_5_GraphPartitioning.html">#5: Spectral Clustering for graphs</a>
+    </li>
     <li class="dropdown-header">Handling Missing Values</li>
   </ul>
 </li>
@@ -580,9 +582,10 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Homework: Clustering of Network data</h1>
+<h1 class="title toc-ignore">Homework #5</h1>
+<h3 class="subtitle">Clustering of Network data</h3>
 <h4 class="author">MAP 573</h4>
-<h4 class="date">2020-10-29</h4>
+<h4 class="date">11/03/2020</h4>
 
 </div>
 
@@ -597,12 +600,9 @@ div.tocify {
 <h3>Package requirements</h3>
 <p>Check that the following packages are available on your computer:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(igraph)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Matrix)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aricode)</span></code></pre></div>
-<!-- If( and only if!!) you have time, you can also play with  -->
-<!-- ```{r, message=FALSE} -->
-<!-- library(ggraph) -->
-<!-- ``` -->
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(missSBM)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aricode)</span></code></pre></div>
 </div>
 </div>
 <div id="introduction-to-igraph" class="section level2">
@@ -632,9 +632,10 @@ div.tocify {
 ## [7]  bix.enix.org/           -- lipietz.net/blog.php3?id_breve=63
 ## [8]  bix.enix.org/           -- democratiesansfrontiere.org/     
 ## + ... omitted several edges</code></pre>
+<p>Plot this graph and quickly comment.</p>
 <div id="graph-partitioning" class="section level3">
 <h3>Graph Partitioning</h3>
-<p>It is time to find some subtle structure in the network by performing graph clustering of the nodes. A commonly seeked structure in networks is the presence of <em>communities</em>, like clusters of friends in social networks.</p>
+<p>It is time to find some subtle structure in this network by performing graph clustering of the nodes. A commonly sought structure is the presence of <em>communities</em>, like clusters of friends in social networks.</p>
 <p>The two methods explored today for community detection do not assume any underlying model on the graph. The first one is based on a generalization of hierarchical clustering for graphs using the concept of <em>modularity</em> to define an appropriate dissimilarity measure between clusters. The second is the normalized spectral clustering.</p>
 <div id="hierarchical-clustering-with-modularity" class="section level4">
 <h4>Hierarchical clustering with modularity</h4>
@@ -642,20 +643,20 @@ div.tocify {
   \mathrm{modularity}(\mathcal{C}) = \sum_{k=1}^K \left(f_{kk}(\mathcal{C}) - f_{kk}^\star\right)^2
 \end{equation*}\]</span> where <span class="math inline">\(f_{kk}^\star\)</span> is the expected value of <span class="math inline">\(f_{kk}\)</span> under some model of random edge assignment. The <code>igraph::fastgreedy.community</code> function performs and approximated optimization of the modularity measure.</p>
 <p>Use this function to extract a possible clustering of the nodes for the French blogosophere. Use the plot function for object with class <code>communities</code> outputing from <code>igraph::fastgreedy.community</code>. Compare this clustering with the political labels of the nodes (use for instance confusion tables with <code>table</code> or adjusted Rand-Index with <code>aricode::ARI</code>).</p>
-<p>Explore the results offered by other clustering methods for community detection (e.g. <code>igraph::cluster_edge_betweenness</code>), or the ones obtained by a simple hierarchical clustering on dissimilarity measured on the adjacency matrix.</p>
+<p>Explore the results offered by other clustering methods for community detection (e.g. <code>igraph::cluster_edge_betweenness</code>), or the ones obtained by a simple hierarchical clustering on dissimilarity measured on the adjacency matrix. Compare the clustering to the “ground-truth”. Comment.</p>
 </div>
 <div id="spectral-analysis" class="section level4">
 <h4>Spectral Analysis</h4>
-<p>Here is a reminder of the spectral clustering algorithm presented during course.</p>
+<p>We first used the algorithm introduced by Ng, Jordan and Weiss (2002). Check the course/slides!</p>
 <ol style="list-style-type: decimal">
-<li>Compute the graph Laplacian (normalized of unormalized) by hands or with the <code>igraph::graph.laplacian</code> function.</li>
+<li>Compute the graph Laplacian with the <code>igraph::graph.laplacian</code> function.</li>
 <li>Compute its eigen values and represent the scree plot (eigen values by increasing order). Comment.</li>
 <li>Compute its eigen vectors and represent the pairs plot between the first 10 eigen vectors with non-null eigen values. Add colors associated to the Political labels of the nodes. Comment.</li>
 <li>Implement the Spectral clustering algorithm and apply it to the French Blogosphere for various numbers of clusters.</li>
 <li>Compare your clustering to the political labels and to the one obtained by hierarchical clustering. Comment, make plots changing node colors, etc.</li>
 <li>Redo the analysis with the absolute spectral clustering of Rohe et al (2011).</li>
 </ol>
-<p><strong>Remark:</strong> Another fancy alternative to the <strong>igraph</strong> package is the <code>Matrix::image</code> or <code>corrplot</code> methods on the adjacency matrix of a graph once rows and columns reordered according to the clustering to represent the clustered network.</p>
+<p><strong>Remark:</strong> Another fancy alternative to the <strong>igraph</strong> package is the <code>corrplot</code> methods on the adjacency matrix of a graph once rows and columns reordered according to the clustering to represent the clustered network.</p>
 </div>
 </div>
 </div>
