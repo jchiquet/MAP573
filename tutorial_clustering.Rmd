@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 
 ## Package requirements
 
-We start by loading a couple of packages for data manipulation, dimension reduction and fancy representations.
+We start by loading a couple of packages for data manipulation, dimension reduction clustering, fancy representations, etc.
 
 ```{r packages, message = FALSE, warning = FALSE}
 library(tidyverse)  # opinionated collection of packages for data manipulation
@@ -28,7 +28,7 @@ theme_set(theme_bw()) # plots themes
 
 ## scRNA data
 
-We stard with the sample of scRNA data presented during the course on non-linear dimension reduction approaches. 
+We start with the sample of scRNA data presented during the course on non-linear dimension reduction approaches. 
 It consists in the normalized gene-level expression of 100 representative genes for a collection of 301 cells 
 spread in 11 cell-lines. 
 
@@ -46,13 +46,13 @@ scRNA <-  pollen$data %>% t() %>% as_tibble() %>%
 
 1. Run the k-means algorithm (function `kmeans`) for 11 clusters a hundred of time and keep track of the within sum of squares. 
 2. Compare the total WSS for each run, and then for each each cluster (with e.g. boxplot). Comment.
-3. Run the k-means for a varying number of clusters (say, between 1 and 20) with parameters `nstart` set to 20. Save the results.
+3. Run the k-means for a varying number of clusters (say, between 1 and 20) with the parameter `nstart` set to 20. Save the results.
 4. Compare the clusterings obtained with the corresponding cell-lines in terms of ARI and NID (use the pakage **aricode**).
 5. Same question as 3-4 with the hierarchical clustering with Ward aggregation criterion (function `hclust` + `cutree`).
 
 ## SNP data: genotyping of various populations
 
-We use the same SNP data studied during homework \#3. We analyze the 5500 most variant SNP for 728 individuals with various origin, with the following descriptors:
+We use the SNP data studied during homework \#3. We analyze the 5500 most variant SNP for 728 individuals with various origin, with the following descriptors:
 
 - CEU: Utah residents with Northern and Western European ancestry from the CEPH collection
 - GIH: Gujarati Indians in Houston, Texas

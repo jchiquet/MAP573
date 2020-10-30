@@ -59,7 +59,7 @@ navbar:
         - text: "MDS, kernel-PCA"
           href: tutorial_nonlinear_dim_reduction_methods_cor.html
         - text: "Clustering"
-          href: tutorials_clustering.html
+          href: tutorial_clustering.html
         - text: "GGM and EM"
 #          href: tutorials_PCA.html
     - text: "Homework"
