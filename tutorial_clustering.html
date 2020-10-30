@@ -11,8 +11,9 @@
 
 <meta name="author" content="MAP573 team" />
 
+<meta name="date" content="2020-11-03" />
 
-<title>Homework #3</title>
+<title>Tutorial: distance-based clustering</title>
 
 <script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -583,38 +584,50 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Homework #3</h1>
-<h3 class="subtitle">PCA for visualization, compression and exploratory analyses</h3>
+<h1 class="title toc-ignore">Tutorial: distance-based clustering</h1>
 <h4 class="author">MAP573 team</h4>
-<h4 class="date">13/20/2020</h4>
+<h4 class="date">11/03/2020</h4>
 
 </div>
 
 
-<div id="preliminaries" class="section level2">
-<h2>Preliminaries</h2>
-<div id="information" class="section level3">
-<h3>Information</h3>
-<p>Data sets are available at <a href="https://github.com/jchiquet/MAP573/tree/master/data">https://github.com/jchiquet/MAP573/tree/master/data</a>. Homework is due Sunday 10/18 23:59 in Rmd (see assignment in Moodle).</p>
-</div>
-<div id="package-requirements" class="section level3">
-<h3>Package requirements</h3>
+<div id="preliminaries" class="section level1">
+<h1>Preliminaries</h1>
+<div id="package-requirements" class="section level2">
+<h2>Package requirements</h2>
 <p>We start by loading a couple of packages for data manipulation, dimension reduction and fancy representations.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)    <span class="co"># advanced data manipulation and vizualisation</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)        <span class="co"># R notebook export and formatting </span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)   <span class="co"># Factor analysis</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)   <span class="co"># Fancy plotting of FactoMineR outputs</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)   <span class="co"># integration of table in Rmarkdown</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>()) <span class="co"># set default ggplot2 theme to black and white</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)  <span class="co"># opinionated collection of packages for data manipulation</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kernlab)    <span class="co"># Kernel-based methods, among which spectral-clustering</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aricode)    <span class="co"># fast computation of clustering measures</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>()) <span class="co"># plots themes</span></span></code></pre></div>
 </div>
 </div>
-<div id="snp-data-genotyping-of-various-population" class="section level2 tabset">
-<h2 class="tabset">SNP data: genotyping of various population</h2>
-<div id="data-description" class="section level3">
-<h3>Data description</h3>
-<p>A single-nucleotide polymorphism is a substitution of a single nucleotide that occurs at a specific position in the genome, where each variation is present at a level of 0.5% from person to person in the population. They are coded as 0, 1 or 2 (meaning 0, 1 or 2 allels different regarding the reference population)</p>
-<p><a href="https://en.wikipedia.org/wiki/Single-nucleotide_polymorphism">See the great wikipedia page for detail!</a></p>
-<p>We can measure SNP for individuals with high trhoughput technology and SNP array. SNP chips for human contains more than 1 million variables! We only suggest to analyse a sample of a data set containing the 5500 most variant SNP for 728 individuals with various origin, with the following descriptors:</p>
+<div id="clustering-of-a-series-of-data-sets" class="section level1">
+<h1>Clustering of a series of data sets</h1>
+<div id="scrna-data" class="section level2">
+<h2>scRNA data</h2>
+<p>We stard with the sample of scRNA data presented during the course on non-linear dimension reduction approaches. It consists in the normalized gene-level expression of 100 representative genes for a collection of 301 cells spread in 11 cell-lines.</p>
+<div id="data-importation" class="section level3">
+<h3>Data Importation</h3>
+<p>The data are imported as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;data/scRNA.RData&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>scRNA <span class="ot">&lt;-</span>  pollen<span class="sc">$</span>data <span class="sc">%&gt;%</span> <span class="fu">t</span>() <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_column</span>(<span class="at">cell_type =</span> pollen<span class="sc">$</span>celltypes)</span></code></pre></div>
+</div>
+<div id="questions" class="section level3">
+<h3>Questions</h3>
+<ol style="list-style-type: decimal">
+<li>Run the k-means algorithm (function <code>kmeans</code>) for 11 clusters a hundred of time and keep track of the within sum of squares.</li>
+<li>Compare the total WSS for each run, and then for each each cluster (with e.g. boxplot). Comment.</li>
+<li>Run the k-means for a varying number of clusters (say, between 1 and 20) with parameters <code>nstart</code> set to 20. Save the results.</li>
+<li>Compare the clusterings obtained with the corresponding cell-lines in terms of ARI and NID (use the pakage <strong>aricode</strong>).</li>
+<li>Same question as 3-4 with the hierarchical clustering with Ward aggregation criterion (function <code>hclust</code> + <code>cutree</code>).</li>
+</ol>
+</div>
+</div>
+<div id="snp-data-genotyping-of-various-populations" class="section level2">
+<h2>SNP data: genotyping of various populations</h2>
+<p>We use the same SNP data studied during homework #3. We analyze the 5500 most variant SNP for 728 individuals with various origin, with the following descriptors:</p>
 <ul>
 <li>CEU: Utah residents with Northern and Western European ancestry from the CEPH collection</li>
 <li>GIH: Gujarati Indians in Houston, Texas</li>
@@ -623,109 +636,17 @@ div.tocify {
 <li>TSI: Toscani in Italia</li>
 <li>YRI: Yoruba in Ibadan, Nigeria</li>
 </ul>
+<div id="data-importation-1" class="section level3">
+<h3>Data Importation</h3>
 <p>The data are imported as follows:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;data/SNP.RData&quot;</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>snp  <span class="ot">&lt;-</span> data<span class="sc">$</span>Geno <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_column</span>(<span class="at">origin =</span> data<span class="sc">$</span>origin, <span class="at">.before =</span> <span class="dv">1</span>) </span></code></pre></div>
-</div>
-<div id="questions" class="section level3">
-<h3>Questions</h3>
-<ol start="0" style="list-style-type: decimal">
-<li>Have a look at the data a make some brief descriptive plot/summary</li>
-<li>Fit a PCA on these data. Justify the scaling or not.</li>
-<li>Represent the scree plot for the 100 first axes. Comment. Estimate the number of axis with <code>estim_npc</code></li>
-<li>Plot individual factor maps on axes 1, 2 and 3. Add colors and ellipses associated with the factor ‘origin’</li>
-<li>Check who are the first, say, 250 most contributive individuals to these axes. Show them in the projection. Have a look at the cosine of the most influent guys.</li>
-<li>Plot the correlation circle. Only retain variables based on the quality of their representation and/or degree of contribution to the axes represented.</li>
-<li>Summarize the above analyses in biplots. Add fancy colors and whatever.</li>
-<li>Indicate a group of individual as supplementary (i.e., not use to fit the PC). Show how excluding a group influence (or not) the fit and the projection, by exploring several groups. Explain.</li>
-</ol>
-</div>
-</div>
-<div id="mnist-data-handwritten-digit-data" class="section level2 tabset">
-<h2 class="tabset">MNIST data: handwritten digit data</h2>
-<div id="data-description-1" class="section level3">
-<h3>Data description</h3>
-<p>The MNIST dataset is an acronym that stands for the Modified National Institute of Standards and Technology dataset. It is a dataset of 60,000 small square 28×28 pixel grayscale images of handwritten single digits between 0 and 9. It is commonly used for training various image processing systems. The database is also widely used for training and testing in the field of machine learning.</p>
-<p>The full data set is <a href="mnist_raw%20%3C-%20read_csv(%22https://pjreddie.com/media/files/mnist_train.csv%22,%20col_names%20=%20FALSE)">available here</a>.</p>
-<p><strong>But careful!!, it weigths more than 100 Mo so check your internet connection</strong></p>
-<p>A sample of 2,000 instances is provided for convenience <a href="&#39;https://jchiquet.github.io/MAP573/data/mnist_sample.csv&#39;">mnist_sample</a>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;data/SNP.RData&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>snp  <span class="ot">&lt;-</span> data<span class="sc">$</span>Geno <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">replace</span>(<span class="fu">is.na</span>(.), <span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_column</span>(<span class="at">origin =</span> data<span class="sc">$</span>origin, <span class="at">.before =</span> <span class="dv">1</span>) </span></code></pre></div>
 </div>
 <div id="questions-1" class="section level3">
 <h3>Questions</h3>
-<ol style="list-style-type: decimal">
-<li>Load an format the data (first column is the label) as a <code>tibble</code> or a <code>data.frame</code>. Each row is a vector with size 784 (28 x 28) + a column for the label.</li>
-<li>Write a function to plot an 28 x 28 image based on a vector, and test it on a row of your data frame.</li>
-<li>Make a PCA, choice whether to scale or not.</li>
-<li>Make the usual diagnostic plots (screeplot, individual, variable) for the first axes, and comment. Use GCV to select the number of axes.</li>
-<li>Write a function to reconstruct an image with two argument: <span class="math inline">\(i\)</span> (an instance) <span class="math inline">\(k\)</span> (the number of component used).</li>
-<li>Plot the reconstructed image for various value of <span class="math inline">\(k\)</span></li>
-</ol>
-<!-- 7  Bonus: try kernel PCA with package `kernlab` or t-SNE with package `tsne`. -->
-<!-- ## Decathlon: analysing performance between athletes {.tabset} -->
-<!-- _Courtesy of [Julie Josse](http://juliejosse.com/), thanks!_ -->
-<!-- ### Data description -->
-<!-- This dataset contains the results of decathlon events during two athletic meetings which took place one month apart in 2004: the Olympic Games in Athens (23 and 24 August), and the Decastar 2004 (25 and 26 September). For both competitions, the following information is available for each athlete: performance for each of the 10 events, total number of points (for each event, an athlete earns points based on performance; here the sum of points scored) and final ranking. The events took place in the following order: 100 meters, long jump, shot put, high jump, 400 meters (first day) and 110 meter hurdles, discus, pole vault, javelin, 1500 meters (second day). Nine athletes participated to both competitions. We would like to obtain a typology of the performance profiles. -->
-<!-- The data are distributed with {FactoMineR} -->
-<!-- ```{r data set} -->
-<!-- library(FactoMineR) -->
-<!-- data("decathlon") -->
-<!-- ``` -->
-<!-- ### Questions -->
-<!-- 1. Inspect the data set with the following commands: -->
-<!-- 2. Explain the interest of centering and scaling the data. Could you spotlight outstanding athletes ? Which inequality are you using? -->
-<!-- 3. Explain your choices for the active and illustrative variables/individuals and perform the PCA on this data set. -->
-<!-- 4. Comment -->
-<!-- - the correlation between the 100 m and long.jump -->
-<!-- - the correlation between long.jump and Pole.vault -->
-<!-- - can you describe the athlete Casarsa?  -->
-<!-- - the proximity between Sebrle and Clay  -->
-<!-- - the proximity between Schoenbeck and Barras -->
-<!-- 5. In which trials those who win the decathlon perform the best? Could we say that the decathlon trials are well selected?  -->
-<!-- 6. Compare and comment the performances during both events: Decastar and Olympic. Could we conclude on the differences?  Plot Confidence ellipses -->
-<!-- 7. Select the number of dimensions with the function `estim_npc`.  -->
-<!-- ### Solution (compulsive click forbidden!) -->
-<!-- 1. Inspect the data set with the following commands: -->
-<!-- 2. Explain the interest of centering and scaling the data. Could you spotlight outstanding athletes? -->
-<!-- When the data are standardized, it is possible to compare two variables with different units and to say sentences such as "Paul is more remarkable by his height than John is by is weight". When looking at the standardized data, we can look for the values greater or smaller than 2 for instance. We are refering to Bienaymé-Tchebychev which states that 25% of the observations will be at 2 standard deviation from their means. If we consider Gaussian data, we can refine this inequality and consider know that 4.5 % of the observations are greater than 2 in absolute value. Sebrle value for Javeline is 2.528251350 meaning that he is far above average.  -->
-<!-- The aim of conducting PCA on this dataset is to determine profiles for similar performances: are there any athletes who are better at endurance events or those requiring short bursts of energy, etc? And are some of the events similar? If an athlete performs well in one event, will he necessarily perform well in another? -->
-<!-- 3. Explain your choices for the active and illustrative variables/individuals and perform the PCA on this data set. -->
-<!-- ```{r PCA decathlon} -->
-<!-- decathlon_PCA <- PCA(decathlon, quanti.sup = c(11,12) , quali.sup = 13) -->
-<!-- fviz_eig(decathlon_PCA) -->
-<!-- fviz_pca_ind(decathlon_PCA, axes = c(3, 4)) -->
-<!-- fviz_pca_var(decathlon_PCA, axes = c(3, 4)) -->
-<!-- ``` -->
-<!-- To obtain a typology of the athletes based on their performances for the 10 -->
-<!-- decathlon events, such as "two athletes are close as they have similar -->
-<!-- performance profiles", the distances between two athletes are defined on the -->
-<!-- basis of their performances in the 10 events. Thus, only the performance -->
-<!-- variables are considered active; the other variables (number of points, rank, -->
-<!-- and competition) are supplementary. Here, the athletes are all considered as active -->
-<!-- individuals. -->
-<!-- 4. Comment:  -->
-<!--   - the correlation between the 100 m and long.jump -->
-<!-- The 100m and long.jump are negatively correlated: therefore, an athlete who runs 100 meters quickly will generally jump a long way. The variables 100m, 400m, and 110m hurdles are positively correlated, that is, some athletes perform well in all four events while others do not. -->
-<!--   - the correlation between long.jump and Pole.vault -->
-<!-- Since long.jump is well represented in the first plan and Pole.vault is not, we can deduce that long.jump and Pole.vault are approximately orthogonal, meaning that the corresponding variables are roughly uncorrelated. Overall, the variables relating to speed are negatively correlated with the first principal component while the variables shot put and long jump are positively correlated with this component. The coordinates of these active variables can be found in the object  which also gives the representation quality of the variables (cosine squared) and their contributions to the construction of the components. -->
-<!-- Bourguignon and Karpov have very different performance profiles since they are opposed according to the main axis of variability.  -->
-<!--   - can you describe the athlete Casarsa?  -->
-<!-- Casarsa is located on the top left corner. The first dimension is highly correlated with the number of points: this indicates that he does not have a large number of points. The second dimension is correlated with the Shot.put, High.jump and Discus. This indicates that Casarsa had good results in these three sports. Remember that the second dimension is calculated orthogonally to the first. So Casarsa has good results in these three sports compared to other "bad" athletes.   -->
-<!--   - the proximity between Sebrle and Clay  -->
-<!-- Sebrle and Clay are close to one another and both far from the center of gravity of the cloud of points. The quality of their projection is therefore good, and we can be certain that they are indeed close in the original space. This means that they have similar profiles in their results across all sports events. -->
-<!--   - the proximity between Schoenbeck and Barras -->
-<!-- Schoenbeck and Barras are close to one another but they are also close to the center of gravity of the cloud of points. When looking at their cos2 they are not well projected, We cannot interpret their distance based on this plot only. -->
-<!-- 5. In which trials those who win the decathlon perform the best? Could we say that the decathlon trials are well selected?  -->
-<!-- The supplementary variable "number of points" is almost collinear to the first principal component. Therefore, the athletes with a high number of points are -->
-<!-- particularly good in the trials correlated with the first principal component. Those who win the decathlon perform the best in 100m, 110m hurdles and long jump. This means that the ranking of the decathlon is governed by those three sports. -->
-<!-- 6. Compare and comment the performances during both events: Decastar and Olympic, by ploting confidence ellipses. -->
-<!-- ```{r ellipse} -->
-<!-- plotellipses(decathlon_PCA) -->
-<!-- ``` -->
-<!-- 7. Select the number of dimensions with the function `estim_npc`.  -->
-<!-- ```{r} -->
-<!-- plot(estim_ncp(decathlon[, 1:10])$criterion, type = "l", xlab = "number of axis", ylab = "GCV") -->
-<!-- ``` -->
+<p>Try the various algorithms seen during the course (kmeans, hierarchical clustering, spectral clustering, kernel versions), possibly with a step of dimension reduction first (e.g. PCA, t-SNE, UMAP). Try to get the best result in terms of ARI/NID compared to the natural classification (the origin of the population). If you have time, assess the robustness of your result in terms of ARI by performing resampling in the initial table snp (i.e., by running the analysis several times on a random subsample of your data, say 80%, and then averaging your results in terms of ARI).</p>
+</div>
 </div>
 </div>
 

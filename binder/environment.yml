@@ -20,6 +20,7 @@ dependencies:
   - r-ggally
   - r-igraph
   - r-knitr
+  - r-kernlab
   - r-learnr
   - r-matrix
   - r-maps
