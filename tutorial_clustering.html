@@ -522,7 +522,7 @@ div.tocify {
       <a href="tutorial_nonlinear_dim_reduction_methods_cor.html">MDS, kernel-PCA</a>
     </li>
     <li>
-      <a href="tutorials_clustering.html">Clustering</a>
+      <a href="tutorial_clustering.html">Clustering</a>
     </li>
     <li class="dropdown-header">GGM and EM</li>
   </ul>
@@ -595,7 +595,7 @@ div.tocify {
 <h1>Preliminaries</h1>
 <div id="package-requirements" class="section level2">
 <h2>Package requirements</h2>
-<p>We start by loading a couple of packages for data manipulation, dimension reduction and fancy representations.</p>
+<p>We start by loading a couple of packages for data manipulation, dimension reduction clustering, fancy representations, etc.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)  <span class="co"># opinionated collection of packages for data manipulation</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kernlab)    <span class="co"># Kernel-based methods, among which spectral-clustering</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aricode)    <span class="co"># fast computation of clustering measures</span></span>
@@ -606,7 +606,7 @@ div.tocify {
 <h1>Clustering of a series of data sets</h1>
 <div id="scrna-data" class="section level2">
 <h2>scRNA data</h2>
-<p>We stard with the sample of scRNA data presented during the course on non-linear dimension reduction approaches. It consists in the normalized gene-level expression of 100 representative genes for a collection of 301 cells spread in 11 cell-lines.</p>
+<p>We start with the sample of scRNA data presented during the course on non-linear dimension reduction approaches. It consists in the normalized gene-level expression of 100 representative genes for a collection of 301 cells spread in 11 cell-lines.</p>
 <div id="data-importation" class="section level3">
 <h3>Data Importation</h3>
 <p>The data are imported as follows:</p>
@@ -619,7 +619,7 @@ div.tocify {
 <ol style="list-style-type: decimal">
 <li>Run the k-means algorithm (function <code>kmeans</code>) for 11 clusters a hundred of time and keep track of the within sum of squares.</li>
 <li>Compare the total WSS for each run, and then for each each cluster (with e.g. boxplot). Comment.</li>
-<li>Run the k-means for a varying number of clusters (say, between 1 and 20) with parameters <code>nstart</code> set to 20. Save the results.</li>
+<li>Run the k-means for a varying number of clusters (say, between 1 and 20) with the parameter <code>nstart</code> set to 20. Save the results.</li>
 <li>Compare the clusterings obtained with the corresponding cell-lines in terms of ARI and NID (use the pakage <strong>aricode</strong>).</li>
 <li>Same question as 3-4 with the hierarchical clustering with Ward aggregation criterion (function <code>hclust</code> + <code>cutree</code>).</li>
 </ol>
@@ -627,7 +627,7 @@ div.tocify {
 </div>
 <div id="snp-data-genotyping-of-various-populations" class="section level2">
 <h2>SNP data: genotyping of various populations</h2>
-<p>We use the same SNP data studied during homework #3. We analyze the 5500 most variant SNP for 728 individuals with various origin, with the following descriptors:</p>
+<p>We use the SNP data studied during homework #3. We analyze the 5500 most variant SNP for 728 individuals with various origin, with the following descriptors:</p>
 <ul>
 <li>CEU: Utah residents with Northern and Western European ancestry from the CEPH collection</li>
 <li>GIH: Gujarati Indians in Houston, Texas</li>
