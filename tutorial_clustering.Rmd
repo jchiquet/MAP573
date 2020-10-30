@@ -1,0 +1,77 @@
+---
+title: 'Tutorial: distance-based clustering'
+author: 'MAP573 team'
+date: "11/03/2020"
+# bibliography: resources/MAP573.bib
+---
+
+# Preliminaries
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  rows.print = 5)
+```
+
+## Package requirements
+
+We start by loading a couple of packages for data manipulation, dimension reduction and fancy representations.
+
+```{r packages, message = FALSE, warning = FALSE}
+library(tidyverse)  # opinionated collection of packages for data manipulation
+library(kernlab)    # Kernel-based methods, among which spectral-clustering
+library(aricode)    # fast computation of clustering measures
+theme_set(theme_bw()) # plots themes
+```
+
+# Clustering of a series of data sets
+
+## scRNA data
+
+We stard with the sample of scRNA data presented during the course on non-linear dimension reduction approaches. 
+It consists in the normalized gene-level expression of 100 representative genes for a collection of 301 cells 
+spread in 11 cell-lines. 
+
+### Data Importation
+
+The data are imported as follows: 
+
+```{r pollen data set}
+load("data/scRNA.RData")
+scRNA <-  pollen$data %>% t() %>% as_tibble() %>% 
+  add_column(cell_type = pollen$celltypes)
+```
+
+### Questions
+
+1. Run the k-means algorithm (function `kmeans`) for 11 clusters a hundred of time and keep track of the within sum of squares. 
+2. Compare the total WSS for each run, and then for each each cluster (with e.g. boxplot). Comment.
+3. Run the k-means for a varying number of clusters (say, between 1 and 20) with parameters `nstart` set to 20. Save the results.
+4. Compare the clusterings obtained with the corresponding cell-lines in terms of ARI and NID (use the pakage **aricode**).
+5. Same question as 3-4 with the hierarchical clustering with Ward aggregation criterion (function `hclust` + `cutree`).
+
+## SNP data: genotyping of various populations
+
+We use the same SNP data studied during homework \#3. We analyze the 5500 most variant SNP for 728 individuals with various origin, with the following descriptors:
+
+- CEU: Utah residents with Northern and Western European ancestry from the CEPH collection
+- GIH: Gujarati Indians in Houston, Texas
+- LWK: Luhya in Webuye, Kenya
+- MKK: Maasai in Kinyawa, Kenya
+- TSI: Toscani in Italia
+- YRI: Yoruba in Ibadan, Nigeria
+
+### Data Importation
+
+The data are imported as follows: 
+
+```{r import load SNP}
+load("data/SNP.RData")
+snp  <- data$Geno %>% as_tibble() %>% replace(is.na(.), 0) %>% 
+  add_column(origin = data$origin, .before = 1) 
+```
+
+### Questions
+
+Try the various algorithms seen during the course (kmeans, hierarchical clustering, spectral clustering, kernel versions), possibly with a step of dimension reduction first (e.g. PCA, t-SNE, UMAP). Try to get the best result in terms of ARI/NID compared to the natural classification (the origin of the population).
+If you have time, assess the robustness of your result in terms of ARI by performing resampling in the initial table snp (i.e., by running the analysis several times on a random subsample of your data, say 80%, and then averaging your results in terms of ARI).
