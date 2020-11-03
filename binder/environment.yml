@@ -3,7 +3,7 @@ channels:
   - conda-forge
 dependencies:
 #  - graph-tool
-#  - jupytext
+  - pytorch
   - numpy
   - matplotlib
   - scikit-learn
@@ -16,6 +16,7 @@ dependencies:
   - r-dt
   - r-codetools
   - r-cluster
+  - r-dimred
   - r-foreign
   - r-ggally
   - r-igraph
