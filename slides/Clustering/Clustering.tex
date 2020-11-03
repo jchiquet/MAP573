@@ -941,7 +941,7 @@ B-F & B-M & O-F & O-M\\
 \begin{frame}
   \frametitle{Ward's criteria: details}
   
-  Recall that the inertia measures the homogenity of th size-K clustering
+  Recall that the inertia measures the homogenity of the size-K clustering
   \begin{equation*}
     I_W = \sum_{k=1}^K \sum_{\bx_i \in \mathcal{C}_k} \| \bx_i - \bmu_{\mathcal{C}_k}  \|_2^2, \quad I_B = \sum_{k=1}^K n_k \| \bmu_k - \bmu  \|_2^2
   \end{equation*}
@@ -954,7 +954,7 @@ B-F & B-M & O-F & O-M\\
   \end{itemize}
   Then
   \begin{equation*}
-    I_B(\mathcal{P}) - I_B(\mathcal{P'}) = \frac{|\mathcal{C}_k||\mathcal{C}_\ell|}{|\mathcal{C}_k|+|\mathcal{C}_\ell|}d^2(\bmu_{\mathcal{C}_k}, \bmu_{\mathcal{C}_\ell}) = \frac{1}{2} \Delta(\mathcal{C}_k, \mathcal{C}_\ell).
+    I_W(\mathcal{P}') - I_W(\mathcal{P}) = \frac{|\mathcal{C}_k||\mathcal{C}_\ell|}{|\mathcal{C}_k|+|\mathcal{C}_\ell|}d^2(\bmu_{\mathcal{C}_k}, \bmu_{\mathcal{C}_\ell}) = \frac{1}{2} \Delta(\mathcal{C}_k, \mathcal{C}_\ell).
   \end{equation*}
   }
 
@@ -1338,6 +1338,7 @@ Look at Ward intra-class variance
 
 \begin{frame}
   \frametitle{Absolute Spectral Clustering}
+  \framesubtitle{by Rohe et al. (2011)}
 
 \begin{algorithm}[H]
   \KwIn{Adjacency matrix and number of classes $Q$}
@@ -1352,7 +1353,6 @@ Look at Ward intra-class variance
   \BlankLine\BlankLine
   \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^p$, such as  $C_i = q$ if $i\in q$}
 
-  \caption{Spectral Clustering by Rohe et al. (2011)}
 \end{algorithm}
 
 \end{frame}

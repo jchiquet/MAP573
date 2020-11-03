@@ -230,6 +230,7 @@ abline(0, 0, lwd = 2, col = "lightgray")
 
 \begin{frame}
   \frametitle{Absolute Spectral Clustering}
+  \framesubtitle{by Rohe et al. (2011)}
 
 \begin{algorithm}[H]
   \KwIn{Adjacency matrix and number of classes $Q$}
@@ -244,7 +245,6 @@ abline(0, 0, lwd = 2, col = "lightgray")
   \BlankLine\BlankLine
   \KwOut{vector of classes $\mathbf{C}\in \mathcal{Q}^p$, such as  $C_i = q$ if $i\in q$}
 
-  \caption{Spectral Clustering by Rohe et al. (2011)}
 \end{algorithm}
 
 \end{frame}
