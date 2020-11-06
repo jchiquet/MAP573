@@ -6,21 +6,29 @@ on:
 
 jobs:
   website:
-    name: Build website with rmarkdown
+    name: Build Website with rmarkdown
     if: "contains(github.event.head_commit.message, 'do_website')"
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v2
-# needed for external apt libraries
-      - name: apt install
+      - name: Checking out repository for Github action
+        uses: actions/checkout@v2
+      - name: Installing additional system libraries with APT
         run: xargs -a binder/apt.txt sudo apt-get install
-      - uses: goanpeca/setup-miniconda@v1
+      - name: Cache conda
+        uses: actions/cache@v1
+        env:
+          # Increase this value to reset cache if etc/example-environment.yml has not changed
+          CACHE_NUMBER: 0
+      - name: Setting up miniconda with specified Python and R dependencies
+        uses: goanpeca/setup-miniconda@v1
         with:
           auto-update-conda: true
           environment-file: binder/environment.yml
           activate-environment: MAP573
-      - shell: bash -l {0}
+      - name: Rendering Rmd files
+        shell: bash -l {0}
         run: |
+          export LANG=en_US.UTF-8
           conda run -n MAP573 Rscript binder/install.R
           conda run -n MAP573 Rscript -e 'rmarkdown::render_site(".")'
       - name: GitHub Pages action

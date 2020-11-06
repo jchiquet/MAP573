@@ -11,8 +11,8 @@ output:
 knitr::opts_chunk$set(
   cache = FALSE,
   echo  = TRUE,
-  rows.print = 5,
-  python = reticulate::eng_python)
+  rows.print = 5
+  )
 ```
 
 ## Preliminaries
@@ -69,8 +69,8 @@ Let us separate the training data $X$ and the true cluster labels $y$ for the re
 Separate the data $X$ and the true data labels $y$ by running the code below: 
 
 ```{r exo1_question1b}
-X = df %>% select(-cluster)
-y = df %>% select(cluster)
+X = df %>% dplyr::select(-cluster)
+y = df %>% dplyr::select(cluster)
 ```
 
 ### 2) First dataset plot
@@ -345,10 +345,8 @@ We will work on a **sampled** version of the [MNIST](http://yann.lecun.com/exdb/
 Please load the sampled dataset by running the code below. X is the matrix of images. The images are composed of 28x28 pixels in greyscale color, meaning that the value of each pixel varies from 0 (white) to 255 (black). There are 10 labels standing for the digit represented in each image. You should see that the classes are roughly balanced with around 1000 samples per class.
 
 ```{r exo2_question1}
-X <- read.csv("data/images_mnist_10K.csv",header = FALSE)
+X <- read.csv("data/images_mnist_10K.csv", header = FALSE)
 y <- read.csv("data/labels_mnist_10K.csv", header = FALSE)
-#dim(X)
-#table(y$V1)
 ```
 
 Write a code (you can reuse your work from Homework 3) to plot the 12 first images of the dataset on a grid (3 rows of 4 images). 
@@ -450,7 +448,8 @@ criterion = nn.MSELoss()
 Let us now work on the data: the 10,000 digit samples will be split into a train, a validation and a test set. The train set is used to train the network. The validation set enables us to set the hyperparameters for training. The test set is used to assess the model trained on the train set with the set of best hyperparameters found with the validation set. We use the function train_test_split from sklearn to split the train, validation, and test set. This is a two-step procedure: 1) Split test and train + validation and 2) Split train + validation into train and validation. **Please uncomment the following code and fill the argument test_size on the chunck below so that: 60% of 10,000 samples are in train set, 20% are in the validation set, 20% are in the test set.**
 
 ```{python exo2_question2_split_train_val_test}
-X_train_val, X_test, y_train_val, y_test = sk.train_test_split(r.X, r.y, test_size=0.2)
+X_train_val, X_test, y_train_val, y_test =  sk.train_test_split(np.array(r.X), np.array(r.y['V1']), test_size= 0.2)
+#X_train_val, X_test, y_train_val, y_test = sk.train_test_split(r.X, r.y, test_size=0.2)
 X_train, X_val, y_train, y_val = sk.train_test_split(X_train_val, y_train_val, test_size=0.25)
 print(X_train.shape)
 print(X_val.shape)

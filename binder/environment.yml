@@ -2,7 +2,6 @@ name: MAP573
 channels:
   - conda-forge
 dependencies:
-#  - graph-tool
   - pytorch
   - numpy
   - matplotlib

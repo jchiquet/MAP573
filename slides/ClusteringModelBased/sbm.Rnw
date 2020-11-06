@@ -1,0 +1,654 @@
+%% ==========================================================================
+\section{The Stochastic Block Model (SBM)}
+%% ==========================================================================
+
+\begin{frame}
+  \frametitle{References}
+
+    \begin{thebibliography}{99}
+      \setbeamertemplate{bibliography item}[book]
+
+    \bibitem[EK2]{EK2} Statistical Analysis of Network Data: Methods and Models
+    \newblock \textcolor{black}{Eric Kolazcyk}
+    \newblock \alert{Chapters 5 and 6}
+
+      \setbeamertemplate{bibliography item}[article]
+
+    \bibitem[EK2]{EK2} Mixture model for random graphs, Statistics and Computing
+    \newblock \textcolor{black}{Daudin, Robin, Picard}
+    \newblock {\tiny\url{pbil.univ-lyon1.fr/members/fpicard/franckpicard_fichiers/pdf/DPR08.pdf
+}}
+
+    \bibitem[CM1]{CM1} Analyse statistique de graphes,
+    \newblock \textcolor{black}{Catherine Matias}
+    \newblock \alert{Chapitre 4, Section 4}
+
+    \end{thebibliography}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Motivations}
+
+  \begin{block}{Last section: \alert{find an underlying organization in a observed network}}
+    Spectral or hierachical clustering for network data \\
+    \begin{itemize}
+      \item[$\rightsquigarrow$] \alert{Not model-based}, thus no statistical inference possible
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Now: \alert{clustering of network based on a probabilistic model of the graph}}
+    Become familiar with
+    \begin{itemize}
+      \item the stochastic block model, a random graph model tailored for clustering vertices,
+      \item the variational EM algorithm used to infer SBM from network data.
+    \end{itemize}
+  \end{block}
+
+  \onslide{
+  \begin{center}
+    hierarchical/kmeans clustering $\leftrightarrow$ \alert{Gaussian mixture models} \\
+      $\Updownarrow$ \\
+    hierarchical/spectral clustering for network $\leftrightarrow$ Stochastic block model
+  \end{center}
+  }
+
+\end{frame}
+
+%% ==========================================================================
+\subsection{Some Graphs Models and their limitations}
+%% ==========================================================================
+
+\begin{frame}
+  \frametitle{A mathematical model: Erdös-Rényi graph}
+
+  \begin{definition}
+    Let $\clV = {1,\dots,n}$ be a set of fixed vertices. The (simple) Erdös-Rényi model $\mathcal{G}(n,\pi)$ assumes random edges between pairs of nodes with probability $\pi$. In orther word, the (random) adjacency matrix $\bX$ is such that
+    \begin{equation*}
+      X_{ij} \sim \mathcal{B}(\pi)
+    \end{equation*}
+  \end{definition}
+
+  \vfill
+
+  \begin{proposition}[degree distribution]
+    The (random) degree $D_i$ of vertex $i$ follows a binomial distribution:
+      \begin{equation*}
+        D_i \sim b(n-1, \pi).
+      \end{equation*}
+  \end{proposition}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Erdös-Rényi - example}
+
+<<ER_example>>=
+G1 <- igraph::sample_gnp(10, 0.1)
+G2 <- igraph::sample_gnp(10, 0.9)
+G3 <- igraph::sample_gnp(100, .02)
+par(mfrow=c(1,3))
+plot(G1, vertex.label=NA) ; plot(G2, vertex.label=NA)
+plot(G3, vertex.label=NA, layout=layout.circle)
+@
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Erdös-Rény - limitations: very homegeneous}
+
+<<ER_limitation1>>=
+average.path.length(G3); diameter(G3)
+@
+
+<<ER_limitation2, echo=FALSE>>=
+par(mfrow=c(1,2))
+hist(degree(G3), col="lightblue"); plot(cluster_fast_greedy(G3), G3)
+@
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mechanism-based model: preferential attachment}
+
+  The graph is defined dynamically as follows
+  \begin{block}{Definition}
+    Start from a initial graph $\mathcal{G}_0 = (\mathcal{V}_0,\mathcal{E}_0)$, then for each time step,
+    \begin{enumerate}
+      \item At $t$ a new node $V_t$ is added
+      \item $V_t$ is connected to $i \in V_{t-1}$ with probability
+      \begin{equation*}
+        D_i^\alpha + \mathrm{cst.}
+      \end{equation*}
+    \end{enumerate}
+  \end{block}
+  $\rightsquigarrow$ Nodes with high degree get more connections thus \alert{richers get richers}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Preferential attachment - example}
+
+<<PA_example>>=
+G1 <- igraph::sample_pa(20, 1, directed=FALSE)
+G2 <- igraph::sample_pa(20, 5, directed=FALSE)
+G3 <- igraph::sample_pa(200, directed=FALSE)
+par(mfrow=c(1,3))
+plot(G1, vertex.label=NA) ; plot(G2, vertex.label=NA)
+plot(G3, vertex.label=NA, layout=layout.circle)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Preferential attachment - limitations}
+
+<<PA_limitation1>>=
+average.path.length(G3); diameter(G3)
+@
+
+<<PA_limitation2, echo=FALSE>>=
+par(mfrow=c(1,2))
+hist(degree(G3), col="lightblue"); plot(cluster_fast_greedy(G3), G3)
+@
+\end{frame}
+
+\begin{frame}
+  \frametitle{Limitations}
+
+    \begin{itemize}
+    \item \alert{Erdös-Rényi}\\
+      The ER model does not fit well real world network
+      \begin{itemize}
+        \item As can been seen from its degree distribution
+        \item ER is generally too homogeneous
+      \end{itemize}
+    \item \alert{Preferential attachment}
+      \begin{itemize}
+        \item Is defined through an algorithm so performing statistics is complicated
+        \item Is stucked to the power-law distribution of degrees
+      \end{itemize}
+    \end{itemize}
+
+  \vfill
+
+  \begin{block}{The Stochastic Block Model}
+    The SBM\footnote{Other models exist (e.g. exponential model for random graphs) but less popular.} generalizes ER in a mixture framework. It provides
+    \begin{itemize}
+      \item a statistical framework to adjust and interpret the parameters
+      \item a flexible yet simple specification that fits many existing network data
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+
+%% ==========================================================================
+\subsection{Mixture of Erdös-Rényi and the SBM}
+%% ==========================================================================
+
+\begin{frame}
+  \frametitle{Stochastic Block Model: definition}
+    \framesubtitle{Mixture model point of view: mixture of Erdös-Rényi}
+
+    \begin{block}{Latent structure}
+      Let $\mathcal{V} = \set{1,..,n}$ be a fixed set of vertices. We give each $i\in\mathcal{V}$ a \alert{latent label} among a set $\mathcal{Q}=\{1,\dots,Q\}$ such that
+    \begin{itemize}
+    \item $\alpha_q = \prob(i\in q), \quad \sum_q \alpha_q=1$;
+    \item $Z_{iq}=\1_{\{i \in  q\}}$  are independent  hidden variables.
+   \end{itemize}
+   \end{block}
+
+    \begin{block}{The conditional distribution of the edges}
+    Connexion probabilities depend on the node class belonging:
+    \begin{equation*}
+      X_{ij} | \set{i\in q, j\in\ell} \sim \mathcal{B}(\pi_{q \ell}) \qquad \bigg(\Leftrightarrow       X_{ij} | \set{Z_{iq}Z_{j\ell}=1} \sim \mathcal{B}(\pi_{q \ell}).
+ \bigg)
+    \end{equation*}
+    The $Q\times Q$ matrix ${\boldsymbol\pi}$  gives for all couple of labels $\pi_{q\ell}=\mathbb{P}(X_{ij}=1|i\in q, j\in\ell)$.
+   \end{block}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Stochastic Block Model: the big picture}
+
+  \begin{center}
+    \begin{overlayarea}{\textwidth}{.5\textheight}
+      \begin{columns}
+        \begin{column}{.45\paperwidth}
+        \begin{tikzpicture}
+          %% UN GRAPH
+
+          \tikzstyle{every edge}=[-,>=stealth',shorten >=1pt,auto,thin,draw]
+          \tikzstyle{every state}=[draw=none,text=white,scale=0.65, font=\scriptsize, transform shape]
+          \tikzstyle{every node}=[fill=yellow!40!orange]
+          % premier cluster
+          \node[state] (A1) at (0,0.5) {A1};
+          \node[state] (A2) at (1,0.5) {A2};
+          \node[state] (A3) at (.5,1.5) {A3};
+
+          \path (A2) edge [bend left] node[fill=white,below=.1cm]
+          {$\pi_{\textcolor{yellow!40!orange}{\bullet}\textcolor{yellow!40!orange}{\bullet}}$}
+          (A1)
+          (A1) edge [bend left] (A3)
+          (A3) edge [bend left] (A2);
+
+          \tikzstyle{every node}=[fill=blue!80!black]
+          \foreach \angle/\text in {234/B1, 162/B2, 90/B3, 18/B4, -54/B5} {
+            \node[fill=blue,state,xshift=5cm,yshift=3.5cm]     (\text)    at
+            (\angle:1cm) {\text};
+          }
+          \path (B2) edge (B5)
+          (B1) edge (B4);
+          \foreach \from/\to in {1/2,2/3,4/5,5/1}{
+            \path (B\from) edge [bend left] (B\to);
+          }
+
+          \path    (B3)    edge     [bend    left]    node[fill=white]
+          {$\pi_{\textcolor{blue!80!black}{\bullet}\textcolor{blue!80!black}{\bullet}}$}  (B4) ;
+
+          \tikzstyle{every node}=[fill=green!50!black]
+          % troisieme cluster
+          \node[state] (C1) at (3,-.5) {C1};
+          \node[state] (C2) at (4,0) {C2};
+
+          \path (C1) edge [bend right] node[fill=white,below=.25cm]
+          {$\pi_{\textcolor{green!50!black}{\bullet}\textcolor{green!50!black}{\bullet}}$}
+          (C2);
+
+          % inter cluster
+          \path (A3) edge [bend right]  (B2)
+          (A3)    edge    [bend    left]    node[fill=white]
+          {$\pi_{\textcolor{yellow!40!orange}{\bullet}\textcolor{blue!80!black}{\bullet}}$}
+          (B3)
+          (C2) edge [bend right] node[fill=white,right]
+          {$\pi_{\textcolor{blue!80!black}{\bullet}\textcolor{green!50!black}{\bullet}}$}
+          (B4)
+          (A2) edge [bend right] node[fill=white]
+          {$\pi_{\textcolor{yellow!40!orange}{\bullet}\textcolor{green!50!black}{\bullet}}$}
+          (C1);
+        \end{tikzpicture}
+        \end{column}
+        \begin{column}{.5\paperwidth}
+          \begin{small}
+            \begin{block}{Stochastic Block Model}
+              Let $n$ nodes divided into
+              \begin{itemize}
+              \item
+                $\mathcal{Q}=\{\textcolor{yellow!40!orange}{\bullet},\textcolor{blue!80!black}{\bullet},\textcolor{green!50!black}{\bullet}\}$
+                classes
+              \item  $\alpha_\bullet  =  \mathbb{P}(i  \in  \bullet)$,
+                $\bullet\in\mathcal{Q},i=1,\dots,n$
+              \item      $\pi_{\textcolor{yellow!40!orange}{\bullet}\textcolor{blue!80!black}{\bullet}}     =      \mathbb{P}(i
+                \leftrightarrow j | i\in\textcolor{yellow!40!orange}{\bullet},j\in\textcolor{blue!80!black}{\bullet})$
+              \end{itemize}
+            \end{block}
+          \end{small}
+        \end{column}
+      \end{columns}
+    \end{overlayarea}
+  \end{center}
+
+  \begin{align*}
+    Z_i = \mathbf{1}_{\{i \in \bullet\}}  \ & \sim^{\text{iid}} \mathcal{M}(1,\alpha), \quad \forall\bullet\in\mathcal{Q}, \\
+    X_{ij} \ | \ \{i\in\textcolor{yellow!40!orange}{\bullet},j\in\textcolor{blue!80!black}{\bullet}\} & \sim^{\text{ind}} \mathcal{B}(\pi_{\textcolor{yellow!40!orange}{\bullet}\textcolor{blue!80!black}{\bullet}})\\
+  \end{align*}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Stochastic Block Model: unknown parameters}
+
+    \begin{center}
+  \begin{overlayarea}{\textwidth}{.5\textheight}
+      \begin{columns}
+        \begin{column}{.45\paperwidth}
+        \begin{tikzpicture}
+          %% UN GRAPH
+
+          \tikzstyle{every edge}=[-,>=stealth',shorten >=1pt,auto,thin,draw]
+          \tikzstyle{every state}=[draw=none,text=white,scale=0.65, font=\scriptsize, transform shape]
+          \tikzstyle{every node}=[fill=gray]
+          % premier cluster
+          \node[state] (A1) at (0,0.5) {N1};
+          \node[state] (A2) at (1,0.5) {N2};
+          \node[state] (A3) at (.5,1.5) {N3};
+
+          \path (A2) edge [bend left] node[fill=white,below=.1cm]
+          {}
+          (A1)
+          (A1) edge [bend left] (A3)
+          (A3) edge [bend left] (A2);
+
+          \tikzstyle{every node}=[fill=blue!80!black]
+          \foreach \angle/\text in {234/N1, 162/N2, 90/N3, 18/N4, -54/N5} {
+            \node[fill=gray,state,xshift=5cm,yshift=3.5cm]     (\text)    at
+            (\angle:1cm) {\text};
+          }
+          \path (B2) edge (B5)
+          (B1) edge (B4);
+          \foreach \from/\to in {1/2,2/3,4/5,5/1}{
+            \path (B\from) edge [bend left] (B\to);
+          }
+
+          \path (B3) edge [bend left] node[fill=white] {}  (B4) ;
+
+          \tikzstyle{every node}=[fill=gray]
+          % troisime cluster
+          \node[state] (C1) at (3,-.5) {N1};
+          \node[state] (C2) at (4,0) {N2};
+
+          \path (C1) edge [bend right] (C2);
+
+          % inter cluster
+          \path (A3) edge [bend right]  (B2)
+          (A3)    edge    [bend    left]    node[fill=white]
+          {}
+          (B3)
+          (C2) edge [bend right] node[fill=white,right]
+          {}
+          (B4)
+          (A2) edge [bend right] node[fill=white]
+          {}
+          (C1);
+        \end{tikzpicture}
+        \end{column}
+        \begin{column}{.5\paperwidth}
+          \begin{small}
+            \begin{block}{Stochastic Block Model}
+              Let $n$ nodes divided into
+              \begin{itemize}
+              \item
+                $\mathcal{Q}=\{\textcolor{yellow!40!orange}{\bullet},\textcolor{blue!80!black}{\bullet},\textcolor{green!50!black}{\bullet}\}$,
+                $\text{card}(\mathcal{Q})$ known
+              \item  $\alpha_\bullet  =  ?$,
+              \item      $\pi_{\textcolor{yellow!40!orange}{\bullet}\textcolor{blue!80!black}{\bullet}}     =      ?$
+              \end{itemize}
+            \end{block}
+          \end{small}
+        \end{column}
+      \end{columns}
+    \end{overlayarea}
+    \end{center}
+
+  \begin{align*}
+    Z_i = \mathbf{1}_{\{i \in \bullet\}}  \ & \sim^{\text{iid}} \mathcal{M}(1,\alpha), \quad \forall\bullet\in\mathcal{Q}, \\
+    X_{ij} \ | \ \{i\in\textcolor{yellow!40!orange}{\bullet},j\in\textcolor{blue!80!black}{\bullet}\} & \sim^{\text{ind}} \mathcal{B}(\pi_{\textcolor{yellow!40!orange}{\bullet}\textcolor{blue!80!black}{\bullet}})\\
+  \end{align*}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Stochastic block models -- examples of topology}
+  \framesubtitle{Community network}
+
+<<>>=
+pi <- matrix(c(0.3,0.02,0.02,0.02,0.3,0.02,0.02,0.02,0.3),3,3)
+communities <- igraph::sample_sbm(100, pi, c(25, 50, 25))
+plot(communities, vertex.label=NA, vertex.color = rep(1:3,c(25, 50, 25)))
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Stochastic block models -- examples of topology}
+  \framesubtitle{Star network}
+
+<<>>=
+pi <- matrix(c(0.05,0.3,0.3,0),2,2)
+star <- igraph::sample_sbm(100, pi, c(4, 96))
+plot(star, vertex.label=NA, vertex.color = rep(1:2,c(4,96)))
+@
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Degree distributions}
+
+  \begin{block}{Conditional degree distribution}
+    The conditional degree distribution of a node $i\in q$ is
+    \begin{equation*}
+      D_i | i \in q \sim \mathrm{b}(n-1,\bar\pi) \approx \mathcal{P}(\lambda_q), \qquad \bar\pi_q = \sum_{\ell=1}^Q \alpha_\ell \pi_{q\ell}, \quad \lambda_q = (n-1)\bar\pi_q
+    \end{equation*}
+  \end{block}
+
+  \vfill
+
+  \begin{block}{Conditional degree distribution}
+    The degree distribution of a node $i$ can be approximated by a mixture of Poisson distributions:
+    \begin{equation*}
+      \prob(D_i = k) = \sum_{q=1}^Q\alpha_q \exp{\set{-\lambda_q}} \ \frac{\lambda_q^k}{k !}
+    \end{equation*}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Likelihoods}
+
+  \begin{block}{Complete-data loglikelihood}
+    \vspace{-.5cm}
+    \begin{equation*}
+      \log L(\bX,\bZ) = \sum_{i,q} Z_{iq} \log \alpha_q + \sum_{i<j,q,\ell} Z_{iq}Z_{j\ell} \log \pi_{q\ell}^{X_{ij}} (1-\pi_{q\ell})^{1-X_{ij}}.
+    \end{equation*}
+  \end{block}
+
+  \begin{block}{Conditional expectation of the complete-data loglikelihood}
+    \vspace{-.5cm}
+    \begin{equation*}
+      \E_{\bZ|\bX} \big[\log L(\btheta;\bX,\bZ) \big] = \sum_{i,q} \tau_{iq} \log \alpha_q + \sum_{i<j,q,\ell} \eta_{ijq\ell} \log \pi_{q\ell}^{X_{ij}} (1-\pi_{q\ell})^{1-X_{ij}}
+    \end{equation*}
+      where $\tau_ {iq}, \eta_{ijq\ell}$ are the posterior probabilities:
+      \begin{itemize}
+        \item $\tau_{iq} = \prob(Z_{iq} = 1 | \bX) = \E \left[Z_{iq} | \bX\right].$
+        \item $\eta_{ijq\ell} = \prob(Z_{iq}Z_{j\ell} = 1 | \bX) = \E \left[Z_{iq}Z_{j\ell} | \bX\right].$
+      \end{itemize}
+  \end{block}
+
+\end{frame}
+
+%% ==========================================================================
+\subsection{Inference in SBM with variational EM}
+%% ==========================================================================
+
+\begin{frame}
+  \frametitle{The EM strategy does not apply directly for SBM}
+
+  \begin{block}{Ouch: another intractability problem}
+    \begin{itemize}
+      \item the $Z_{iq}$ are \alert{not independent conditional on $(X_{ij}, i<j)$} \dots
+      \item we cannot compute $\eta_{ijq\ell} = \prob(Z_{iq}Z_{j\ell} = 1 | \bX) = \E \left[Z_{iq}Z_{j\ell} | \bX\right]$,
+      \item the conditional expectation $Q(\btheta)$, i.e. the main EM ingredient, is \alert{intractable}.
+    \end{itemize}
+  \end{block}
+
+  \vfill
+
+  \begin{block}{Solution: mean field approximation}
+    Approximate $\eta_{ijq\ell}$ by $\tau_{iq}\tau_{j\ell}$, i.e., \alert{assume conditional independence between $Z_{iq}$}\\
+
+    $\rightsquigarrow$ This can be formalized in the variational framework
+  \end{block}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Revisting the EM algorithm I}
+
+  \begin{proposition}
+    Consider a distribution $\mathbb{Q}$ for the $\set{Z_{iq}}$. We have
+    \begin{equation*}
+      \log L(\btheta; \bX) = \E_{\mathbb{Q}} [\log L(\btheta, \bX,\bZ)] + \mathcal{H}(\mathbb{Q}) + \mathrm{KL}(\mathbb{Q} \ | \ \prob(\bZ|\bX;\btheta)),
+    \end{equation*}
+    where $\mathcal{H}$ is the entropy and $\mathrm{KL}( \cdot| \cdot)$ is the Kullback-Leibler divergence:
+    \begin{gather*}
+      \mathcal{H}(\mathbb{Q}) = - \sum_z \mathbb{Q}(z) \log \mathbb{Q}(z) = - \E_\mathbb{Q} [\log \mathbb{Q} (Z)]\\
+      \mathrm{KL}(\mathbb{Q} \ | \ \prob(\bZ|\bX;\btheta)) = \sum_z \mathbb{Q}(z) \log \frac{\mathbb{Q}(z)}{\prob(\bZ|\bX;\btheta)} = \E_\mathbb{Q} \left[\log \frac{\mathbb{Q}(z)}{\prob(\bZ|\bX;\btheta)}\right]\\
+    \end{gather*}
+  \end{proposition}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Revisting the EM algorithm II}
+  Let
+   \begin{equation*}
+    J(\mathbb{Q},\btheta) \triangleq \E_{\mathbb{Q}}\left(\log L(\btheta ;\bX,\bZ)\right) + \mathcal{H}(\mathbb{Q})
+\end{equation*}
+
+  \vfill
+
+  The steps in the EM algorithm may be viewed as:
+  \begin{description}
+    \item[Expectation step]: choose $\mathbb{Q}$ to maximize $J(\mathbb{Q};\btheta^{(t)})$\\[2ex]
+      \alert{The solution is $\prob(\bZ|\bX;\btheta^{(t)})$}\\
+    \item[Maximization step]: choose $\btheta$ to maximize $J(\mathbb{Q}^{(t)};\btheta$)\\[2ex]
+      \alert{The solution maximizes $\E_{\bZ|\bX;\btheta^{(t)}}\left(\log L(\btheta ;\bX,\bZ)\right)$}
+  \end{description}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Variational approximation for SBM}
+
+    \begin{block}{Problem for SBM}
+      $\prob(\bZ|\bX;\btheta^{(t)})$ cannot be computed thus the E-step cannot be solved.
+  \end{block}
+
+  \begin{block}{Idea}
+      Choose $\mathbb{Q}$ in a class of function so that the E-step can be solved.
+  \end{block}
+
+  \begin{block}{Family of distribution that factorizes}
+      We chose $\mathbb{Q}$ the multinomial distribution so that
+      \begin{equation*}
+        \mathbb{Q}(\bZ) = \prod_{i=1}^n \mathbb{Q}_i(Z_i) = \prod_{i=1}^n\prod_{q=1}^Q \tau_{iq}^{Z_{iq}},
+      \end{equation*}
+      where $\tau_{iq} =\mathbb{Q}_i(Z_{i} = q) = \E_{\mathbb{Q}}(Z_{iq})$, with $\sum_{q} \tau_{iq} = 1$ for all $i=1,\dots,n$.
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Variational EM for SBM: the criterion}
+
+  \begin{block}{Lower bound of the loglikehood}
+  Since $\mathbb{Q}$ is an approximation of $\prob(\bZ|\bX)$, the Kullback-Leibler divergence is non-negative and
+    \begin{equation*}
+      \log L(\btheta; \bX) \geq \E_{\mathbb{Q}} [\log L(\btheta, \bX,\bZ)] + \mathcal{H}(\mathbb{Q}) = J(\mathbb{Q},\btheta).
+    \end{equation*}
+  \end{block}
+
+  For the SBM,
+  \begin{equation*}
+  J(\mathbb{Q},\btheta) = \sum_{i,q} \tau_{iq} \log \alpha_q + \sum_{i<j,q,\ell}  \tau_{iq}  \tau_{j\ell} \log b(X_{ij} ; \pi_{q\ell}) - \sum_{i,q} \tau_{iq} \log(\tau_{iq}),
+  \end{equation*}
+
+  $\rightsquigarrow$ we optimize the loglikelihood lower bound $J(\mathbb{Q},\btheta) = J(\boldsymbol\tau,\btheta)$ in $(\boldsymbol\tau, \btheta)$.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{E and M steps for SBM}
+
+  \begin{block}{Variational E-step}
+    Maximizing $J(\boldsymbol\tau)$ for fixed $\btheta$, we find a fixed-point relationship:
+    \begin{equation}
+      \hat{\tau}_{iq} \varpropto \alpha_q \prod_{j} \prod_{\ell} b(X_{ij}, \pi_{q\ell})^{\hat{\tau}_{j\ell}}
+    \end{equation}
+  \end{block}
+
+  \vfill
+
+  \begin{block}{M-step}
+    Maximizing $J(\btheta)$ for fixed $\boldsymbol\tau$, we find,
+    \begin{equation}
+\hat{\alpha}_q = \frac{1}{n}\sum_i \hat{\tau}_{iq} , \quad \hat\pi_{q\ell} = \frac{\sum_{i\neq j} \hat{\tau}_{iq}\hat{\tau}_{j\ell} X_{ij}}{\sum_{i\neq j} \hat{\tau}_{iq}\hat{\tau}_{j\ell}}.
+\end{equation}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Model selection}
+
+  We use our lower bound of the  loglikelihood to compute an approximation of the ICL
+  \begin{multline*}
+  \mathrm{vICL}(Q) = \E_{\hat{\mathbb{Q}}} [\log L(\hat{\btheta)};\bX,\bZ] \\ - \frac{1}{2} \left(\frac{Q(Q+1)}{2} \log \frac{n(n-1)}{2} + (Q-1) \log (n) \right),
+\end{multline*}
+where
+    \begin{equation*}
+      \E_{\hat{\mathbb{Q}}} [\log L(\hat\btheta; \bX,\bZ)] = J(\hat{\boldsymbol\tau},\hat\btheta) - \mathcal{H}(\hat{\mathbb{Q}}).
+    \end{equation*}
+
+    The variational BIC is just
+    \begin{equation*}
+  \mathrm{vBIC}(Q) = J(\hat{\boldsymbol\tau},\hat\btheta) - \frac{1}{2} \left(\frac{Q(Q+1)}{2} \log \frac{n(n-1)}{2} + (Q-1) \log (n) \right).
+    \end{equation*}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example on the French blogsphere (I)}
+
+<<example blockmodels 2, cache = TRUE>>=
+library(blockmodels)
+library(sand)
+
+adj_blog <- upgrade_graph(fblog) %>%
+    as_adjacency_matrix() %>%
+    as.matrix()
+
+mySBM_collection <- BM_bernoulli(
+  "SBM_sym",
+  adj_blog, verbosity = 0,
+  plotting = "figures/ICL_fblog.pdf"
+)
+mySBM_collection$estimate()
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example on the French blogsphere (II)}
+
+\includegraphics[width=.7\textwidth]{figures/ICL_fblog}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example on the French blogsphere (III)}
+
+<<example blockmodels 3>>=
+library(Matrix)
+clusters <-
+  apply(mySBM_collection$memberships[[10]]$Z, 1, which.max)
+image(Matrix(adj_blog[order(clusters), order(clusters)]))
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Example on the French blogsphere (IV)}
+
+<<example blockmodels 4, fig.align="center", fig.height=8>>=
+library(RColorBrewer); pal <- brewer.pal(10, "Set3")
+
+g <- graph_from_adjacency_matrix(
+  adj_blog,
+  mode = "undirected",
+  weighted = TRUE,
+  diag = FALSE
+)
+V(g)$class <- clusters
+V(g)$size <- 5
+V(g)$frame.color <- "white"
+V(g)$color <- pal[V(g)$class]
+V(g)$label <- ""
+E(g)$arrow.mode <- 0
+
+par(mar =c(0,0,0,0))
+plot(g, edge.width=E(g)$weight)
+@
+
+\end{frame}

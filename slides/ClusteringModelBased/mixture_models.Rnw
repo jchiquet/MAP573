@@ -1,0 +1,282 @@
+%% ==========================================================================
+\section{Mixture models}
+%% ==========================================================================
+
+\begin{frame}
+  \frametitle{References}
+
+    \begin{thebibliography}{99}
+      \setbeamertemplate{bibliography item}[book]
+
+    \bibitem[EK2]{EK2} Pattern recognition and machine learning,
+    \newblock \textcolor{black}{Christopher Bishop}
+    \newblock \alert{Chapter 9: Mixture Models and EM}
+    \newblock {\tiny\url{http://users.isr.ist.utl.pt/~wurmd/Livros/school/}}
+
+    \bibitem[SR]{SR} Models with Hidden Structure with Applications in Biology and Genomics,
+    \newblock \textcolor{black}{Stéphane Robin}
+    \newblock \alert{Master MathSV Course}
+    \newblock {\tiny\url{https://www6.inra.fr/mia-paris/content/download/4587/42934/version/1/file/ModelsHiddenStruct-Biology.pdf}}
+
+      \setbeamertemplate{bibliography item}[article]
+
+    \bibitem[CM1]{CM1} Classification non-supervisées,
+    \newblock \textcolor{black}{É. Lebarbier, T. Mary-Huard}
+    \newblock \alert{Chapitre 3 - méthode probabiliste: le modèle de mélange}
+    \newblock {\tiny\url{https://www.agroparistech.fr/IMG/pdf/ClassificationNonSupervisee-AgroParisTech.pdf}}
+
+    \end{thebibliography}
+
+
+\end{frame}
+
+%% ==========================================================================
+\subsection{Statistical model: latent variable}
+%% ==========================================================================
+
+\begin{frame}
+  \frametitle{Latent variable models}
+
+  \begin{definition}
+    A \alert{latent variable model} is a statistical model that relates, for $i=1,\dots,n$ individuals,
+  \begin{itemize}
+    \item a set of \alert{manifest} (observed) variables $\bX = (X_i, i=1,\dots,n)$ to
+    \item a set of \alert{latent} (unobserved) variables $\bZ = (Z_i, i=1,\dots,n)$.
+    \end{itemize}
+  \end{definition}
+
+  \begin{block}{Common assumption: conditional independence}
+    \vspace{-.5cm}
+    \begin{equation*}
+      \prob((X_1, \dots, X_n)|(Z_1,\dots, Z_n))  = \prod_{i=1}^n \prob(X_i| Z_i).
+    \end{equation*}
+  \end{block}
+
+  \vspace{-.25cm}
+
+  \begin{block}{Famous examples}<2->
+    \vspace{-.25cm}
+    \begin{itemize}
+      \item $(Z_i, i\geq 1)$ is Markov chain: \alert{Markov models}
+      \item $Z_i$ categorical and independent: \alert{mixture models}
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mixture models: the latent variables}
+
+    When $(Z_1,\dots,Z_n)$ are independent categorical variables, they give a \alert{natural (latent) classification of the observations} $(X_1,\dots,X_n)$ -- or \alert{labels}.
+
+  \begin{block}{Notations}<2->
+    Let $(Z_1, \dots, Z_n)$ be \textit{iid} categorical variables with distribution
+    \vspace{-.25cm}
+    \begin{equation*}
+      \prob(i \in q) = \prob(Z_i = q) = \alpha_q, \quad \text{s.t.}  \sum_{q=1}^Q \alpha_q = 1.
+    \end{equation*}
+  \end{block}
+
+  \vspace{-.5cm}
+  \begin{block}{Alternative (equivalent) notation}<3>
+    Let $Z_i=(Z_{i1},\dots, Z_{iq})$ be an indicator vector of label for $i$:
+    \vspace{-.25cm}
+    \begin{equation*}
+      \prob(i \in q) = \prob(Z_{iq}  =  1)=\alpha_q,  \quad  \text{s.t.} \sum_{q=1}^Q \alpha_q = 1.
+    \end{equation*}
+    By definition, $Z_i \sim \mathcal{M}(1, \balpha)$, with $\balpha = (\alpha_1, \dots, \alpha_Q)$.
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mixture models: the manifest variables}
+
+  A mixture model represents the \alert{presence of subpopulations} within an overall population as follows:
+  \begin{equation*}
+    \prob(X_i) = \sum_{z_i \in \mathcal{Z}_i} \prob(X_i , Z_i) = \sum_{Z_i \in \mathcal{Z}_i}\prob(X_i | Z_i) \prob(Z_i).
+  \end{equation*}
+
+  \vfill
+
+  \begin{block}{Conditional distribution of the manifest variables}
+    We assume a \alert{parametric distribution} of $X$ in each subpopulation
+    \begin{equation*}
+      X_i | \set{Z_i = q} \sim \prob_{\theta_q} \qquad \bigg(\Leftrightarrow X_i | \set{Z_{iq}} = 1 \sim \prob_{\theta_q}\bigg)
+    \end{equation*}
+    The specificity of each class is handled by $\set{\btheta_q}_{q=1}^Q$.
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mixture models: likelihoods}
+
+  \begin{block}{The complete-data likelihood}
+    It is the join distribution of $(X_i,Z_i)$:
+    \begin{equation*}
+      \prob(X_i,Z_i) = \alpha_{Z_i} \prob_{\btheta_{{Z_i}}}(X_i)
+    \end{equation*}
+  \end{block}
+
+  \vspace{-.25cm}
+
+  \begin{block}{The incomplete-data likelihood}<2>
+    It is the marginal distribution of $X_i$ once $Z_i$ integrated:
+    \begin{equation*}
+      \prob(X_i) = \sum_{q=1}^Q \prob(X_i, Z_i = q)  = \sum_{q=1}^Q \alpha_q \prob_{\btheta_q}(X_i)
+    \end{equation*}
+  \end{block}
+
+  \vspace{-.25cm}
+
+  \onslide<2>{
+    $\rightsquigarrow$ A \alert{mixture model} is a sum of distributions weigthed by the proportion of each subpopulation.
+  }
+
+\end{frame}
+
+%% ==========================================================================
+\subsection{Expectation-Maximization algorithm}
+%% ==========================================================================
+
+\begin{frame}
+  \frametitle{Intractability of the Likelihood}
+
+  \begin{block}{Maximum Likelihood Estimator}
+    The MLE aims to maximize the (marginal) likehood of the observations:
+    \begin{equation*}
+      L(\btheta; \bX) = \prob_{\btheta}((X_1,\dots,X_n)) = \int_{\bZ \in \mathcal{Z}} \prob_{\btheta}(\bX,\bZ) \mathrm{d} \bZ
+    \end{equation*}
+    Integrations are summation over $\set{1,\dots,Q}$: we have $Q^n$ terms !
+  \end{block}
+
+  \vfill
+
+  \begin{block}{Intractable summation}<2->
+    With mixture models, for $\btheta = (\btheta_1,\dots,\btheta_Q)$ we have
+    \begin{equation*}
+      \log L(\btheta; \bX) = \sum_{i=1}^n \log \set{\sum_{q=1}^Q \alpha_q \prob_{\btheta_q}(X_i)}.
+    \end{equation*}
+    \alert{$\rightsquigarrow$ Direct maximization of the likelihood is impossible in practice}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Bayes decision rule / Maximum \textit{a posteriori}}
+
+  \begin{block}{Principle}
+    Affect an individual $i$ to the subpopulation which is the most likely according to the data:
+    \begin{equation*}
+      \tau_{iq} = \prob(Z_{iq}=1 | X_i = x_i)
+    \end{equation*}
+    This is the \alert{posterior probability} for $i\in q$.
+  \end{block}
+
+  \vfill
+
+  \begin{block}{Application of the Bayes Theorem}
+    It is straightforward to show that
+    \begin{equation*}
+      \tau_{iq} = \frac{\alpha_q \prob_{\theta_q}(x_i)}{\sum_{q=1}^Q \alpha_q \prob_{\theta_q}(x_i)}
+    \end{equation*}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Principle of the EM algorithm}
+
+  \begin{block}{If $\btheta$ were known}
+    \dots estimating the \alert{posterior probability $\prob(Z_i|\bX)$} of $\bZ$ should be easy\\
+    \textit{By means of the Bayes decision rule}
+  \end{block}
+
+  \vfill
+
+  \begin{block}{If $\bZ$ were known\dots}
+    \dots estimating the \alert{best set of parameter} $\btheta$ should be easy\\
+    \textit{This is close to usual maximum likelihood estimation}
+  \end{block}
+
+  \vfill
+
+  \begin{block}{EM principle}<2>
+    Maximize the marginal likelihood iteratively:
+    \begin{enumerate}
+      \item Initialize $\btheta$
+      \item Compute the probability of $\bZ$ given $\btheta$
+      \item Get a better $\btheta$ with the new $\bZ$
+      \item Iterate until convergence
+    \end{enumerate}
+  \end{block}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Formal algorithm}
+
+  \begin{block}{Initialization: \textcolor{black}{start from a good guess either of $\bZ$ or $\btheta$, then iterate 1-2}}
+  \end{block}
+
+  \begin{block}{1. Expectation step}
+    Calculate the expected value of the loglikelihood under the current $\btheta$
+    \begin{equation*}
+      Q\left(\btheta|\btheta^{(t)}\right) = \E_{\bZ|\bX;\btheta^{(t)}}\big[ \log L (\btheta;\bX,\bZ)  \big] \qquad (\textit {needs } \prob_{\btheta^{(t)}}(\bZ|\bX))
+    \end{equation*}
+  \end{block}
+
+  \vfill
+
+  \begin{block}{2. Maximization step}
+    Find the parameters that maximize this quantity
+    \begin{equation*}
+      \btheta^{(t+1)} = \argmax_{\btheta} Q\left(\btheta|\btheta^{(t)}\right)
+    \end{equation*}
+  \end{block}
+
+  Stop when $\|\btheta^{(t+1)} - \btheta^{(t)}\| < \varepsilon$ or $\|Q^{(t+1)} - Q^{(t)}\| < \varepsilon$
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{(Basic) Convergence analysis}
+
+  \begin{theorem}
+    At each step of the EM algorithm, the loglikelihood increases. EM thus reaches a local optimum.
+  \end{theorem}
+
+  \begin{proof}
+    On board.
+  \end{proof}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Choosing the number of component}
+
+  \begin{block}{Reminder: Bayesian Information Criterion}
+    The BIC is a model selection criterion which penalizes the adjustement to the data by the number of parameter in model $\mathcal{M}$ as follows:
+    \begin{equation*}
+      \mathrm{BIC}(\mathcal{M}) = \log L(\hatbtheta; \bX) - \frac{1}{2}\log(n) \mathrm{df}(\mathcal{M}).
+    \end{equation*}
+  \end{block}
+
+  \vspace{-.35cm}
+
+  \begin{block}{Integrated Classification Criterion}<2->
+    It is an adaptation working with the complete-data likelihood:
+    \vspace{-.25cm}
+    \begin{align*}
+      \mathrm{ICL}(\mathcal{M}) & = \log L(\hatbtheta; \bX, \hat{\bZ}) + \frac{1}{2}\log(n) \mathrm{df}(\mathcal{M}) \\
+      & = \mathrm{BIC} - \mathcal{H}(\prob(\hat \bZ | \bX),
+    \end{align*}
+    where the entropy $\mathcal{H}$ measures the separability of the subpopulations.
+  \end{block}
+
+  \vfill
+
+  \onslide<3>{$\rightsquigarrow$ \alert{We choose $\mathcal{M}(Q)$ that maximizes either BIC or ICL}}
+\end{frame}

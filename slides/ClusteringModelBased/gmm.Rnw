@@ -1,0 +1,257 @@
+% ==========================================================================
+\subsection{Example: mixture of Gaussians}
+% ==========================================================================
+
+\begin{frame}
+  \frametitle{Popular model: Gaussian Multivariate mixture models}
+
+  The distribution of $X_i$ conditional on the label of $i$ is assumed to be a multivariate Gaussian distribution with unknown parameters:
+  \begin{equation*}
+  X_i | i \in q \sim \mathcal{N}(\bmu_q,\bSigma_q)
+  \end{equation*}
+
+  \begin{block}{Complete Likelihood $(\bX,\bZ)$}
+  The model complete loglikelihood is
+    \begin{multline*}
+        \log L(\boldsymbol{\mu},\boldsymbol{\Sigma}; \bX, \bZ)  = \\ \sum_{i=1}^n \sum_{q=1}^Q Z_{iq} \left(\log \alpha_q - \frac{1}{2}\log\mathrm{det}(\bSigma_q) - \frac{1}{2} \|\bx_i - \bmu_q\|^2_{\bSigma_q^{-1}}) \right) + c
+   \end{multline*}
+  \end{block}
+  
+
+  $\rightsquigarrow$ Implementation of the univariate case during the labs.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mixture of Gaussians}
+  \framesubtitle{Calculs in the univariate case: complete likelihood}
+
+  The distribution of $X_i$ conditional on the label of $i$ is assumed to be a univariate Gaussian distribution with unknown parameters:
+  \begin{equation*}
+  X_i | Z_{iq} = 1 \sim \mathcal{N}(\mu_q,\sigma^2_q)
+  \end{equation*}
+
+  \begin{block}{complete Likelihood $(\bX,\bZ)$}
+  The model complete loglikelihood is
+    \begin{multline*}
+        \log L(\boldsymbol{\mu},\boldsymbol{\sigma}^2; \bX, \bZ)  = \\ \sum_{i=1}^n \sum_{q=1}^Q Z_{iq} \left(\log \alpha_q - \log\sigma_q -\log(\sqrt{2\pi}) - \frac{1}{2\sigma_q^2} (x_i - \mu_q)^2 \right)
+   \end{multline*}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Gaussian mixture model in \texttt{R}}
+  
+  The package \texttt{Mclust} is a great reference 
+  
+  See \url{https://cran.r-project.org/web/packages/mclust/vignettes/mclust.html} 
+
+  
+<<GMM, message=FALSE>>=
+GMM <- crabs_corrected %>% 
+  select(-sex, -species) %>%
+  Mclust(modelNames = c("EII", "EEI"))
+plot(GMM, 'BIC')
+aricode::ARI(GMM$classification, classes)
+aricode::ARI(GMM$classification, clusters)
+aricode::ARI(GMM$classification, clusters_ward)
+plot(GMM, 'classification')
+@
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mixture of Gaussians}
+  \framesubtitle{Calculs in the univariate case: complete likelihood}
+
+  The distribution of $X_i$ conditional on the label of $i$ is assumed to be a univariate Gaussian distribution with unknown parameters:
+  \begin{equation*}
+  X_i | Z_{iq} = 1 \sim \mathcal{N}(\mu_q,\sigma^2_q)
+  \end{equation*}
+
+  \begin{block}{complete Likelihood $(\bX,\bZ)$}
+  The model complete loglikelihood is
+    \begin{multline*}
+        \log L(\boldsymbol{\mu},\boldsymbol{\sigma}^2; \bX, \bZ)  = \\ \sum_{i=1}^n \sum_{q=1}^Q Z_{iq} \left(\log \alpha_q - \log\sigma_q -\log(\sqrt{2\pi}) - \frac{1}{2\sigma_q^2} (x_i - \mu_q)^2 \right)
+   \end{multline*}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mixture of Gaussians}
+  \framesubtitle{Calculs in the univariate case: E-step}
+
+  \begin{block}{E-step}
+    For fixed values of  $\mu_q, \sigma_q^2$ and  $\alpha_q$, the  estimates of  the
+  posterior probabilities $\hat\tau_{iq}= \P(Z_{iq}=1|X_i)$ are
+    \begin{equation*}
+        \hat\tau_{iq} = \frac{\alpha_q \mathcal{N}(x_i; {\mu}_q, \sigma_q^2)}{\sum_{q=1}^Q \alpha_q \mathcal{N}(x_i; {\mu}_q, \sigma_q^2)},
+   \end{equation*}
+   where $\mathcal{N}$ is the density of the normal distribution.
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mixture of Gaussians}
+  \framesubtitle{Calculs in the univariate case: M-step}
+
+  \begin{block}{M-step}
+    For fixed values of  $\tau_{iq}$, the  estimates of  the model parameters are
+    \begin{equation*}
+    \hat\alpha_q = \frac{\sum_{i=1}^n \tau_{iq}}{\sum_{i=1}^n\sum_{q=1}^Q \tau_{iq}} \quad \hat\mu_q = \frac{\sum_i \tau_{iq} x_i}{\sum_i \tau_{iq}} \quad \hat\sigma^2_q = \frac{\sum_{i=1}^n \tau_{iq} (x_i-\mu_q)^2}{\sum_{i=1}^n \tau_{iq}}
+   \end{equation*}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{R code: auxiliary functions}
+
+We start by defining functions to compute the complete model loglikelihood, perform the E step and the M step.
+<<EM_mixture_auxiliaries, tidy=FALSE>>=
+get.cloglik <- function(X, Z, theta) {
+  alpha <- theta$alpha; mu <- theta$mu; sigma <- theta$sigma
+  xs <- scale(matrix(X,length(x),length(alpha)),mu,sigma)
+  return(sum(Z*(log(alpha)-log(sigma)-.5*(log(2*pi)+xs^2))))
+}
+
+M.step <- function(X, tau) {
+  n <- length(X); Q <- ncol(tau)
+  alpha  <- colMeans(tau)
+  mu     <- colMeans(tau * matrix(X,n,Q)) / alpha
+  sigma  <- sqrt(colMeans(tau*sweep(matrix(X,n,Q),2,mu,"-")^2)/alpha)
+  return(list(alpha=alpha, mu=mu, sigma=sigma))
+}
+
+E.step <- function(X, theta) {
+  tau <- mapply(function(alpha, mu, sigma) {
+      alpha*dnorm(X,mu,sigma)
+    }, theta$alpha, theta$mu, theta$sigma)
+  return(tau / rowSums(tau))
+}
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{R code: EM for univariate mixture}
+
+<<EM_mixture, echo=TRUE, tidy=FALSE>>=
+EM.mixture <- function(X, Q,
+                       init.cl=sample(1:Q,n,rep=TRUE), max.iter=100, eps=1e-5) {
+    n <- length(X); tau <- matrix(0,n,Q); tau[cbind(1:n,init.cl)] <- 1
+    Eloglik <- vector("numeric", max.iter)
+    iter <- 0; cond <- FALSE
+
+    while (!cond) {
+        iter <- iter + 1
+        ## M step
+        theta <- M.step(X, tau)
+        ## E step
+        tau <- E.step(X, theta)
+        ## check consistency
+        Eloglik[iter] <- get.cloglik(X, tau, theta)
+        if (iter > 1)
+            cond <- (iter>=max.iter) | Eloglik[iter]-Eloglik[iter-1] < eps
+    }
+
+    return(list(alpha = theta$alpha,  mu = theta$mu,  sigma = theta$sigma,
+                tau   = tau, cl = apply(tau, 1, which.max),
+                Eloglik = Eloglik[1:iter]))
+}
+@
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example: data generation}
+
+We first generate data with 4 components:
+<<EM_mixture_example_data>>=
+mu1 <- 5   ; sigma1 <- 1; n1 <- 100
+mu2 <- 10  ; sigma2 <- 1; n2 <- 200
+mu3 <- 15  ; sigma3 <- 2; n3 <- 50
+mu4 <- 20  ; sigma4 <- 3; n4 <- 100
+cl <- rep(1:4,c(n1,n2,n3,n4))
+x <- c(rnorm(n1,mu1,sigma1),rnorm(n2,mu2,sigma2),
+       rnorm(n3,mu3,sigma3),rnorm(n4,mu4,sigma4))
+n <- length(x)
+
+## we randomize the class ordering
+rnd <- sample(1:n)
+cl <- cl[rnd]
+x  <- x[rnd]
+
+alpha <- c(n1,n2,n3,n4)/n
+@
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]
+  \frametitle{Example: data generation - plot}
+
+Let us plot the data and the theoretical mixture.
+<<EM_mixture_example_data_plot>>=
+curve(alpha[1]*dnorm(x,mu1,sigma1) +
+      alpha[2]*dnorm(x,mu2,sigma2) +
+      alpha[3]*dnorm(x,mu3,sigma3) +
+      alpha[4]*dnorm(x,mu4,sigma4),
+      col="blue", lty=1, from=0,to=30, n=1000,
+      main="Theoretical Gaussian mixture and its components",
+      xlab="x", ylab="density")
+curve(alpha[1]*dnorm(x,mu1,sigma1), col="red", add=TRUE, lty=2)
+curve(alpha[2]*dnorm(x,mu2,sigma2), col="red", add=TRUE, lty=2)
+curve(alpha[3]*dnorm(x,mu3,sigma3), col="red", add=TRUE, lty=2)
+curve(alpha[4]*dnorm(x,mu4,sigma4), col="red", add=TRUE, lty=2)
+rug(x)
+@
+\end{frame}
+% 
+% \begin{frame}[fragile]
+%    \frametitle{Implementation}
+%    
+%    \begin{center}
+%       Your labs!
+%    \end{center}
+%    
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+%   \frametitle{Example: adjustment}
+% 
+% <<EM_mixture_run>>=
+% out <- EM.mixture(x, Q=4, init.cl=sample(1:4,n,rep=TRUE))
+% plot(out$Eloglik, main="EM criterion", type="l", xlab="iteration")
+% @
+% \end{frame}
+% 
+% \begin{frame}[fragile, allowframebreaks]
+%   \frametitle{Example: adjustment - plot}
+% 
+% <<EM_mixture_run_plot>>=
+% out <- EM.mixture(x, Q=4, init.cl=kmeans(x,4)$cl)
+% curve(alpha[1]*dnorm(x,mu1,sigma1) +
+%       alpha[2]*dnorm(x,mu2,sigma2) +
+%       alpha[3]*dnorm(x,mu3,sigma3) +
+%       alpha[4]*dnorm(x,mu4,sigma3), col="blue",
+%       lty=1, from=0,to=30, n=1000,
+%       main="Theoretical Gaussian mixture and estimated components",
+%       xlab="x", ylab="density")
+% curve(out$alpha[1]*dnorm(x,out$mu[1],out$sigma[1]), col="red", add=TRUE, lty=2)
+% curve(out$alpha[2]*dnorm(x,out$mu[2],out$sigma[2]), col="red", add=TRUE, lty=2)
+% curve(out$alpha[3]*dnorm(x,out$mu[3],out$sigma[3]), col="red", add=TRUE, lty=2)
+% curve(out$alpha[4]*dnorm(x,out$mu[4],out$sigma[4]), col="red", add=TRUE, lty=2)
+% rug(x)
+% @
+% 
+% \end{frame}
+% 
+% \begin{frame}[fragile, allowframebreaks]
+%   \frametitle{Example: adjustment - classification}
+% 
+% <<EM_mixture_run_contingency>>=
+% table(cl, out$cl)
+% aricode::ARI(cl, out$cl)
+% @
+% 
+% \end{frame}

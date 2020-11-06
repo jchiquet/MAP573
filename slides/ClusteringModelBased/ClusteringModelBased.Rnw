@@ -1,0 +1,54 @@
+\documentclass{beamer}
+
+\usepackage{animate}
+
+\def\currentCourse{Data anaysis and Unsupervised Learning}
+\def\currentInstitute{MAP 573, 2020 -- Julien Chiquet}
+\def\currentLogo{../common_figs/logo_X}
+\def\currentDate{\'Ecole Polytechnique, Autumn semester, 2020}
+\def\currentChapter{Clustering: model-based approaches}
+
+<<preamble, child='../common_preamble.Rnw'>>=
+@
+
+\usetikzlibrary{calc,shapes,backgrounds,arrows,automata,shadows,positioning}
+
+\graphicspath{{figures/}}
+
+\begin{document}
+
+\dotitlepage
+
+%% ====================================================================
+\part{Introduction}
+%% ====================================================================
+<<introduction, child='introduction.Rnw'>>=
+@
+
+%% ====================================================================
+\part{Model-based method}
+%% ====================================================================
+\begin{frame}
+  \partpage
+\end{frame}
+
+%% ==========================================================================
+%% Model-based clustering: Mixture models
+%% ==========================================================================
+<<mixture_models, child='mixture_models.Rnw'>>=
+@
+
+%% ==========================================================================
+%% Example: Gaussian Mixture Models
+%% ==========================================================================
+<<gmm, child='gmm.Rnw'>>=
+@
+
+
+%% ==========================================================================
+%% Clustering of Network Data: SBM
+%% ==========================================================================
+<<sbm, child='sbm.Rnw'>>=
+@
+
+\end{document}

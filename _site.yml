@@ -61,7 +61,7 @@ navbar:
         - text: "Clustering"
           href: tutorial_clustering.html
         - text: "GGM and EM"
-#          href: tutorials_PCA.html
+          href: tutorials_mixtureModelsEM.html
     - text: "Homework"
       icon: fas fa-keyboard
       menu:

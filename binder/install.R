@@ -21,4 +21,4 @@ install.packages("RANN")        # fast nearest neighbors
 install.packages("Rtsne")       # tSNE implementation in R
 install.packages("umap")        # umap implementation in R
 install.packages("missSBM")     # SBM + data for French political blogosphere
-
+install.packages("mixtools")    # simple mixture models
