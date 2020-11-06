@@ -34,11 +34,14 @@ jobs:
        #    environment-file: binder/environment.yml
        #    use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
        # - uses: goanpeca/setup-miniconda@v1
+      - name: Installing additional R packages
+        shell: bash -l {0}
+        run: | 
+          export LANG=en_US.UTF-8
+          conda run -n MAP573 Rscript binder/install.R
       - name: Rendering Rmd files
         shell: bash -l {0}
         run: |
-          export LANG=en_US.UTF-8
-          conda run -n MAP573 Rscript binder/install.R
           conda run -n MAP573 Rscript -e 'rmarkdown::render_site(".")'
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3
