@@ -756,14 +756,14 @@ div.tocify {
 <span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(alpha[<span class="dv">3</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu3,sigma3), <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
 <span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(alpha[<span class="dv">4</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu4,sigma4), <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
 <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="fu">rug</span>(x)</span></code></pre></div>
-<p><img src="tuto_mixtureModelsEM_corr_files/figure-html/data%20generation-1.png" width="672" /> Try your EM algorithm on the simulated data. Comment the results. Consider different initialization. Compare with the output of the function <strong>normalmixEm</strong> in the package <strong>mixtools</strong>.</p>
+<p><img src="tutorial_mixtureModelsEM_corr_files/figure-html/data%20generation-1.png" width="672" /> Try your EM algorithm on the simulated data. Comment the results. Consider different initialization. Compare with the output of the function <strong>normalmixEm</strong> in the package <strong>mixtools</strong>.</p>
 </div>
 <div id="solution-5" class="section level3">
 <h3>Solution 5)</h3>
 <p>Suppose that we know the number of components, i.e. 4.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">EM_mixture</span>(x, <span class="at">Q =</span> <span class="dv">4</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(out<span class="sc">$</span>loglik, <span class="at">main =</span> <span class="st">&quot;data log-likelihood&quot;</span>, <span class="at">type=</span><span class="st">&quot;l&quot;</span>)</span></code></pre></div>
-<p><img src="tuto_mixtureModelsEM_corr_files/figure-html/test%20EM-1.png" width="672" /></p>
+<p><img src="tutorial_mixtureModelsEM_corr_files/figure-html/test%20EM-1.png" width="672" /></p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(alpha[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu1,sigma1) <span class="sc">+</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">2</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu2,sigma2) <span class="sc">+</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">3</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu3,sigma3) <span class="sc">+</span></span>
@@ -776,39 +776,40 @@ div.tocify {
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(out<span class="sc">$</span>alpha[<span class="dv">3</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,out<span class="sc">$</span>mu[<span class="dv">3</span>],out<span class="sc">$</span>sigma[<span class="dv">3</span>]), <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(out<span class="sc">$</span>alpha[<span class="dv">4</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,out<span class="sc">$</span>mu[<span class="dv">4</span>],out<span class="sc">$</span>sigma[<span class="dv">4</span>]), <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rug</span>(x)</span></code></pre></div>
-<p><img src="tuto_mixtureModelsEM_corr_files/figure-html/test%20EM-2.png" width="672" /></p>
+<p><img src="tutorial_mixtureModelsEM_corr_files/figure-html/test%20EM-2.png" width="672" /></p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## the confusion table gives rather good results</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(out<span class="sc">$</span>cl,cl)</span></code></pre></div>
 <pre><code>##    cl
 ##       1   2   3   4
-##   1   0 179   1   1
-##   2  13  10   0   0
-##   3  87   0   0   0
-##   4   0  11  49  99</code></pre>
+##   1  89   0   0   0
+##   2   0 169   1   1
+##   3   0   0  28  95
+##   4  11  31  21   4</code></pre>
 <p>It seems like we are not too far from two first normal distributions. It seems harder to recover the two last.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#?normalmixEM</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>EM <span class="ot">&lt;-</span> <span class="fu">normalmixEM</span>(x, <span class="at">k =</span> <span class="dv">4</span>)</span></code></pre></div>
-<pre><code>## number of iterations= 320</code></pre>
+<pre><code>## WARNING! NOT CONVERGENT! 
+## number of iterations= 1000</code></pre>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&#39;mu using normalmixEM algo:&#39;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;mu using normalmixEM algo:&quot;</code></pre>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(EM<span class="sc">$</span>mu)</span></code></pre></div>
-<pre><code>## [1]  4.305377 10.069484  5.370591 17.231314</code></pre>
+<pre><code>## [1]  4.582403  9.269412 10.098786 17.786396</code></pre>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&#39;mu using our EM algo:&#39;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;mu using our EM algo:&quot;</code></pre>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(out<span class="sc">$</span>mu)</span></code></pre></div>
-<pre><code>## [1] 10.123135  7.562795  4.548663 17.244838</code></pre>
+<pre><code>## [1]  4.616133 10.072635 18.925081 10.762244</code></pre>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&#39;sigma using normalmixEM algo:&#39;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;sigma using normalmixEM algo:&quot;</code></pre>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(EM<span class="sc">$</span>sigma)</span></code></pre></div>
-<pre><code>## [1] 0.4458574 0.8149669 1.1921494 4.3105531</code></pre>
+<pre><code>## [1] 0.7487798 2.6355116 0.7046221 4.0478264</code></pre>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&#39;sigma using our EM algo:&#39;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;sigma using our EM algo:&quot;</code></pre>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(out<span class="sc">$</span>sigma)</span></code></pre></div>
-<pre><code>## [1] 0.7514565 2.0091716 0.7225878 4.2948759</code></pre>
+<pre><code>## [1] 0.7750100 0.7030647 3.5375028 3.2765952</code></pre>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>EM<span class="sc">$</span>lambda</span></code></pre></div>
-<pre><code>## [1] 0.09747641 0.39348009 0.12839662 0.38064688</code></pre>
+<pre><code>## [1] 0.1821417 0.1478335 0.3241398 0.3458850</code></pre>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(EM<span class="sc">$</span>loglik, <span class="at">main =</span> <span class="st">&quot;data log-likelihood&quot;</span>, <span class="at">type=</span><span class="st">&quot;l&quot;</span>)</span></code></pre></div>
-<p><img src="tuto_mixtureModelsEM_corr_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="tutorial_mixtureModelsEM_corr_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(alpha[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu1,sigma1) <span class="sc">+</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">2</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu2,sigma2) <span class="sc">+</span></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">3</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu3,sigma3) <span class="sc">+</span></span>
@@ -821,7 +822,7 @@ div.tocify {
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(EM<span class="sc">$</span>lambda[<span class="dv">3</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,EM<span class="sc">$</span>mu[<span class="dv">3</span>],EM<span class="sc">$</span>sigma[<span class="dv">3</span>]), <span class="at">col=</span><span class="st">&quot;green&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
 <span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(EM<span class="sc">$</span>lambda[<span class="dv">4</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,EM<span class="sc">$</span>mu[<span class="dv">4</span>],EM<span class="sc">$</span>sigma[<span class="dv">4</span>]), <span class="at">col=</span><span class="st">&quot;green&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
 <span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rug</span>(x)</span></code></pre></div>
-<p><img src="tuto_mixtureModelsEM_corr_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+<p><img src="tutorial_mixtureModelsEM_corr_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
 <ol start="6" style="list-style-type: decimal">
 <li><em>Model Selection.</em> Discuss the choice of <span class="math inline">\(Q\)</span> by computing the BIC and ICL criterion and test it on your simulated data. <span class="math display">\[
 \mathrm{BIC}(Q) = - 2 \log L(X;\hat \alpha, \hat \mu, \hat \sigma^2)
@@ -843,7 +844,7 @@ div.tocify {
 <span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="fu">matplot</span>(seq.Q, <span class="fu">t</span>(crit.EM), <span class="at">type=</span><span class="st">&quot;l&quot;</span>, <span class="at">col=</span><span class="fu">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>))</span>
 <span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;topleft&quot;</span>, <span class="fu">c</span>(<span class="st">&quot;BIC&quot;</span>, <span class="st">&quot;ICL&quot;</span>), <span class="at">col=</span><span class="fu">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>),<span class="at">lty=</span><span class="dv">1</span>)</span></code></pre></div>
-<p><img src="tuto_mixtureModelsEM_corr_files/figure-html/model%20selection-1.png" width="672" /></p>
+<p><img src="tutorial_mixtureModelsEM_corr_files/figure-html/model%20selection-1.png" width="672" /></p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>Q.hat <span class="ot">&lt;-</span> seq.Q[<span class="fu">which.min</span>(crit.EM[<span class="dv">1</span>, ])]</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">EM_mixture</span>(x, <span class="at">Q =</span> Q.hat, <span class="fu">kmeans</span>(x, Q.hat)<span class="sc">$</span>cl)</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
@@ -858,7 +859,7 @@ div.tocify {
 <span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">curve</span>(out<span class="sc">$</span>alpha[q]<span class="sc">*</span><span class="fu">dnorm</span>(x,out<span class="sc">$</span>mu[q],out<span class="sc">$</span>sigma[q]), <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
 <span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="fu">rug</span>(x)</span></code></pre></div>
-<p><img src="tuto_mixtureModelsEM_corr_files/figure-html/model%20selection-2.png" width="672" /></p>
+<p><img src="tutorial_mixtureModelsEM_corr_files/figure-html/model%20selection-2.png" width="672" /></p>
 </div>
 </div>
 </div>
