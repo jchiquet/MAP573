@@ -27,7 +27,7 @@ jobs:
         with:
           activate-environment: MAP573
           channel-priority: strict
-          environment-file: binder/environment-caching.yml
+          environment-file: binder/environment.yml
           use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
       - name: Rendering Rmd files
         shell: bash -l {0}
