@@ -447,181 +447,181 @@ criterion = nn.MSELoss()
 
 Let us now work on the data: the 10,000 digit samples will be split into a train, a validation and a test set. The train set is used to train the network. The validation set enables us to set the hyperparameters for training. The test set is used to assess the model trained on the train set with the set of best hyperparameters found with the validation set. We use the function train_test_split from sklearn to split the train, validation, and test set. This is a two-step procedure: 1) Split test and train + validation and 2) Split train + validation into train and validation. **Please uncomment the following code and fill the argument test_size on the chunck below so that: 60% of 10,000 samples are in train set, 20% are in the validation set, 20% are in the test set.**
 
-```{python exo2_question2_split_train_val_test}
-X_train_val, X_test, y_train_val, y_test =  sk.train_test_split(np.array(r.X), np.array(r.y['V1']), test_size= 0.2)
-#X_train_val, X_test, y_train_val, y_test = sk.train_test_split(r.X, r.y, test_size=0.2)
-X_train, X_val, y_train, y_val = sk.train_test_split(X_train_val, y_train_val, test_size=0.25)
-print(X_train.shape)
-print(X_val.shape)
-print(X_test.shape)
-```
+<!-- ```{python exo2_question2_split_train_val_test} -->
+<!-- X_train_val, X_test, y_train_val, y_test =  sk.train_test_split(np.array(r.X), np.array(r.y['V1']), test_size= 0.2) -->
+<!-- #X_train_val, X_test, y_train_val, y_test = sk.train_test_split(r.X, r.y, test_size=0.2) -->
+<!-- X_train, X_val, y_train, y_val = sk.train_test_split(X_train_val, y_train_val, test_size=0.25) -->
+<!-- print(X_train.shape) -->
+<!-- print(X_val.shape) -->
+<!-- print(X_test.shape) -->
+<!-- ``` -->
 
-The model is trained for a given number of epochs. An epoch corresponds to a complete pass through the training set. The training set is divided into batches of fixed size. We chose here batches of size 128. Pytorch provides a class of iterable object DataLoader to automatically create the batches. 
+<!-- The model is trained for a given number of epochs. An epoch corresponds to a complete pass through the training set. The training set is divided into batches of fixed size. We chose here batches of size 128. Pytorch provides a class of iterable object DataLoader to automatically create the batches.  -->
 
-The validation and test set are not split into batches since they are not used for training: we only convert them to Pytorch tensors. 
+<!-- The validation and test set are not split into batches since they are not used for training: we only convert them to Pytorch tensors.  -->
 
-Please run the code below. 
+<!-- Please run the code below.  -->
 
-```{python exo2_question2_create_batches}
-#Create Dataoader objects with will automaticaly create batches for test and train
-train_loader = torch.utils.data.DataLoader(
-    torch.tensor(X_train.to_numpy()).float(), 
-    batch_size=128, 
-    shuffle=True
-)
+<!-- ```{python exo2_question2_create_batches} -->
+<!-- #Create Dataoader objects with will automaticaly create batches for test and train -->
+<!-- train_loader = torch.utils.data.DataLoader( -->
+<!--     torch.tensor(X_train.to_numpy()).float(),  -->
+<!--     batch_size=128,  -->
+<!--     shuffle=True -->
+<!-- ) -->
 
-X_val_torch = torch.tensor(X_val.to_numpy()).float()
-X_test_torch = torch.tensor(X_test.to_numpy()).float()
-```
+<!-- X_val_torch = torch.tensor(X_val.to_numpy()).float() -->
+<!-- X_test_torch = torch.tensor(X_test.to_numpy()).float() -->
+<!-- ``` -->
 
-### 3) Train the model 
+<!-- ### 3) Train the model  -->
 
-Let us finally train the model. Choose the number of epochs to run (start low and increase it). The following code loops on the number of epochs and on the train batches. The MSE loss is computed for each batch after a forward pass through the network. The function backward then computes the gradient of the loss with respect to the network parameters. Finally, the network parameters are updated through the optimizer (Adam here). 
+<!-- Let us finally train the model. Choose the number of epochs to run (start low and increase it). The following code loops on the number of epochs and on the train batches. The MSE loss is computed for each batch after a forward pass through the network. The function backward then computes the gradient of the loss with respect to the network parameters. Finally, the network parameters are updated through the optimizer (Adam here).  -->
 
-The mean training loss averaged on all the batches of the code is stored in a list to be analyzed afterward. **Your task** is to compute the MSE loss **on the validation set** once the training loop on all the batches done. Please uncomment, fill the code below and run it. 
+<!-- The mean training loss averaged on all the batches of the code is stored in a list to be analyzed afterward. **Your task** is to compute the MSE loss **on the validation set** once the training loop on all the batches done. Please uncomment, fill the code below and run it.  -->
 
-**Important**: the goal of this exercise is to discover Auto-Encoders, Pytorch, and reticulate. Please do not spend time on tuning all the hyperparameters. Plus, do not run too many epochs if your computer does not have much calculus power. To give you an idea, a 100 epochs run in less than 1 minute on my computer. 
+<!-- **Important**: the goal of this exercise is to discover Auto-Encoders, Pytorch, and reticulate. Please do not spend time on tuning all the hyperparameters. Plus, do not run too many epochs if your computer does not have much calculus power. To give you an idea, a 100 epochs run in less than 1 minute on my computer.  -->
 
-```{python exo2_question3a_run_epochs}
-epochs = 200
-val_losses  = []
-train_losses = []
+<!-- ```{python exo2_question3a_run_epochs} -->
+<!-- epochs = 200 -->
+<!-- val_losses  = [] -->
+<!-- train_losses = [] -->
 
-for epoch in range(epochs):
+<!-- for epoch in range(epochs): -->
 
-    loss = 0
-    for batch_features in train_loader:
-        
-        # Reset the gradients back to zero
-        # PyTorch accumulates gradients on subsequent backward passes
-        optimizer.zero_grad()
-        
-        # Compute reconstructions
-        outputs = model(batch_features)
-        
-        # Compute training reconstruction loss
-        train_loss = criterion(outputs, batch_features)
-        
-        # Compute accumulated gradients
-        train_loss.backward()
-        
-        # Perform parameter update based on current gradients
-        optimizer.step()
-        
-        # Add the mini-batch training loss to epoch loss
-        loss += train_loss.item()
-     
-    # Store the mean training loss on epoch 
-    loss = loss / len(train_loader)
-    train_losses.append(loss)   
-    
-    # Compute loss on validation set
-    # TODO 
-    outputs_val = model(X_val_torch)
-    val_loss = criterion(outputs_val, X_val_torch)
-    
-    # Store the validation loss on epoch 
-    val_losses.append(val_loss.item())
-    
-    # Display the epoch training loss
-    print("epoch : {}/{}, train_loss = {:.6f}, val_loss = {:.6f}".format(epoch + 1, epochs, loss,val_loss))
-```
+<!--     loss = 0 -->
+<!--     for batch_features in train_loader: -->
 
-Let us come back to R! Plot the evolution of the training and validation loss in function of the epochs. Comment on your result. Can you train your network with more epochs? Should you stop the training process before the last epoch? 
+<!--         # Reset the gradients back to zero -->
+<!--         # PyTorch accumulates gradients on subsequent backward passes -->
+<!--         optimizer.zero_grad() -->
 
-Note that one can acces val_losses and train_losses created in the chunck above with `py$val_losses` and `py$train_loss`. 
+<!--         # Compute reconstructions -->
+<!--         outputs = model(batch_features) -->
 
-```{r exo2_question3b_print_val_train_loss}
-#print(py$val_losses)
-#print(py$train_losses)
-losses <- as.data.frame(cbind(1:py$epochs,py$val_losses,py$train_losses))
-colnames(losses) <- c("epoch","validation_loss","train_loss")
-#print(losses)
+<!--         # Compute training reconstruction loss -->
+<!--         train_loss = criterion(outputs, batch_features) -->
 
-#TODO : plot 
-ggplot(data = losses, aes(x = epoch)) +
-  geom_line(aes(y = validation_loss,color = "Validation loss"), ) +
-  geom_line(aes(y = train_loss, color = "Train loss") ) +
-  ggsci::scale_color_jama() +
-  theme_bw() + 
-  labs(title = "Train and validation loss in function of the epoch number",
-       x = "Epoch", 
-       y = "MSE Loss",
-       color = "")
-```
+<!--         # Compute accumulated gradients -->
+<!--         train_loss.backward() -->
 
-After a run of 200 epochs, the validation and training are still both decreasing: there is no sign of overfitting for now. We can run the model for more epochs. 
+<!--         # Perform parameter update based on current gradients -->
+<!--         optimizer.step() -->
 
-By analyzing the behavior of the network on the validation set, we can tune all the hyperparameters of the model: number of epochs, learning rate, batch size, layer shapes, ... Please do not do it for this homework as this may be too time-consuming. Indeed, let's keep the parameters defined above and the weights of the model as it was after the last training you did. It does not matter if it is not perfectly trained for the mark. 
+<!--         # Add the mini-batch training loss to epoch loss -->
+<!--         loss += train_loss.item() -->
 
-Let us now focus on assessing the algorithm on the test set. 
-First, compute the reconstructed outputs (forward pass through the auto-encoder) for the test set images. Name your table outputs_test. 
-Print the loss on the test set and comment. 
+<!--     # Store the mean training loss on epoch  -->
+<!--     loss = loss / len(train_loader) -->
+<!--     train_losses.append(loss)    -->
 
-```{python exo2_question3c_loss_test}
-# Compute test loss
-outputs_test = model(X_test_torch)
-test_loss = criterion(outputs_test, X_test_torch)
-print(test_loss.item())
-outputs_test = model(X_test_torch).detach().numpy() #To detach the results from gradien graph. 
-```
+<!--     # Compute loss on validation set -->
+<!--     # TODO  -->
+<!--     outputs_val = model(X_val_torch) -->
+<!--     val_loss = criterion(outputs_val, X_val_torch) -->
 
-The MSE loss on the test set is more or less the same as on the training and validation set. 
+<!--     # Store the validation loss on epoch  -->
+<!--     val_losses.append(val_loss.item()) -->
 
-Next, print the five first original and reconstructed test images by running the code below. Comment on the results.  
+<!--     # Display the epoch training loss -->
+<!--     print("epoch : {}/{}, train_loss = {:.6f}, val_loss = {:.6f}".format(epoch + 1, epochs, loss,val_loss)) -->
+<!-- ``` -->
 
-```{r exo2_question3_print_reconstructed_test_images}
-par(mar=c(1,1,1,1))
-par(mfrow=c(5,2))
-for (idx in 1:5) {
-    label <- py$y_test[idx, ]
-    image(matrix.rotate(py$X_test[idx, ]),
-          col = grey(level = seq(1, 0, by=-1/255)), 
-          axes=F, 
-          main=label)
-    image(matrix.rotate(py$outputs_test[idx, ]), #TODO : 
-          col = grey(level = seq(1, 0, by=-1/255)), 
-          axes=F, 
-          main=label)
-}
-```
+<!-- Let us come back to R! Plot the evolution of the training and validation loss in function of the epochs. Comment on your result. Can you train your network with more epochs? Should you stop the training process before the last epoch?  -->
 
-We see that the global shape of each digit is preserved. Yet, the reconstructed images seem to be somehow blurred. 
+<!-- Note that one can acces val_losses and train_losses created in the chunck above with `py$val_losses` and `py$train_loss`.  -->
 
-### 4) t-SNE on embeddings
+<!-- ```{r exo2_question3b_print_val_train_loss} -->
+<!-- #print(py$val_losses) -->
+<!-- #print(py$train_losses) -->
+<!-- losses <- as.data.frame(cbind(1:py$epochs,py$val_losses,py$train_losses)) -->
+<!-- colnames(losses) <- c("epoch","validation_loss","train_loss") -->
+<!-- #print(losses) -->
 
-The goal of this last section is to apply t-SNE to the embeddings we get (dimension : 179) in order to visualize them in 2D. 
+<!-- #TODO : plot  -->
+<!-- ggplot(data = losses, aes(x = epoch)) + -->
+<!--   geom_line(aes(y = validation_loss,color = "Validation loss"), ) + -->
+<!--   geom_line(aes(y = train_loss, color = "Train loss") ) + -->
+<!--   ggsci::scale_color_jama() + -->
+<!--   theme_bw() +  -->
+<!--   labs(title = "Train and validation loss in function of the epoch number", -->
+<!--        x = "Epoch",  -->
+<!--        y = "MSE Loss", -->
+<!--        color = "") -->
+<!-- ``` -->
 
-First, compute the embeddings of the test set images (pass through the encoder only). 
+<!-- After a run of 200 epochs, the validation and training are still both decreasing: there is no sign of overfitting for now. We can run the model for more epochs.  -->
 
-```{python exo2_question4a_embedding_test}
-embedding_tests = model.encoder(X_test_torch)
-embedding_tests = embedding_tests.detach().numpy() #To detach the results from gradient graph. 
-```
+<!-- By analyzing the behavior of the network on the validation set, we can tune all the hyperparameters of the model: number of epochs, learning rate, batch size, layer shapes, ... Please do not do it for this homework as this may be too time-consuming. Indeed, let's keep the parameters defined above and the weights of the model as it was after the last training you did. It does not matter if it is not perfectly trained for the mark.  -->
 
-Next, apply t-SNE to the embeddings with t-SNE output dimension 2 and the value of perplexity you want (no need to tune the perplexity).
+<!-- Let us now focus on assessing the algorithm on the test set.  -->
+<!-- First, compute the reconstructed outputs (forward pass through the auto-encoder) for the test set images. Name your table outputs_test.  -->
+<!-- Print the loss on the test set and comment.  -->
 
-```{r exo2_question4b_tsne}
-tsne <- Rtsne(py$embedding_tests, dims = 2, perplexity= 30  , verbose=FALSE)
-```
+<!-- ```{python exo2_question3c_loss_test} -->
+<!-- # Compute test loss -->
+<!-- outputs_test = model(X_test_torch) -->
+<!-- test_loss = criterion(outputs_test, X_test_torch) -->
+<!-- print(test_loss.item()) -->
+<!-- outputs_test = model(X_test_torch).detach().numpy() #To detach the results from gradien graph.  -->
+<!-- ``` -->
 
-Finally, print the 2D t-SNE embeddings as **points colored by their true label**. Comment on the results. 
+<!-- The MSE loss on the test set is more or less the same as on the training and validation set.  -->
 
-```{r exo2_question4c_print_tsne}
-results_tsne <- cbind(tsne$Y,py$y_test) %>%
-  as.data.frame() %>% 
-  mutate(label = factor(V1))
- 
-ggplot(data = results_tsne, mapping = aes(x=`1`, y=`2`, color = label)) +
-  geom_point() +
-  theme_bw() + 
-  labs(title ="t-SNE results representation", 
-       color = "True digit", 
-       x = "",
-       y="",
-       caption = "Artificial dataset generated from 3 Gaussian distriubtions")
-```
+<!-- Next, print the five first original and reconstructed test images by running the code below. Comment on the results.   -->
 
-The concatenation of the Auto-Encoder and t-SNE manages to more or less separate the classes in a two-dimension space. Indeed, some classes like 1 or 2 lead to quite compact and isolated clusters. Some classes are still mixed: there is a mix between 4 and 9 for instance. We also guess some outliers. 
+<!-- ```{r exo2_question3_print_reconstructed_test_images} -->
+<!-- par(mar=c(1,1,1,1)) -->
+<!-- par(mfrow=c(5,2)) -->
+<!-- for (idx in 1:5) { -->
+<!--     label <- py$y_test[idx, ] -->
+<!--     image(matrix.rotate(py$X_test[idx, ]), -->
+<!--           col = grey(level = seq(1, 0, by=-1/255)),  -->
+<!--           axes=F,  -->
+<!--           main=label) -->
+<!--     image(matrix.rotate(py$outputs_test[idx, ]), #TODO :  -->
+<!--           col = grey(level = seq(1, 0, by=-1/255)),  -->
+<!--           axes=F,  -->
+<!--           main=label) -->
+<!-- } -->
+<!-- ``` -->
 
-Through the slides, TD and homework, you should now have a large overview of dimensionality reductions methods (linear and non-linear) that exist. You can have a look at [this page](https://scikit-learn.org/stable/auto_examples/manifold/plot_compare_methods.html#sphx-glr-auto-examples-manifold-plot-compare-methods-py) which compares several methods and their execution time for the S-curve problem you have seen during the TD. Among them are Isomap and t-SNE that you used during the Homework. 
+<!-- We see that the global shape of each digit is preserved. Yet, the reconstructed images seem to be somehow blurred.  -->
+
+<!-- ### 4) t-SNE on embeddings -->
+
+<!-- The goal of this last section is to apply t-SNE to the embeddings we get (dimension : 179) in order to visualize them in 2D.  -->
+
+<!-- First, compute the embeddings of the test set images (pass through the encoder only).  -->
+
+<!-- ```{python exo2_question4a_embedding_test} -->
+<!-- embedding_tests = model.encoder(X_test_torch) -->
+<!-- embedding_tests = embedding_tests.detach().numpy() #To detach the results from gradient graph.  -->
+<!-- ``` -->
+
+<!-- Next, apply t-SNE to the embeddings with t-SNE output dimension 2 and the value of perplexity you want (no need to tune the perplexity). -->
+
+<!-- ```{r exo2_question4b_tsne} -->
+<!-- tsne <- Rtsne(py$embedding_tests, dims = 2, perplexity= 30  , verbose=FALSE) -->
+<!-- ``` -->
+
+<!-- Finally, print the 2D t-SNE embeddings as **points colored by their true label**. Comment on the results.  -->
+
+<!-- ```{r exo2_question4c_print_tsne} -->
+<!-- results_tsne <- cbind(tsne$Y,py$y_test) %>% -->
+<!--   as.data.frame() %>%  -->
+<!--   mutate(label = factor(V1)) -->
+
+<!-- ggplot(data = results_tsne, mapping = aes(x=`1`, y=`2`, color = label)) + -->
+<!--   geom_point() + -->
+<!--   theme_bw() +  -->
+<!--   labs(title ="t-SNE results representation",  -->
+<!--        color = "True digit",  -->
+<!--        x = "", -->
+<!--        y="", -->
+<!--        caption = "Artificial dataset generated from 3 Gaussian distriubtions") -->
+<!-- ``` -->
+
+<!-- The concatenation of the Auto-Encoder and t-SNE manages to more or less separate the classes in a two-dimension space. Indeed, some classes like 1 or 2 lead to quite compact and isolated clusters. Some classes are still mixed: there is a mix between 4 and 9 for instance. We also guess some outliers.  -->
+
+<!-- Through the slides, TD and homework, you should now have a large overview of dimensionality reductions methods (linear and non-linear) that exist. You can have a look at [this page](https://scikit-learn.org/stable/auto_examples/manifold/plot_compare_methods.html#sphx-glr-auto-examples-manifold-plot-compare-methods-py) which compares several methods and their execution time for the S-curve problem you have seen during the TD. Among them are Isomap and t-SNE that you used during the Homework.  -->
