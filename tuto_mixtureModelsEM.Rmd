@@ -79,7 +79,7 @@ E_step <- function(X, theta) {
 
 ```{r EM}
 EM_mixture <- function(X, Q,
-                       init.cl = sample(1:Q, n, rep=TRUE), max.iter=100, eps=1e-5) {
+                       init.cl = base::sample(1:Q, n, rep=TRUE), max.iter=100, eps=1e-5) {
     n <- length(X); tau <- matrix(0, n, Q); tau[cbind(1:n, init.cl)] <- 1
     loglik  <- vector("numeric", max.iter)
     Eloglik <- vector("numeric", max.iter)
@@ -121,7 +121,7 @@ x <- c(rnorm(n1,mu1,sigma1),rnorm(n2,mu2,sigma2),
 n <- length(x)
 
 ## we randomize the class ordering
-rnd <- sample(1:n)
+rnd <- base::sample(1:n)
 cl <- cl[rnd]
 x  <- x[rnd]
 
