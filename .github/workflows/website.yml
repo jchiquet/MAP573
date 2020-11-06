@@ -14,21 +14,26 @@ jobs:
         uses: actions/checkout@v2
       - name: Installing additional system libraries with APT
         run: xargs -a binder/apt.txt sudo apt-get install
-      - name: Caching miniconda
-        uses: actions/cache@v1
-        env:
-          # Increase this value to reset cache if binder/environment.yml has not changed
-          CACHE_NUMBER: 0
-        with:
-          path: ~/conda_pkgs_dir
-          key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('binder/environment.yml') }}
+      # - name: Caching miniconda
+      #   uses: actions/cache@v1
+      #   env:
+      #     # Increase this value to reset cache if binder/environment.yml has not changed
+      #     CACHE_NUMBER: 0
+      #   with:
+      #     path: ~/conda_pkgs_dir
+      #     key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('binder/environment.yml') }}
       - name: Setting up miniconda with specified Python and R dependencies
         uses: goanpeca/setup-miniconda@v1
         with:
-          activate-environment: MAP573
-          channel-priority: strict
+          auto-update-conda: true
           environment-file: binder/environment.yml
-          use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
+          activate-environment: MAP573
+       #  with:
+       #    activate-environment: MAP573
+       #    channel-priority: strict
+       #    environment-file: binder/environment.yml
+       #    use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
+       # - uses: goanpeca/setup-miniconda@v1
       - name: Rendering Rmd files
         shell: bash -l {0}
         run: |
