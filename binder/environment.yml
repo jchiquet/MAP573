@@ -1,0 +1,33 @@
+name: MAP573
+channels:
+  - conda-forge
+dependencies:
+  - pytorch
+  - numpy
+  - matplotlib
+  - scikit-learn
+  - pandoc
+  - r-aricode
+  - r-base=3.6.3
+  - r-corrplot
+  - r-devtools
+  - r-dimred
+  - r-dt
+  - r-codetools
+  - r-cluster
+  - r-dimred
+  - r-foreign
+  - r-ggally
+  - r-igraph
+  - r-knitr
+  - r-kernlab
+  - r-learnr
+  - r-matrix
+  - r-maps
+  - r-mnormt
+  - r-readods
+  - r-rcpp
+  - r-rcpparmadillo
+  - r-reticulate
+  - r-rmarkdown
+  - r-tidyverse

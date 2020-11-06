@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="MAP573 team" />
+
+<meta name="date" content="2020-10-20" />
+
+<title>Tutorial: nonlinear dimensionality reduction methods</title>
+
+<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<script src="resources/hideOutput.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="resources/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 45px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h2 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h3 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h4 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h5 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h6 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">MAP573</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="https://github.com/jchiquet/CourseUnsupervisedLearningX">
+    <span class="fa fa-github"></span>
+     
+    
+  </a>
+</li>
+<li>
+  <a href="https://moodle.polytechnique.fr/enrol/index.php?id=9404">
+    <span class="fa fa-server"></span>
+     
+    Moodle
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="instructions.html">
+    <span class="fas fa fas fa-gear"></span>
+     
+    Setup
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-chalkboard-teacher"></span>
+     
+    Lectures/Slides
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="resources/introMAP573.pdf">General introduction</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="https://github.com/jchiquet/CourseAdvancedR/raw/master/2020_MAP573/R_intro.pdf">An introduction to R</a>
+    </li>
+    <li>
+      <a href="https://github.com/jchiquet/CourseAdvancedR/raw/master/2020_MAP573/R_intro_tidyverse.pdf">Manipulation, representation: a Tour of the tidyverse</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Dimensionality Reduction</li>
+    <li>
+      <a href="resources/DimensionReductionPCA.pdf">Linear methods: PCA</a>
+    </li>
+    <li>
+      <a href="resources/DimensionReductionNonLinear.pdf">Non linear methods: MDS, Kernel PCA, t-SNE and others</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Clustering</li>
+    <li>
+      <a href="resources/Clustering.pdf">Distance/Similarity-based: HAC, k-means, Spectral clustering</a>
+    </li>
+    <li class="dropdown-header">Model-based clustering: Gaussian mixture model and EM</li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-laptop"></span>
+     
+    Tutorials
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="tutorials_R.html">R tutorials</a>
+    </li>
+    <li>
+      <a href="tutorial_PCA_correction.html">PCA</a>
+    </li>
+    <li>
+      <a href="tutorial_nonlinear_dim_reduction_methods_cor.html">MDS, kernel-PCA</a>
+    </li>
+    <li>
+      <a href="tutorial_clustering.html">Clustering</a>
+    </li>
+    <li>
+      <a href="tutorials_mixtureModelsEM.html">GGM and EM</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-keyboard"></span>
+     
+    Homework
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="homework_1_reporting_correction.html">#1: Swirl, Rmarkdown, R basics - correction</a>
+    </li>
+    <li>
+      <a href="homework_2_data_manipulation_representation_correction.html">#2: Data manipulation and representation - correction</a>
+    </li>
+    <li>
+      <a href="homework_3_PCA_correction.html">#3: Data analysis with PCA - correction</a>
+    </li>
+    <li>
+      <a href="homework_4_dim_reduc_non_linear.html">#4: Non-linear dimension reduction method</a>
+    </li>
+    <li>
+      <a href="homework_5_GraphPartitioning.html">#5: Spectral Clustering for graphs</a>
+    </li>
+    <li class="dropdown-header">#6: Handling Missing Values</li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-chart-bar"></span>
+     
+    Projects
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Subject 1:</li>
+    <li class="dropdown-header">Subject 2:</li>
+    <li class="dropdown-header">Subject 3:</li>
+    <li class="dropdown-header">Subject 4:</li>
+    <li class="dropdown-header">Subject 5:</li>
+    <li class="dropdown-header">Subject 6:</li>
+    <li class="dropdown-header">Subject 7:</li>
+    <li class="dropdown-header">Subject 8:</li>
+    <li class="dropdown-header">Subject 9:</li>
+    <li class="dropdown-header">Subject 10:</li>
+  </ul>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Tutorial: nonlinear dimensionality reduction methods</h1>
+<h4 class="author">MAP573 team</h4>
+<h4 class="date">10/20/2020</h4>
+
+</div>
+
+
+<div id="preliminaries" class="section level1">
+<h1>Preliminaries</h1>
+<div id="package-requirements" class="section level2">
+<h2>Package requirements</h2>
+<p>We start by loading a couple of packages for data manipulation, dimension reduction and fancy representations.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)   <span class="co"># advanced data manipulation and vizualisation</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)       <span class="co"># R notebook export and formatting </span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)  <span class="co"># Factor analysis</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)  <span class="co"># Fancy plotting of FactoMineR outputs</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)    <span class="co"># Fancy plotting of matrices </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)      <span class="co"># Easy-to-use ggplot2 extensions</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)      <span class="co"># Easy-to-use ggplot2 exentesions</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(maps)        <span class="co"># Draw Geographical Maps</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)     <span class="co"># Automatically Position Non-Overlapping Text Labels with ggplot</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>()) <span class="co"># set default ggplot2 theme to black and white</span></span></code></pre></div>
+<div id="reminders-on-multidimensional-scaling-mds" class="section level3">
+<h3>Reminders on Multidimensional scaling (MDS)</h3>
+<p>There are different types of MDS algorithms, including</p>
+<p><strong>Classical multidimensional scaling</strong> Preserves the original distance metric, between points, as well as possible. That is the fitted distances on the MDS map and the original distances are in the same metric. Classic MDS belongs to the so-called metric multidimensional scaling category.</p>
+<p>It is also known as principal coordinates analysis. It is suitable for quantitative data.</p>
+<p><strong>Non-metric multidimensional scaling</strong> It is also known as ordinal MDS. Here, it is not the metric of a distance value that is important or meaningful, but its value in relation to the distances between other pairs of objects.</p>
+<p>Ordinal MDS constructs fitted distances that are in the same rank order as the original distance. For example, if the distance of apart objects <span class="math inline">\(1\)</span> and <span class="math inline">\(5\)</span> rank fifth in the original distance data, then they should also rank fifth in the MDS configuration.</p>
+<p>It is suitable for qualitative data.</p>
+</div>
+</div>
+<div id="r-functions-for-mds" class="section level2">
+<h2>R functions for MDS</h2>
+<p>To perform MDS, we may either use:</p>
+<p><strong>cmdscale()</strong> [stats package]: Compute classical (metric) multidimensional scaling.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>?<span class="fu">cmdscale</span>()</span></code></pre></div>
+<p><strong>isoMDS()</strong> [MASS package]: Compute Kruskal’s non-metric multidimensional scaling (one form of non-metric MDS).</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>?<span class="fu">isoMDS</span>()</span></code></pre></div>
+<p><strong>sammon()</strong> [MASS package]: Compute Sammon’s non-linear mapping (one form of non-metric MDS).</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>?<span class="fu">sammon</span>()</span></code></pre></div>
+<p>All of these functions take a distance object as main argument and a number <span class="math inline">\(k\)</span> corresponding to the desired number of dimensions in the scaled output.</p>
+<div id="classical-mds" class="section level3">
+<h3>Classical MDS</h3>
+<p>We consider the <strong>swiss</strong> data that contains fertility and socio-economic data on 47 French speaking provinces in Switzerland.</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Start by loading the <em>swiss</em> package and have a quick look at it.</strong></p></li>
+<li><p><strong>Perform classical MDS with <span class="math inline">\(k=2\)</span> and plot the results.</strong></p></li>
+<li><p><strong>Create <span class="math inline">\(3\)</span> groups using <span class="math inline">\(k\)</span>-means clustering and color points by group.</strong></p></li>
+</ol>
+</div>
+</div>
+<div id="non-metric-mds" class="section level2">
+<h2>Non-metric MDS</h2>
+<ol start="4" style="list-style-type: decimal">
+<li><strong>Perform the same analysis with both Kruskal’s non-metric MDS and Sammon’s non-linear mapping. Can you spot any differences?</strong></li>
+</ol>
+<div id="correlation-matrix-using-multidimensional-scaling" class="section level3">
+<h3>Correlation matrix using Multidimensional Scaling</h3>
+<p>MDS can also be used to detect a hidden pattern in a correlation matrix.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>res.cor <span class="ot">&lt;-</span> <span class="fu">cor</span>(mtcars, <span class="at">method =</span> <span class="st">&quot;spearman&quot;</span>)</span></code></pre></div>
+<ol start="5" style="list-style-type: decimal">
+<li><p><strong>Would you say that correlation is a measure of similarity or dissimilarity? Using correlation, how would you compute distances between objects?</strong></p></li>
+<li><p><strong>Perform a classical MDS on the <em>mtcars</em> dataset and comment.</strong></p></li>
+<li><p><strong>Perform a PCA on the <em>mtcars</em> dataset. Comment on the differences with MDS. Recall what are the main differences between MDS and PCA.</strong></p></li>
+</ol>
+</div>
+</div>
+<div id="pairwise-distances-between-american-cities" class="section level2">
+<h2>Pairwise distances between American cities</h2>
+<p>The <strong>UScitiesD</strong> dataset gives ‘straight line’ distances between <span class="math inline">\(10\)</span> cities in the US.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>?UScitiesD</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>cities <span class="ot">&lt;-</span> UScitiesD</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>cities</span></code></pre></div>
+<pre><code>##               Atlanta Chicago Denver Houston LosAngeles Miami NewYork
+## Chicago           587                                                
+## Denver           1212     920                                        
+## Houston           701     940    879                                 
+## LosAngeles       1936    1745    831    1374                         
+## Miami             604    1188   1726     968       2339              
+## NewYork           748     713   1631    1420       2451  1092        
+## SanFrancisco     2139    1858    949    1645        347  2594    2571
+## Seattle          2182    1737   1021    1891        959  2734    2408
+## Washington.DC     543     597   1494    1220       2300   923     205
+##               SanFrancisco Seattle
+## Chicago                           
+## Denver                            
+## Houston                           
+## LosAngeles                        
+## Miami                             
+## NewYork                           
+## SanFrancisco                      
+## Seattle                678        
+## Washington.DC         2442    2329</code></pre>
+<p>Just looking at the table does not provide any information about the underlying structure of the data (i.e. the position of each city on a map). We are going to apply MDS to recover the geographical structure.</p>
+<ol style="list-style-type: decimal">
+<li><strong>Run the following code which displays the <span class="math inline">\(10\)</span> US cities we are considering.</strong></li>
+</ol>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Atlanta GA&quot;</span>, <span class="st">&quot;Chicago IL&quot;</span>, <span class="st">&quot;Denver CO&quot;</span>, <span class="st">&quot;Houston TX&quot;</span>, </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;Los Angeles CA&quot;</span>, <span class="st">&quot;Miami FL&quot;</span>, <span class="st">&quot;New York NY&quot;</span>, <span class="st">&quot;San Francisco CA&quot;</span>,                                          <span class="st">&quot;Seattle WA&quot;</span>, <span class="st">&quot;WASHINGTON DC&quot;</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">as_tibble</span>(us.cities)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(name <span class="sc">%in%</span> names)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>usa <span class="ot">&lt;-</span> <span class="fu">map_data</span>(<span class="st">&quot;usa&quot;</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>gg1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_polygon</span>(<span class="at">data =</span> usa, <span class="fu">aes</span>(<span class="at">x=</span>long, <span class="at">y =</span> lat, <span class="at">group =</span> group), <span class="at">fill =</span> <span class="st">&quot;NA&quot;</span>, <span class="at">color =</span> <span class="st">&quot;blue&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>(<span class="fl">1.3</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>labs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">long =</span> df<span class="sc">$</span>long,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">lat =</span> df<span class="sc">$</span>lat,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">names =</span> df<span class="sc">$</span>name,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  )  </span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>gg1 <span class="sc">+</span> </span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> labs, <span class="fu">aes</span>(<span class="at">x =</span> long, <span class="at">y =</span> lat), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> labs, <span class="fu">aes</span>(<span class="at">x =</span> long, <span class="at">y =</span> lat), <span class="at">color =</span> <span class="st">&quot;yellow&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">data =</span> labs, <span class="fu">aes</span>(<span class="at">x=</span>long , <span class="at">y=</span>lat, <span class="at">label =</span> names), <span class="at">size=</span><span class="dv">3</span>)</span></code></pre></div>
+<p><img src="tutorial_nonlinear_dim_reduction_methods_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<ol start="2" style="list-style-type: decimal">
+<li><p><strong>Plot the MDS representation of the pair-wise distances for the <span class="math inline">\(10\)</span> US cities with their name. Comment on the results. Is this the usual US map? Does this somehow contradict the use of MDS for dimensionality reduction?</strong></p></li>
+<li><p><strong>Solve the issue above by rotating the figure the proper way.</strong></p></li>
+</ol>
+<div id="kernel-pca" class="section level3">
+<h3>Kernel PCA</h3>
+</div>
+</div>
+<div id="reminders" class="section level2">
+<h2>Reminders</h2>
+<p>Recall that the principal components variables <span class="math inline">\(Z\)</span> of a data matrix <span class="math inline">\(X\)</span> can be computed from the inner-product (gram) matrix <span class="math inline">\(K=XX^\top\)</span>. In detail, we compute the eigen-decomposition of the double-centered version of the gram matrix <span class="math display">\[
+\tilde{K} = (I-M) K (I-M) = U D^2 U^\top,
+\]</span> where <span class="math inline">\(M = \frac 1n \mathbf{1}\mathbf{1}^\top\)</span> and <span class="math inline">\(Z = UD\)</span>. Kernel PCA mimics this proceduren interpreting the kernel matrix <span class="math inline">\(\mathbf K = (K(x_i,x_{i^{&#39;}}))_{1 \leq i,i^{&#39;} \leq n}\)</span> as an inner-product matrix of the implicit features <span class="math inline">\(\langle \phi(x_i), \phi(x_{i^{&#39;}}) \rangle\)</span> and finding its eigen vectors.</p>
+</div>
+<div id="with-python-using-reticulate-in-r" class="section level2">
+<h2>With Python using reticulate in R</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reticulate)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>reticulate<span class="sc">::</span><span class="fu">use_virtualenv</span>(<span class="st">&quot;r-reticulate&quot;</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>reticulate<span class="sc">::</span><span class="fu">py_config</span>()</span></code></pre></div>
+<pre><code>## python:         /usr/share/miniconda/envs/MAP573/bin/python3
+## libpython:      /usr/share/miniconda/envs/MAP573/lib/libpython3.7m.so
+## pythonhome:     /usr/share/miniconda/envs/MAP573:/usr/share/miniconda/envs/MAP573
+## version:        3.7.8 | packaged by conda-forge | (default, Jul 31 2020, 02:25:08)  [GCC 7.5.0]
+## numpy:          /usr/share/miniconda/envs/MAP573/lib/python3.7/site-packages/numpy
+## numpy_version:  1.19.4
+## umap:           [NOT FOUND]
+## 
+## python versions found: 
+##  /usr/share/miniconda/envs/MAP573/bin/python3
+##  /usr/bin/python3
+##  /usr/bin/python</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># py_install(&quot;sklearn&quot;   , pip=TRUE) # you need to install package sklearn first time</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># py_install(&quot;matplotlib&quot;, pip=TRUE) # you need to install install matplotlib first time</span></span></code></pre></div>
+<p>Let us start with a simple example of the two half-moon shapes generated by the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_moons.html">make_moons</a> functions from <a href="https://scikit-learn.org/stable/index.html">sklearn_learn</a>.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_moons</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(n_samples<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">0</span>], X[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;red&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">0</span>], X[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;A nonlinear 2Ddataset&#39;</span>)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;y coordinate&#39;</span>)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;x coordinate&#39;</span>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p><img src="tutorial_nonlinear_dim_reduction_methods_files/figure-html/unnamed-chunk-7-1.png" /><!-- --></p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Are the two half-moon shapes linearly separable? Do you expect PCA to give satisfactory results? Perform a <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html">PCA</a> using sklearn with <em>n_components</em> <span class="math inline">\(=1\)</span> and <span class="math inline">\(2\)</span>. Comment.</strong></p></li>
+<li><p><strong>Perform a KernelPCA using the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.KernelPCA.html">KernelPCA</a> function from sklearn with the rbf kernel and <span class="math inline">\(\gamma=15\)</span> with both n_components <span class="math inline">\(=1\)</span> and <span class="math inline">\(2\)</span>. Comment. Try different values for <span class="math inline">\(\gamma\)</span> and different kernels. Comment.</strong></p></li>
+</ol>
+</div>
+<div id="concentric-circles" class="section level2">
+<h2>Concentric circles</h2>
+<p>Another well-known example for which linear PCA will fail is the classic case of two concentric circles with random noise: have a look at <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html">make_circles</a>.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_circles</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_circles(n_samples<span class="op">=</span><span class="dv">1000</span>, random_state<span class="op">=</span><span class="dv">123</span>, noise<span class="op">=</span><span class="fl">0.1</span>, factor<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>))</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">0</span>], X[y<span class="op">==</span><span class="dv">0</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;red&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">0</span>], X[y<span class="op">==</span><span class="dv">1</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Concentric circles&#39;</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;y coordinate&#39;</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;x coordinate&#39;</span>)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p><img src="tutorial_nonlinear_dim_reduction_methods_files/figure-html/unnamed-chunk-8-1.png" /><!-- --></p>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Again, perform both a linear and kernel PCA on the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_circles.html">make_circles</a> dataset</strong></li>
+</ol>
+</div>
+<div id="swiss-roll" class="section level2">
+<h2>Swiss roll</h2>
+<p>Unrolling the Swiss roll dataset is a much more challenging task (see <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_swiss_roll.html">Swiss roll</a>).</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_swiss_roll</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mpl_toolkits.mplot3d <span class="im">import</span> Axes3D</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>X, color <span class="op">=</span> make_swiss_roll(n_samples<span class="op">=</span><span class="dv">800</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">7</span>,<span class="dv">7</span>))</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>, projection<span class="op">=</span><span class="st">&#39;3d&#39;</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>ax.scatter(X[:, <span class="dv">0</span>], X[:, <span class="dv">1</span>], X[:, <span class="dv">2</span>], c<span class="op">=</span>color, cmap<span class="op">=</span>plt.cm.rainbow)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Swiss Roll in 3D&#39;</span>)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p><img src="tutorial_nonlinear_dim_reduction_methods_files/figure-html/unnamed-chunk-9-1.png" /><!-- --></p>
+<ol start="4" style="list-style-type: decimal">
+<li><strong>Again, try to perform both linear and kernel PCA on the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_swiss_roll.html">Swiss roll</a> dataset. Try with different values of <span class="math inline">\(\gamma\)</span>. Are you satisfied with the results?</strong></li>
+</ol>
+<div id="locally-linear-embedding" class="section level3">
+<h3>Locally Linear Embedding</h3>
+<p>In 2000, Sam T. Roweis and Lawrence K. Saul <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.111.3313">Nonlinear dimensionality reduction by locally linear embedding</a> introduced an unsupervised learning algorithm called locally linear embedding (LLE) that is better suited to identify patterns in the high-dimensional feature space and solves our problem of nonlinear dimensionality reduction for the Swiss roll.</p>
+<p>Locally linear embedding (LLE) seeks a lower-dimensional projection of the data which preserves distances within local neighborhoods. It can be thought of as a series of local Principal Component Analyses which are globally compared to find the best non-linear embedding.</p>
+<ol start="5" style="list-style-type: decimal">
+<li><strong>Using the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.manifold.locally_linear_embedding.html">locally_linear_embedding</a> class, ‘unroll’ the Swiss roll both in <span class="math inline">\(1\)</span> and <span class="math inline">\(2\)</span> dimensions.</strong></li>
+</ol>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="MAP573 team" />
+
+<meta name="date" content="2020-11-10" />
+
+<title>Tutorial: Gaussian mixture model and the EM algorithm</title>
+
+<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<script src="resources/hideOutput.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="resources/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 45px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h2 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h3 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h4 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h5 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h6 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">MAP573</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="https://github.com/jchiquet/CourseUnsupervisedLearningX">
+    <span class="fa fa-github"></span>
+     
+    
+  </a>
+</li>
+<li>
+  <a href="https://moodle.polytechnique.fr/enrol/index.php?id=9404">
+    <span class="fa fa-server"></span>
+     
+    Moodle
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="instructions.html">
+    <span class="fas fa fas fa-gear"></span>
+     
+    Setup
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-chalkboard-teacher"></span>
+     
+    Lectures/Slides
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="resources/introMAP573.pdf">General introduction</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="https://github.com/jchiquet/CourseAdvancedR/raw/master/2020_MAP573/R_intro.pdf">An introduction to R</a>
+    </li>
+    <li>
+      <a href="https://github.com/jchiquet/CourseAdvancedR/raw/master/2020_MAP573/R_intro_tidyverse.pdf">Manipulation, representation: a Tour of the tidyverse</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Dimensionality Reduction</li>
+    <li>
+      <a href="resources/DimensionReductionPCA.pdf">Linear methods: PCA</a>
+    </li>
+    <li>
+      <a href="resources/DimensionReductionNonLinear.pdf">Non linear methods: MDS, Kernel PCA, t-SNE and others</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Clustering</li>
+    <li>
+      <a href="resources/Clustering.pdf">Distance/Similarity-based: HAC, k-means, Spectral clustering</a>
+    </li>
+    <li class="dropdown-header">Model-based clustering: Gaussian mixture model and EM</li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-laptop"></span>
+     
+    Tutorials
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="tutorials_R.html">R tutorials</a>
+    </li>
+    <li>
+      <a href="tutorial_PCA_correction.html">PCA</a>
+    </li>
+    <li>
+      <a href="tutorial_nonlinear_dim_reduction_methods_cor.html">MDS, kernel-PCA</a>
+    </li>
+    <li>
+      <a href="tutorial_clustering.html">Clustering</a>
+    </li>
+    <li>
+      <a href="tutorials_mixtureModelsEM.html">GGM and EM</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-keyboard"></span>
+     
+    Homework
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="homework_1_reporting_correction.html">#1: Swirl, Rmarkdown, R basics - correction</a>
+    </li>
+    <li>
+      <a href="homework_2_data_manipulation_representation_correction.html">#2: Data manipulation and representation - correction</a>
+    </li>
+    <li>
+      <a href="homework_3_PCA_correction.html">#3: Data analysis with PCA - correction</a>
+    </li>
+    <li>
+      <a href="homework_4_dim_reduc_non_linear.html">#4: Non-linear dimension reduction method</a>
+    </li>
+    <li>
+      <a href="homework_5_GraphPartitioning.html">#5: Spectral Clustering for graphs</a>
+    </li>
+    <li class="dropdown-header">#6: Handling Missing Values</li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-chart-bar"></span>
+     
+    Projects
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Subject 1:</li>
+    <li class="dropdown-header">Subject 2:</li>
+    <li class="dropdown-header">Subject 3:</li>
+    <li class="dropdown-header">Subject 4:</li>
+    <li class="dropdown-header">Subject 5:</li>
+    <li class="dropdown-header">Subject 6:</li>
+    <li class="dropdown-header">Subject 7:</li>
+    <li class="dropdown-header">Subject 8:</li>
+    <li class="dropdown-header">Subject 9:</li>
+    <li class="dropdown-header">Subject 10:</li>
+  </ul>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Tutorial: Gaussian mixture model and the EM algorithm</h1>
+<h4 class="author">MAP573 team</h4>
+<h4 class="date">11/10/2020</h4>
+
+</div>
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mixtools)</span></code></pre></div>
+<div id="gaussian-mixture-models" class="section level1">
+<h1>Gaussian Mixture Models</h1>
+<p>We consider a collection of random variables <span class="math inline">\((X_1, \dots, X_n)\)</span> associated with <span class="math inline">\(n\)</span> individuals drawn from <span class="math inline">\(Q\)</span> populations. The label of each individual describes the population (or class) to which it belongs and is unobserved. The <span class="math inline">\(Q\)</span> classes have <em>a priori</em> distribution <span class="math inline">\({\boldsymbol \alpha} = (\alpha_1,\dots,\alpha_Q)\)</span> with <span class="math inline">\(\alpha_q = \mathbb{P}(Z_i = q)\)</span>. In other word, the latent variable <span class="math inline">\(Z_i \in \{1,..,Q\}\)</span> indicating the label follow a multinomial distribution <span class="math inline">\(Z_i \sim \mathcal{M}(1,\boldsymbol\alpha)\)</span>, such as <span class="math inline">\(\sum_{q=1}^Q \alpha_q = 1\)</span>.</p>
+<p>The distribution of <span class="math inline">\(X_i\)</span> conditional on the label of <span class="math inline">\(i\)</span> is assumed to be a univariate gaussian distribution with unknown parameters, that is, <span class="math inline">\(X_i | Z_i = q \sim \mathcal{N}(\mu_q,\sigma^2_q)\)</span>.</p>
+<p>We further introduce the additional notation <span class="math inline">\(Z_{iq} = \mathbb 1_{\{Z_i = q\}}\)</span> and <span class="math inline">\(\tau_{iq}= \mathbb{P}(Z_{iq}=1|X_i)\)</span> for posterior probabilities.</p>
+<p>We denote the vector of parameters to be estimated by <span class="math inline">\(\mathbf{\mu} = (\mu_1,\dots,\mu_Q)\)</span>, <span class="math inline">\(\mathbf{\sigma^2} = (\sigma^2_1,\dots,\sigma^2_Q)\)</span>, <span class="math inline">\(\boldsymbol\tau = (\tau_{iq, i=1,\dots,n; q=1,\dots Q})\)</span>.</p>
+</div>
+<div id="questions" class="section level1">
+<h1>Questions</h1>
+<ol style="list-style-type: decimal">
+<li><em>Likelihood.</em> Write the model complete-data loglikelihood.</li>
+</ol>
+<div id="solution-1" class="section level3">
+<h3>Solution 1)</h3>
+<p>The marginal likelihood can be written as <span class="math display">\[\begin{equation}
+  \label{eq:likelihood}
+  L(X) = p(X) = \prod_{i=1}^n p(X_i) = \prod_{i=1}^n \sum_{q=1}^Q  p(X_i, Z_i = q) = \prod_{i=1}^n \sum_{q=1}^Q p(Z_i = q) p(X_i | Z_i = q)
+\end{equation}\]</span></p>
+<p>Equivalently, the loglikelihood is <span class="math display">\[\begin{equation*}
+  \log L(X)  = \sum_{i=1}^n \log \sum_{q=1}^Q p(Z_i = q) p(X_i | Z_i = q)
+\end{equation*}\]</span></p>
+</div>
+<div id="alternative-equivalent-formulation" class="section level2 unnumbered">
+<h2 class="unnumbered">Alternative (equivalent) formulation</h2>
+<p>Let us introduce (with slight abuse of notation) <span class="math inline">\(x \mapsto \mathcal N(x,\mu,\sigma^2)\)</span> the density of a normal distribution <span class="math inline">\(\mathcal N(\mu,\sigma^2)\)</span>.</p>
+<p>Introducing the additional notation <span class="math inline">\(Z_{iq} = \mathbb 1_{\{Z_i = q\}}\)</span>, then the following writting will be useful: <span class="math display">\[\begin{equation*}
+  \log p(Z_i) = \log\left(\prod_{q=1}^Q (\alpha_q)^{Z_{iq}}\right)= \sum_{q=1}^Q Z_{iq} \log (\alpha_q), 
+\end{equation*}\]</span> which is non zero just when <span class="math inline">\(q\)</span> is the effective realization of <span class="math inline">\(Z_i\)</span>. Similarly, <span class="math display">\[\begin{equation*}
+  \log p(X_i | Z_i) = \log\left(\prod_{q=1}^Q (\mathcal{N}(X_i;\mu_q,\sigma_q^2))^{Z_{iq}}\right) = \sum_{q=1}^Q Z_{iq} \log (\mathcal{N}(X_i;\mu_q,\sigma_q^2)).
+\end{equation*}\]</span></p>
+<p>Hence, the complete data likelihood can be written <span class="math display">\[\begin{equation*}
+  L(X, Z) = p(X, Z) = \prod_{i=1}^n p(X_i, Z_i) =  \prod_{i=1}^n p(Z_i) p(X_i | Z_i) = \prod_{i=1}^n \prod_{q=1}^Q (\alpha_q \mathcal{N}(X_i;\mu_q,\sigma_q^2))^{Z_{iq}},
+\end{equation*}\]</span> and then <span class="math display">\[\begin{equation}
+  \label{eq:cloglikelihood}
+  \log L(X, Z) =  \sum_{i=1}^n  \sum_{q=1}^Q Z_{iq} \log (\alpha_q \mathcal{N}(X_i;\mu_q,\sigma_q^2)),
+\end{equation}\]</span></p>
+<p><strong>Keep in mind that the difference between the marginal likelhood and the complete likelhood is that the <span class="math inline">\(Z_i\)</span> are given in the latter, not in the former.</strong> Then, in the expression for <span class="math inline">\(L(X)\)</span> the summation over the class is indeed an integration over all possible values, while in the expression for <span class="math inline">\(\log L(X, Z)\)</span>, all elements in <span class="math inline">\(\sum_q\)</span> will be zero except for the one truly observed, that is the <span class="math inline">\(q\)</span> such that <span class="math inline">\(Z_{iq} = 1\)</span>.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><em>E-step.</em> For fixed values of <span class="math inline">\(\hat{\mu}_q, \hat{\sigma}_{q}^{2}\)</span> and <span class="math inline">\(\hat\alpha_q\)</span>, give the expression of the estimates of the posterior probabilities <span class="math inline">\(\tau_{iq}= \mathbb{P}(Z_{iq}=1|X_i)\)</span>.</li>
+</ol>
+<div id="solution-2" class="section level3">
+<h3>Solution 2)</h3>
+<p>As a direct application of Bayes’ theorem, it holds: <span class="math display">\[\begin{equation}
+\tau_{iq} 
+=
+\frac{\hat\alpha_q \mathcal N(X_i; \hat{\mu}_q, \hat\sigma_q^2)}{\sum_{q=1}^Q \hat\alpha_q \mathcal N(X_i; \hat{\mu}_q, \hat\sigma_q^2)}.
+\end{equation}\]</span></p>
+<ol start="3" style="list-style-type: decimal">
+<li><em>M-step.</em> For fixed values of <span class="math inline">\(\hat{\tau}_{iq}\)</span>, show that the maximization step leads to the following estimator for the model parameters: <span class="math display">\[
+\hat{\alpha}_q = \frac 1n \sum_{i=1}^n \hat{\tau}_{iq}, \:\:\:\:\:
+\hat{\mu}_q = \frac{\sum_i \hat{\tau}_{iq} x_i}{\sum_i \hat{\tau}_{iq}}, \:\:\:\:\:
+\hat{\sigma}_q^2 = \frac{\sum_i \hat{\tau}_{iq} (x_i - \hat{\mu}_q)^2}{\sum_i \hat{\tau}_{iq}}.
+\]</span></li>
+</ol>
+</div>
+<div id="solution-3" class="section level3">
+<h3>Solution 3)</h3>
+<p>The maximization step consists in solving the following optimization problem <span class="math display">\[\begin{equation}
+\label{eq:m_step_optim}
+\arg \max_{\sigma_q,\mu_q,\alpha_q}  \underbrace{\sum_{i=1}^n \sum_{q=1}^Q \hat\tau_{iq} \left(\log \alpha_q - \log\sigma -\log(\sqrt{2\pi}) - \frac{1}{2\sigma_q^2} (x_i - \mu_q)^2 \right)}_{Q(\boldsymbol\sigma,\boldsymbol\mu,{\boldsymbol\alpha};\hat{\boldsymbol\tau})}
+\end{equation}\]</span></p>
+<p>Consider first the mixture coefficients. We solve the above maximization problem under the constraint that the mixture coefficients sum to 1. This can be dealt with the Lagrange multiplier technique. By deriving the objective function w.r.t <span class="math inline">\(\alpha_q\)</span>, we get</p>
+<p><span class="math display">\[\begin{equation} 
+\frac{\sum_i\hat\tau_{iq}}{\alpha_q} + \lambda = 0 \Leftrightarrow  \alpha_q = \frac{\sum_i\hat \tau_{iq}}{-\lambda}  
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(\lambda\)</span> corresponds to the Lagrange multiplier associated with the constraint <span class="math inline">\(\sum_q \alpha_q=1\)</span>. If we sum the latter result over all <span class="math inline">\(q\)</span>, we get that <span class="math inline">\(1 = \sum_q \hat \tau_{iq} / (-\lambda)\)</span>. In other words, <span class="math inline">\(\lambda = -\sum_q \hat \tau_{iq}\)</span> so that finally <span class="math display">\[\begin{equation} 
+\hat\alpha_q = \frac{\sum_{i=1}^n \hat \tau_{iq}}{\sum_{i=1}^n\sum_{q=1}^Q \hat \tau_{iq}}  
+\end{equation}\]</span></p>
+<p>Concerning, <span class="math inline">\(\hat\mu_q\)</span>, null gradient condition leads to <span class="math display">\[\begin{equation} 
+\sum_i \frac{\hat \tau_{iq}}{2\sigma_q^2}(x_i-\mu_q)  = 0 \Leftrightarrow  \mu_q = \frac{\sum_i \hat \tau_{iq} x_i}{\sum_i \hat \tau_{iq}}
+\end{equation}\]</span></p>
+<p>Similarly, for <span class="math inline">\(\hat\sigma_q\)</span>, we get <span class="math display">\[\begin{equation} 
+\sum_{i=1}^n \hat \tau_{iq} \left(-\frac{1}{2\sigma_q^2} + \frac{1}{2\sigma_q^4}(x_i-\mu_q)^2 \right)  = 0 \Leftrightarrow  \sigma^2_q = \frac{\sum_{i=1}^n \hat \tau_{iq} (x_i-\mu_q)^2}{\sum_{i=1}^n \hat \tau_{iq}}
+\end{equation}\]</span></p>
+<ol start="4" style="list-style-type: decimal">
+<li><em>Implementation.</em> Complete the following code.</li>
+</ol>
+</div>
+<div id="solution-4" class="section level3">
+<h3>Solution 4)</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>get_cloglik <span class="ot">&lt;-</span> <span class="cf">function</span>(X, Z, theta) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#returns the complete model loglikelihood</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(X); Q <span class="ot">&lt;-</span> <span class="fu">ncol</span>(Z)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> theta<span class="sc">$</span>alpha; mu <span class="ot">&lt;-</span> theta<span class="sc">$</span>mu; sigma <span class="ot">&lt;-</span> theta<span class="sc">$</span>sigma</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  Xs <span class="ot">&lt;-</span> <span class="fu">scale</span>(<span class="fu">matrix</span>(X, <span class="fu">length</span>(X), <span class="fu">length</span>(alpha)), mu, sigma)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">sum</span>(Z<span class="sc">*</span>(<span class="fu">log</span>(alpha) <span class="sc">-</span> <span class="fu">log</span>(sigma) <span class="sc">-</span> .<span class="dv">5</span><span class="sc">*</span>(<span class="fu">log</span>(<span class="dv">2</span><span class="sc">*</span>pi) <span class="sc">+</span> Xs<span class="sc">^</span><span class="dv">2</span>)))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  res</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>M_step <span class="ot">&lt;-</span> <span class="cf">function</span>(X, tau) {</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(X); Q <span class="ot">&lt;-</span> <span class="fu">ncol</span>(tau)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  alpha  <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(tau)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  mu     <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(tau <span class="sc">*</span> <span class="fu">matrix</span>(X,n,Q)) <span class="sc">/</span> alpha</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  sigma  <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">colMeans</span>(tau<span class="sc">*</span><span class="fu">sweep</span>(<span class="fu">matrix</span>(X,n,Q),<span class="dv">2</span>,mu,<span class="st">&quot;-&quot;</span>)<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>alpha)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">alpha =</span> alpha, <span class="at">mu =</span> mu, <span class="at">sigma =</span> sigma)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>E_step <span class="ot">&lt;-</span> <span class="cf">function</span>(X, theta) {</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  probs <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(alpha, mu, sigma) {</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    alpha<span class="sc">*</span><span class="fu">dnorm</span>(X,mu,sigma)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  }, theta<span class="sc">$</span>alpha, theta<span class="sc">$</span>mu, theta<span class="sc">$</span>sigma)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  likelihoods <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(probs)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">tau =</span> probs <span class="sc">/</span> likelihoods, <span class="at">loglik =</span> <span class="fu">sum</span>(<span class="fu">log</span>(likelihoods)))</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>EM_mixture <span class="ot">&lt;-</span> <span class="cf">function</span>(X, Q,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">init.cl =</span> base<span class="sc">::</span><span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>Q, n, <span class="at">rep=</span><span class="cn">TRUE</span>), <span class="at">max.iter=</span><span class="dv">100</span>, <span class="at">eps=</span><span class="fl">1e-5</span>) {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    n <span class="ot">&lt;-</span> <span class="fu">length</span>(X); tau <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, n, Q); tau[<span class="fu">cbind</span>(<span class="dv">1</span><span class="sc">:</span>n, init.cl)] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    loglik  <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">&quot;numeric&quot;</span>, max.iter)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    Eloglik <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">&quot;numeric&quot;</span>, max.iter)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    iter <span class="ot">&lt;-</span> <span class="dv">0</span>; cond <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (<span class="sc">!</span>cond) {</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        iter <span class="ot">&lt;-</span> iter <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="do">## M step</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        theta <span class="ot">&lt;-</span> <span class="fu">M_step</span>(X, tau)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="do">## E step</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        res_Estep <span class="ot">&lt;-</span> <span class="fu">E_step</span>(X, theta)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        tau <span class="ot">&lt;-</span> res_Estep<span class="sc">$</span>tau</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        <span class="do">## check consistency</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        loglik[iter]  <span class="ot">&lt;-</span> res_Estep<span class="sc">$</span>loglik</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        Eloglik[iter] <span class="ot">&lt;-</span> <span class="fu">get_cloglik</span>(X, tau, theta)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (iter <span class="sc">&gt;</span> <span class="dv">1</span>)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>            cond <span class="ot">&lt;-</span> (iter<span class="sc">&gt;=</span>max.iter) <span class="sc">|</span> Eloglik[iter]<span class="sc">-</span>Eloglik[iter<span class="dv">-1</span>] <span class="sc">&lt;</span> eps</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">alpha =</span> theta<span class="sc">$</span>alpha,  <span class="at">mu =</span> theta<span class="sc">$</span>mu,  <span class="at">sigma =</span> theta<span class="sc">$</span>sigma,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>                <span class="at">tau   =</span> tau, <span class="at">cl =</span> <span class="fu">apply</span>(tau, <span class="dv">1</span>, which.max),</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>                <span class="at">Eloglik =</span> Eloglik[<span class="dv">1</span><span class="sc">:</span>iter],</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>                <span class="at">loglik  =</span> loglik[<span class="dv">1</span><span class="sc">:</span>iter])</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    res</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<ol start="5" style="list-style-type: decimal">
+<li><em>Examples.</em> We would like now to assess the performance of our EM algorithm. To do so, we generate:</li>
+</ol>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mu1 <span class="ot">&lt;-</span> <span class="dv">5</span>   ; sigma1 <span class="ot">&lt;-</span> <span class="dv">1</span>; n1 <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>mu2 <span class="ot">&lt;-</span> <span class="dv">10</span>  ; sigma2 <span class="ot">&lt;-</span> <span class="dv">1</span>; n2 <span class="ot">&lt;-</span> <span class="dv">200</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>mu3 <span class="ot">&lt;-</span> <span class="dv">15</span>  ; sigma3 <span class="ot">&lt;-</span> <span class="dv">2</span>; n3 <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>mu4 <span class="ot">&lt;-</span> <span class="dv">20</span>  ; sigma4 <span class="ot">&lt;-</span> <span class="dv">3</span>; n4 <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,<span class="fu">c</span>(n1,n2,n3,n4))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(n1,mu1,sigma1),<span class="fu">rnorm</span>(n2,mu2,sigma2),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>       <span class="fu">rnorm</span>(n3,mu3,sigma3),<span class="fu">rnorm</span>(n4,mu4,sigma4))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="do">## we randomize the class ordering</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>rnd <span class="ot">&lt;-</span> base<span class="sc">::</span><span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> cl[rnd]</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>x  <span class="ot">&lt;-</span> x[rnd]</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fu">c</span>(n1,n2,n3,n4)<span class="sc">/</span>n</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(alpha[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu1,sigma1) <span class="sc">+</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">2</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu2,sigma2) <span class="sc">+</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">3</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu3,sigma3) <span class="sc">+</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">4</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu4,sigma3), </span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">col=</span><span class="st">&quot;blue&quot;</span>, <span class="at">lty=</span><span class="dv">1</span>, <span class="at">from=</span><span class="dv">0</span>,<span class="at">to=</span><span class="dv">30</span>, <span class="at">n=</span><span class="dv">1000</span>,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">main=</span><span class="st">&quot;Theoretical Gaussian mixture and its components&quot;</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab=</span><span class="st">&quot;x&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;density&quot;</span>)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(alpha[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu1,sigma1), <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(alpha[<span class="dv">2</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu2,sigma2), <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(alpha[<span class="dv">3</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu3,sigma3), <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(alpha[<span class="dv">4</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu4,sigma4), <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="fu">rug</span>(x)</span></code></pre></div>
+<p><img src="tuto_mixtureModelsEM_corr_files/figure-html/data%20generation-1.png" width="672" /> Try your EM algorithm on the simulated data. Comment the results. Consider different initialization. Compare with the output of the function <strong>normalmixEm</strong> in the package <strong>mixtools</strong>.</p>
+</div>
+<div id="solution-5" class="section level3">
+<h3>Solution 5)</h3>
+<p>Suppose that we know the number of components, i.e. 4.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">EM_mixture</span>(x, <span class="at">Q =</span> <span class="dv">4</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(out<span class="sc">$</span>loglik, <span class="at">main =</span> <span class="st">&quot;data log-likelihood&quot;</span>, <span class="at">type=</span><span class="st">&quot;l&quot;</span>)</span></code></pre></div>
+<p><img src="tuto_mixtureModelsEM_corr_files/figure-html/test%20EM-1.png" width="672" /></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(alpha[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu1,sigma1) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">2</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu2,sigma2) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">3</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu3,sigma3) <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">4</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu4,sigma3), <span class="at">col=</span><span class="st">&quot;blue&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">lty=</span><span class="dv">1</span>, <span class="at">from=</span><span class="dv">0</span>,<span class="at">to=</span><span class="dv">30</span>, <span class="at">n=</span><span class="dv">1000</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">main=</span><span class="st">&quot;Theoretical Gaussian mixture and estimated components&quot;</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab=</span><span class="st">&quot;x&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;density&quot;</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(out<span class="sc">$</span>alpha[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,out<span class="sc">$</span>mu[<span class="dv">1</span>],out<span class="sc">$</span>sigma[<span class="dv">1</span>]), <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(out<span class="sc">$</span>alpha[<span class="dv">2</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,out<span class="sc">$</span>mu[<span class="dv">2</span>],out<span class="sc">$</span>sigma[<span class="dv">2</span>]), <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(out<span class="sc">$</span>alpha[<span class="dv">3</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,out<span class="sc">$</span>mu[<span class="dv">3</span>],out<span class="sc">$</span>sigma[<span class="dv">3</span>]), <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(out<span class="sc">$</span>alpha[<span class="dv">4</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,out<span class="sc">$</span>mu[<span class="dv">4</span>],out<span class="sc">$</span>sigma[<span class="dv">4</span>]), <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rug</span>(x)</span></code></pre></div>
+<p><img src="tuto_mixtureModelsEM_corr_files/figure-html/test%20EM-2.png" width="672" /></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## the confusion table gives rather good results</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(out<span class="sc">$</span>cl,cl)</span></code></pre></div>
+<pre><code>##    cl
+##       1   2   3   4
+##   1   0 179   1   1
+##   2  13  10   0   0
+##   3  87   0   0   0
+##   4   0  11  49  99</code></pre>
+<p>It seems like we are not too far from two first normal distributions. It seems harder to recover the two last.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#?normalmixEM</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>EM <span class="ot">&lt;-</span> <span class="fu">normalmixEM</span>(x, <span class="at">k =</span> <span class="dv">4</span>)</span></code></pre></div>
+<pre><code>## number of iterations= 320</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&#39;mu using normalmixEM algo:&#39;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;mu using normalmixEM algo:&quot;</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(EM<span class="sc">$</span>mu)</span></code></pre></div>
+<pre><code>## [1]  4.305377 10.069484  5.370591 17.231314</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&#39;mu using our EM algo:&#39;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;mu using our EM algo:&quot;</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(out<span class="sc">$</span>mu)</span></code></pre></div>
+<pre><code>## [1] 10.123135  7.562795  4.548663 17.244838</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&#39;sigma using normalmixEM algo:&#39;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;sigma using normalmixEM algo:&quot;</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(EM<span class="sc">$</span>sigma)</span></code></pre></div>
+<pre><code>## [1] 0.4458574 0.8149669 1.1921494 4.3105531</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&#39;sigma using our EM algo:&#39;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;sigma using our EM algo:&quot;</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(out<span class="sc">$</span>sigma)</span></code></pre></div>
+<pre><code>## [1] 0.7514565 2.0091716 0.7225878 4.2948759</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>EM<span class="sc">$</span>lambda</span></code></pre></div>
+<pre><code>## [1] 0.09747641 0.39348009 0.12839662 0.38064688</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(EM<span class="sc">$</span>loglik, <span class="at">main =</span> <span class="st">&quot;data log-likelihood&quot;</span>, <span class="at">type=</span><span class="st">&quot;l&quot;</span>)</span></code></pre></div>
+<p><img src="tuto_mixtureModelsEM_corr_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(alpha[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu1,sigma1) <span class="sc">+</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">2</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu2,sigma2) <span class="sc">+</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">3</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu3,sigma3) <span class="sc">+</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">4</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu4,sigma3), <span class="at">col=</span><span class="st">&quot;blue&quot;</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">lty=</span><span class="dv">1</span>, <span class="at">from=</span><span class="dv">0</span>,<span class="at">to=</span><span class="dv">30</span>, <span class="at">n=</span><span class="dv">1000</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">main=</span><span class="st">&quot;Theoretical Gaussian mixture and estimated components&quot;</span>,</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab=</span><span class="st">&quot;x&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;density&quot;</span>)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(EM<span class="sc">$</span>lambda[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,EM<span class="sc">$</span>mu[<span class="dv">1</span>],EM<span class="sc">$</span>sigma[<span class="dv">1</span>]), <span class="at">col=</span><span class="st">&quot;green&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(EM<span class="sc">$</span>lambda[<span class="dv">2</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,EM<span class="sc">$</span>mu[<span class="dv">2</span>],EM<span class="sc">$</span>sigma[<span class="dv">2</span>]), <span class="at">col=</span><span class="st">&quot;green&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(EM<span class="sc">$</span>lambda[<span class="dv">3</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,EM<span class="sc">$</span>mu[<span class="dv">3</span>],EM<span class="sc">$</span>sigma[<span class="dv">3</span>]), <span class="at">col=</span><span class="st">&quot;green&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(EM<span class="sc">$</span>lambda[<span class="dv">4</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,EM<span class="sc">$</span>mu[<span class="dv">4</span>],EM<span class="sc">$</span>sigma[<span class="dv">4</span>]), <span class="at">col=</span><span class="st">&quot;green&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rug</span>(x)</span></code></pre></div>
+<p><img src="tuto_mixtureModelsEM_corr_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+<ol start="6" style="list-style-type: decimal">
+<li><em>Model Selection.</em> Discuss the choice of <span class="math inline">\(Q\)</span> by computing the BIC and ICL criterion and test it on your simulated data. <span class="math display">\[
+\mathrm{BIC}(Q) = - 2 \log L(X;\hat \alpha, \hat \mu, \hat \sigma^2)
++\log(n) \mathrm{df}(Q).
+\]</span> <span class="math display">\[
+\mathrm{ICL}(Q) = - 2 \log L(X,Z;\hat \alpha, \hat \mu, \hat \sigma^2)
++\log(n) \mathrm{df}(Q).
+\]</span></li>
+</ol>
+</div>
+<div id="solution-6" class="section level3">
+<h3>Solution 6)</h3>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>seq.Q <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>crit.EM <span class="ot">&lt;-</span> <span class="fu">sapply</span>(seq.Q, <span class="cf">function</span>(Q) {</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">EM_mixture</span>(x, Q, <span class="fu">kmeans</span>(x,Q)<span class="sc">$</span>cl)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> Q <span class="sc">-</span> <span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> Q</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">c</span>(<span class="at">BIC =</span> <span class="sc">-</span><span class="dv">2</span><span class="sc">*</span><span class="fu">tail</span>(out<span class="sc">$</span>loglik ,<span class="dv">1</span>) <span class="sc">+</span> <span class="fu">log</span>(n)<span class="sc">*</span>df,</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">ICL =</span> <span class="sc">-</span><span class="dv">2</span><span class="sc">*</span><span class="fu">tail</span>(out<span class="sc">$</span>Eloglik,<span class="dv">1</span>) <span class="sc">+</span> <span class="fu">log</span>(n)<span class="sc">*</span>df ))</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="fu">matplot</span>(seq.Q, <span class="fu">t</span>(crit.EM), <span class="at">type=</span><span class="st">&quot;l&quot;</span>, <span class="at">col=</span><span class="fu">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>))</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;topleft&quot;</span>, <span class="fu">c</span>(<span class="st">&quot;BIC&quot;</span>, <span class="st">&quot;ICL&quot;</span>), <span class="at">col=</span><span class="fu">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>),<span class="at">lty=</span><span class="dv">1</span>)</span></code></pre></div>
+<p><img src="tuto_mixtureModelsEM_corr_files/figure-html/model%20selection-1.png" width="672" /></p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>Q.hat <span class="ot">&lt;-</span> seq.Q[<span class="fu">which.min</span>(crit.EM[<span class="dv">1</span>, ])]</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">EM_mixture</span>(x, <span class="at">Q =</span> Q.hat, <span class="fu">kmeans</span>(x, Q.hat)<span class="sc">$</span>cl)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(alpha[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu1,sigma1) <span class="sc">+</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">2</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu2,sigma2) <span class="sc">+</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">3</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu3,sigma3) <span class="sc">+</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>      alpha[<span class="dv">4</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x,mu4,sigma3), <span class="at">col=</span><span class="st">&quot;blue&quot;</span>, </span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">lty=</span><span class="dv">1</span>, <span class="at">from=</span><span class="dv">0</span>,<span class="at">to=</span><span class="dv">30</span>, <span class="at">n=</span><span class="dv">1000</span>,</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">main=</span><span class="st">&quot;Theoretical Gaussian mixture and estimated components&quot;</span>,</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab=</span><span class="st">&quot;x&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;density&quot;</span>)</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (q <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>Q.hat) {</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">curve</span>(out<span class="sc">$</span>alpha[q]<span class="sc">*</span><span class="fu">dnorm</span>(x,out<span class="sc">$</span>mu[q],out<span class="sc">$</span>sigma[q]), <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="fu">rug</span>(x)</span></code></pre></div>
+<p><img src="tuto_mixtureModelsEM_corr_files/figure-html/model%20selection-2.png" width="672" /></p>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
