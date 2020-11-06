@@ -11,5 +11,5 @@ jobs:
       with:
         NO_PUSH: true
         MYBINDERORG_TAG: ${{ github.event.ref }}
-        IMAGE_NAME: MAP573
+        IMAGE_NAME: map573
 
