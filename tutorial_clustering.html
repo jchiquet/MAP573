@@ -599,9 +599,8 @@ div.tocify {
 <h2>Package requirements</h2>
 <p>We start by loading a couple of packages for data manipulation, dimension reduction clustering, fancy representations, etc.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)  <span class="co"># opinionated collection of packages for data manipulation</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kernlab)    <span class="co"># Kernel-based methods, among which spectral-clustering</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aricode)    <span class="co"># fast computation of clustering measures</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>()) <span class="co"># plots themes</span></span></code></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aricode)    <span class="co"># fast computation of clustering measures</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>()) <span class="co"># plots themes</span></span></code></pre></div>
 </div>
 </div>
 <div id="clustering-of-a-series-of-data-sets" class="section level1">
@@ -620,11 +619,69 @@ div.tocify {
 <h3>Questions</h3>
 <ol style="list-style-type: decimal">
 <li>Run the k-means algorithm (function <code>kmeans</code>) for 11 clusters a hundred of time and keep track of the within sum of squares.</li>
+</ol>
+<div class="hiddensolution">
+<p>We replicate 100 runs of the kmeans with a single start:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>scRNA_matrix <span class="ot">&lt;-</span> scRNA <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>cell_type) <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>kmeans_out <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">100</span>, <span class="fu">kmeans</span>(scRNA_matrix, <span class="at">centers =</span> <span class="dv">11</span>, <span class="at">nstart =</span> <span class="dv">1</span>), <span class="at">simplify =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+</div>
+<ol start="2" style="list-style-type: decimal">
 <li>Compare the total WSS for each run, and then for each each cluster (with e.g. boxplot). Comment.</li>
+</ol>
+<p>Overall, there can be a variation of up to 50% of the total sum of squares for different initialization of the kmeans:</p>
+<div class="hiddensolution">
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">WSS =</span> <span class="fu">map_dbl</span>(kmeans_out, <span class="st">&quot;tot.withinss&quot;</span>), <span class="at">run =</span> <span class="fu">as.character</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">aes</span>(<span class="at">y =</span> WSS<span class="sc">/</span><span class="fu">max</span>(WSS)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;Variation of the rescaled Total sum of squares&quot;</span>)</span></code></pre></div>
+<p><img src="tutorial_clustering_files/figure-html/compare%20WSS-1.png" width="672" /></p>
+</div>
+<p>At the cluster level, one can see that some clusters are a bit more stable (unstable) than others, probably with individual at the boundary, more difficult to affect to a given group.</p>
+<div class="hiddensolution">
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(kmeans_out, <span class="st">&quot;withinss&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># tranformation to a named data frame/tibble</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(<span class="st">&quot;rbind&quot;</span>, .) <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">setNames</span>(<span class="fu">paste0</span>(<span class="st">&quot;cluster&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">&quot;cluster&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;WSS&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">aes</span>(<span class="at">x =</span> cluster, <span class="at">y =</span> WSS) <span class="sc">+</span> <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;Within sum of squares per cluster&quot;</span>)</span></code></pre></div>
+<p><img src="tutorial_clustering_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+</div>
+<ol start="3" style="list-style-type: decimal">
 <li>Run the k-means for a varying number of clusters (say, between 1 and 20) with the parameter <code>nstart</code> set to 20. Save the results.</li>
+</ol>
+<p><code>map</code> of any other <code>apply</code>-like functional is your friend ! We go up to 30 clusters and make 50 restart for each run, in order to get rather smooth ARI/NID curves:</p>
+<div class="hiddensolution">
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nb_clusters <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">30</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>kmeans_var_cluster <span class="ot">&lt;-</span> <span class="fu">map</span>(nb_clusters, <span class="sc">~</span><span class="fu">kmeans</span>(scRNA_matrix, <span class="at">centers =</span> ., <span class="at">nstart =</span> <span class="dv">50</span>))</span></code></pre></div>
+</div>
+<ol start="4" style="list-style-type: decimal">
 <li>Compare the clusterings obtained with the corresponding cell-lines in terms of ARI and NID (use the pakage <strong>aricode</strong>).</li>
+</ol>
+<div class="hiddensolution">
+<p>A consensus appear around 10 clusters: note that the curves are not perfectly smooth, partly due to convergence of the k-means algorithm to local minima.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ARI <span class="ot">&lt;-</span> <span class="fu">map</span>(kmeans_var_cluster, <span class="st">&quot;cluster&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># extract the clusterings</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dbl</span>(aricode<span class="sc">::</span>ARI, scRNA<span class="sc">$</span>cell_type) <span class="do">## compute the ARI</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>NID <span class="ot">&lt;-</span> <span class="fu">map</span>(kmeans_var_cluster, <span class="st">&quot;cluster&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># extract the clusterings</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dbl</span>(aricode<span class="sc">::</span>NID, scRNA<span class="sc">$</span>cell_type) <span class="do">## compute the ARI</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">ARI =</span> ARI, <span class="at">NID =</span> NID, <span class="at">nb_clusters =</span> nb_clusters) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>nb_clusters, <span class="at">values_to =</span> <span class="st">&quot;value&quot;</span>, <span class="at">names_to =</span> <span class="st">&quot;measure&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(measure) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">aes</span>(<span class="at">x =</span> nb_clusters, <span class="at">y =</span> value, <span class="at">color =</span> measure) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;K-means Clustering Performance&quot;</span>)</span></code></pre></div>
+<p><img src="tutorial_clustering_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<ol start="5" style="list-style-type: decimal">
 <li>Same question as 3-4 with the hierarchical clustering with Ward aggregation criterion (function <code>hclust</code> + <code>cutree</code>).</li>
 </ol>
+<div class="hiddensolution">
+<p>Alright then, <code>hclust</code> + <code>cutree</code> with Ward criterion do a similar job to the k-means:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>hclust_var_cluster <span class="ot">&lt;-</span> <span class="fu">dist</span>(scRNA_matrix, <span class="at">method =</span> <span class="st">&quot;euclidean&quot;</span>) <span class="sc">%&gt;%</span>  <span class="fu">hclust</span>(<span class="at">method =</span> <span class="st">&quot;ward.D2&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ARI <span class="ot">&lt;-</span> <span class="fu">cutree</span>(hclust_var_cluster, nb_clusters) <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="dv">2</span>, ARI, scRNA<span class="sc">$</span>cell_type)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>NID <span class="ot">&lt;-</span> <span class="fu">cutree</span>(hclust_var_cluster, nb_clusters) <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="dv">2</span>, NID, scRNA<span class="sc">$</span>cell_type)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">ARI =</span> ARI, <span class="at">NID =</span> NID, <span class="at">nb_clusters =</span> nb_clusters) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>nb_clusters, <span class="at">values_to =</span> <span class="st">&quot;value&quot;</span>, <span class="at">names_to =</span> <span class="st">&quot;measure&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(measure) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">aes</span>(<span class="at">x =</span> nb_clusters, <span class="at">y =</span> value, <span class="at">color =</span> measure) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Hierarchical Clustering Performance&quot;</span>)</span></code></pre></div>
+<p><img src="tutorial_clustering_files/figure-html/hclust-1.png" width="672" /></p>
+</div>
 </div>
 </div>
 <div id="snp-data-genotyping-of-various-populations" class="section level2">
@@ -641,13 +698,52 @@ div.tocify {
 <div id="data-importation-1" class="section level3">
 <h3>Data Importation</h3>
 <p>The data are imported as follows:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;data/SNP.RData&quot;</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>snp  <span class="ot">&lt;-</span> data<span class="sc">$</span>Geno <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">replace</span>(<span class="fu">is.na</span>(.), <span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_column</span>(<span class="at">origin =</span> data<span class="sc">$</span>origin, <span class="at">.before =</span> <span class="dv">1</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;data/SNP.RData&quot;</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>snp  <span class="ot">&lt;-</span> data<span class="sc">$</span>Geno <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">replace</span>(<span class="fu">is.na</span>(.), <span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_column</span>(<span class="at">origin =</span> data<span class="sc">$</span>origin, <span class="at">.before =</span> <span class="dv">1</span>) </span></code></pre></div>
 </div>
 <div id="questions-1" class="section level3">
 <h3>Questions</h3>
 <p>Try the various algorithms seen during the course (kmeans, hierarchical clustering, spectral clustering, kernel versions), possibly with a step of dimension reduction first (e.g. PCA, t-SNE, UMAP). Try to get the best result in terms of ARI/NID compared to the natural classification (the origin of the population). If you have time, assess the robustness of your result in terms of ARI by performing resampling in the initial table snp (i.e., by running the analysis several times on a random subsample of your data, say 80%, and then averaging your results in terms of ARI).</p>
+<div class="hiddensolution">
+<p>A generally good baseline is hierarchical clustering (to chose visually the number of cluster) + k-means. In this case, they gave similar results:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>hclust_snp <span class="ot">&lt;-</span> <span class="fu">dist</span>(<span class="fu">select</span>(snp, <span class="sc">-</span>origin)) <span class="sc">%&gt;%</span>  <span class="fu">hclust</span>(, <span class="at">method =</span> <span class="st">&quot;ward.D2&quot;</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ARI_hc <span class="ot">&lt;-</span> <span class="fu">cutree</span>(hclust_snp, <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>) <span class="sc">%&gt;%</span> <span class="fu">apply</span>(<span class="dv">2</span>, ARI, snp<span class="sc">$</span>origin)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>kmeans_snp <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="fu">select</span>(snp, <span class="sc">-</span>origin), <span class="at">centers =</span> <span class="fu">which.max</span>(ARI_hc), <span class="at">nstart =</span> <span class="dv">20</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>ARI_km <span class="ot">&lt;-</span> <span class="fu">ARI</span>(kmeans_snp<span class="sc">$</span>cluster, snp<span class="sc">$</span>origin)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Hierarchical clustering: &quot;</span>, <span class="fu">max</span>(ARI_hc))</span></code></pre></div>
+<pre><code>## 
+## Hierarchical clustering:  0.8194639</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">K-means clustering: &quot;</span>, <span class="fu">max</span>(ARI_km))</span></code></pre></div>
+<pre><code>## 
+## K-means clustering:  0.7898888</code></pre>
+<p>It’s going to be hard to beat!</p>
+<p>I have tried umap with custom configuration, which is doing not so bad:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(umap)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>custom.settings <span class="ot">&lt;-</span> umap.defaults</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>custom.settings<span class="sc">$</span>n_components <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>custom.settings<span class="sc">$</span>n_neighbors <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>umap_out <span class="ot">&lt;-</span> <span class="fu">select</span>(snp, <span class="sc">-</span>origin) <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">umap</span>(<span class="at">config =</span> custom.settings)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>umap_out<span class="sc">$</span>layout <span class="sc">%&gt;%</span>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> <span class="fu">add_column</span>(<span class="at">origin =</span> snp<span class="sc">$</span>origin) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> V1, <span class="at">y =</span> V2, <span class="at">color =</span> origin)) <span class="sc">+</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>     <span class="fu">geom_point</span>(<span class="at">size=</span><span class="fl">1.25</span>) <span class="sc">+</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>     <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">size=</span><span class="dv">6</span>)))</span></code></pre></div>
+<p><img src="tutorial_clustering_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ARI</span>(<span class="fu">kmeans</span>(umap_out<span class="sc">$</span>layout, <span class="at">centers =</span> <span class="dv">6</span>, <span class="at">nstart =</span> <span class="dv">100</span>)<span class="sc">$</span>cluster, snp<span class="sc">$</span>origin)</span></code></pre></div>
+<pre><code>## [1] 0.68618</code></pre>
+<p>Finally, dimension reduction via SVD and kmeans on the projected points do a little better than hierarchical clustering.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>SVD <span class="ot">&lt;-</span> <span class="fu">select</span>(snp, <span class="sc">-</span>origin) <span class="sc">%&gt;%</span> <span class="fu">scale</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> <span class="fu">svd</span>(<span class="at">nv =</span> <span class="dv">10</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>snp_proj <span class="ot">&lt;-</span> SVD<span class="sc">$</span>u[, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>] <span class="sc">%*%</span> <span class="fu">diag</span>(SVD<span class="sc">$</span>d[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]) <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>()</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>snp_proj <span class="sc">%&gt;%</span>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> X1, <span class="at">y =</span> X2, <span class="at">color =</span> snp<span class="sc">$</span>origin)) <span class="sc">+</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>     <span class="fu">geom_point</span>(<span class="at">size=</span><span class="fl">1.25</span>) <span class="sc">+</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>     <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">size=</span><span class="dv">6</span>)))</span></code></pre></div>
+<p><img src="tutorial_clustering_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ARI</span>(<span class="fu">kmeans</span>(snp_proj, <span class="at">centers =</span> <span class="dv">6</span>, <span class="at">nstart =</span> <span class="dv">100</span>)<span class="sc">$</span>cluster, snp<span class="sc">$</span>origin)</span></code></pre></div>
+<pre><code>## [1] 0.8364261</code></pre>
+</div>
 </div>
 </div>
 </div>
