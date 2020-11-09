@@ -48,7 +48,7 @@ navbar:
         - text: "Distance/Similarity-based: HAC, k-means, Spectral clustering"
           href: resources/Clustering.pdf
         - text: "Model-based clustering: Gaussian mixture model and EM"
-#          href: .html
+          href: resources/ClusteringModelBased.pdf
     - text: "Tutorials"
       icon: fas fa-laptop
       menu:
