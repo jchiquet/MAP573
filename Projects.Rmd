@@ -52,7 +52,7 @@ _Mots-clés:_ réduction de dimension, visualisation, trajectoire
 
 L'étude FEERIC (FErtility, PrEgnancy, contRaception after BC in France) est une étude française lancée en mars 2018 pour évaluer la fertilité et la contraception de femmes ayant eu un cancer du sein et comparées à des femmes qui en sont indemnes. Les données ont été collectées sur une plateforme de recherche communautaire et collaborative “ Seintinelles” (https://www.seintinelles.com). Ce réseau social de recherche  a pour vocation initiale de mettre en relation des citoyens volontaires et des chercheurs pour accélerer la réalisation d'étude. A ce jour, plus de 30 000 citoyens sont inscrits sur la plateforme Seintinelles qui a lancé plus de 30 études et a obtenu des temps d'inclusions record.
 
-[Plus d'informations sur la page wikipedia}(https://fr.wikipedia.org/wiki/Seintinelles)
+[Plus d'informations sur la page wikipedia](https://fr.wikipedia.org/wiki/Seintinelles)
 
 Les données des projets 4 et 5 sont issues de questionnaires remplis en ligne (par des femmes ayant eu un cancer du sein ou non), et les questions portent 
 principalement sur la fertilité et les grossesses. 
@@ -187,6 +187,7 @@ _keywords_: prediction, dimension reduction, neural networks
 In this project, we compare both GANs and WGANs. Comment the two original paper.  Precisely describe both approaches and the main differences. Start to test on simple examples (e.g. normal distribution) 
 
 _References_:
+
 - [https://arxiv.org/abs/1701.07875](https://arxiv.org/abs/1701.07875) (WGANs) 
 - [https://arxiv.org/abs/1406.2661](https://arxiv.org/abs/1406.2661) (original paper of GANs)  
 
@@ -195,6 +196,7 @@ _Keywords_: neural networks, auto-encoders
 ### Projet 13 - Generative Adversarial Nets (via Pytorch) for generating time series 
 
 _References_:
+
 - [https://arxiv.org/pdf/1907.06673.pdf](https://arxiv.org/pdf/1907.06673.pdf)
 - [https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf](https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf)
 
