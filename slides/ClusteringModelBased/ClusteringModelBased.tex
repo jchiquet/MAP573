@@ -119,7 +119,7 @@
     \end{center}
     \vfill
     \includegraphics[width=2cm]{\currentLogo}\hfill
-    \includegraphics[width=2.5cm]{logo_inra}
+    \includegraphics[width=2.5cm]{logo_inrae}
   \end{frame}
   %
 }
@@ -529,6 +529,42 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
 \end{frame}
 
 \begin{frame}
+  \frametitle{EM: the complete data log-likelihood}
+
+  \begin{itemize}
+    \item Marginal likelihood is hard to work with
+    \item Use the \alert{\bf "complete-data" likelihood}, where $\bZ_i$ is known
+  \end{itemize}
+   % Use indicator (observed) as a tricks to derve the expression:
+  \begin{align*}
+    \log L (\btheta;\bX, \bZ) & = \log \prod_{i=1}^n \prob(\bX_i, \bZ_i) \\
+    & = \log \prod_{i=1}^n \underbrace{\prod_{q=1}^Q \prob(\bX_i, (\bZ_{i1}, \dots, \bZ_{iQ})^{Z_{iq}}}_{\text{a single "active" term (the one with $Z_{iq}=1$)}} \\
+    & = \log \prod_{i=1}^n \prod_{q=1}^Q \alpha_q \prob_{\theta_q}(\bX_i)^{Z_{iq}} \\
+    & = \sum_{i=1}^n \sum_{q=1}^Q Z_{iq} \log\left[\alpha_q \prob_{\theta_q}(\bX_i)\right]\\
+  \end{align*}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{EM: the criterion }
+
+  \begin{itemize}
+    \item Alright, Use the "complete-data" likelihood, \alert{\bf but $\bZ_i$ is unknown!}
+    \item \alert{\bf Replace the $\bZ_i$} by its best prediction: $\E_{\bZ|\bX; \btheta'}\big(\cdot \big)$
+    \item Use an estimation of $\prob_{\btheta^{(t)}}(\bZ|\bX))$ to estimate $\E_{\bZ|\bX; \btheta'}\big(\cdot \big)$
+  \end{itemize}
+
+  \begin{align*}
+    \E_{\bZ|\bX;\btheta'}\big(\log L (\btheta;\bX, \bZ)\big) & = 
+    \E_{\bZ|\bX;\btheta'}\big(\sum_{i=1}^n \sum_{q=1}^Q Z_{iq} \log\left[\alpha_q \prob_{\theta_q}(\bX_i)\right]\big) \\
+    & = \sum_{i=1}^n \sum_{q=1}^Q \E_{\bZ|\bX;\btheta'}\big(Z_{iq}\big) \log\left[\alpha_q \prob_{\theta_q}(\bX_i)\right] \\
+    & = \sum_{i=1}^n \sum_{q=1}^Q \tau_{iq} \log\left[\alpha_q \prob_{\theta_q}(\bX_i)\right] \\
+    & \triangleq Q \big(\btheta | \btheta' \big)
+  \end{align*}
+
+\end{frame}
+
+\begin{frame}
   \frametitle{Formal algorithm}
 
   \begin{block}{Initialization: \textcolor{black}{start from a good guess either of $\bZ$ or $\btheta$, then iterate 1-2}}
@@ -554,16 +590,63 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
 
 \end{frame}
 
-\begin{frame}
+\begin{frame}[allowframebreaks]
   \frametitle{(Basic) Convergence analysis}
 
   \begin{theorem}
     At each step of the EM algorithm, the loglikelihood increases. EM thus reaches a local optimum.
   \end{theorem}
 
-  \begin{proof}
-    On board.
-  \end{proof}
+  \paragraph{Proof}~\\
+  
+    By definition of conditional probability $\prob(\bZ | \bX)$ , one has
+    \begin{equation*}
+      \log L(\bX;\btheta)  = \log L(\bX, \bZ;\btheta)  - \log L(\bZ | \bX;\btheta)
+    \end{equation*}
+    We then apply the expectation $\E_{\bZ|\bX; \btheta'}\big(\cdot \big)$ both side 
+    \begin{equation*}
+      \log L(\bX)  = \E_{\bZ|\bX; \btheta'}\big(\log L(\bX, \bZ; \btheta)\big)  - \E_{\bZ|\bX; \btheta'}\big(\log L(\bZ | \bX; \btheta) \big)
+    \end{equation*}
+    Indeed, the marginal likelihood does not depend on $\bZ$.    
+    \vfill
+    \begin{flushright}continue\dots\end{flushright}
+    \newpage
+    
+    We recognize two important quantities: the criterion $Q$ and what we call the entropy of $\mathcal{H}$ of $\prob(\bZ|\bX)$:
+    \begin{equation*}
+      \log L(\bX)  = Q(\btheta|\btheta') + \mathcal{H}(\btheta,\btheta')
+    \end{equation*}
+
+    To prove that $\log L$ is increased by EM, we consider two successive iteration with parameter $\btheta'$ and $\btheta''$ and study there difference:
+
+    \begin{align*}
+      \log L(\bX;\btheta'') - \log L(\bX;\btheta')  & = Q(\btheta''|\btheta') - Q(\btheta'|\btheta') \\
+      & + \mathcal{H}(\btheta'',\btheta') - \mathcal{H}(\btheta',\btheta')
+    \end{align*}
+  
+    \begin{enumerate}
+    \item First $Q(\btheta''|\btheta') - Q(\btheta'|\btheta') \geq 0$ by definition of the maximization step.
+    \item Second we need to prove that $\mathcal{H}(\btheta'',\btheta') - \mathcal{H}(\btheta',\btheta')\geq 0$
+    \end{enumerate}
+
+    \newpage
+    
+    \begin{align*}
+    \mathcal{H}(\btheta'',\btheta') - \mathcal{H}(\btheta',\btheta') & = 
+    \E_{\btheta'}\left( \log L(\bZ | \bX; \btheta'') - \log L(\bZ | \bX; \btheta')\right)  \\
+      & = \E_{\btheta'} \left( \log \frac{L(\bZ | \bX; \btheta'')}{L(\bZ | \bX; \btheta')} \right)
+    \end{align*}
+    
+    We then use the Jensen inequality: if $\phi$ is convex, then $ \phi(\E(X)) \leq \E(\phi(X))$. Since $\log$ is concave, 
+    $-\log(\E(X)) \leq -\E(\log(X))$ and $ \E(\log(X)) \leq \log(\E(X))$, thus
+    
+    \begin{align*}
+    \mathcal{H}(\btheta'',\btheta') - \mathcal{H}(\btheta',\btheta') & = 
+    \E_{\btheta'} \left( \log \frac{L(\bZ | \bX; \btheta'')}{L(\bZ | \bX; \btheta')} \right) \\
+      & \leq \log \E_{\btheta'}\left(\frac{L(\bZ | \bX; \btheta'')}{L(\bZ | \bX; \btheta')} \right)\\
+      & = \log \int_{\mathcal{Z}} \left(\frac{L(\bz | \bX; \btheta'')}{\prob(\bz | \bX; \btheta')} \prob(\bz | \bX; \btheta')  \mathrm{d} \bz\right)
+      & = \log(1) = 0
+    \end{align*}
 
 \end{frame}
 
@@ -618,7 +701,7 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
   \end{block}
   
 
-  $\rightsquigarrow$ Implementation of the univariate case during the labs.
+  $\rightsquigarrow$ Implementation of the univariate case during the today's lab.
 \end{frame}
 
 \begin{frame}
@@ -638,226 +721,246 @@ $\rightsquigarrow$ Axis 1 explains a latent effect, here the size in the case at
   \end{block}
 
 \end{frame}
-
+ 
 \begin{frame}[fragile,allowframebreaks]
   \frametitle{Gaussian mixture model in \texttt{R}}
-  
-  The package \texttt{Mclust} is a great reference 
-  
-  See \url{https://cran.r-project.org/web/packages/mclust/vignettes/mclust.html} 
 
-  
+  The package \texttt{Mclust} is a great reference
+
+  See \url{https://cran.r-project.org/web/packages/mclust/vignettes/mclust.html}
+
+
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
+\hlstd{classes} \hlkwb{<-} \hlkwd{paste}\hlstd{(crabs_corrected}\hlopt{$}\hlstd{sex, crabs_corrected}\hlopt{$}\hlstd{species,} \hlkwc{sep}\hlstd{=}\hlstr{"-"}\hlstd{)}
 \hlstd{GMM} \hlkwb{<-} \hlstd{crabs_corrected} \hlopt{%>%}
   \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{sex,} \hlopt{-}\hlstd{species)} \hlopt{%>%}
-  \hlkwd{Mclust}\hlstd{(}\hlkwc{modelNames} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"EII"}\hlstd{,} \hlstr{"EEI"}\hlstd{))}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in Mclust(., modelNames = c("{}EII"{}, "{}EEI"{})): could not find function "{}Mclust"{}}}\begin{alltt}
+  \hlkwd{Mclust}\hlstd{(}\hlkwc{modelNames} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"EII"}\hlstd{,} \hlstr{"EEI"}\hlstd{,} \hlstr{"VII"}\hlstd{,} \hlstr{"VEI"}\hlstd{,} \hlstr{"EVI"}\hlstd{,} \hlstr{"VVI"}\hlstd{))}
 \hlkwd{plot}\hlstd{(GMM,} \hlstr{'BIC'}\hlstd{)}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'plot': object 'GMM' not found}}\begin{alltt}
-\hlstd{aricode}\hlopt{::}\hlkwd{ARI}\hlstd{(GMM}\hlopt{$}\hlstd{classification, classes)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in sortPairs(c1, c2): object 'GMM' not found}}\begin{alltt}
-\hlstd{aricode}\hlopt{::}\hlkwd{ARI}\hlstd{(GMM}\hlopt{$}\hlstd{classification, clusters)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in sortPairs(c1, c2): object 'GMM' not found}}\begin{alltt}
-\hlstd{aricode}\hlopt{::}\hlkwd{ARI}\hlstd{(GMM}\hlopt{$}\hlstd{classification, clusters_ward)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in sortPairs(c1, c2): object 'GMM' not found}}\begin{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/GMM_BIC-1} 
+\begin{kframe}\begin{alltt}
 \hlkwd{plot}\hlstd{(GMM,} \hlstr{'classification'}\hlstd{)}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'plot': object 'GMM' not found}}\end{kframe}
-\end{knitrout}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Mixture of Gaussians}
-  \framesubtitle{Calculs in the univariate case: complete likelihood}
-
-  The distribution of $X_i$ conditional on the label of $i$ is assumed to be a univariate Gaussian distribution with unknown parameters:
-  \begin{equation*}
-  X_i | Z_{iq} = 1 \sim \mathcal{N}(\mu_q,\sigma^2_q)
-  \end{equation*}
-
-  \begin{block}{complete Likelihood $(\bX,\bZ)$}
-  The model complete loglikelihood is
-    \begin{multline*}
-        \log L(\boldsymbol{\mu},\boldsymbol{\sigma}^2; \bX, \bZ)  = \\ \sum_{i=1}^n \sum_{q=1}^Q Z_{iq} \left(\log \alpha_q - \log\sigma_q -\log(\sqrt{2\pi}) - \frac{1}{2\sigma_q^2} (x_i - \mu_q)^2 \right)
-   \end{multline*}
-  \end{block}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Mixture of Gaussians}
-  \framesubtitle{Calculs in the univariate case: E-step}
-
-  \begin{block}{E-step}
-    For fixed values of  $\mu_q, \sigma_q^2$ and  $\alpha_q$, the  estimates of  the
-  posterior probabilities $\hat\tau_{iq}= \P(Z_{iq}=1|X_i)$ are
-    \begin{equation*}
-        \hat\tau_{iq} = \frac{\alpha_q \mathcal{N}(x_i; {\mu}_q, \sigma_q^2)}{\sum_{q=1}^Q \alpha_q \mathcal{N}(x_i; {\mu}_q, \sigma_q^2)},
-   \end{equation*}
-   where $\mathcal{N}$ is the density of the normal distribution.
-  \end{block}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Mixture of Gaussians}
-  \framesubtitle{Calculs in the univariate case: M-step}
-
-  \begin{block}{M-step}
-    For fixed values of  $\tau_{iq}$, the  estimates of  the model parameters are
-    \begin{equation*}
-    \hat\alpha_q = \frac{\sum_{i=1}^n \tau_{iq}}{\sum_{i=1}^n\sum_{q=1}^Q \tau_{iq}} \quad \hat\mu_q = \frac{\sum_i \tau_{iq} x_i}{\sum_i \tau_{iq}} \quad \hat\sigma^2_q = \frac{\sum_{i=1}^n \tau_{iq} (x_i-\mu_q)^2}{\sum_{i=1}^n \tau_{iq}}
-   \end{equation*}
-  \end{block}
-
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{R code: auxiliary functions}
-
-We start by defining functions to compute the complete model loglikelihood, perform the E step and the M step.
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{get.cloglik} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{X}\hlstd{,} \hlkwc{Z}\hlstd{,} \hlkwc{theta}\hlstd{) \{}
-  \hlstd{alpha} \hlkwb{<-} \hlstd{theta}\hlopt{$}\hlstd{alpha; mu} \hlkwb{<-} \hlstd{theta}\hlopt{$}\hlstd{mu; sigma} \hlkwb{<-} \hlstd{theta}\hlopt{$}\hlstd{sigma}
-  \hlstd{xs} \hlkwb{<-} \hlkwd{scale}\hlstd{(}\hlkwd{matrix}\hlstd{(X,}\hlkwd{length}\hlstd{(x),}\hlkwd{length}\hlstd{(alpha)),mu,sigma)}
-  \hlkwd{return}\hlstd{(}\hlkwd{sum}\hlstd{(Z}\hlopt{*}\hlstd{(}\hlkwd{log}\hlstd{(alpha)}\hlopt{-}\hlkwd{log}\hlstd{(sigma)}\hlopt{-}\hlnum{.5}\hlopt{*}\hlstd{(}\hlkwd{log}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{pi)}\hlopt{+}\hlstd{xs}\hlopt{^}\hlnum{2}\hlstd{))))}
-\hlstd{\}}
-
-\hlstd{M.step} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{X}\hlstd{,} \hlkwc{tau}\hlstd{) \{}
-  \hlstd{n} \hlkwb{<-} \hlkwd{length}\hlstd{(X); Q} \hlkwb{<-} \hlkwd{ncol}\hlstd{(tau)}
-  \hlstd{alpha}  \hlkwb{<-} \hlkwd{colMeans}\hlstd{(tau)}
-  \hlstd{mu}     \hlkwb{<-} \hlkwd{colMeans}\hlstd{(tau} \hlopt{*} \hlkwd{matrix}\hlstd{(X,n,Q))} \hlopt{/} \hlstd{alpha}
-  \hlstd{sigma}  \hlkwb{<-} \hlkwd{sqrt}\hlstd{(}\hlkwd{colMeans}\hlstd{(tau}\hlopt{*}\hlkwd{sweep}\hlstd{(}\hlkwd{matrix}\hlstd{(X,n,Q),}\hlnum{2}\hlstd{,mu,}\hlstr{"-"}\hlstd{)}\hlopt{^}\hlnum{2}\hlstd{)}\hlopt{/}\hlstd{alpha)}
-  \hlkwd{return}\hlstd{(}\hlkwd{list}\hlstd{(}\hlkwc{alpha}\hlstd{=alpha,} \hlkwc{mu}\hlstd{=mu,} \hlkwc{sigma}\hlstd{=sigma))}
-\hlstd{\}}
-
-\hlstd{E.step} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{X}\hlstd{,} \hlkwc{theta}\hlstd{) \{}
-  \hlstd{tau} \hlkwb{<-} \hlkwd{mapply}\hlstd{(}\hlkwa{function}\hlstd{(}\hlkwc{alpha}\hlstd{,} \hlkwc{mu}\hlstd{,} \hlkwc{sigma}\hlstd{) \{}
-      \hlstd{alpha}\hlopt{*}\hlkwd{dnorm}\hlstd{(X,mu,sigma)}
-    \hlstd{\}, theta}\hlopt{$}\hlstd{alpha, theta}\hlopt{$}\hlstd{mu, theta}\hlopt{$}\hlstd{sigma)}
-  \hlkwd{return}\hlstd{(tau} \hlopt{/} \hlkwd{rowSums}\hlstd{(tau))}
-\hlstd{\}}
-\end{alltt}
 \end{kframe}
+\includegraphics[width=.8\textwidth]{figures/GMM_BIC-2} 
+
 \end{knitrout}
-
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{R code: EM for univariate mixture}
 
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{EM.mixture} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{X}\hlstd{,} \hlkwc{Q}\hlstd{,}
-                       \hlkwc{init.cl}\hlstd{=}\hlkwd{sample}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{Q,n,}\hlkwc{rep}\hlstd{=}\hlnum{TRUE}\hlstd{),} \hlkwc{max.iter}\hlstd{=}\hlnum{100}\hlstd{,} \hlkwc{eps}\hlstd{=}\hlnum{1e-5}\hlstd{) \{}
-    \hlstd{n} \hlkwb{<-} \hlkwd{length}\hlstd{(X); tau} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{0}\hlstd{,n,Q); tau[}\hlkwd{cbind}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{n,init.cl)]} \hlkwb{<-} \hlnum{1}
-    \hlstd{Eloglik} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlstr{"numeric"}\hlstd{, max.iter)}
-    \hlstd{iter} \hlkwb{<-} \hlnum{0}\hlstd{; cond} \hlkwb{<-} \hlnum{FALSE}
-
-    \hlkwa{while} \hlstd{(}\hlopt{!}\hlstd{cond) \{}
-        \hlstd{iter} \hlkwb{<-} \hlstd{iter} \hlopt{+} \hlnum{1}
-        \hlcom{## M step}
-        \hlstd{theta} \hlkwb{<-} \hlkwd{M.step}\hlstd{(X, tau)}
-        \hlcom{## E step}
-        \hlstd{tau} \hlkwb{<-} \hlkwd{E.step}\hlstd{(X, theta)}
-        \hlcom{## check consistency}
-        \hlstd{Eloglik[iter]} \hlkwb{<-} \hlkwd{get.cloglik}\hlstd{(X, tau, theta)}
-        \hlkwa{if} \hlstd{(iter} \hlopt{>} \hlnum{1}\hlstd{)}
-            \hlstd{cond} \hlkwb{<-} \hlstd{(iter}\hlopt{>=}\hlstd{max.iter)} \hlopt{|} \hlstd{Eloglik[iter]}\hlopt{-}\hlstd{Eloglik[iter}\hlopt{-}\hlnum{1}\hlstd{]} \hlopt{<} \hlstd{eps}
-    \hlstd{\}}
-
-    \hlkwd{return}\hlstd{(}\hlkwd{list}\hlstd{(}\hlkwc{alpha} \hlstd{= theta}\hlopt{$}\hlstd{alpha,}  \hlkwc{mu} \hlstd{= theta}\hlopt{$}\hlstd{mu,}  \hlkwc{sigma} \hlstd{= theta}\hlopt{$}\hlstd{sigma,}
-                \hlkwc{tau}   \hlstd{= tau,} \hlkwc{cl} \hlstd{=} \hlkwd{apply}\hlstd{(tau,} \hlnum{1}\hlstd{, which.max),}
-                \hlkwc{Eloglik} \hlstd{= Eloglik[}\hlnum{1}\hlopt{:}\hlstd{iter]))}
-\hlstd{\}}
+\hlstd{kmeans_cl} \hlkwb{<-} \hlstd{crabs_corrected} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{sex,} \hlopt{-}\hlstd{species)} \hlopt{%>%} \hlkwd{as.matrix}\hlstd{()} \hlopt{%>%}
+  \hlkwd{kmeans}\hlstd{(}\hlkwc{centers} \hlstd{=} \hlnum{4}\hlstd{,} \hlkwc{nstart} \hlstd{=} \hlnum{100}\hlstd{)} \hlopt{%>%} \hlkwd{pluck}\hlstd{(}\hlstr{"cluster"}\hlstd{)}
+\hlstd{ward_cl} \hlkwb{<-} \hlstd{crabs_corrected} \hlopt{%>%} \hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{sex,} \hlopt{-}\hlstd{species)} \hlopt{%>%} \hlkwd{dist}\hlstd{()} \hlopt{%>%}
+  \hlkwd{hclust}\hlstd{(}\hlkwc{method} \hlstd{=} \hlstr{"ward.D2"}\hlstd{)} \hlopt{%>%} \hlkwd{cutree}\hlstd{(}\hlnum{4}\hlstd{)}
+\hlstd{aricode}\hlopt{::}\hlkwd{ARI}\hlstd{(GMM}\hlopt{$}\hlstd{classification, classes)}
 \end{alltt}
+\begin{verbatim}
+## [1] 0.764725
+\end{verbatim}
+\begin{alltt}
+\hlstd{aricode}\hlopt{::}\hlkwd{ARI}\hlstd{(GMM}\hlopt{$}\hlstd{classification, kmeans_cl)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.8230122
+\end{verbatim}
+\begin{alltt}
+\hlstd{aricode}\hlopt{::}\hlkwd{ARI}\hlstd{(GMM}\hlopt{$}\hlstd{classification, ward_cl)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.7670297
+\end{verbatim}
 \end{kframe}
 \end{knitrout}
-\end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Example: data generation}
+The posterior probabilities
 
-We first generate data with 4 components:
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{mu1} \hlkwb{<-} \hlnum{5}   \hlstd{; sigma1} \hlkwb{<-} \hlnum{1}\hlstd{; n1} \hlkwb{<-} \hlnum{100}
-\hlstd{mu2} \hlkwb{<-} \hlnum{10}  \hlstd{; sigma2} \hlkwb{<-} \hlnum{1}\hlstd{; n2} \hlkwb{<-} \hlnum{200}
-\hlstd{mu3} \hlkwb{<-} \hlnum{15}  \hlstd{; sigma3} \hlkwb{<-} \hlnum{2}\hlstd{; n3} \hlkwb{<-} \hlnum{50}
-\hlstd{mu4} \hlkwb{<-} \hlnum{20}  \hlstd{; sigma4} \hlkwb{<-} \hlnum{3}\hlstd{; n4} \hlkwb{<-} \hlnum{100}
-\hlstd{cl} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{4}\hlstd{,}\hlkwd{c}\hlstd{(n1,n2,n3,n4))}
-\hlstd{x} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlkwd{rnorm}\hlstd{(n1,mu1,sigma1),}\hlkwd{rnorm}\hlstd{(n2,mu2,sigma2),}
-       \hlkwd{rnorm}\hlstd{(n3,mu3,sigma3),}\hlkwd{rnorm}\hlstd{(n4,mu4,sigma4))}
-\hlstd{n} \hlkwb{<-} \hlkwd{length}\hlstd{(x)}
-
-\hlcom{## we randomize the class ordering}
-\hlstd{rnd} \hlkwb{<-} \hlkwd{sample}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{n)}
-\hlstd{cl} \hlkwb{<-} \hlstd{cl[rnd]}
-\hlstd{x}  \hlkwb{<-} \hlstd{x[rnd]}
-
-\hlstd{alpha} \hlkwb{<-} \hlkwd{c}\hlstd{(n1,n2,n3,n4)}\hlopt{/}\hlstd{n}
+\hlkwd{matplot}\hlstd{(GMM}\hlopt{$}\hlstd{z)}
 \end{alltt}
 \end{kframe}
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-3-1} 
+
 \end{knitrout}
-\end{frame}
 
-\begin{frame}[fragile, allowframebreaks]
-  \frametitle{Example: data generation - plot}
-
-Let us plot the data and the theoretical mixture.
+The model parameters:
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{curve}\hlstd{(alpha[}\hlnum{1}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu1,sigma1)} \hlopt{+}
-      \hlstd{alpha[}\hlnum{2}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu2,sigma2)} \hlopt{+}
-      \hlstd{alpha[}\hlnum{3}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu3,sigma3)} \hlopt{+}
-      \hlstd{alpha[}\hlnum{4}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu4,sigma4),}
-      \hlkwc{col}\hlstd{=}\hlstr{"blue"}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{from}\hlstd{=}\hlnum{0}\hlstd{,}\hlkwc{to}\hlstd{=}\hlnum{30}\hlstd{,} \hlkwc{n}\hlstd{=}\hlnum{1000}\hlstd{,}
-      \hlkwc{main}\hlstd{=}\hlstr{"Theoretical Gaussian mixture and its components"}\hlstd{,}
-      \hlkwc{xlab}\hlstd{=}\hlstr{"x"}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{"density"}\hlstd{)}
-\hlkwd{curve}\hlstd{(alpha[}\hlnum{1}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu1,sigma1),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
-\hlkwd{curve}\hlstd{(alpha[}\hlnum{2}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu2,sigma2),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
-\hlkwd{curve}\hlstd{(alpha[}\hlnum{3}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu3,sigma3),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
-\hlkwd{curve}\hlstd{(alpha[}\hlnum{4}\hlstd{]}\hlopt{*}\hlkwd{dnorm}\hlstd{(x,mu4,sigma4),} \hlkwc{col}\hlstd{=}\hlstr{"red"}\hlstd{,} \hlkwc{add}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{lty}\hlstd{=}\hlnum{2}\hlstd{)}
-\hlkwd{rug}\hlstd{(x)}
+\hlkwd{str}\hlstd{(GMM}\hlopt{$}\hlstd{parameters,} \hlkwc{max.level} \hlstd{=} \hlnum{1}\hlstd{)}
 \end{alltt}
+\begin{verbatim}
+## List of 3
+##  $ pro     : num [1:5] 0.114 0.175 0.222 0.261 0.228
+##  $ mean    : num [1:5, 1:5] -0.256 1.681 -0.414 0.626 -1.493 ...
+##   ..- attr(*, "dimnames")=List of 2
+##  $ variance:List of 6
+\end{verbatim}
 \end{kframe}
-\includegraphics[width=.8\textwidth]{figures/EM_mixture_example_data_plot-1} 
-
 \end{knitrout}
+
+
 \end{frame}
+% 
+% \begin{frame}
+%   \frametitle{Mixture of Gaussians}
+%   \framesubtitle{Calculs in the univariate case: complete likelihood}
+% 
+%   The distribution of $X_i$ conditional on the label of $i$ is assumed to be a univariate Gaussian distribution with unknown parameters:
+%   \begin{equation*}
+%   X_i | Z_{iq} = 1 \sim \mathcal{N}(\mu_q,\sigma^2_q)
+%   \end{equation*}
+% 
+%   \begin{block}{complete Likelihood $(\bX,\bZ)$}
+%   The model complete loglikelihood is
+%     \begin{multline*}
+%         \log L(\boldsymbol{\mu},\boldsymbol{\sigma}^2; \bX, \bZ)  = \\ \sum_{i=1}^n \sum_{q=1}^Q Z_{iq} \left(\log \alpha_q - \log\sigma_q -\log(\sqrt{2\pi}) - \frac{1}{2\sigma_q^2} (x_i - \mu_q)^2 \right)
+%    \end{multline*}
+%   \end{block}
+% 
+% \end{frame}
+% 
+% \begin{frame}
+%   \frametitle{Mixture of Gaussians}
+%   \framesubtitle{Calculs in the univariate case: E-step}
+% 
+%   \begin{block}{E-step}
+%     For fixed values of  $\mu_q, \sigma_q^2$ and  $\alpha_q$, the  estimates of  the
+%   posterior probabilities $\hat\tau_{iq}= \P(Z_{iq}=1|X_i)$ are
+%     \begin{equation*}
+%         \hat\tau_{iq} = \frac{\alpha_q \mathcal{N}(x_i; {\mu}_q, \sigma_q^2)}{\sum_{q=1}^Q \alpha_q \mathcal{N}(x_i; {\mu}_q, \sigma_q^2)},
+%    \end{equation*}
+%    where $\mathcal{N}$ is the density of the normal distribution.
+%   \end{block}
+% 
+% \end{frame}
+% 
+% \begin{frame}
+%   \frametitle{Mixture of Gaussians}
+%   \framesubtitle{Calculs in the univariate case: M-step}
+% 
+%   \begin{block}{M-step}
+%     For fixed values of  $\tau_{iq}$, the  estimates of  the model parameters are
+%     \begin{equation*}
+%     \hat\alpha_q = \frac{\sum_{i=1}^n \tau_{iq}}{\sum_{i=1}^n\sum_{q=1}^Q \tau_{iq}} \quad \hat\mu_q = \frac{\sum_i \tau_{iq} x_i}{\sum_i \tau_{iq}} \quad \hat\sigma^2_q = \frac{\sum_{i=1}^n \tau_{iq} (x_i-\mu_q)^2}{\sum_{i=1}^n \tau_{iq}}
+%    \end{equation*}
+%   \end{block}
+% 
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+%   \frametitle{R code: auxiliary functions}
+% 
+% We start by defining functions to compute the complete model loglikelihood, perform the E step and the M step.
+% <<EM_mixture_auxiliaries, tidy=FALSE>>=
+% get.cloglik <- function(X, Z, theta) {
+%   alpha <- theta$alpha; mu <- theta$mu; sigma <- theta$sigma
+%   xs <- scale(matrix(X,length(x),length(alpha)),mu,sigma)
+%   return(sum(Z*(log(alpha)-log(sigma)-.5*(log(2*pi)+xs^2))))
+% }
+% 
+% M.step <- function(X, tau) {
+%   n <- length(X); Q <- ncol(tau)
+%   alpha  <- colMeans(tau)
+%   mu     <- colMeans(tau * matrix(X,n,Q)) / alpha
+%   sigma  <- sqrt(colMeans(tau*sweep(matrix(X,n,Q),2,mu,"-")^2)/alpha)
+%   return(list(alpha=alpha, mu=mu, sigma=sigma))
+% }
+% 
+% E.step <- function(X, theta) {
+%   tau <- mapply(function(alpha, mu, sigma) {
+%       alpha*dnorm(X,mu,sigma)
+%     }, theta$alpha, theta$mu, theta$sigma)
+%   return(tau / rowSums(tau))
+% }
+% @
+% 
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+%   \frametitle{R code: EM for univariate mixture}
+% 
+% <<EM_mixture, echo=TRUE, tidy=FALSE>>=
+% EM.mixture <- function(X, Q,
+%                        init.cl=sample(1:Q,n,rep=TRUE), max.iter=100, eps=1e-5) {
+%     n <- length(X); tau <- matrix(0,n,Q); tau[cbind(1:n,init.cl)] <- 1
+%     Eloglik <- vector("numeric", max.iter)
+%     iter <- 0; cond <- FALSE
+% 
+%     while (!cond) {
+%         iter <- iter + 1
+%         ## M step
+%         theta <- M.step(X, tau)
+%         ## E step
+%         tau <- E.step(X, theta)
+%         ## check consistency
+%         Eloglik[iter] <- get.cloglik(X, tau, theta)
+%         if (iter > 1)
+%             cond <- (iter>=max.iter) | Eloglik[iter]-Eloglik[iter-1] < eps
+%     }
+% 
+%     return(list(alpha = theta$alpha,  mu = theta$mu,  sigma = theta$sigma,
+%                 tau   = tau, cl = apply(tau, 1, which.max),
+%                 Eloglik = Eloglik[1:iter]))
+% }
+% @
+% \end{frame}
+ 
+% \begin{frame}[fragile]
+%   \frametitle{Example: data generation}
+% 
+% We first generate data with 4 components:
+% <<EM_mixture_example_data>>=
+% mu1 <- 5   ; sigma1 <- 1; n1 <- 100
+% mu2 <- 10  ; sigma2 <- 1; n2 <- 200
+% mu3 <- 15  ; sigma3 <- 2; n3 <- 50
+% mu4 <- 20  ; sigma4 <- 3; n4 <- 100
+% cl <- rep(1:4,c(n1,n2,n3,n4))
+% x <- c(rnorm(n1,mu1,sigma1),rnorm(n2,mu2,sigma2),
+%        rnorm(n3,mu3,sigma3),rnorm(n4,mu4,sigma4))
+% n <- length(x)
+% 
+% ## we randomize the class ordering
+% rnd <- sample(1:n)
+% cl <- cl[rnd]
+% x  <- x[rnd]
+% 
+% alpha <- c(n1,n2,n3,n4)/n
+% @
+% \end{frame}
+% 
+% \begin{frame}[fragile, allowframebreaks]
+%   \frametitle{Example: data generation - plot}
+% 
+% Let us plot the data and the theoretical mixture.
+% <<EM_mixture_example_data_plot>>=
+% curve(alpha[1]*dnorm(x,mu1,sigma1) +
+%       alpha[2]*dnorm(x,mu2,sigma2) +
+%       alpha[3]*dnorm(x,mu3,sigma3) +
+%       alpha[4]*dnorm(x,mu4,sigma4),
+%       col="blue", lty=1, from=0,to=30, n=1000,
+%       main="Theoretical Gaussian mixture and its components",
+%       xlab="x", ylab="density")
+% curve(alpha[1]*dnorm(x,mu1,sigma1), col="red", add=TRUE, lty=2)
+% curve(alpha[2]*dnorm(x,mu2,sigma2), col="red", add=TRUE, lty=2)
+% curve(alpha[3]*dnorm(x,mu3,sigma3), col="red", add=TRUE, lty=2)
+% curve(alpha[4]*dnorm(x,mu4,sigma4), col="red", add=TRUE, lty=2)
+% rug(x)
+% @
+% \end{frame}
 % 
 % \begin{frame}[fragile]
 %    \frametitle{Implementation}
-%    
+% 
 %    \begin{center}
 %       Your labs!
 %    \end{center}
-%    
+% 
 % \end{frame}
 % 
 % \begin{frame}[fragile]
@@ -889,7 +992,7 @@ Let us plot the data and the theoretical mixture.
 % @
 % 
 % \end{frame}
-% 
+
 % \begin{frame}[fragile, allowframebreaks]
 %   \frametitle{Example: adjustment - classification}
 % 
@@ -963,7 +1066,7 @@ Let us plot the data and the theoretical mixture.
 \end{frame}
 
 %% ==========================================================================
-\subsection{Some Graphs Models and their limitations}
+\subsection{The Erdös-Rényi model and their limitations}
 %% ==========================================================================
 
 \begin{frame}
@@ -1028,64 +1131,49 @@ Let us plot the data and the theoretical mixture.
 \end{knitrout}
 \end{frame}
 
-\begin{frame}
-  \frametitle{Mechanism-based model: preferential attachment}
-
-  The graph is defined dynamically as follows
-  \begin{block}{Definition}
-    Start from a initial graph $\mathcal{G}_0 = (\mathcal{V}_0,\mathcal{E}_0)$, then for each time step,
-    \begin{enumerate}
-      \item At $t$ a new node $V_t$ is added
-      \item $V_t$ is connected to $i \in V_{t-1}$ with probability
-      \begin{equation*}
-        D_i^\alpha + \mathrm{cst.}
-      \end{equation*}
-    \end{enumerate}
-  \end{block}
-  $\rightsquigarrow$ Nodes with high degree get more connections thus \alert{richers get richers}
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Preferential attachment - example}
-
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{G1} \hlkwb{<-} \hlstd{igraph}\hlopt{::}\hlkwd{sample_pa}\hlstd{(}\hlnum{20}\hlstd{,} \hlnum{1}\hlstd{,} \hlkwc{directed}\hlstd{=}\hlnum{FALSE}\hlstd{)}
-\hlstd{G2} \hlkwb{<-} \hlstd{igraph}\hlopt{::}\hlkwd{sample_pa}\hlstd{(}\hlnum{20}\hlstd{,} \hlnum{5}\hlstd{,} \hlkwc{directed}\hlstd{=}\hlnum{FALSE}\hlstd{)}
-\hlstd{G3} \hlkwb{<-} \hlstd{igraph}\hlopt{::}\hlkwd{sample_pa}\hlstd{(}\hlnum{200}\hlstd{,} \hlkwc{directed}\hlstd{=}\hlnum{FALSE}\hlstd{)}
-\hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{3}\hlstd{))}
-\hlkwd{plot}\hlstd{(G1,} \hlkwc{vertex.label}\hlstd{=}\hlnum{NA}\hlstd{) ;} \hlkwd{plot}\hlstd{(G2,} \hlkwc{vertex.label}\hlstd{=}\hlnum{NA}\hlstd{)}
-\hlkwd{plot}\hlstd{(G3,} \hlkwc{vertex.label}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{layout}\hlstd{=layout.circle)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=.8\textwidth]{figures/PA_example-1} 
-
-\end{knitrout}
-
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Preferential attachment - limitations}
-
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{average.path.length}\hlstd{(G3);} \hlkwd{diameter}\hlstd{(G3)}
-\end{alltt}
-\begin{verbatim}
-## [1] 5.520854
-## [1] 14
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=.8\textwidth]{figures/PA_limitation2-1} 
-
-\end{knitrout}
-\end{frame}
+% \begin{frame}
+%   \frametitle{Mechanism-based model: preferential attachment}
+% 
+%   The graph is defined dynamically as follows
+%   \begin{block}{Definition}
+%     Start from a initial graph $\mathcal{G}_0 = (\mathcal{V}_0,\mathcal{E}_0)$, then for each time step,
+%     \begin{enumerate}
+%       \item At $t$ a new node $V_t$ is added
+%       \item $V_t$ is connected to $i \in V_{t-1}$ with probability
+%       \begin{equation*}
+%         D_i^\alpha + \mathrm{cst.}
+%       \end{equation*}
+%     \end{enumerate}
+%   \end{block}
+%   $\rightsquigarrow$ Nodes with high degree get more connections thus \alert{richers get richers}
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+%   \frametitle{Preferential attachment - example}
+% 
+% <<PA_example>>=
+% G1 <- igraph::sample_pa(20, 1, directed=FALSE)
+% G2 <- igraph::sample_pa(20, 5, directed=FALSE)
+% G3 <- igraph::sample_pa(200, directed=FALSE)
+% par(mfrow=c(1,3))
+% plot(G1, vertex.label=NA) ; plot(G2, vertex.label=NA)
+% plot(G3, vertex.label=NA, layout=layout.circle)
+% @
+% 
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+%   \frametitle{Preferential attachment - limitations}
+% 
+% <<PA_limitation1>>=
+% average.path.length(G3); diameter(G3)
+% @
+% 
+% <<PA_limitation2, echo=FALSE>>=
+% par(mfrow=c(1,2))
+% hist(degree(G3), col="lightblue"); plot(cluster_fast_greedy(G3), G3)
+% @
+% \end{frame}
 
 \begin{frame}
   \frametitle{Limitations}
@@ -1097,11 +1185,11 @@ Let us plot the data and the theoretical mixture.
         \item As can been seen from its degree distribution
         \item ER is generally too homogeneous
       \end{itemize}
-    \item \alert{Preferential attachment}
-      \begin{itemize}
-        \item Is defined through an algorithm so performing statistics is complicated
-        \item Is stucked to the power-law distribution of degrees
-      \end{itemize}
+    % \item \alert{Preferential attachment}
+    %   \begin{itemize}
+    %     \item Is defined through an algorithm so performing statistics is complicated
+    %     \item Is stucked to the power-law distribution of degrees
+    %   \end{itemize}
     \end{itemize}
 
   \vfill
@@ -1326,7 +1414,7 @@ Let us plot the data and the theoretical mixture.
 \hlkwd{plot}\hlstd{(communities,} \hlkwc{vertex.label}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{vertex.color} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{3}\hlstd{,}\hlkwd{c}\hlstd{(}\hlnum{25}\hlstd{,} \hlnum{50}\hlstd{,} \hlnum{25}\hlstd{)))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-2-1} 
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-5-1} 
 
 \end{knitrout}
 
@@ -1344,7 +1432,7 @@ Let us plot the data and the theoretical mixture.
 \hlkwd{plot}\hlstd{(star,} \hlkwc{vertex.label}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{vertex.color} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{2}\hlstd{,}\hlkwd{c}\hlstd{(}\hlnum{4}\hlstd{,}\hlnum{96}\hlstd{)))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-3-1} 
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-6-1} 
 
 \end{knitrout}
 

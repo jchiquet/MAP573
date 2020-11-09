@@ -56,7 +56,7 @@
 \end{frame}
 
 %% ==========================================================================
-\subsection{Some Graphs Models and their limitations}
+\subsection{The Erdös-Rényi model and their limitations}
 %% ==========================================================================
 
 \begin{frame}
@@ -106,49 +106,49 @@ hist(degree(G3), col="lightblue"); plot(cluster_fast_greedy(G3), G3)
 @
 \end{frame}
 
-\begin{frame}
-  \frametitle{Mechanism-based model: preferential attachment}
-
-  The graph is defined dynamically as follows
-  \begin{block}{Definition}
-    Start from a initial graph $\mathcal{G}_0 = (\mathcal{V}_0,\mathcal{E}_0)$, then for each time step,
-    \begin{enumerate}
-      \item At $t$ a new node $V_t$ is added
-      \item $V_t$ is connected to $i \in V_{t-1}$ with probability
-      \begin{equation*}
-        D_i^\alpha + \mathrm{cst.}
-      \end{equation*}
-    \end{enumerate}
-  \end{block}
-  $\rightsquigarrow$ Nodes with high degree get more connections thus \alert{richers get richers}
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Preferential attachment - example}
-
-<<PA_example>>=
-G1 <- igraph::sample_pa(20, 1, directed=FALSE)
-G2 <- igraph::sample_pa(20, 5, directed=FALSE)
-G3 <- igraph::sample_pa(200, directed=FALSE)
-par(mfrow=c(1,3))
-plot(G1, vertex.label=NA) ; plot(G2, vertex.label=NA)
-plot(G3, vertex.label=NA, layout=layout.circle)
-@
-
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Preferential attachment - limitations}
-
-<<PA_limitation1>>=
-average.path.length(G3); diameter(G3)
-@
-
-<<PA_limitation2, echo=FALSE>>=
-par(mfrow=c(1,2))
-hist(degree(G3), col="lightblue"); plot(cluster_fast_greedy(G3), G3)
-@
-\end{frame}
+% \begin{frame}
+%   \frametitle{Mechanism-based model: preferential attachment}
+% 
+%   The graph is defined dynamically as follows
+%   \begin{block}{Definition}
+%     Start from a initial graph $\mathcal{G}_0 = (\mathcal{V}_0,\mathcal{E}_0)$, then for each time step,
+%     \begin{enumerate}
+%       \item At $t$ a new node $V_t$ is added
+%       \item $V_t$ is connected to $i \in V_{t-1}$ with probability
+%       \begin{equation*}
+%         D_i^\alpha + \mathrm{cst.}
+%       \end{equation*}
+%     \end{enumerate}
+%   \end{block}
+%   $\rightsquigarrow$ Nodes with high degree get more connections thus \alert{richers get richers}
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+%   \frametitle{Preferential attachment - example}
+% 
+% <<PA_example>>=
+% G1 <- igraph::sample_pa(20, 1, directed=FALSE)
+% G2 <- igraph::sample_pa(20, 5, directed=FALSE)
+% G3 <- igraph::sample_pa(200, directed=FALSE)
+% par(mfrow=c(1,3))
+% plot(G1, vertex.label=NA) ; plot(G2, vertex.label=NA)
+% plot(G3, vertex.label=NA, layout=layout.circle)
+% @
+% 
+% \end{frame}
+% 
+% \begin{frame}[fragile]
+%   \frametitle{Preferential attachment - limitations}
+% 
+% <<PA_limitation1>>=
+% average.path.length(G3); diameter(G3)
+% @
+% 
+% <<PA_limitation2, echo=FALSE>>=
+% par(mfrow=c(1,2))
+% hist(degree(G3), col="lightblue"); plot(cluster_fast_greedy(G3), G3)
+% @
+% \end{frame}
 
 \begin{frame}
   \frametitle{Limitations}
@@ -160,11 +160,11 @@ hist(degree(G3), col="lightblue"); plot(cluster_fast_greedy(G3), G3)
         \item As can been seen from its degree distribution
         \item ER is generally too homogeneous
       \end{itemize}
-    \item \alert{Preferential attachment}
-      \begin{itemize}
-        \item Is defined through an algorithm so performing statistics is complicated
-        \item Is stucked to the power-law distribution of degrees
-      \end{itemize}
+    % \item \alert{Preferential attachment}
+    %   \begin{itemize}
+    %     \item Is defined through an algorithm so performing statistics is complicated
+    %     \item Is stucked to the power-law distribution of degrees
+    %   \end{itemize}
     \end{itemize}
 
   \vfill

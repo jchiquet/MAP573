@@ -216,6 +216,42 @@
 \end{frame}
 
 \begin{frame}
+  \frametitle{EM: the complete data log-likelihood}
+
+  \begin{itemize}
+    \item Marginal likelihood is hard to work with
+    \item Use the \alert{\bf "complete-data" likelihood}, where $\bZ_i$ is known
+  \end{itemize}
+   % Use indicator (observed) as a tricks to derve the expression:
+  \begin{align*}
+    \log L (\btheta;\bX, \bZ) & = \log \prod_{i=1}^n \prob(\bX_i, \bZ_i) \\
+    & = \log \prod_{i=1}^n \underbrace{\prod_{q=1}^Q \prob(\bX_i, (\bZ_{i1}, \dots, \bZ_{iQ})^{Z_{iq}}}_{\text{a single "active" term (the one with $Z_{iq}=1$)}} \\
+    & = \log \prod_{i=1}^n \prod_{q=1}^Q \alpha_q \prob_{\theta_q}(\bX_i)^{Z_{iq}} \\
+    & = \sum_{i=1}^n \sum_{q=1}^Q Z_{iq} \log\left[\alpha_q \prob_{\theta_q}(\bX_i)\right]\\
+  \end{align*}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{EM: the criterion }
+
+  \begin{itemize}
+    \item Alright, Use the "complete-data" likelihood, \alert{\bf but $\bZ_i$ is unknown!}
+    \item \alert{\bf Replace the $\bZ_i$} by its best prediction: $\E_{\bZ|\bX; \btheta'}\big(\cdot \big)$
+    \item Use an estimation of $\prob_{\btheta^{(t)}}(\bZ|\bX))$ to estimate $\E_{\bZ|\bX; \btheta'}\big(\cdot \big)$
+  \end{itemize}
+
+  \begin{align*}
+    \E_{\bZ|\bX;\btheta'}\big(\log L (\btheta;\bX, \bZ)\big) & = 
+    \E_{\bZ|\bX;\btheta'}\big(\sum_{i=1}^n \sum_{q=1}^Q Z_{iq} \log\left[\alpha_q \prob_{\theta_q}(\bX_i)\right]\big) \\
+    & = \sum_{i=1}^n \sum_{q=1}^Q \E_{\bZ|\bX;\btheta'}\big(Z_{iq}\big) \log\left[\alpha_q \prob_{\theta_q}(\bX_i)\right] \\
+    & = \sum_{i=1}^n \sum_{q=1}^Q \tau_{iq} \log\left[\alpha_q \prob_{\theta_q}(\bX_i)\right] \\
+    & \triangleq Q \big(\btheta | \btheta' \big)
+  \end{align*}
+
+\end{frame}
+
+\begin{frame}
   \frametitle{Formal algorithm}
 
   \begin{block}{Initialization: \textcolor{black}{start from a good guess either of $\bZ$ or $\btheta$, then iterate 1-2}}
@@ -241,16 +277,63 @@
 
 \end{frame}
 
-\begin{frame}
+\begin{frame}[allowframebreaks]
   \frametitle{(Basic) Convergence analysis}
 
   \begin{theorem}
     At each step of the EM algorithm, the loglikelihood increases. EM thus reaches a local optimum.
   \end{theorem}
 
-  \begin{proof}
-    On board.
-  \end{proof}
+  \paragraph{Proof}~\\
+  
+    By definition of conditional probability $\prob(\bZ | \bX)$ , one has
+    \begin{equation*}
+      \log L(\bX;\btheta)  = \log L(\bX, \bZ;\btheta)  - \log L(\bZ | \bX;\btheta)
+    \end{equation*}
+    We then apply the expectation $\E_{\bZ|\bX; \btheta'}\big(\cdot \big)$ both side 
+    \begin{equation*}
+      \log L(\bX)  = \E_{\bZ|\bX; \btheta'}\big(\log L(\bX, \bZ; \btheta)\big)  - \E_{\bZ|\bX; \btheta'}\big(\log L(\bZ | \bX; \btheta) \big)
+    \end{equation*}
+    Indeed, the marginal likelihood does not depend on $\bZ$.    
+    \vfill
+    \begin{flushright}continue\dots\end{flushright}
+    \newpage
+    
+    We recognize two important quantities: the criterion $Q$ and what we call the entropy of $\mathcal{H}$ of $\prob(\bZ|\bX)$:
+    \begin{equation*}
+      \log L(\bX)  = Q(\btheta|\btheta') + \mathcal{H}(\btheta,\btheta')
+    \end{equation*}
+
+    To prove that $\log L$ is increased by EM, we consider two successive iteration with parameter $\btheta'$ and $\btheta''$ and study there difference:
+
+    \begin{align*}
+      \log L(\bX;\btheta'') - \log L(\bX;\btheta')  & = Q(\btheta''|\btheta') - Q(\btheta'|\btheta') \\
+      & + \mathcal{H}(\btheta'',\btheta') - \mathcal{H}(\btheta',\btheta')
+    \end{align*}
+  
+    \begin{enumerate}
+    \item First $Q(\btheta''|\btheta') - Q(\btheta'|\btheta') \geq 0$ by definition of the maximization step.
+    \item Second we need to prove that $\mathcal{H}(\btheta'',\btheta') - \mathcal{H}(\btheta',\btheta')\geq 0$
+    \end{enumerate}
+
+    \newpage
+    
+    \begin{align*}
+    \mathcal{H}(\btheta'',\btheta') - \mathcal{H}(\btheta',\btheta') & = 
+    \E_{\btheta'}\left( \log L(\bZ | \bX; \btheta'') - \log L(\bZ | \bX; \btheta')\right)  \\
+      & = \E_{\btheta'} \left( \log \frac{L(\bZ | \bX; \btheta'')}{L(\bZ | \bX; \btheta')} \right)
+    \end{align*}
+    
+    We then use the Jensen inequality: if $\phi$ is convex, then $ \phi(\E(X)) \leq \E(\phi(X))$. Since $\log$ is concave, 
+    $-\log(\E(X)) \leq -\E(\log(X))$ and $ \E(\log(X)) \leq \log(\E(X))$, thus
+    
+    \begin{align*}
+    \mathcal{H}(\btheta'',\btheta') - \mathcal{H}(\btheta',\btheta') & = 
+    \E_{\btheta'} \left( \log \frac{L(\bZ | \bX; \btheta'')}{L(\bZ | \bX; \btheta')} \right) \\
+      & \leq \log \E_{\btheta'}\left(\frac{L(\bZ | \bX; \btheta'')}{L(\bZ | \bX; \btheta')} \right)\\
+      & = \log \int_{\mathcal{Z}} \left(\frac{L(\bz | \bX; \btheta'')}{\prob(\bz | \bX; \btheta')} \prob(\bz | \bX; \btheta')  \mathrm{d} \bz\right)
+      & = \log(1) = 0
+    \end{align*}
 
 \end{frame}
 
