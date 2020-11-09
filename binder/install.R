@@ -22,3 +22,5 @@ install.packages("Rtsne")       # tSNE implementation in R
 install.packages("umap")        # umap implementation in R
 install.packages("missSBM")     # SBM + data for French political blogosphere
 install.packages("mixtools")    # simple mixture models
+install.packages("sna")         # Tools for Social Network Analysis
+install.packages("blockmodels") # SBM

@@ -75,30 +75,9 @@ navbar:
           href: homework_4_dim_reduc_non_linear.html
         - text: "#5: Spectral Clustering for graphs"
           href: homework_5_GraphPartitioning.html
-        - text: "#6: Handling Missing Values"
-#          href: .html
+        - text: "#6: The Stochastic Block Model"
+          href: homework_6_SBM.html
     - text: "Projects"
+      href: Projects.html
       icon: fas fa-chart-bar
-      menu:
-        - text: "Subject 1:"
-#          href: .html
-        - text: "Subject 2:"
-#          href: .html
-        - text: "Subject 3:"
-#          href: .html
-        - text: "Subject 4:"
-#          href: .html
-        - text: "Subject 5:"
-#          href: .html
-        - text: "Subject 6:"
-#          href: .html
-        - text: "Subject 7:"
-#          href: .html
-        - text: "Subject 8:"
-#          href: .html
-        - text: "Subject 9:"
-#          href: .html
-        - text: "Subject 10:"
-#          href: .html
-
 

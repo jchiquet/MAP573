@@ -1,0 +1,122 @@
+---
+title: 'Homework: Stochastic Block Model'
+author: 'MAP573 team'
+date: "11/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = FALSE)
+set.seed(1234)
+```
+
+## Packages
+
+First, make sure you have the following packages installed:
+
+```{r, eval=FALSE}
+install.packages("igraph")
+install.packages("sna")
+install.packages("blockmodels")
+```
+
+Let us load the package [igraph](https://igraph.org/r/) which is particularly useful to manipulate graph data.
+
+```{r, eval = FALSE}
+library(igraph)
+```
+
+## Graph manipulation
+
+Let us load the [Zachary's Karate Club dataset](http://aris.ss.uci.edu/~lin/76.pdf). 
+
+It is composed of links between 34 members of a karate club. Given the club's small size, each club member knew everyone else. Sociologist Wayne Zachary documented pairwise links between members who regularly interacted outside the club.
+
+<br>
+
+Conflit and split:
+
+- A conflict between the club's president and the instructor split the club into two.
+
+- About half of the members followed the instructor ad the other half the president, a breakup that unveiled the ground truth, representing club's underlying community structure.
+
+- Today community finding algorithms are often tested based on their ability to infer these two communities from the structure of the network before the split.
+
+```{r, eval = FALSE}
+g <- igraph::read.graph(file="data/karate.gml", format="gml")
+```
+
+<br>
+
+1) Give a quick summary of the graph (plot, number of vertices, edges, id associated to each vertex).
+
+<br>
+
+2) Who are the most 'important' nodes?
+
+
+<br>
+
+
+3) Study the empirical degree distribution of the nodes. Use a Gaussian kernel for the non-parametric estimation of the degree distribution. Comment.
+
+<br>
+
+4) Remove the node with $id=1$ and illustrate the effect on the resulting network.
+
+
+<br>
+
+## Graph visualisation
+
+We now load the package [sna](https://cran.r-project.org/web/packages/sna/sna.pdf) which is particularly useful to visualise networks.
+
+```{r, results="hide", message=FALSE, eval = FALSE}
+library(sna)
+```
+
+<br>
+
+1) Test the different visualisation algorithms of sna (look at the _mode_ parameter). Rely on the function gplot.
+Note that most functions of _sna_ work with adjacency matrices.
+
+<br>
+
+## Graph models: the simulation part
+
+Let us now simulate various random graph models.
+
+1) Simulate an undirected graph (without self-loops) with $n=50$ nodes from an ER model with $p=0.1$.
+
+<br>
+
+2) Simulate an undirected graph (without self-loops) with $n=50$ nodes from a SBM model with $K=3$, the same cluster proportions, and a matrix $\pi$ such that $\pi_{kk}=0.9,\forall k$ and $\pi_{kl}=0.1,\forall k \neq l$.
+
+<br>
+
+
+## Graph models: analysis of real data
+
+We now load the package [blockmodels](https://cran.r-project.org/web/packages/blockmodels/blockmodels.pdf) to perform inference in the SBM model. 
+
+```{r, results="hide", message=FALSE}
+library(blockmodels)
+```
+
+<br>
+
+1) Analyse the karate data set with the spectral clustering algorithms that you implemented in last homework.
+
+<br>
+
+2) Analyse the karate data set with blockmodels. Plot the ICL criterion w.r.t. the number of clusters ranging from $1$ to $6$.
+
+<br>
+
+3) Using the *cluster_edge_betweenness()* and the *dendPlot(, mode="hclust")* functions from the *igraph* package, detect communities based on edge betweenness. Plot the results.
+
+<br>
+
+4) Compare the obtained classification. Comment
+
+<br>
