@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Projects</title>
+
+<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<script src="resources/hideOutput.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="resources/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 45px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h2 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h3 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h4 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h5 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.section h6 {
+  padding-top: 50px;
+  margin-top: -50px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">MAP573</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="https://github.com/jchiquet/CourseUnsupervisedLearningX">
+    <span class="fa fa-github"></span>
+     
+    
+  </a>
+</li>
+<li>
+  <a href="https://moodle.polytechnique.fr/enrol/index.php?id=9404">
+    <span class="fa fa-server"></span>
+     
+    Moodle
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="instructions.html">
+    <span class="fas fa fas fa-gear"></span>
+     
+    Setup
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-chalkboard-teacher"></span>
+     
+    Lectures/Slides
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="resources/introMAP573.pdf">General introduction</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="https://github.com/jchiquet/CourseAdvancedR/raw/master/2020_MAP573/R_intro.pdf">An introduction to R</a>
+    </li>
+    <li>
+      <a href="https://github.com/jchiquet/CourseAdvancedR/raw/master/2020_MAP573/R_intro_tidyverse.pdf">Manipulation, representation: a Tour of the tidyverse</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Dimensionality Reduction</li>
+    <li>
+      <a href="resources/DimensionReductionPCA.pdf">Linear methods: PCA</a>
+    </li>
+    <li>
+      <a href="resources/DimensionReductionNonLinear.pdf">Non linear methods: MDS, Kernel PCA, t-SNE and others</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Clustering</li>
+    <li>
+      <a href="resources/Clustering.pdf">Distance/Similarity-based: HAC, k-means, Spectral clustering</a>
+    </li>
+    <li>
+      <a href="resources/ClusteringModelBased.pdf">Model-based clustering: Gaussian mixture model and EM</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-laptop"></span>
+     
+    Tutorials
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="tutorials_R.html">R tutorials</a>
+    </li>
+    <li>
+      <a href="tutorial_PCA_correction.html">PCA</a>
+    </li>
+    <li>
+      <a href="tutorial_nonlinear_dim_reduction_methods_cor.html">MDS, kernel-PCA</a>
+    </li>
+    <li>
+      <a href="tutorial_clustering.html">Clustering</a>
+    </li>
+    <li>
+      <a href="tutorial_mixtureModelsEM.html">GGM and EM</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa fas fa-keyboard"></span>
+     
+    Homework
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="homework_1_reporting_correction.html">#1: Swirl, Rmarkdown, R basics - correction</a>
+    </li>
+    <li>
+      <a href="homework_2_data_manipulation_representation_correction.html">#2: Data manipulation and representation - correction</a>
+    </li>
+    <li>
+      <a href="homework_3_PCA_correction.html">#3: Data analysis with PCA - correction</a>
+    </li>
+    <li>
+      <a href="homework_4_dim_reduc_non_linear.html">#4: Non-linear dimension reduction method</a>
+    </li>
+    <li>
+      <a href="homework_5_GraphPartitioning.html">#5: Spectral Clustering for graphs</a>
+    </li>
+    <li>
+      <a href="homework_6_SBM.html">#6: The Stochastic Block Model</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="Projects.html">
+    <span class="fas fa fas fa-chart-bar"></span>
+     
+    Projects
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Projects</h1>
+
+</div>
+
+
+<div id="instructions" class="section level2">
+<h2>Instructions</h2>
+<p>Form groups with 4 students. Make your choice by joining a group via Moodle. First arrived, first served.</p>
+<p>There will be 3 afternoons dedicated to projects follow-up. You can work with your mates whenever you want.</p>
+<p>You should send a report no later that December the 13th. Your work will be presented during a 20 minutes talk (10 minutes + questions) on December the 15th.</p>
+<p>Report and talk can be written/made in English or in French.</p>
+</div>
+<div id="projets-1-à-3-base-vican" class="section level2">
+<h2>Projets 1 à 3: base [VICAN]</h2>
+<p>VICAN (vie après cancer) est une étude menée chez environ 17K patientes ayant un cancer (majorité de cancer du sein et cancer du poumon) avec recueil d’information à inclusion, 2 ans après inclusion (VICAN2), 5 après inclusion (VICAN5). <a href="https://www.proinfoscancer.org/sites/default/files/2018-6-19-la_vie_cinq_ans_apres_un_diagnostic_de_cancer_rapport_mel_inserm-inca.pdf">Plus d’information disponible ici</a>.</p>
+<div id="projet-1-vican-1---co-médications" class="section level3">
+<h3>Projet 1 [VICAN 1] - Co-médications</h3>
+<p>Le projet vise à décrire les co-médications (médicaments pris en parallèle des traitements de cancer, qui ne sont pas pour traiter le cancer, e.g. traitement chronique) : description des médicaments par molécules puis classes et sous-classes de la classification internationale des molécules ATC, clustering des patientes selon le type de co-médications qu’elles prennent.</p>
+<p>On pourra observer les différences entre les clusters en termes de variables exogènes telles que l’âge, le lieu de résidence, l’IMC, etc… Les élèves pourront aussi s’intéresser aux différences de prises de comédications avant cancer et après cancer (à 2 ans puis à 5 ans).</p>
+<p><em>Mots-clés:</em> Clustering, médicaments, population stratification</p>
+</div>
+<div id="projet-2-vican-2---inégalité-géographique-et-séquelles-de-cancer-du-sein" class="section level3">
+<h3>Projet 2 [VICAN 2] - Inégalité géographique et séquelles de Cancer du sein</h3>
+<p>Le projet vise à étudier le potentiel impact du lieu de résidence sur les séquelles après cancer du sein et leur guérison. Le projet pourrait être effectué en deux étapes :</p>
+<ol style="list-style-type: decimal">
+<li><p>Étape 1 : Graph clustering sur les communes françaises. Les noeuds sont les villes françaises caractérisées par des indicateurs sociaux tels que indices de pauvreté, taux de chômage, distance au médecin généraliste. Les arêtes sont pondérées par les distances entre les communes.</p></li>
+<li><p>Étape 2 : Dans chacun des clusters définis plus haut, on étudie les différences entre : l’existence de séquelles, le type de séquelle, l’évolution des séquelles dans le temps (à 2 ans puis 5 ans) pour les patientes de VICAN résidant dans chaque cluster. Le projet invite aussi à travailler sur des visualisations sous forme de graphes.</p></li>
+</ol>
+<p><em>Mots-clés:</em> clustering, graphe, spatial</p>
+</div>
+<div id="projet-3-vican-3---femmes-jeunes--40-ans" class="section level3">
+<h3>Projet 3 [VICAN 3] - Femmes jeunes (-40 ans)</h3>
+<p>Ce projet exploratoire vise à décrire le cancer et les trajectoires de vie de patientes jeunes atteintes de cancer du sein. On pourra se focaliser sur les variables suivantes :</p>
+<ul>
+<li>Trajectoire du couple</li>
+<li>Fertilité (préservation de la fertilité au cours des traitements de cancer, grossesses, issue de la grossesse, désir d’enfant)</li>
+<li>IMC</li>
+<li>Modification des habitudes de vie (sport, alimentation)</li>
+<li>Évolution de la situation au travail (chômage, perte d’emploi, arrêt maladie)</li>
+<li>Niveau d’étude, profession, catégorie socio-professionnelle.</li>
+</ul>
+<p><em>Mots-clés:</em> réduction de dimension, visualisation, trajectoire</p>
+</div>
+</div>
+<div id="projets-4-et-5-base-feeric" class="section level2">
+<h2>Projets 4 et 5: base [FEERIC]</h2>
+<p>L’étude FEERIC (FErtility, PrEgnancy, contRaception after BC in France) est une étude française lancée en mars 2018 pour évaluer la fertilité et la contraception de femmes ayant eu un cancer du sein et comparées à des femmes qui en sont indemnes. Les données ont été collectées sur une plateforme de recherche communautaire et collaborative “ Seintinelles” (<a href="https://www.seintinelles.com" class="uri">https://www.seintinelles.com</a>). Ce réseau social de recherche a pour vocation initiale de mettre en relation des citoyens volontaires et des chercheurs pour accélerer la réalisation d’étude. A ce jour, plus de 30 000 citoyens sont inscrits sur la plateforme Seintinelles qui a lancé plus de 30 études et a obtenu des temps d’inclusions record.</p>
+<p><a href="https://fr.wikipedia.org/wiki/Seintinelles">Plus d’informations sur la page wikipedia</a></p>
+<p>Les données des projets 4 et 5 sont issues de questionnaires remplis en ligne (par des femmes ayant eu un cancer du sein ou non), et les questions portent principalement sur la fertilité et les grossesses.</p>
+<div id="projet-4-feeric-1---déterminant-des-délais-de-conceptions-et-des-issues-de-grossesse-chez-les-participantes-de-létude." class="section level3">
+<h3>Projet 4 [FEERIC 1] - Déterminant des délais de conceptions et des issues de grossesse chez les participantes de l’étude.</h3>
+<p>Ce projet peut être sélectionné par plusieurs groupes d’étudiants (2 groupes maximum).</p>
+<p>Un délai de conception est défini par le temps entre le début d’un projet de grossesse et l’obtention effective d’une grossesse. Peu de données sont disponibles sur les délais de conception chez les couples désirant une grossesse.</p>
+<p>Une issue de grossesse est définie par le devenir final de la grossesse et inclut : la fausse couche spontanée, l’interruption volontaire de grossesse (IVG), l’interruption thérapeutique de grossesse (ITG), la grossesse extra-utérine, la grossesse menée à terme, ou autres évènements plus rares (môle hydatiforme, etc…).</p>
+<p>L’histoire obstétricale d’une femme est composée de l’ensemble des éléments liés aux grossesses (délais de conception, issues de grossesses, complications etc…). Les événements obstétricaux sont souvent étudiés seuls, mais ne sont pas intégrés au sein d’un parcours obstétrical; qui serait propre à chaque patiente. Dans le questionnaire de l’étude FEERIC, les femmes étaient interrogées sur leur passé gynéco-obstétrical et renseignaient pour les grossesses antérieures à l’entrée dans l’étude : (i) si la grossesse était désirée ; (ii) le délai de conception ;(iii) une éventuelle assistance médicale à la procréation ; (iv) l’issue de la grossesse et de l’accouchement.</p>
+<p>L’objectif du projet est triple :</p>
+<ol style="list-style-type: decimal">
+<li><p>analyser les déterminants cliniques et démographiques du délai d’obtention d’une grossesse chez les femmes ayant eu une grossesse désirée (par construction, le délai de conception chez une femme ayant une grossesse non désirée est considéré comme NA). Il s’agit donc d’un problème de régression qui pourra être traité par des analyses statistiques classiques ou par des méthodes plus avancées d’apprentissage supervisé.</p></li>
+<li><p>analyser les déterminants cliniques et démographiques de l’issue de grossesse chez les femmes ayant eu une grossesse (qu’elle soit désirée ou non). Il s’agit cette fois-ci d’un problème de classification.</p></li>
+<li><p>identifier des parcours obstétricaux similaires et les déterminants qui les sous tendent. Les données seront étudiées pour cette question sous la forme d’une séquence d’événements ordonnés : contraception / grossesse / issue de la grossesse/ etc… avec des délais. L’idée est de clusteriser les parcours obstétricaux en utilisant des algorithmes de clustering de séquences. Les clusters obtenus seront étudiés (qualité du clustering, choix des hyper-paramètres, caractéristiques..) et visualisés.</p></li>
+</ol>
+<p><em>Mots-clés:</em> séquence, visualisation, clustering, prédiction (classification, régression)</p>
+</div>
+<div id="projet-5-feeric-2---prédiction-de-la-probabilité-quune-patiente-ayant-répondu-à-une-étude-n-réponde-à-létude-n1" class="section level3">
+<h3>Projet 5 [FEERIC 2] - Prédiction de la probabilité qu’une patiente ayant répondu à une étude n réponde à l’étude n+1</h3>
+<p>Le modèle de recherche lié à la plateforme Seintinelles est un modèle pionnier. L’association a reçu le prix Google « Moteur de réussites françaises » en 2015. En cas d’étude longitudinale, un des défis majeurs est la fidélité dans le temps des répondeurs, afin de limiter le nombre de participants ‘perdus de vue’ qui peuvent biaiser les résultats de l’étude.</p>
+<p>Dans l’étude FEERIC, les patientes répondaient à un questionnaire à l’inclusion, puis un questionnaire d’actualisation tous les 6 mois (soit 7 questionnaires au total). Les données fournies pour le projet correspondent au questionnaire initial et aux 5 questionnaires d’actualisation.</p>
+<p>Le but du projet est d’anticiper les profils de patientes susceptibles d’être “perdues de vue” au fil des différents questionnaires longitudinaux, et à l’opposé, celles qui seront de “fidèles répondeuses”. C’est un projet de prédiction (classification) à partir des données cliniques / démographiques dans lequel l’interprétabilité des résultats (quelles sont les variables importantes) est cruciale. Mots-clés: Prédiction (classification), interprétabilité, modèle explicatifs</p>
+</div>
+</div>
+<div id="projets-6-et-7-base-microcosm" class="section level2">
+<h2>Projets 6 et 7: base [MICROCOSM]</h2>
+<p>Le projet MICROCOSM a pour objectif d’étudier l’holobionte bovin, c’est à dire l’hôte et les communautés microbiennes (aussi appelées microbiotes) associées pour comprendre l’interaction entre le microbiote et la santé de l’hôte. Il repose sur une étude longitudinale (3 à 4 points de temps) des microbiotes bovins associés à différents sites anatomiques (bouche, nasaux, vagins, trayons) et intègre différentes communautés (bactériennes, levures / champignons). Au delà des quantification microbiennes, chaque animal est caractérisé par un certain nombre de variable: score génétique, lignée, état de santé, etc. Le projet vise à (i) identifier les facteurs structurant les microbiotes, (ii) évaluer l’interdépendance entre ces microbiotes (redondance, réseaux d’association) (iii) établir les liens entre ces microbiotes et la santé de l’hôte à l’échelle locale et globale.</p>
+<p>Les données consistent en deux tables d’abondances: une décrivant les abondances de 1091 espèces bactériennes dans 671 microbiotes et une décrivant les abondances de 232 espèces fongiques dans un sous-ensemble de 389 échantillons.</p>
+<div id="projet-6-microcosm-1---identification-des-facteurs-structurants-du-microbiote" class="section level3">
+<h3>Projet 6 [MICROCOSM 1] - Identification des facteurs structurants du microbiote</h3>
+<p>L’idée de ce projet est d’étudier et de comparer les microbiotes pour identifier les facteurs structurants majeurs. On pourra s’appuyer sur des distances classiques en écologie microbienne et/ou une modélisation ad-hoc des données d’abondance pour visualiser intelligemment les données. On pourra ensuite essayer de clusteriser les microbiotes et vérifier l’accord entre les groupes reconstruits et les covariables d’intérêts (temps, site, état de santé de l’animal, etc). On pourra en parallèle prédire la classe (au sens de site, point de temps, etc), de chaque microbiote pour qualifier la difficulté du problème de classification et identifier les facteurs les plus discriminants.</p>
+<p><em>Mots-clés:</em> visualisation, clustering, classification</p>
+</div>
+<div id="projet-7-microcosm-2---recherche-de-structure-en-blocs" class="section level3">
+<h3>Projet 7 [MICROCOSM 2] - Recherche de structure en blocs</h3>
+<p>L’idée de ce projet est d’appliquer des modèles à blocs latents sur les données de comptages (éventuellement transformées) pour identifier des groupes d’espèces, des groupes de microbiotes et des associations préférentielles entres eux (e.g. les espèces du groupe A sont spécifiques des échantillons du groupe 1 tandis que les espèces du groupe B sont ubiquitaires) avant de vérifier si les groupes d’échantillon ainsi formés coïncident avec les covariables décrites plus haut (site, point de temps, lignée, etc). On pourra dans un deuxième temps corriger par ces covariables et vérifier si les associations persistent.</p>
+<p><em>Mots-clés:</em> clustering, modèles à variables latentes</p>
+</div>
+</div>
+<div id="projets-8-9-et-10-projet-metaotu" class="section level2">
+<h2>Projets 8, 9 et 10: projet [MetaOTU]</h2>
+<p>Le projet MetaOTU a pour objectif d’étudier conjointement les données provenant de 7 études portant sur l’écosystème microbien de sols soumis à différentes sources de variation (traitements différents, pratiques de culture etc.) pour comprendre la structure ou l’assemblage des communautés bactériennes en fonction de ces différentes sources de variation. Au delà des quantification microbiennes, chaque échantillon de sol est caractérisé par un certain nombre de variables telles que : l’étude dont il est issu, le pays d’origine de l’échantillon de sol initial, la présence ou non de couvert végétal, le traitement principal appliqué, etc.. Le projet vise à (i) identifier les facteurs structurant les communautés microbiennes, (ii) évaluer l’interdépendance entre ces communautés (redondance, réseaux d’association) (iii) inférer des réseaux entre les espèces et regarder leur « robustesse » par rapport aux covariables.</p>
+<p><em>Les 7 études sont les suivantes :</em></p>
+<ul>
+<li>BP = « Bioprophylaxie » : cette étude comporte 96 échantillons, microcosmes de sol planté avec du blé et de la moutarde. Le but est d’étudier l’impact sur les communautés bactériennes de 4 traitements (contrôle, un désherbant (2,4D), une souche dégradant du 2,4D (C. necator), une association désherbant + souche (2,4D+)) à 6 temps différents (0,2,4,7,9,15).</li>
+<li>CP = « Cipan » : cette étude comporte 235 échantillons et étudie à 3 temps différents l’impact du mode de destruction de couverts végétaux de diversité variable sur les communautés microbiennes du sol.</li>
+<li>DD = « Digging Deeper » : cette étude comporte 217 échantillons. Il s’agit d’un transect européen de champs cultivés avec une diversité végétale variable (High, Low, Grassland, Conventional, Organic) et de prairies.</li>
+<li>IB = « Idiome-Blé » : cette expérience en pots comporte 235 échantillons correspondant à 40 génotypes de blé appartenant à 4 groupes « temporels » d’une série de domestication de blé dur (diccocoides = forme non domestiquée, dicoccum = 1ère forme domestiquée, durum landraces = variétés populations, durum elite = variétés élites).</li>
+<li>MC = « Macaroni » : cette expérience de 367 échantillons étudie l’impact de 13 différents traitements sur l’assemblage des communautés bactériennes.</li>
+<li>II = « InterIntra » : cette expérience en pots de 150 échantillons vise à étudier les effets d’une mobilisation simultanée de la diversité intra (1,2,4 ou 6 génotypes) et interspécifique (Blé ou Pois ou les 2) sur les propriétés d’un écosystème dont la structure des communautés bactériennes.</li>
+<li>LU = « Lusignan » cette expérience de 347 échantillons étudie les effets sur l’assemblage des communautés bactériennes de différents traitements à partir de 3 sols avec des historiques de culture différents (rotation classique, prairie depuis longtemps et culture après prairie).</li>
+</ul>
+<p>Les données consistent en une table d’abondances décrivant les abondances de 1161 OTUs, proxies d’espèces bactériennes dans 1647 échantillons de sols et une table ‘MetaOTU-mapping-file.csv’ caractérisant les 1647 échantillons de sols.</p>
+<!-- #### SampleID : Nom de l'échantillon -->
+<!-- - Study : Nom de l'étude -->
+<!-- - Pays : Pays d'origine de l'échantillon initial -->
+<!-- - MicrocosmeVsNaturel : Renseigne si l'étude a été faite en microcosmes/pots ou si ce sont prélèvements in situ -->
+<!-- - DilExtractVsOriginal : Renseigne si l'échantillon est issu d'un sol ou d'une extraction de bactérie de jus de sol. -->
+<!-- - Soil : Renseigne sur l'origine géographique précise du sol. -->
+<!-- - NuVsCover : Renseigne si l'expérience a été faite avec un couvert végétal ou pas. -->
+<!-- - NuVsPlantDiv : Renseigne sur le niveau de diversité végétal du couvert. -->
+<!-- - TraitementPrincipal : Renseigne sur le source de variation principale étudiée au sein de chacune des études. -->
+<!-- - TraitementSecondaire : Renseigne sur le source de variation secondaire étudiée au sein de -->
+<!--  chacune des études. -->
+<div id="projet-8-metaotu-1---identification-des-facteurs-structurant-les-communautés-microbiennes-du-sol" class="section level3">
+<h3>Projet 8 [MetaOTU 1] - Identification des facteurs structurant les communautés microbiennes du sol</h3>
+<p>L’idée de ce projet est d’étudier et de comparer les communautés microbiennes du sol (en univarié ou en mutivariée) pour mettre en avant les facteurs structurants majeurs. On pourra s’appuyer sur des indices de diversité, des distances classiques en écologie microbienne, et/ou une modélisation ad-hoc des données d’abondance pour décrire et visualiser intelligemment les données. On pourra ensuite essayer de classer les écosystèmes microbiens et vérifier l’accord entre les groupes reconstruits et les covariables d’intérêts (nature du sol, origine géographique, extraction vs original, etc).</p>
+<p><em>Mots-clés:</em> description, visualisation, clustering</p>
+</div>
+<div id="projet-9-metaotu-2---recherche-de-structure-en-blocs" class="section level3">
+<h3>Projet 9 [MetaOTU 2] - recherche de structure en blocs</h3>
+<p>L’idée de ce projet est d’appliquer des modèles à blocs latents sur les données de comptages<br />
+(éventuellement transformées) pour identifier des groupes d’espèces microbiennes, des groupes de sols et des associations préférentielles entres eux (e.g. les espèces du groupe A sont spécifiques des échantillons du groupe 1 tandis que les espèces du groupe B sont ubiquitaires) avant de vérifier si les groupes d’échantillon ainsi formés coïncident avec les covariables décrites plus haut. On pourra dans un deuxième temps corriger par ces covariables et vérifier si les associations persistent.</p>
+<p><em>Mots-clés:</em> bi-clustering, modèles à variables latentes</p>
+</div>
+<div id="projet-10-metaotu-3---réseau-dinteractions-entre-espèces" class="section level3">
+<h3>Projet 10 [MetaOTU 3] - réseau d’interactions entre espèces</h3>
+<p>L’idée de ce projet est d’inférer un ou plusieurs réseaux d’interactions entre espèces</p>
+<p>microbiennes à partir des données de comptages. On pourra étudier la stabilité du réseau en enlevant quelques échantillons. Dans un deuxième temps on pourra corriger par certaines covariables pour vérifier si les interactions inférées persistent une fois la ou les covariables prises en compte. On pourra finalement proposer une visualisation des résultats.</p>
+<p><em>Mots-clés:</em> network, modèles à variables latentes, visualisation</p>
+</div>
+</div>
+<div id="projets-11-12-13-deep-autoencoders" class="section level2">
+<h2>Projets 11, 12, 13 : Deep Autoencoders</h2>
+<div id="project-11-predicting-sp500-returns-or-other-indices" class="section level3">
+<h3>Project 11: Predicting SP500 returns or other indices</h3>
+<p>See e.g.<br />
+<a href="">https://github.com/Leo8216/An-Analysis-of-PCA-and-Autoencoder-Generated-Factors-in-Predicting-SP500-Returns</a> <a href="">https://gt.rstudio.com/reference/sp500.html</a> <a href="">https://rdocumentation.org/packages/depmixS4/versions/1.4-1/topics/sp500</a> <a href="">https://towardsdatascience.com/exploring-the-sp500-with-r-part-1-scraping-data-acquisition-and-functional-programming-56c9498f38e8</a></p>
+<p><em>keywords</em>: prediction, dimension reduction, neural networks</p>
+</div>
+<div id="projet-12---comparison-of-gan-versus-wassertein-gan" class="section level3">
+<h3>Projet 12 - Comparison of GAN versus Wassertein GAN</h3>
+<p>In this project, we compare both GANs and WGANs. Comment the two original paper. Precisely describe both approaches and the main differences. Start to test on simple examples (e.g. normal distribution)</p>
+<p><em>References</em>:</p>
+<ul>
+<li><a href="https://arxiv.org/abs/1701.07875">https://arxiv.org/abs/1701.07875</a> (WGANs)</li>
+<li><a href="https://arxiv.org/abs/1406.2661">https://arxiv.org/abs/1406.2661</a> (original paper of GANs)</li>
+</ul>
+<p><em>Keywords</em>: neural networks, auto-encoders</p>
+</div>
+<div id="projet-13---generative-adversarial-nets-via-pytorch-for-generating-time-series" class="section level3">
+<h3>Projet 13 - Generative Adversarial Nets (via Pytorch) for generating time series</h3>
+<p><em>References</em>:</p>
+<ul>
+<li><a href="https://arxiv.org/pdf/1907.06673.pdf">https://arxiv.org/pdf/1907.06673.pdf</a></li>
+<li><a href="https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf">https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf</a></li>
+</ul>
+<p><em>Possible examples</em>: financial time series e.g. learn how to sample SP&amp;500</p>
+<p><em>Keywords</em>: neural networks, auto-encoders</p>
+</div>
+</div>
+<div id="projets-14-analysis-of-network-data-with-sbm" class="section level2">
+<h2>Projets 14: Analysis of network data with SBM</h2>
+<p>(2 groups possible - Python or R)</p>
+<p>In this project, the goal is to explore extensions of the Stochastic Block Model where edges are weighted with various distributions (Poisson and Gaussian for instance). It also shows how one can include external knowledge on top of the network structure, by means of covariates on the nodes of the graph. All the corresponding models are implemented either in R or in Python. Use them to analyze some weighted network data and/or binary network with covariates.</p>
+<p>R package. <a href="">https://CRAN.R-project.org/package=sbm</a>, and <a href="">https://grosssbm.github.io/sbm</a></p>
+<p>Python library: <a href="">https://graph-tool.skewed.de/</a></p>
+<p><em>Network data.</em> Pick up some network data (with less than 500/1000 nodes for your convenience!) to illustrate the method that you study, for instance in</p>
+<ul>
+<li>Network repository <a href="http://networkrepository.com/" class="uri">http://networkrepository.com/</a></li>
+<li>General network data: <a href="http://www-personal.umich.edu/~mejn/netdata/" class="uri">http://www-personal.umich.edu/~mejn/netdata/</a></li>
+<li>Ecological network database: <a href="http://networkrepository.com/eco.php" class="uri">http://networkrepository.com/eco.php</a></li>
+<li>SNAP database: <a href="https://snap.stanford.edu/data/index.html" class="uri">https://snap.stanford.edu/data/index.html</a></li>
+<li>… feel free to use your own network data!</li>
+</ul>
+<p><em>Keywords:</em> graph clustering, mixtures model, model-based approaches</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
