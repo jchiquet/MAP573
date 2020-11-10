@@ -688,7 +688,7 @@ div.tocify {
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(spectrum_L<span class="sc">$</span>values, <span class="at">pch =</span><span class="st">&quot;.&quot;</span>)</span></code></pre></div>
 <p><img src="homework_5_GraphPartitioning_correction_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(spectrum_L<span class="sc">$</span>values <span class="sc">&lt;=</span> <span class="fl">1e-16</span>)</span></code></pre></div>
-<pre><code>## [1] 4</code></pre>
+<pre><code>## [1] 3</code></pre>
 <p>As expected, there are 4 zero eigen values (the number of connected components). Indeed, we saw on the graph plots 3 isolated nodes plus one large group of connected nodes.</p>
 <ol start="3" style="list-style-type: decimal">
 <li>Compute its eigen vectors and represent the pairs plot between the first 10 eigen vectors with non-null eigen values. Add colors associated to the Political labels of the nodes. Comment.</li>
