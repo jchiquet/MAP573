@@ -12,6 +12,8 @@ You should send a report no later that December the 13th. Your work will be pres
 
 Report and talk can be written/made in English or in French.
 
+Only reatined project are known visible
+
 ## Projets 1 à 3: base [VICAN]
 
 VICAN (vie après cancer) est une étude menée chez environ 17K patientes ayant un cancer (majorité de cancer du sein et cancer du poumon) avec recueil d'information à inclusion, 2 ans après inclusion (VICAN2),  5 après inclusion (VICAN5). [Plus d'information disponible ici](https://www.proinfoscancer.org/sites/default/files/2018-6-19-la_vie_cinq_ans_apres_un_diagnostic_de_cancer_rapport_mel_inserm-inca.pdf).
@@ -37,7 +39,9 @@ _Mots-clés:_ clustering, graphe, spatial
 
 ### Projet 3 [VICAN 3] - Femmes jeunes (-40 ans)
 
-Ce projet exploratoire vise à décrire le cancer et les trajectoires de vie de patientes jeunes atteintes de cancer du sein. On pourra se focaliser sur les variables suivantes :
+Ce projet peut être sélectionné par 2 groupes d'étudiants.
+
+Ce projet exploratoire vise à décrire le cancer et les trajectoires de vie de patientes jeunes atteintes de cancer du sein.  On pourra se focaliser sur les variables suivantes:
 
 - Trajectoire du couple 
 - Fertilité (préservation de la fertilité au cours des traitements de cancer, grossesses, issue de la grossesse, désir d'enfant)
@@ -46,9 +50,15 @@ Ce projet exploratoire vise à décrire le cancer et les trajectoires de vie de 
 - Évolution de la situation au travail (chômage, perte d'emploi, arrêt maladie)
 - Niveau d'étude, profession, catégorie socio-professionnelle. 
 
+**Groupe 1: Recherche exploratoire et descriptive**
+
+**Groupe 2: Étude des différences géographiques**
+
+
 _Mots-clés:_ réduction de dimension, visualisation, trajectoire
 
-## Projets 4 et 5: base [FEERIC]
+
+## Projets 5 : base [FEERIC]
 
 L'étude FEERIC (FErtility, PrEgnancy, contRaception after BC in France) est une étude française lancée en mars 2018 pour évaluer la fertilité et la contraception de femmes ayant eu un cancer du sein et comparées à des femmes qui en sont indemnes. Les données ont été collectées sur une plateforme de recherche communautaire et collaborative “ Seintinelles” (https://www.seintinelles.com). Ce réseau social de recherche  a pour vocation initiale de mettre en relation des citoyens volontaires et des chercheurs pour accélerer la réalisation d'étude. A ce jour, plus de 30 000 citoyens sont inscrits sur la plateforme Seintinelles qui a lancé plus de 30 études et a obtenu des temps d'inclusions record.
 
@@ -57,26 +67,26 @@ L'étude FEERIC (FErtility, PrEgnancy, contRaception after BC in France) est une
 Les données des projets 4 et 5 sont issues de questionnaires remplis en ligne (par des femmes ayant eu un cancer du sein ou non), et les questions portent 
 principalement sur la fertilité et les grossesses. 
 
-### Projet 4 [FEERIC 1] - Déterminant des délais de conceptions et des issues de grossesse chez les participantes de l'étude.
+<!-- ### Projet 4 [FEERIC 1] - Déterminant des délais de conceptions et des issues de grossesse chez les participantes de l'étude. -->
 
-Ce projet peut être sélectionné par plusieurs groupes d'étudiants (2 groupes maximum).
+<!-- Ce projet peut être sélectionné par plusieurs groupes d'étudiants (2 groupes maximum). -->
 
-Un délai de conception est défini par le temps entre le début d'un projet de grossesse et l'obtention effective d'une grossesse. Peu de données sont disponibles sur les délais de conception chez les couples désirant une grossesse. 
+<!-- Un délai de conception est défini par le temps entre le début d'un projet de grossesse et l'obtention effective d'une grossesse. Peu de données sont disponibles sur les délais de conception chez les couples désirant une grossesse.  -->
 
-Une issue de grossesse est définie par le devenir final de la grossesse et inclut : la fausse couche spontanée, l'interruption volontaire de grossesse (IVG), l'interruption thérapeutique de grossesse (ITG), la grossesse extra-utérine, la grossesse menée à terme, ou autres évènements plus rares (môle hydatiforme, etc...).
+<!-- Une issue de grossesse est définie par le devenir final de la grossesse et inclut : la fausse couche spontanée, l'interruption volontaire de grossesse (IVG), l'interruption thérapeutique de grossesse (ITG), la grossesse extra-utérine, la grossesse menée à terme, ou autres évènements plus rares (môle hydatiforme, etc...). -->
 
-L'histoire obstétricale d'une femme est composée de l'ensemble des éléments liés aux grossesses (délais de conception, issues de grossesses, complications etc...). Les événements obstétricaux sont souvent étudiés seuls, mais ne sont pas intégrés au sein d'un parcours obstétrical; qui serait propre à chaque patiente. 
-Dans le questionnaire de l'étude FEERIC, les femmes étaient interrogées sur leur passé gynéco-obstétrical et renseignaient pour les grossesses antérieures à l'entrée dans l'étude : (i) si la grossesse était désirée ; (ii) le délai de conception ;(iii) une éventuelle assistance médicale à la procréation ; (iv) l'issue de la grossesse et de l'accouchement.
- 
-L'objectif du projet est triple : 
+<!-- L'histoire obstétricale d'une femme est composée de l'ensemble des éléments liés aux grossesses (délais de conception, issues de grossesses, complications etc...). Les événements obstétricaux sont souvent étudiés seuls, mais ne sont pas intégrés au sein d'un parcours obstétrical; qui serait propre à chaque patiente.  -->
+<!-- Dans le questionnaire de l'étude FEERIC, les femmes étaient interrogées sur leur passé gynéco-obstétrical et renseignaient pour les grossesses antérieures à l'entrée dans l'étude : (i) si la grossesse était désirée ; (ii) le délai de conception ;(iii) une éventuelle assistance médicale à la procréation ; (iv) l'issue de la grossesse et de l'accouchement. -->
 
-  1. analyser les déterminants cliniques et démographiques du délai  d'obtention d'une grossesse chez les femmes ayant eu une grossesse désirée (par construction, le délai de conception chez une femme ayant une grossesse non désirée est considéré comme NA). Il s'agit donc d'un problème de régression qui pourra être traité par des analyses statistiques classiques ou par des méthodes plus avancées d'apprentissage supervisé.
-  
-  2. analyser les déterminants cliniques et démographiques de l'issue de grossesse chez les femmes ayant eu une grossesse (qu'elle soit désirée ou non). Il s'agit cette fois-ci d'un problème de classification.
-  
-  3. identifier des parcours obstétricaux similaires et les déterminants qui les sous tendent. Les données seront étudiées pour cette question sous la forme d'une séquence d'événements ordonnés : contraception  / grossesse  / issue de la grossesse/ etc… avec des délais. L'idée est de clusteriser les parcours obstétricaux en utilisant des algorithmes de clustering de séquences. Les clusters obtenus seront étudiés (qualité du clustering, choix des hyper-paramètres, caractéristiques..) et visualisés.
- 
-_Mots-clés:_ séquence, visualisation, clustering, prédiction (classification, régression)
+<!-- L'objectif du projet est triple :  -->
+
+<!--   1. analyser les déterminants cliniques et démographiques du délai  d'obtention d'une grossesse chez les femmes ayant eu une grossesse désirée (par construction, le délai de conception chez une femme ayant une grossesse non désirée est considéré comme NA). Il s'agit donc d'un problème de régression qui pourra être traité par des analyses statistiques classiques ou par des méthodes plus avancées d'apprentissage supervisé. -->
+
+<!--   2. analyser les déterminants cliniques et démographiques de l'issue de grossesse chez les femmes ayant eu une grossesse (qu'elle soit désirée ou non). Il s'agit cette fois-ci d'un problème de classification. -->
+
+<!--   3. identifier des parcours obstétricaux similaires et les déterminants qui les sous tendent. Les données seront étudiées pour cette question sous la forme d'une séquence d'événements ordonnés : contraception  / grossesse  / issue de la grossesse/ etc… avec des délais. L'idée est de clusteriser les parcours obstétricaux en utilisant des algorithmes de clustering de séquences. Les clusters obtenus seront étudiés (qualité du clustering, choix des hyper-paramètres, caractéristiques..) et visualisés. -->
+
+<!-- _Mots-clés:_ séquence, visualisation, clustering, prédiction (classification, régression) -->
 
 ### Projet 5 [FEERIC 2] - Prédiction de la probabilité qu'une patiente ayant répondu à une étude n réponde à l'étude n+1
 
@@ -85,102 +95,29 @@ Le modèle de recherche lié à la plateforme Seintinelles est un modèle pionni
 Dans l'étude FEERIC, les patientes répondaient à un questionnaire à l'inclusion, puis un questionnaire d'actualisation tous les 6 mois (soit 7 questionnaires au total). Les données fournies pour le projet correspondent au questionnaire initial et aux 5 questionnaires d'actualisation.
  
 Le but du projet est d'anticiper les profils de patientes susceptibles d'être “perdues de vue” au fil des différents questionnaires longitudinaux, et à l'opposé, celles qui seront de “fidèles répondeuses”. C'est un projet de prédiction (classification) à partir des données cliniques / démographiques dans lequel l'interprétabilité des résultats (quelles sont les variables importantes) est cruciale. 
-Mots-clés: Prédiction (classification), interprétabilité, modèle explicatifs
 
-## Projets 6 et 7: base [MICROCOSM]
-
-Le projet MICROCOSM a pour objectif d'étudier l'holobionte bovin, c'est à dire l'hôte et les communautés microbiennes (aussi appelées microbiotes) associées pour comprendre l'interaction entre le microbiote et la santé de l'hôte. Il repose sur une étude longitudinale (3 à 4 points de temps) des microbiotes bovins associés à différents sites anatomiques (bouche, nasaux, vagins, trayons) et intègre différentes communautés (bactériennes, levures / champignons). Au delà des quantification microbiennes, chaque animal est caractérisé par un certain nombre de variable: score génétique, lignée, état de santé, etc. Le projet vise à (i) identifier les facteurs structurant les microbiotes, (ii) évaluer l'interdépendance entre ces microbiotes (redondance, réseaux d'association) (iii) établir les liens entre ces microbiotes et la santé de l'hôte à l'échelle locale et globale.
-
-Les données consistent en deux tables d'abondances: une décrivant les abondances de 1091 espèces bactériennes dans 671 microbiotes et une décrivant les abondances de 232 espèces fongiques dans un sous-ensemble de 389 échantillons. 
-
-### Projet 6 [MICROCOSM 1] - Identification des facteurs structurants du microbiote
-
-L'idée de ce projet est d'étudier et de comparer les microbiotes pour identifier les facteurs structurants majeurs. On pourra s'appuyer sur des distances classiques en écologie microbienne et/ou une modélisation ad-hoc des données d'abondance pour visualiser intelligemment les données. On pourra ensuite essayer de clusteriser les microbiotes et vérifier l'accord entre les groupes reconstruits et les covariables d'intérêts (temps, site, état de santé de l'animal, etc). On pourra en parallèle prédire la classe (au sens de site, point de temps, etc), de chaque microbiote pour qualifier la difficulté du problème de classification et identifier les facteurs les plus discriminants. 
- 
-_Mots-clés:_ visualisation, clustering, classification
-
-### Projet 7 [MICROCOSM 2] - Recherche de structure en blocs 
-
-L'idée de ce projet est d'appliquer des modèles à blocs latents sur les données de comptages  (éventuellement transformées) pour identifier des groupes d'espèces, des groupes de microbiotes et des associations préférentielles entres eux (e.g. les espèces du groupe A sont spécifiques des échantillons du groupe 1 tandis que les espèces du groupe B sont ubiquitaires) avant de vérifier si les groupes d'échantillon ainsi formés coïncident avec les covariables décrites plus haut (site, point de temps, lignée, etc). On pourra dans un deuxième temps corriger par ces covariables et vérifier si les associations persistent. 
- 
-_Mots-clés:_ bi-clustering, modèles à variables latentes
- 
-## Projets 8, 9 et 10: projet [MetaOTU]
-
-Le projet MetaOTU a pour objectif d'étudier conjointement les données provenant de 7 études portant sur l'écosystème microbien de sols soumis à différentes sources de variation (traitements différents, pratiques de culture etc.) pour comprendre la structure ou l'assemblage des communautés bactériennes en fonction de ces différentes sources de variation. Au delà des quantification microbiennes, chaque échantillon de sol est caractérisé par un certain nombre de variables telles que : l'étude dont il est issu, le pays d'origine de l'échantillon de sol initial, la présence ou non de couvert végétal, le traitement principal appliqué, etc.. Le projet vise à (i) identifier les facteurs structurant les communautés microbiennes, (ii) évaluer l'interdépendance entre ces communautés (redondance, réseaux d'association) (iii) inférer des réseaux entre les espèces et regarder leur « robustesse » par rapport aux covariables.
-
-_Les 7 études sont les suivantes :_
-
-  - BP = « Bioprophylaxie » : cette étude comporte 96 échantillons, microcosmes de sol planté avec du blé et de la moutarde. Le but est d'étudier l'impact sur les communautés bactériennes de 4 traitements (contrôle, un désherbant (2,4D), une souche dégradant du 2,4D (C. necator), une association désherbant + souche (2,4D+)) à 6 temps différents (0,2,4,7,9,15).
-  - CP = « Cipan » : cette étude comporte 235 échantillons et étudie à 3 temps différents l'impact du mode de destruction de couverts végétaux de diversité variable sur les communautés microbiennes du sol.
-  - DD = « Digging Deeper » : cette étude comporte 217 échantillons. Il s'agit d'un transect européen de champs cultivés avec une diversité végétale variable (High, Low, Grassland, Conventional, Organic) et de prairies.
-  - IB = « Idiome-Blé » : cette expérience en pots comporte 235 échantillons correspondant à 40 génotypes de blé appartenant à 4 groupes « temporels » d'une série de domestication de blé dur (diccocoides = forme non domestiquée, dicoccum = 1ère forme domestiquée, durum landraces = variétés populations, durum elite = variétés élites).
-  - MC = « Macaroni » : cette expérience de 367 échantillons étudie l'impact de 13 différents traitements sur l'assemblage des communautés bactériennes.
-  - II = « InterIntra » : cette expérience en pots de 150 échantillons vise à étudier les effets d'une mobilisation simultanée de la diversité intra (1,2,4 ou 6 génotypes) et interspécifique (Blé ou Pois ou les 2) sur les propriétés d'un écosystème dont la structure des communautés bactériennes.
-  - LU = « Lusignan » cette expérience de 347 échantillons étudie les effets sur l'assemblage des communautés bactériennes de différents traitements à partir de 3 sols avec des historiques de culture différents (rotation classique, prairie depuis longtemps et culture après prairie).
-
-Les données consistent en une table d'abondances décrivant les abondances de 1161 OTUs, proxies d'espèces bactériennes dans 1647 échantillons de sols et une table
-‘MetaOTU-mapping-file.csv' caractérisant les 1647 échantillons de sols.
-
-<!-- #### SampleID : Nom de l'échantillon -->
-
-<!-- - Study : Nom de l'étude -->
-<!-- - Pays : Pays d'origine de l'échantillon initial -->
-<!-- - MicrocosmeVsNaturel : Renseigne si l'étude a été faite en microcosmes/pots ou si ce sont prélèvements in situ -->
-<!-- - DilExtractVsOriginal : Renseigne si l'échantillon est issu d'un sol ou d'une extraction de bactérie de jus de sol. -->
-<!-- - Soil : Renseigne sur l'origine géographique précise du sol. -->
-<!-- - NuVsCover : Renseigne si l'expérience a été faite avec un couvert végétal ou pas. -->
-<!-- - NuVsPlantDiv : Renseigne sur le niveau de diversité végétal du couvert. -->
-<!-- - TraitementPrincipal : Renseigne sur le source de variation principale étudiée au sein de chacune des études. -->
-<!-- - TraitementSecondaire : Renseigne sur le source de variation secondaire étudiée au sein de -->
-<!--  chacune des études. -->
-
-### Projet 8 [MetaOTU 1] - Identification des facteurs structurant les communautés microbiennes du sol
-
-L'idée de ce projet est d'étudier et de comparer les communautés microbiennes du sol (en 
-univarié ou en mutivariée) pour mettre en avant les facteurs structurants majeurs. On pourra 
-s'appuyer sur des indices de diversité, des distances classiques en écologie microbienne, et/ou 
-une modélisation ad-hoc des données d'abondance pour décrire et visualiser intelligemment les 
-données. On pourra ensuite essayer de classer les écosystèmes microbiens et vérifier l'accord 
-entre les groupes reconstruits et les covariables d'intérêts (nature du sol, origine géographique, 
-extraction vs original, etc).  
- 
-_Mots-clés:_ description, visualisation, clustering
-
-### Projet 9 [MetaOTU 2] - recherche de structure en blocs 
-
-L'idée de ce projet est d'appliquer des modèles à blocs latents sur les données de comptages  
-(éventuellement transformées) pour identifier des groupes d'espèces microbiennes, des 
-groupes de sols et des associations préférentielles entres eux (e.g. les espèces du groupe A 
-sont spécifiques des échantillons du groupe 1 tandis que les espèces du groupe B sont 
-ubiquitaires) avant de vérifier si les groupes d'échantillon ainsi formés coïncident avec les 
-covariables décrites plus haut. On pourra dans un deuxième temps corriger par ces covariables 
-et vérifier si les associations persistent.
- 
-_Mots-clés:_ bi-clustering, modèles à variables latentes
-
-### Projet 10 [MetaOTU 3] - réseau d'interactions entre espèces 
-
-L'idée de ce projet est d'inférer un ou plusieurs réseaux d'interactions entre espèces 
- 
-microbiennes à partir des données de comptages. On pourra étudier la stabilité du réseau en 
-enlevant quelques échantillons. Dans un deuxième temps on pourra corriger par certaines 
-covariables pour vérifier si les interactions inférées persistent une fois la ou les covariables 
-prises en compte. On pourra finalement proposer une visualisation des résultats.
- 
-_Mots-clés:_ network, modèles à variables latentes, visualisation
+_Mots-clés:_ Prédiction (classification), interprétabilité, modèle explicatifs
 
 ## Projets 11, 12, 13 : Deep Autoencoders
 
-### Project 11:  Predicting SP500 returns or other indices 
+<!-- ### Project 11:  Predicting SP500 returns or other indices  -->
 
-See e.g.  
-[https://github.com/Leo8216/An-Analysis-of-PCA-and-Autoencoder-Generated-Factors-in-Predicting-SP500-Returns]()
-[https://gt.rstudio.com/reference/sp500.html]()
-[https://rdocumentation.org/packages/depmixS4/versions/1.4-1/topics/sp500]()
-[https://towardsdatascience.com/exploring-the-sp500-with-r-part-1-scraping-data-acquisition-and-functional-programming-56c9498f38e8]()
+<!-- See e.g.   -->
+<!-- [https://github.com/Leo8216/An-Analysis-of-PCA-and-Autoencoder-Generated-Factors-in-Predicting-SP500-Returns]() -->
+<!-- [https://gt.rstudio.com/reference/sp500.html]() -->
+<!-- [https://rdocumentation.org/packages/depmixS4/versions/1.4-1/topics/sp500]() -->
+<!-- [https://towardsdatascience.com/exploring-the-sp500-with-r-part-1-scraping-data-acquisition-and-functional-programming-56c9498f38e8]() -->
 
-_keywords_: prediction, dimension reduction, neural networks
+<!-- _keywords_: prediction, dimension reduction, neural networks -->
+
+### Project 11: - Variational auto-encoders for generating time series 
+
+_References_:
+
+- [https://arxiv.org/abs/1312.6114](https://arxiv.org/abs/1312.6114)
+- [https://arxiv.org/abs/1906.02691](https://arxiv.org/abs/1906.02691)
+
+_Possible examples_: financial time series e.g. learn how to sample  SP&500  
 
 ### Projet 12 - Comparison of GAN versus Wassertein GAN
 
@@ -223,3 +160,90 @@ _Network data._ Pick up some network data (with less than 500/1000 nodes for you
 - ... feel free to use your own network data!
 
 _Keywords:_ graph clustering, mixtures model, model-based approaches
+
+
+
+
+
+<!-- ## Projets 6 et 7: base [MICROCOSM] -->
+
+<!-- Le projet MICROCOSM a pour objectif d'étudier l'holobionte bovin, c'est à dire l'hôte et les communautés microbiennes (aussi appelées microbiotes) associées pour comprendre l'interaction entre le microbiote et la santé de l'hôte. Il repose sur une étude longitudinale (3 à 4 points de temps) des microbiotes bovins associés à différents sites anatomiques (bouche, nasaux, vagins, trayons) et intègre différentes communautés (bactériennes, levures / champignons). Au delà des quantification microbiennes, chaque animal est caractérisé par un certain nombre de variable: score génétique, lignée, état de santé, etc. Le projet vise à (i) identifier les facteurs structurant les microbiotes, (ii) évaluer l'interdépendance entre ces microbiotes (redondance, réseaux d'association) (iii) établir les liens entre ces microbiotes et la santé de l'hôte à l'échelle locale et globale. -->
+
+<!-- Les données consistent en deux tables d'abondances: une décrivant les abondances de 1091 espèces bactériennes dans 671 microbiotes et une décrivant les abondances de 232 espèces fongiques dans un sous-ensemble de 389 échantillons.  -->
+
+<!-- ### Projet 6 [MICROCOSM 1] - Identification des facteurs structurants du microbiote -->
+
+<!-- L'idée de ce projet est d'étudier et de comparer les microbiotes pour identifier les facteurs structurants majeurs. On pourra s'appuyer sur des distances classiques en écologie microbienne et/ou une modélisation ad-hoc des données d'abondance pour visualiser intelligemment les données. On pourra ensuite essayer de clusteriser les microbiotes et vérifier l'accord entre les groupes reconstruits et les covariables d'intérêts (temps, site, état de santé de l'animal, etc). On pourra en parallèle prédire la classe (au sens de site, point de temps, etc), de chaque microbiote pour qualifier la difficulté du problème de classification et identifier les facteurs les plus discriminants.  -->
+
+<!-- _Mots-clés:_ visualisation, clustering, classification -->
+
+<!-- ### Projet 7 [MICROCOSM 2] - Recherche de structure en blocs  -->
+
+<!-- L'idée de ce projet est d'appliquer des modèles à blocs latents sur les données de comptages  (éventuellement transformées) pour identifier des groupes d'espèces, des groupes de microbiotes et des associations préférentielles entres eux (e.g. les espèces du groupe A sont spécifiques des échantillons du groupe 1 tandis que les espèces du groupe B sont ubiquitaires) avant de vérifier si les groupes d'échantillon ainsi formés coïncident avec les covariables décrites plus haut (site, point de temps, lignée, etc). On pourra dans un deuxième temps corriger par ces covariables et vérifier si les associations persistent.  -->
+
+<!-- _Mots-clés:_ bi-clustering, modèles à variables latentes -->
+
+<!-- ## Projets 8, 9 et 10: projet [MetaOTU] -->
+
+<!-- Le projet MetaOTU a pour objectif d'étudier conjointement les données provenant de 7 études portant sur l'écosystème microbien de sols soumis à différentes sources de variation (traitements différents, pratiques de culture etc.) pour comprendre la structure ou l'assemblage des communautés bactériennes en fonction de ces différentes sources de variation. Au delà des quantification microbiennes, chaque échantillon de sol est caractérisé par un certain nombre de variables telles que : l'étude dont il est issu, le pays d'origine de l'échantillon de sol initial, la présence ou non de couvert végétal, le traitement principal appliqué, etc.. Le projet vise à (i) identifier les facteurs structurant les communautés microbiennes, (ii) évaluer l'interdépendance entre ces communautés (redondance, réseaux d'association) (iii) inférer des réseaux entre les espèces et regarder leur « robustesse » par rapport aux covariables. -->
+
+<!-- _Les 7 études sont les suivantes :_ -->
+
+<!--   - BP = « Bioprophylaxie » : cette étude comporte 96 échantillons, microcosmes de sol planté avec du blé et de la moutarde. Le but est d'étudier l'impact sur les communautés bactériennes de 4 traitements (contrôle, un désherbant (2,4D), une souche dégradant du 2,4D (C. necator), une association désherbant + souche (2,4D+)) à 6 temps différents (0,2,4,7,9,15). -->
+<!--   - CP = « Cipan » : cette étude comporte 235 échantillons et étudie à 3 temps différents l'impact du mode de destruction de couverts végétaux de diversité variable sur les communautés microbiennes du sol. -->
+<!--   - DD = « Digging Deeper » : cette étude comporte 217 échantillons. Il s'agit d'un transect européen de champs cultivés avec une diversité végétale variable (High, Low, Grassland, Conventional, Organic) et de prairies. -->
+<!--   - IB = « Idiome-Blé » : cette expérience en pots comporte 235 échantillons correspondant à 40 génotypes de blé appartenant à 4 groupes « temporels » d'une série de domestication de blé dur (diccocoides = forme non domestiquée, dicoccum = 1ère forme domestiquée, durum landraces = variétés populations, durum elite = variétés élites). -->
+<!--   - MC = « Macaroni » : cette expérience de 367 échantillons étudie l'impact de 13 différents traitements sur l'assemblage des communautés bactériennes. -->
+<!--   - II = « InterIntra » : cette expérience en pots de 150 échantillons vise à étudier les effets d'une mobilisation simultanée de la diversité intra (1,2,4 ou 6 génotypes) et interspécifique (Blé ou Pois ou les 2) sur les propriétés d'un écosystème dont la structure des communautés bactériennes. -->
+<!--   - LU = « Lusignan » cette expérience de 347 échantillons étudie les effets sur l'assemblage des communautés bactériennes de différents traitements à partir de 3 sols avec des historiques de culture différents (rotation classique, prairie depuis longtemps et culture après prairie). -->
+
+<!-- Les données consistent en une table d'abondances décrivant les abondances de 1161 OTUs, proxies d'espèces bactériennes dans 1647 échantillons de sols et une table -->
+<!-- ‘MetaOTU-mapping-file.csv' caractérisant les 1647 échantillons de sols. -->
+
+<!-- #### SampleID : Nom de l'échantillon -->
+
+<!-- - Study : Nom de l'étude -->
+<!-- - Pays : Pays d'origine de l'échantillon initial -->
+<!-- - MicrocosmeVsNaturel : Renseigne si l'étude a été faite en microcosmes/pots ou si ce sont prélèvements in situ -->
+<!-- - DilExtractVsOriginal : Renseigne si l'échantillon est issu d'un sol ou d'une extraction de bactérie de jus de sol. -->
+<!-- - Soil : Renseigne sur l'origine géographique précise du sol. -->
+<!-- - NuVsCover : Renseigne si l'expérience a été faite avec un couvert végétal ou pas. -->
+<!-- - NuVsPlantDiv : Renseigne sur le niveau de diversité végétal du couvert. -->
+<!-- - TraitementPrincipal : Renseigne sur le source de variation principale étudiée au sein de chacune des études. -->
+<!-- - TraitementSecondaire : Renseigne sur le source de variation secondaire étudiée au sein de -->
+<!--  chacune des études. -->
+
+<!-- ### Projet 8 [MetaOTU 1] - Identification des facteurs structurant les communautés microbiennes du sol -->
+
+<!-- L'idée de ce projet est d'étudier et de comparer les communautés microbiennes du sol (en  -->
+<!-- univarié ou en mutivariée) pour mettre en avant les facteurs structurants majeurs. On pourra  -->
+<!-- s'appuyer sur des indices de diversité, des distances classiques en écologie microbienne, et/ou  -->
+<!-- une modélisation ad-hoc des données d'abondance pour décrire et visualiser intelligemment les  -->
+<!-- données. On pourra ensuite essayer de classer les écosystèmes microbiens et vérifier l'accord  -->
+<!-- entre les groupes reconstruits et les covariables d'intérêts (nature du sol, origine géographique,  -->
+<!-- extraction vs original, etc).   -->
+
+<!-- _Mots-clés:_ description, visualisation, clustering -->
+
+<!-- ### Projet 9 [MetaOTU 2] - recherche de structure en blocs  -->
+
+<!-- L'idée de ce projet est d'appliquer des modèles à blocs latents sur les données de comptages   -->
+<!-- (éventuellement transformées) pour identifier des groupes d'espèces microbiennes, des  -->
+<!-- groupes de sols et des associations préférentielles entres eux (e.g. les espèces du groupe A  -->
+<!-- sont spécifiques des échantillons du groupe 1 tandis que les espèces du groupe B sont  -->
+<!-- ubiquitaires) avant de vérifier si les groupes d'échantillon ainsi formés coïncident avec les  -->
+<!-- covariables décrites plus haut. On pourra dans un deuxième temps corriger par ces covariables  -->
+<!-- et vérifier si les associations persistent. -->
+
+<!-- _Mots-clés:_ bi-clustering, modèles à variables latentes -->
+
+<!-- ### Projet 10 [MetaOTU 3] - réseau d'interactions entre espèces  -->
+
+<!-- L'idée de ce projet est d'inférer un ou plusieurs réseaux d'interactions entre espèces  -->
+
+<!-- microbiennes à partir des données de comptages. On pourra étudier la stabilité du réseau en  -->
+<!-- enlevant quelques échantillons. Dans un deuxième temps on pourra corriger par certaines  -->
+<!-- covariables pour vérifier si les interactions inférées persistent une fois la ou les covariables  -->
+<!-- prises en compte. On pourra finalement proposer une visualisation des résultats. -->
+
+<!-- _Mots-clés:_ network, modèles à variables latentes, visualisation -->
