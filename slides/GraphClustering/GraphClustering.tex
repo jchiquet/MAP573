@@ -50,11 +50,11 @@
 
 \usepackage{alltt}
 
-\def\currentCourse{Unsupervised Learning}
-\def\currentInstitute{Polytechnique MAP 573, 2019 -- Julien Chiquet}
+\def\currentCourse{Masterclass in Machine Learning}
+\def\currentInstitute{}
 \def\currentLogo{../common_figs/logo_X}
-\def\currentDate{Autumn semester, 2019}
-\def\currentChapter{Graph clustering and the Stochastic Block Model}
+\def\currentDate{January 2022}
+\def\currentChapter{Graph clustering and the Stocahstic Bloc Model}
 
 
 % THEME BEAMER
@@ -113,11 +113,11 @@
     \titlepage
     \vfill
     \begin{center}
-        \scriptsize\url{https://github.com/jchiquet/CourseUnsupervisedLearningX}
+        \scriptsize\url{https://jchiquet.github.io/MAP573}
     \end{center}
     \vfill
     \includegraphics[width=2cm]{\currentLogo}\hfill
-    \includegraphics[width=2.5cm]{logo_inra}
+    \includegraphics[width=2.5cm]{logo_inrae}
   \end{frame}
   %
 }
@@ -132,13 +132,30 @@
   %
 }
 
-
-
 \usetikzlibrary{calc,shapes,backgrounds,arrows,automata,shadows,positioning}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
 \dotitlepage
+
+\begin{frame}[fragile]
+  \frametitle{Setup and Reproducibility}
+  
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(tidyverse)} \hlcom{# data manipulation}
+\hlkwd{library}\hlstd{(igraph)}    \hlcom{# graph manipulation}
+\hlkwd{library}\hlstd{(sbm)}       \hlcom{# stochastic bloc model}
+\hlkwd{library}\hlstd{(missSBM)}   \hlcom{# stochastic bloc model with missing data}
+\hlkwd{library}\hlstd{(aricode)}   \hlcom{# clustering measures comparison}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+\end{frame}
 
 \begin{frame}
   \frametitle{Outline}
@@ -146,263 +163,197 @@
 \end{frame}
 
 %% ==========================================================================
-\section{Basic notions on graphs and networks}
+\section{Motivations}
 %% ==========================================================================
 
-\begin{frame} 
-  \frametitle{References}
+\begin{frame}
+  \frametitle{Network data}
 
-    \begin{thebibliography}{99}
-      \setbeamertemplate{bibliography item}[book]
+  \begin{block}{Recommandation system: Epinion}
+Who-trust-whom online social network of a general consumer review site Epinions.com. Members of the site can decide whether to ''trust'' each other. 
 
-    \bibitem[EK2]{EK2} Statistical Analysis of Network Data: Methods and Models, 
-    \newblock \textcolor{black}{Eric Kolazcyk} 
-    \newblock \alert{Chapiter 2, Section 1}
+\end{block}
 
-      \setbeamertemplate{bibliography item}[article]
+\begin{block}{Social networks in ethnobiology}
 
-    \bibitem[CM1]{CM1} Analyse statistique de graphes, 
-    \newblock \textcolor{black}{Catherine Matias}
-    \newblock \alert{Chapitre 1}    
+A seed exchange network in Kenya is collected on a limited space area, where all the 155 farmers are interviewed. Farmers provide information about other farmers with whom they have interacted.
 
-    \end{thebibliography}
+\end{block}
+
+\begin{block}{Ecological networks: plant-pollinator network}
+Interaction network between predefined sets of plants and pollinator, by direct observation.
+\end{block}
 
 \end{frame}
 
-\subsection{Definitions}
+\begin{frame}[fragile]
+  \frametitle{Companion data set: French political Blogosphere}
+
+Single day snapshot of almost 200 political blogs automatically extracted the 14 October 2006 and manually classified by the "Observatoire Présidentielle" project.
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{data}\hlstd{(}\hlstr{"frenchblog2007"}\hlstd{,} \hlkwc{package} \hlstd{=} \hlstr{"missSBM"}\hlstd{)}
+\hlstd{blog} \hlkwb{<-} \hlstd{frenchblog2007} \hlopt{%>%}  \hlkwd{delete_vertices}\hlstd{(}\hlkwd{which}\hlstd{(}\hlkwd{degree}\hlstd{(frenchblog2007)} \hlopt{<=} \hlnum{1}\hlstd{))}
+\hlkwd{summary}\hlstd{(blog)}
+\end{alltt}
+\begin{verbatim}
+## IGRAPH 6fb607c UN-- 192 1431 -- 
+## + attr: name (v/c), party (v/c)
+\end{verbatim}
+\begin{alltt}
+\hlstd{party} \hlkwb{<-} \hlkwd{V}\hlstd{(blog)}\hlopt{$}\hlstd{party} \hlopt{%>%} \hlkwd{as_factor}\hlstd{()}
+\hlstd{party} \hlopt{%>%} \hlkwd{table}\hlstd{()} \hlopt{%>%} \hlstd{knitr}\hlopt{::}\hlkwd{kable}\hlstd{(}\hlstr{"latex"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\begin{tabular}{l|r}
+\hline
+. & Freq\\
+\hline
+green & 9\\
+\hline
+right & 40\\
+\hline
+center-rigth & 32\\
+\hline
+left & 57\\
+\hline
+center-left & 11\\
+\hline
+far-left & 7\\
+\hline
+liberal & 25\\
+\hline
+analyst & 11\\
+\hline
+\end{tabular}
+
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Vizualization: graph view}
+
+A visual representation of the network data with nodes colored according to the political party each blog belongs to is achieved as follows:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plot.igraph}\hlstd{(blog,}
+  \hlkwc{vertex.color} \hlstd{= party,}
+  \hlkwc{vertex.label} \hlstd{=} \hlnum{NA}
+ \hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/frenchblog-igraph-plot-1} 
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Vizualization: graph view (advanced)}
+
+
+
+\includegraphics[height=.9\textheight]{figures/fancy_frenchblog2007.png}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Vizualization: matrix view}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{Y}  \hlkwb{<-} \hlkwd{as_adj}\hlstd{(blog,} \hlkwc{sparse} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{sbm}\hlopt{::}\hlkwd{plotMyMatrix}\hlstd{(}
+  \hlstd{Y,} \hlkwc{dimLabels} \hlstd{=} \hlkwd{list}\hlstd{(}\hlstr{'blog'}\hlstd{,} \hlstr{"blog ordered per party"}\hlstd{),}
+  \hlkwc{clustering} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{row} \hlstd{= party))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-1} 
+\end{knitrout}
+
+\end{frame}
 
 \begin{frame}
-  \frametitle{Graphs, Networks: some definitions}
+  \frametitle{Questions}
 
-  \begin{definition}[Network versus Graph]
-    \vspace{-.25cm}
-    \begin{itemize}
-      \item  A \alert{Network} is a collection of interacting entities
-      \item  A \alert{Graph} is the mathematical representation of a network
-    \end{itemize}
-  \end{definition}
+\begin{block}{Remarks}  
+  
+  \begin{itemize}
+  
+  \item  The pattern of connections between the nodes is highly related to the blog classification (political party). 
+  
+  \item The data may support a natural grouping of the node which is not necessarily related a predefined classification
+  
+  \item Same remark holds for any kind of clusteringa and unsupervised leaning problem
+
+  \end{itemize}
+\end{block}
 
   \vfill
+  
+\begin{block}{Objective}  
 
-  \begin{definition}[Graph]
-    A graph $\clG=(\clV,\clE)$ is a mathematical structure consisting of
-    \begin{itemize}
-      \item a set $\clV=\set{1,\dots,n}$ of \alert{vertices} or \alert{nodes} 
-      \item a set $\clE=\set{e_1,\dots,e_p:e_k=(i_k,j_k)\in (\clV\times\clV)}$ of \alert{edges} or \alert{links} 
-      \item The number of vertices $N_v=|\clV|$ is called the \alert{order}
-      \item The number of edges $N_e=|\clE|$ is called the \alert{size}
-    \end{itemize}
-  \end{definition}
+  Our objective is to automatically find a \alert{partitioning} of the node, i.e. a clustering, that groups together nodes with similar connectivity pattern. This is known as graph clustering.
 
-  \vfill
-
-  \begin{definition}[Vocabulary]
-  subgraph,  induced subgraph, (un)directed graph, 
-  weighted graph, bipartite graph, tree, DAG, etc.
-  \end{definition}
+\end{block}
 
 \end{frame}
 
 \begin{frame}
-  \frametitle{Paths, Cycles, Connected Components}
+  \frametitle{Network data and binary graphs: minimal notation}
 
-  \begin{definition}[Path]
-    In a undirected graph $\clG = (\clV,\clE)$ a path  between $i,j\in \clV^2$ is a series of edges $e_1,\dots,e_k$ such that
-    \begin{itemize}
-      \item  $\forall 1 \leq \ell < k$, all edges $(e_\ell, e_{\ell+1})$ share a vertex in $\clV$
-      \item  $e_1$ starts from $i$, $e_k$ ends to $j$.
-    \end{itemize}
-  \end{definition}
+A \alert{network} is a collection of interacting entities. A \alert{graph} is the mathematical representation of a network.
 
-    \vspace{-.15cm}
+\begin{block}{Definition}
 
-  \begin{block}{Vocabulary}
-    \vspace{-.25cm}
-    \begin{itemize}
-    \item  A \alert{cycle} is a path from $i$ to itself.
-    \item  A \alert{connected component} is a subset $\clV'\subset\clV$ such that there exists an path between any $i,j\in\clV'$.
-    \item A graph is \alert{connected} when there is a path between every node pairs.
-    \end{itemize}
-  \end{block}
+A graph $\clG=(\clV,\clE)$ is a mathematical structure consisting of
 
-    \vspace{-.15cm}
-
-  \begin{proposition}[Decomposition]
-    Any graph can be decomposed in a unique set of maximal connected components. The number of connected component is a least $n - |\clE|$
-  \end{proposition}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Neighborhood, Degree}
-
-  \begin{definition}[Neighborhood]
-    The neighbors of a vertex are the nodes directly connected to this vertex:
+  \begin{itemize}
+    \item a set $\clV=\set{1,\dots,n}$ of \alert{vertices} or \alert{nodes} 
+    \item a set $\clE=\set{e_1,\dots,e_p:e_k=(i_k,j_k)\in (\clV\times\clV)}$ of \alert{edges} or \alert{links} 
+    \item The number of vertices $|\clV|$ is called the \alert{order}
+    \item The number of edges $|\clE|$ is called the \alert{size}
+    \item The neighbors of a vertex are the nodes directly connected to this vertex:
     \[
       \clN(i) = \set{j\in\clV : (i,j) \in \clE}.
     \]
-  \end{definition}
-  
-  \begin{definition}[Degree]
-    The degree $d_i$ of a node $i$ is given by its number of neighbors, i.e. $|\clN(i)|$.
-  \end{definition}
-
-  \begin{block}{Remark}
-    In digraphs, vertex degree is replaced by \alert{in-degree} and \alert{out-degree}.
-  \end{block}
-
-  \begin{proposition}
-    In a graph $\clG = (\clV,\clE)$ the sum of the degree is given by $2|\clE|$. Hence \alert{this is always an even quantity}.
-  \end{proposition}
-  
-  
-\end{frame}
-
-\subsection{Representations}
-
-\begin{frame}
-  \frametitle{Adjacency matrix and list of edges}
-
-  \begin{definition}[Adjacency matrix]
-    The connectivity of  $\clG = (\clV,\clE)$ is captured by the $|\clV|\times |\clV|$ matrix $\bA$:
-    \[
-      (\bA)_{ij} = \begin{cases}
-      1  & \text{ if } i \sim j,\\
-      0  & \text{otherwise}.
-      \end{cases}
-    \]
-  \end{definition}
-
-  \begin{proposition}
-    The degrees of $\clG$ are then simply obtained as the row-wise and/or column-wise sums of $\bA$.
-  \end{proposition}
-
-  \begin{block}{Remark}
-    If the list of vertices is known, the only information which needs to be stored is the list of edges. In terms of storage, this is equivalent to a sparse matrix representation.
-  \end{block}
-  
-\end{frame}
-
-\begin{frame}
-  \frametitle{Incidence matrix}
-
-  \begin{definition}[Incidence matrix]
-    The connectivity of $\clG = (\clV,\clE)$ is captured by the $|\clV|\times |\clE|$ matrix $\bB$:
-    \[
-      (\bB)_{ij} = \begin{cases}
-      1  & \text{ if $i$ is incident to edge $j$},\\
-      0  & \text{otherwise}.
-      \end{cases}
-    \]
-  \end{definition}
-
-  \begin{proposition}[Relationship]
-    Let $\tilde\bB$ be a modified \alert{signed} version of $\bB$ where $\tilde{\! B}_{ij}= 1/-1$ if $i$ is incident to $j$ as tail/head. Then
-    \[
-      \tilde \bB \tilde \bB^\intercal = \bD - \bA,
-    \]
-    where $\bD = \diag(\set{d_i, i\in\clV})$ is the diagonal matrix of degrees. 
-  \end{proposition}
-
-  $\rightsquigarrow \tilde \bB \tilde \bB^\intercal $ is called the Laplacian matrix and will be studied later.
-
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{Layout and Vizualization}
-  
-  \begin{itemize}
-    \item Vizualization of large networks is a field of research in its own
-    \item Be carefull with graphical interpretation of (large) networks
+    \item The degree $d_i$ of a node $i$ is given by its number of neighbors $|\clN(i)|$.
   \end{itemize}
+\end{block}
 
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(igraph)}
-
-\hlkwd{library}\hlstd{(sand)}
-
-\hlstd{GLattice} \hlkwb{<-} \hlkwd{graph.lattice}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,}\hlnum{5}\hlstd{,}\hlnum{5}\hlstd{))}
-
-\hlstd{GBlog}    \hlkwb{<-} \hlstd{aidsblog}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-  
 \end{frame}
 
 \begin{frame}
-  \frametitle{Layout and Vizualization}
-  \framesubtitle{Example with circle plot}
-  
+  \frametitle{Representation: adjacency matrix}
 
+The connectivity of a binary undirected (symmetric) graph $\clG = (\clV,\clE)$ is captured by the $|\clV|\times |\clV|$ matrix $Y$, called the adjacency matrix
 
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{))}
+$$
+  (Y)_{ij} = \begin{cases}
+  1  & \text{ if } i \sim j,\\
+  0  & \text{otherwise}.
+\end{cases}
+$$
 
-\hlkwd{plot}\hlstd{(GLattice,} \hlkwc{layout}\hlstd{=layout.circle);} \hlkwd{title}\hlstd{(}\hlstr{"5x5x5 lattice"}\hlstd{)}
+For a valued of weighted graph, a similar definition would be
 
-\hlkwd{plot}\hlstd{(GBlog   ,} \hlkwc{layout}\hlstd{=layout.circle);} \hlkwd{title}\hlstd{(}\hlstr{"blog network"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=.8\textwidth]{figures/vizu_3-1} 
+$$
+  (Y)_{ij} = \begin{cases}
+  w_{ij}  & \text{ if } i \sim j,\\
+  0  & \text{otherwise}.
+\end{cases}
+$$
+where $w_{ij}$ is the weight associated with edge $i\sim j$.
 
-\end{knitrout}
-  
-\end{frame}
+  \begin{block}{Remark}
+    \it If the list of vertices is known, the only information which needs to be stored is the list of edges. In terms of storage, this is equivalent to a sparse matrix representation.
+  \end{block}
 
-\begin{frame}
-  \frametitle{Layout and Vizualization}
-  \framesubtitle{Example with Fruchterman and Reingold}
-
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{))}
-
-\hlkwd{plot}\hlstd{(GLattice,} \hlkwc{layout}\hlstd{=layout.fruchterman.reingold);} \hlkwd{title}\hlstd{(}\hlstr{"5x5x5 lattice"}\hlstd{)}
-
-\hlkwd{plot}\hlstd{(GBlog   ,} \hlkwc{layout}\hlstd{=layout.fruchterman.reingold);} \hlkwd{title}\hlstd{(}\hlstr{"blog network"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=.8\textwidth]{figures/vizu_4-1} 
-
-\end{knitrout}
-  
-\end{frame}
-
-\begin{frame}[fragile, allowframebreaks]
-  \frametitle{Layout and Vizualization: \textbf{ggraph} way}
- 
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(ggraph)}
-\hlkwd{library}\hlstd{(gridExtra)}
-\hlstd{g1} \hlkwb{<-} \hlkwd{ggraph}\hlstd{(GBlog,} \hlkwc{layout} \hlstd{=} \hlstr{"fr"}\hlstd{)} \hlopt{+}
-  \hlkwd{geom_edge_link}\hlstd{(}\hlkwc{color} \hlstd{=} \hlstr{"lightgray"}\hlstd{)} \hlopt{+} \hlkwd{geom_node_point}\hlstd{()} \hlopt{+} \hlkwd{theme_void}\hlstd{()}
-
-\hlstd{g2} \hlkwb{<-} \hlkwd{ggraph}\hlstd{(GBlog   ,} \hlkwc{layout} \hlstd{=} \hlstr{"kk"}\hlstd{)} \hlopt{+}
-  \hlkwd{geom_edge_link}\hlstd{(}\hlkwc{color} \hlstd{=} \hlstr{"lightgray"}\hlstd{)} \hlopt{+} \hlkwd{geom_node_point}\hlstd{()} \hlopt{+} \hlkwd{theme_void}\hlstd{()}
-
-\hlstd{g3} \hlkwb{<-} \hlkwd{ggraph}\hlstd{(GBlog,} \hlkwc{layout} \hlstd{=} \hlstr{"linear"}\hlstd{)} \hlopt{+}
-  \hlkwd{geom_edge_arc}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{alpha}\hlstd{=..index..),} \hlkwc{show.legend} \hlstd{=} \hlnum{FALSE}\hlstd{)} \hlopt{+}
-  \hlkwd{geom_node_point}\hlstd{()} \hlopt{+} \hlkwd{theme_void}\hlstd{()}
-
-\hlstd{g4} \hlkwb{<-} \hlkwd{ggraph}\hlstd{(GBlog   ,} \hlkwc{layout} \hlstd{=} \hlstr{"linear"}\hlstd{,} \hlkwc{circular} \hlstd{=} \hlnum{TRUE}\hlstd{)} \hlopt{+}
-  \hlkwd{geom_edge_link}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{alpha}\hlstd{=..index..),} \hlkwc{show.legend} \hlstd{=} \hlnum{FALSE}\hlstd{)} \hlopt{+}
-  \hlkwd{geom_node_point}\hlstd{()} \hlopt{+} \hlkwd{theme_void}\hlstd{()}
-
-\hlkwd{grid.arrange}\hlstd{(g1, g2, g3, g4,} \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{ncol} \hlstd{=} \hlnum{2}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=.8\textwidth]{figures/ggraph_vizu_1-1} 
-
-\end{knitrout}
 \end{frame}
 
 %% ==========================================================================
@@ -446,7 +397,7 @@
   \vfill
 
   \begin{block}{Goal of graph partionning}
-    Form a partition of the vertices with unsupervized approach where the $\mathcal{C}$ is composed by \alert{"cohesive"} sets of vertices, for instance,
+    Form a partition of the vertices with unsupervised approach where the $\mathcal{C}$ is composed by \alert{"cohesive"} sets of vertices, for instance,
     \begin{enumerate}
       \item vertices well connected among themselves
       \item well separated from the remaining vertices
@@ -456,8 +407,9 @@
 
 \end{frame}
 
+
 %% ==========================================================================
-\subsection{Hierarchical clustering}
+\subsection{Hierarchical clustering for graph}
 
 \begin{frame}
   \frametitle{Principle}
@@ -506,74 +458,47 @@
   
 \end{frame}
 
-
-\begin{frame}[fragile]
-  \frametitle{Example: karaté club}
-
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(sand)}
-\hlkwd{data}\hlstd{(karate)}
-
-\hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{))}
-\hlkwd{plot}\hlstd{(karate)}
-
-\hlkwd{hist}\hlstd{(}\hlkwd{degree}\hlstd{(karate),} \hlkwc{col}\hlstd{=}\hlkwd{adjustcolor}\hlstd{(}\hlstr{"lightblue"}\hlstd{,} \hlkwc{alpha.f} \hlstd{=} \hlnum{0.5}\hlstd{),} \hlkwc{main}\hlstd{=}\hlstr{""}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=.8\textwidth]{figures/degree_1-1} 
-
-\end{knitrout}
-      
-\end{frame}
-
-
 \begin{frame}[fragile,allowframebreaks]
-  \frametitle{Examples of graph clustering}
+  \frametitle{Examples of graph partionning}
 
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_fast_greedy}\hlstd{(karate)}
-\hlkwd{plot}\hlstd{(hc,karate)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-1-1} 
-
-\end{knitrout}
-
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_louvain}\hlstd{(karate)}
-\hlkwd{plot}\hlstd{(hc,karate)}
+\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_fast_greedy}\hlstd{(blog)}
+\hlkwd{plot}\hlstd{(hc, blog)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=.8\textwidth]{figures/unnamed-chunk-2-1} 
-
 \end{knitrout}
 
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_edge_betweenness}\hlstd{(karate)}
-\hlkwd{plot}\hlstd{(hc,karate)}
+\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_louvain}\hlstd{(blog)}
+\hlkwd{plot}\hlstd{(hc, blog)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=.8\textwidth]{figures/unnamed-chunk-3-1} 
-
 \end{knitrout}
 
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_walktrap}\hlstd{(karate)}
-\hlkwd{plot}\hlstd{(hc,karate)}
+\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_edge_betweenness}\hlstd{(blog)}
+\hlkwd{plot}\hlstd{(hc, blog)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=.8\textwidth]{figures/unnamed-chunk-4-1} 
+\end{knitrout}
 
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_walktrap}\hlstd{(blog)}
+\hlkwd{plot}\hlstd{(hc, blog)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-5-1} 
 \end{knitrout}
 
 \end{frame}
@@ -581,49 +506,209 @@
 %% ==========================================================================
 \subsection{Spectral Clustering}
 
-\begin{frame}
-  \frametitle{Graph Laplacian}
+\begin{frame}[fragile]
+  \frametitle{Graph-cut}
+  
+  \begin{block}{Definition}
+    The cut between two set of nodes that form a partition in the graph is
 
-  \begin{definition}[(Un-normalized) Laplacian]
-    The Laplacian matrix $\bL$, resulting from the modified incidence matrix $\tilde\bB$ $\tilde{\! B}_{ij}= 1/-1$ if $i$ is incident to $j$ as tail/head, is defined by 
-    \[
-      \bL = \tilde \bB \tilde \bB^\intercal = \bD - \bA,
-    \]
-    where $\bD = \diag(d_i, i\in\clV)$ is the diagonal matrix of degrees. 
-  \end{definition}
+$$
+\mathrm{cut}(\mathcal{V}_A, \mathcal{V}_B) = \sum_{i\in\clV_A, j\in\clV_B} Y_{ij}, \qquad \clV_A \cup \clV_B = \clV
+$$
+\end{block}
 
-  \begin{block}{Remark}
-    \begin{itemize}
-    \item $\bL$ is called the graph Laplacian (by analogy to continuous Laplacian).
-    \item Spectrum of $\bL$ has much to say about the structure of the graph $\clG$.
-    \end{itemize}
-  \end{block}
+\paragraph{Example:}
+The graph cut between $\clV_A= \{1,2,3,4,10\}$ and $\clV_B= \{5,6,7,8,9\}$ is 2.
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=.8\textwidth]{figures/graph-cut-plot-1} 
+\end{knitrout}
 
 \end{frame}
 
 \begin{frame}
+  \frametitle{Min-cut}
+  
+  \begin{block}{Idea}
+    Find the 2-partition that minimizes the cut to form two homogeneous clusters.
+  \end{block}
+
+  Based on this principle, the normalized cut consider the connectivity between group relative to the volume of each groups
+
+$$\argmin_{\{\clV_A, \clV_B\}} \mathrm{cut}^{N}(\clV_A, \clV_B),$$
+
+where $\mathrm{Vol}(\clV_S)) = \sum_{i\in\mathcal{S}} d_i$ and
+
+$$
+\begin{aligned}
+\mathrm{cut}^{N}(\clV_A, \clV_B) & = \frac{\mathrm{cut}(\clV_A, \clV_B)}{\mathrm{Vol}(\clV_A)} + \frac{\mathrm{cut}(\clV_A, \clV_B)}{\mathrm{Vol}(\clV_B)} \\
+ & =  \mathrm{cut}(\clV_A, \clV_B)\frac{\mathrm{Vol}(\clV_A) + \mathrm{Vol}(\clV_B)}{\mathrm{Vol}(\clV_A)\mathrm{Vol}(\clV_B)} \\
+\end{aligned}
+$$
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Solving min-cut for 2 clusters}
+  
+Let 
+
+$$
+x = (x_i)_{i=1,\dots,n} = 
+\begin{cases}
+-1 & \mathrm{if} \quad  i\in \clV_A, \\
+ 1 & \mathrm{if} \quad  i\in \clV_B. \\
+\end{cases}
+$$
+Then, letting $D$ the diagonal matrix of degrees, 
+
+$$
+x^\top (D - Y) x = x^\top D x - ( x^\top D x - 2 \mathrm{cut} (\clV_A, \clV_B)),
+$$
+
+so that 
+
+$$
+\mathrm{cut} (\clV_A, \clV_B) = \frac12 x^\top (D - Y) x.
+$$
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Solving Min-cut for 2 clusters}
+
+\begin{block}{Normalized graph-cut $\Leftrightarrow$ integer programming problem}
+
+$$\begin{aligned}
+& \argmin_{\{\clV_A, \clV_B\}}  \mathrm{cut}^{N}(\clV_A, \clV_B) \\[1.5ex]
+\Leftrightarrow \quad & \argmin_{x\in\{-1, 1\}^n} \frac{x^\top (D - Y) x}{x^\top D x}, \quad \text{s.c.} \quad x^\top D \mathbf{1}_n = 0, 
+\end{aligned}
+$$
+where the constraint imposes only discrete values in $x$. 
+
+\end{block}
+
+\begin{block}{Relax version}<2>
+If we relax to $x\in[-1,1]^n$, it turns to a simple eigenvalue problem
+
+$$
+\argmin_{x\in[-1, 1]^n} x^\top (D - Y) x, \quad \text{s.c.} \quad x^\top D x = 1 \Leftrightarrow (D - Y) x = \lambda D x .
+$$
+where $\bL = D - Y$ is called the \alert{Laplacian matrix} of the graph $\mathcal{G}$.
+
+\end{block}
+  
+\end{frame}
+
+\begin{frame}[fragile]
   \frametitle{Graph Laplacian: spectrum}
 
   \begin{proposition}[Spectrum of $\bL$]
     The $n\times n$ matrix $\bL$ has the following properties:
     \[
-      \bx^\top \bL \bx = \frac{1}{2} \sum_{i,j} A_{ij} (x_i - x_j)^2, \quad \forall \bx\in\Rset^n .
+      \bx^\top \bL \bx = \frac{1}{2} \sum_{i,j} Y_{ij} (x_i - x_j)^2, \quad \forall \bx\in\Rset^n .
     \]
     \vspace{-.25cm}
     \begin{itemize}
       \item $\bL$ is a symmetric, positive semi-definite matrix,
-      \item  the smallest eigenvalue is $0$ with associated eigenvector $\mathbf{1}$.
-      \item $\bL$ has $n$ positive eigenvalues $0=\lambda_1<\dots <\lambda_n$. 
+      \item $\mathbf{1}_n$ is in the kernel of $L$ since $L \mathbf{1}_n = 0$,
+      \item The first normalized eigen vector with eigen value $\lambda> 0$ is solution to the relaxed graph cut problem
     \end{itemize}  
   \end{proposition}
 
-  \begin{corollary}[Spectrum and Graph]
-    \vspace{-.25cm}
-    \begin{itemize}
-      \item The multiplicity of the first eigen value ($0$) of $\bL$ determines the number of connected components in the graph.
-      \item The larger the second non trivial eigenvalue, the higher the connectivity of $\clG$.
-    \end{itemize}  
-  \end{corollary}
+The Laplacian is easily (and fastly) computed in \texttt{R} thanks to the \textbf{igraph} package:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{L} \hlkwb{<-} \hlkwd{laplacian_matrix}\hlstd{(blog)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Bi-partionning and the Fiedler vector}
+  
+\alert{Fiedler vector} is the named sometimes given to the normalized eigen vector associated with the smallest positive eigen-value of $\bL$. 
+
+\begin{itemize}
+ \item[$\rightarrow$] solves the relaxed min-cut problem
+ \item[$\rightarrow$] can be used to compute a bi-partition of a graph.
+\end{itemize}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{spec_L} \hlkwb{<-} \hlkwd{eigen}\hlstd{(L); practical_zero} \hlkwb{<-} \hlnum{1e-12}
+\hlstd{lambda}  \hlkwb{<-} \hlkwd{min}\hlstd{(spec_L}\hlopt{$}\hlstd{values[spec_L}\hlopt{$}\hlstd{values}\hlopt{>}\hlstd{practical_zero])}
+\hlstd{fiedler} \hlkwb{<-} \hlstd{spec_L}\hlopt{$}\hlstd{vectors[,} \hlkwd{which}\hlstd{(spec_L}\hlopt{$}\hlstd{values} \hlopt{==} \hlstd{lambda)]}
+\hlkwd{qplot}\hlstd{(}\hlkwc{y} \hlstd{= fiedler,} \hlkwc{colour} \hlstd{= party)} \hlopt{+} \hlstd{viridis}\hlopt{::}\hlkwd{scale_color_viridis}\hlstd{(}\hlkwc{discrete} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-6-1} 
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example on a simplied left/right view}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{left_vs_right} \hlkwb{<-}
+  \hlstd{forcats}\hlopt{::}\hlkwd{fct_collapse}\hlstd{(party,}
+    \hlkwc{left} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"green"}\hlstd{,} \hlstr{"left"}\hlstd{,} \hlstr{"far-left"}\hlstd{,} \hlstr{"center-left"}\hlstd{),}
+    \hlkwc{right} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"right"}\hlstd{,} \hlstr{"liberal"}\hlstd{,} \hlstr{"center-rigth"}\hlstd{),}
+    \hlkwc{analyst} \hlstd{=} \hlstr{"analyst"}
+  \hlstd{)}
+\hlkwd{qplot}\hlstd{(}\hlkwc{y} \hlstd{= fiedler,} \hlkwc{colour} \hlstd{= left_vs_right)} \hlopt{+}  \hlstd{viridis}\hlopt{::}\hlkwd{scale_color_viridis}\hlstd{(}\hlkwc{discrete} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-7-1} 
+\end{knitrout}
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{"Validation"}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{thresholds} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{.1}\hlstd{,} \hlnum{.1}\hlstd{,} \hlkwc{len} \hlstd{=} \hlnum{100}\hlstd{)}
+\hlstd{ARIs} \hlkwb{<-} \hlkwd{map_dbl}\hlstd{(thresholds,} \hlopt{~}\hlkwd{ARI}\hlstd{(left_vs_right, fiedler} \hlopt{>} \hlstd{.))}
+\hlkwd{qplot}\hlstd{(thresholds, ARIs)} \hlopt{+} \hlkwd{geom_vline}\hlstd{(}\hlkwc{xintercept} \hlstd{= thresholds[}\hlkwd{which.max}\hlstd{(ARIs)])} \hlopt{+} \hlkwd{theme_bw}\hlstd{()}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-8-1} 
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Spectral clustering}
+
+From the definition of the Laplacian matrix,
+\begin{itemize}
+  \item The multiplicity of the first eigen value ($0$) of $\bL$ determines the number of connected components in the graph.
+  \item The larger the second non trivial (positive) eigenvalue, the higher the connectivity of $\clG$.
+\end{itemize}
+
+
+\begin{block}{General Heuristic}
+\begin{enumerate}
+\item Compute spectral decompostion of $\bL$ to perform clustering in the eigen space
+\item For a graph with $K$ connected components, the first $K$ eigen-vectors are $\mathbf{1}$ spanning the eigenspace associated with eigenvalue $0$
+\item Applying a simple clustering algorithm to the rows of the $K$ first eigenvectors separate the components
+\end{enumerate}
+\end{block}
+
+$\rightsquigarrow$ Generalizes to graphs with a single component (tends to separates groups of nodes which are highly connected together)
 
 \end{frame}
 
@@ -650,22 +735,6 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Spectral Clustering}
-    
-  \begin{block}{Principle}
-  
-  \begin{enumerate}
-    \item Use the spectral property of $\bL$ to perform clustering in the eigen space \medskip
-    \item If the network have $K$ connected components, the first $K$ eigenvectors are $\mathbf{1}$ span the eigenspace associated with eigenvalue $0$ \medskip
-    \item Applying a simple clustering algorithm to the rows of the $K$ first eigenvectors separate the components
-  \end{enumerate}
-  $\rightsquigarrow$ This principle generalizes to a graph with a single component: spectral clustering tends to separates groups of nodes which are highly connected together
-  
-  \end{block}
-  
-\end{frame}
-
-\begin{frame}
   \frametitle{Normalized Spectral Clustering}
   \framesubtitle{by Ng, Jordan and Weiss (2002)}
 
@@ -685,17 +754,70 @@
 
 \end{algorithm}
 
-  \vfill
-
-  \begin{block}{Remarks}
-    \begin{itemize}
-      \item implemented during today's lab
-      \item also apply to no graphical data!
-    \end{itemize}
-  \end{block}
-  
 \end{frame}
 
+\begin{frame}[fragile]
+  \frametitle{Implementation of normalized spectral clustering }
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{spectral_clustering} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{graph}\hlstd{,} \hlkwc{nb_cluster}\hlstd{,} \hlkwc{normalized} \hlstd{=} \hlnum{TRUE}\hlstd{) \{}
+
+  \hlcom{## Compute Laplacian matrix}
+  \hlstd{L} \hlkwb{<-} \hlkwd{laplacian_matrix}\hlstd{(graph,} \hlkwc{normalized} \hlstd{= normalized)}
+  \hlcom{## Generates indices of last (smallest) K vectors}
+  \hlstd{selected} \hlkwb{<-} \hlkwd{rev}\hlstd{(}\hlnum{1}\hlopt{:}\hlkwd{ncol}\hlstd{(L))[}\hlnum{1}\hlopt{:}\hlstd{nb_cluster]}
+  \hlcom{## Extract an normalized eigen-vectors}
+  \hlstd{U} \hlkwb{<-} \hlkwd{eigen}\hlstd{(L)}\hlopt{$}\hlstd{vectors[, selected,} \hlkwc{drop} \hlstd{=} \hlnum{FALSE}\hlstd{]}  \hlcom{# spectral decomposition}
+  \hlstd{U} \hlkwb{<-} \hlkwd{sweep}\hlstd{(U,} \hlnum{1}\hlstd{,} \hlkwd{sqrt}\hlstd{(}\hlkwd{rowSums}\hlstd{(U}\hlopt{^}\hlnum{2}\hlstd{)),} \hlstr{'/'}\hlstd{)}
+  \hlcom{## Perform k-means}
+  \hlstd{res} \hlkwb{<-} \hlkwd{kmeans}\hlstd{(U, nb_cluster,} \hlkwc{nstart} \hlstd{=} \hlnum{40}\hlstd{)}\hlopt{$}\hlstd{cl}
+
+  \hlstd{res}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Application to the French blogosphere (1)}
+
+Perform spectral clustering on the blogosphere for various numbers of group:
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{nb_cluster} \hlkwb{<-} \hlnum{1}\hlopt{:}\hlnum{20}
+\hlkwd{map}\hlstd{(nb_cluster,} \hlopt{~}\hlkwd{spectral_clustering}\hlstd{(blog, .))} \hlopt{%>%}
+  \hlkwd{map_dbl}\hlstd{(ARI, party)} \hlopt{%>%} \hlkwd{qplot}\hlstd{(nb_cluster,} \hlkwc{y} \hlstd{= .)} \hlopt{+} \hlkwd{geom_line}\hlstd{()} \hlopt{+} \hlkwd{theme_bw}\hlstd{()}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/spectral-blog-1} 
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Application to the French blogosphere (2)}
+
+Once reorder according to the best clustering (obtained $k=6$) groups, the orginal data matrix looks as follows
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plotMyMatrix}\hlstd{(}\hlkwd{as_adj}\hlstd{(blog,} \hlkwc{sparse} \hlstd{=} \hlnum{FALSE}\hlstd{),}
+  \hlkwc{clustering} \hlstd{=} \hlkwd{list}\hlstd{(}\hlkwc{row} \hlstd{=} \hlkwd{spectral_clustering}\hlstd{(blog,} \hlnum{6}\hlstd{)))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-9-1} 
+\end{knitrout}
+
+\end{frame}
+
+% 
 % \begin{frame}
 %   \frametitle{Absolute Spectral Clustering}
 % 
@@ -703,7 +825,7 @@
 %   \KwIn{Adjacency matrix and number of classes $Q$}
 %   \BlankLine\BlankLine
 %   \DontPrintSemicolon
-%   
+% 
 %   Compute the graph Laplacian $\mathbf{L}_{abs}$\;
 %   Compute the eigen vectors of $\mathbf{L}_{abs}$ associated with the $Q$ \alert{largest} absolute eigenvalues\;
 %   Define $\mathbf{U}$,  the $p\times Q$ matrix  that encompasses these $Q$ vectors \;
@@ -716,42 +838,6 @@
 % \end{algorithm}
 % 
 % \end{frame}
-
-% \begin{frame}[fragile,allowframebreaks]
-%   \frametitle{Example: Karate club and Fielder vector and eigenvalue}
-% 
-% <<laplacian example>>=
-% eigen_karate <- graph.laplacian(karate) %>% eigen()
-% 
-% fielder_vector <- eigen_karate$vectors[, igraph::vcount(karate) - 1]
-% faction <- as.character(vcount(karate))
-% faction[V(karate)$Faction == 1] <- "red"
-% faction[V(karate)$Faction == 2] <- "cyan"
-% 
-% par(mfrow = c(1,2))
-% plot(eigen_karate$values, col = "blue", ylab = "Eigenvalues of Graph Laplacian")
-% plot(fielder_vector, pch = 16, xlab = "labels",
-%    ylab = "Fiedler vector entry", col = faction)
-% abline(0, 0, lwd = 2, col = "lightgray")
-% @
-% 
-% \end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Clustering based on the first non null eigenvalue}
-  
-\begin{knitrout}\scriptsize
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{hc} \hlkwb{<-} \hlkwd{cluster_leading_eigen}\hlstd{(karate)}
-\hlkwd{plot}\hlstd{(hc,karate)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-5-1} 
-
-\end{knitrout}
-
-\end{frame}
 
 %% ==========================================================================
 \section{The Stochastic Block Model (SBM)}
@@ -850,7 +936,6 @@
 \end{alltt}
 \end{kframe}
 \includegraphics[width=.8\textwidth]{figures/ER_example-1} 
-
 \end{knitrout}
 \end{frame}
 
@@ -863,8 +948,8 @@
 \hlkwd{average.path.length}\hlstd{(G3);} \hlkwd{diameter}\hlstd{(G3)}
 \end{alltt}
 \begin{verbatim}
-## [1] 5.414784
-## [1] 12
+## [1] 5.649385
+## [1] 13
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -872,7 +957,6 @@
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
 \includegraphics[width=.8\textwidth]{figures/ER_limitation2-1} 
-
 \end{knitrout}
 \end{frame}
 
@@ -908,7 +992,6 @@
 \end{alltt}
 \end{kframe}
 \includegraphics[width=.8\textwidth]{figures/PA_example-1} 
-
 \end{knitrout}
 
 \end{frame}
@@ -922,8 +1005,8 @@
 \hlkwd{average.path.length}\hlstd{(G3);} \hlkwd{diameter}\hlstd{(G3)}
 \end{alltt}
 \begin{verbatim}
-## [1] 6.470101
-## [1] 15
+## [1] 6.117387
+## [1] 14
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -931,7 +1014,6 @@
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
 \includegraphics[width=.8\textwidth]{figures/PA_limitation2-1} 
-
 \end{knitrout}
 \end{frame}
 
@@ -1174,8 +1256,7 @@
 \hlkwd{plot}\hlstd{(communities,} \hlkwc{vertex.label}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{vertex.color} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{3}\hlstd{,}\hlkwd{c}\hlstd{(}\hlnum{25}\hlstd{,} \hlnum{50}\hlstd{,} \hlnum{25}\hlstd{)))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-6-1} 
-
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-10-1} 
 \end{knitrout}
 
 \end{frame}
@@ -1192,8 +1273,7 @@
 \hlkwd{plot}\hlstd{(star,} \hlkwc{vertex.label}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{vertex.color} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{2}\hlstd{,}\hlkwd{c}\hlstd{(}\hlnum{4}\hlstd{,}\hlnum{96}\hlstd{)))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-7-1} 
-
+\includegraphics[width=.8\textwidth]{figures/unnamed-chunk-11-1} 
 \end{knitrout}
 
 \end{frame}
@@ -1449,5 +1529,6 @@ where
 % @
 % 
 % \end{frame}
+
 
 \end{document}

@@ -1,17 +1,12 @@
 \documentclass{beamer}
 
-\def\currentCourse{Unsupervised Learning}
-\def\currentInstitute{Polytechnique MAP 573, 2019 -- Julien Chiquet}
+\def\currentCourse{Masterclass in Machine Learning}
+\def\currentInstitute{}
 \def\currentLogo{../common_figs/logo_X}
-\def\currentDate{Autumn semester, 2019}
-\def\currentChapter{Graph clustering and the Stochastic Block Model}
+\def\currentDate{January 2022}
+\def\currentChapter{Graph clustering and the Stocahstic Bloc Model}
 
 <<preamble, child='../common_preamble.Rnw'>>=
-@
-
-<<load_packages, cache = FALSE, echo=FALSE>>=
-library(igraph)
-library(sand)
 @
 
 \usetikzlibrary{calc,shapes,backgrounds,arrows,automata,shadows,positioning}
@@ -20,249 +15,208 @@ library(sand)
 
 \dotitlepage
 
+\begin{frame}[fragile]
+  \frametitle{Setup and Reproducibility}
+  
+<<load_packages, cache = FALSE, eval=FALSE>>=
+library(tidyverse) # data manipulation
+library(igraph)    # graph manipulation
+library(sbm)       # stochastic bloc model
+library(missSBM)   # stochastic bloc model with missing data
+library(aricode)   # clustering measures comparison
+@
+
+<<load_packages-true, cache = FALSE, echo=FALSE>>=
+library(tidyverse) # data manipulation
+library(corrplot)  # plot of covariance/correlation matrices
+library(sbm)       # stochastic bloc model
+library(missSBM)   # stochastic bloc model with missing data
+library(igraph)
+library(aricode)
+library(ggraph)
+library(RColorBrewer)
+theme_set(theme_bw())
+
+fancy_network <- function(mygraph, group) {
+
+  V(mygraph)$party  <- as.character(group)
+  V(mygraph)$degree <- degree(mygraph)
+
+  angle <- 90 - 360 * 1:igraph::gorder(mygraph) / igraph::gorder(mygraph)
+  V(mygraph)$hjust <- ifelse(angle < -90, 1, 0)
+  V(mygraph)$angle <- ifelse(angle < -90, angle + 180, angle)
+  
+  p <- ggraph(mygraph, layout = 'linear', circular = TRUE) + 
+    geom_edge_arc(alpha = 0.25, show.legend = FALSE) +
+#    geom_node_text(aes(label = party, x = x*1.05, y=y*1.05, angle = angle, hjust = hjust), size = 3) +
+    geom_node_point(aes(colour = party, size = degree), alpha = 0.5) +
+    scale_colour_manual(values = c(brewer.pal(6,"Paired"),"maroon4","springgreen", "tan4","plum","brown4","burlywood",brewer.pal(8, "Dark2"), "navy")) +
+    theme_graph(base_size = 20)
+  
+  invisible(p)
+}
+@
+
+\end{frame}
+
 \begin{frame}
   \frametitle{Outline}
   \tableofcontents
 \end{frame}
 
 %% ==========================================================================
-\section{Basic notions on graphs and networks}
+\section{Motivations}
 %% ==========================================================================
 
-\begin{frame} 
-  \frametitle{References}
+\begin{frame}
+  \frametitle{Network data}
 
-    \begin{thebibliography}{99}
-      \setbeamertemplate{bibliography item}[book]
+  \begin{block}{Recommandation system: Epinion}
+Who-trust-whom online social network of a general consumer review site Epinions.com. Members of the site can decide whether to ''trust'' each other. 
 
-    \bibitem[EK2]{EK2} Statistical Analysis of Network Data: Methods and Models, 
-    \newblock \textcolor{black}{Eric Kolazcyk} 
-    \newblock \alert{Chapiter 2, Section 1}
+\end{block}
 
-      \setbeamertemplate{bibliography item}[article]
+\begin{block}{Social networks in ethnobiology}
 
-    \bibitem[CM1]{CM1} Analyse statistique de graphes, 
-    \newblock \textcolor{black}{Catherine Matias}
-    \newblock \alert{Chapitre 1}    
+A seed exchange network in Kenya is collected on a limited space area, where all the 155 farmers are interviewed. Farmers provide information about other farmers with whom they have interacted.
 
-    \end{thebibliography}
+\end{block}
+
+\begin{block}{Ecological networks: plant-pollinator network}
+Interaction network between predefined sets of plants and pollinator, by direct observation.
+\end{block}
 
 \end{frame}
 
-\subsection{Definitions}
+\begin{frame}[fragile]
+  \frametitle{Companion data set: French political Blogosphere}
+
+Single day snapshot of almost 200 political blogs automatically extracted the 14 October 2006 and manually classified by the "Observatoire Présidentielle" project.
+
+<<mixture-faitful-load>>=
+data("frenchblog2007", package = "missSBM")
+blog <- frenchblog2007 %>%  delete_vertices(which(degree(frenchblog2007) <= 1))
+summary(blog)
+party <- V(blog)$party %>% as_factor()
+party %>% table() %>% knitr::kable("latex")
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Vizualization: graph view}
+
+A visual representation of the network data with nodes colored according to the political party each blog belongs to is achieved as follows:
+
+<<frenchblog-igraph-plot>>=
+plot.igraph(blog,
+  vertex.color = party,
+  vertex.label = NA
+ )
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Vizualization: graph view (advanced)}
+
+<<frenchblog-igraph-plot-2, echo = FALSE, message = FALSE, results='hide', warning=FALSE>>=
+p <- fancy_network(blog, party)
+ggsave(p, file='figures/fancy_frenchblog2007.png', device = "png")
+@
+
+\includegraphics[height=.9\textheight]{figures/fancy_frenchblog2007.png}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Vizualization: matrix view}
+
+<<>>=
+Y  <- as_adj(blog, sparse = FALSE)
+sbm::plotMyMatrix(
+  Y, dimLabels = list('blog', "blog ordered per party"),
+  clustering = list(row = party))
+@
+
+\end{frame}
 
 \begin{frame}
-  \frametitle{Graphs, Networks: some definitions}
+  \frametitle{Questions}
 
-  \begin{definition}[Network versus Graph]
-    \vspace{-.25cm}
-    \begin{itemize}
-      \item  A \alert{Network} is a collection of interacting entities
-      \item  A \alert{Graph} is the mathematical representation of a network
-    \end{itemize}
-  \end{definition}
+\begin{block}{Remarks}  
+  
+  \begin{itemize}
+  
+  \item  The pattern of connections between the nodes is highly related to the blog classification (political party). 
+  
+  \item The data may support a natural grouping of the node which is not necessarily related a predefined classification
+  
+  \item Same remark holds for any kind of clusteringa and unsupervised leaning problem
+
+  \end{itemize}
+\end{block}
 
   \vfill
+  
+\begin{block}{Objective}  
 
-  \begin{definition}[Graph]
-    A graph $\clG=(\clV,\clE)$ is a mathematical structure consisting of
-    \begin{itemize}
-      \item a set $\clV=\set{1,\dots,n}$ of \alert{vertices} or \alert{nodes} 
-      \item a set $\clE=\set{e_1,\dots,e_p:e_k=(i_k,j_k)\in (\clV\times\clV)}$ of \alert{edges} or \alert{links} 
-      \item The number of vertices $N_v=|\clV|$ is called the \alert{order}
-      \item The number of edges $N_e=|\clE|$ is called the \alert{size}
-    \end{itemize}
-  \end{definition}
+  Our objective is to automatically find a \alert{partitioning} of the node, i.e. a clustering, that groups together nodes with similar connectivity pattern. This is known as graph clustering.
 
-  \vfill
-
-  \begin{definition}[Vocabulary]
-  subgraph,  induced subgraph, (un)directed graph, 
-  weighted graph, bipartite graph, tree, DAG, etc.
-  \end{definition}
+\end{block}
 
 \end{frame}
 
 \begin{frame}
-  \frametitle{Paths, Cycles, Connected Components}
+  \frametitle{Network data and binary graphs: minimal notation}
 
-  \begin{definition}[Path]
-    In a undirected graph $\clG = (\clV,\clE)$ a path  between $i,j\in \clV^2$ is a series of edges $e_1,\dots,e_k$ such that
-    \begin{itemize}
-      \item  $\forall 1 \leq \ell < k$, all edges $(e_\ell, e_{\ell+1})$ share a vertex in $\clV$
-      \item  $e_1$ starts from $i$, $e_k$ ends to $j$.
-    \end{itemize}
-  \end{definition}
+A \alert{network} is a collection of interacting entities. A \alert{graph} is the mathematical representation of a network.
 
-    \vspace{-.15cm}
+\begin{block}{Definition}
 
-  \begin{block}{Vocabulary}
-    \vspace{-.25cm}
-    \begin{itemize}
-    \item  A \alert{cycle} is a path from $i$ to itself.
-    \item  A \alert{connected component} is a subset $\clV'\subset\clV$ such that there exists an path between any $i,j\in\clV'$.
-    \item A graph is \alert{connected} when there is a path between every node pairs.
-    \end{itemize}
-  \end{block}
+A graph $\clG=(\clV,\clE)$ is a mathematical structure consisting of
 
-    \vspace{-.15cm}
-
-  \begin{proposition}[Decomposition]
-    Any graph can be decomposed in a unique set of maximal connected components. The number of connected component is a least $n - |\clE|$
-  \end{proposition}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Neighborhood, Degree}
-
-  \begin{definition}[Neighborhood]
-    The neighbors of a vertex are the nodes directly connected to this vertex:
+  \begin{itemize}
+    \item a set $\clV=\set{1,\dots,n}$ of \alert{vertices} or \alert{nodes} 
+    \item a set $\clE=\set{e_1,\dots,e_p:e_k=(i_k,j_k)\in (\clV\times\clV)}$ of \alert{edges} or \alert{links} 
+    \item The number of vertices $|\clV|$ is called the \alert{order}
+    \item The number of edges $|\clE|$ is called the \alert{size}
+    \item The neighbors of a vertex are the nodes directly connected to this vertex:
     \[
       \clN(i) = \set{j\in\clV : (i,j) \in \clE}.
     \]
-  \end{definition}
-  
-  \begin{definition}[Degree]
-    The degree $d_i$ of a node $i$ is given by its number of neighbors, i.e. $|\clN(i)|$.
-  \end{definition}
-
-  \begin{block}{Remark}
-    In digraphs, vertex degree is replaced by \alert{in-degree} and \alert{out-degree}.
-  \end{block}
-
-  \begin{proposition}
-    In a graph $\clG = (\clV,\clE)$ the sum of the degree is given by $2|\clE|$. Hence \alert{this is always an even quantity}.
-  \end{proposition}
-  
-  
-\end{frame}
-
-\subsection{Representations}
-
-\begin{frame}
-  \frametitle{Adjacency matrix and list of edges}
-
-  \begin{definition}[Adjacency matrix]
-    The connectivity of  $\clG = (\clV,\clE)$ is captured by the $|\clV|\times |\clV|$ matrix $\bA$:
-    \[
-      (\bA)_{ij} = \begin{cases}
-      1  & \text{ if } i \sim j,\\
-      0  & \text{otherwise}.
-      \end{cases}
-    \]
-  \end{definition}
-
-  \begin{proposition}
-    The degrees of $\clG$ are then simply obtained as the row-wise and/or column-wise sums of $\bA$.
-  \end{proposition}
-
-  \begin{block}{Remark}
-    If the list of vertices is known, the only information which needs to be stored is the list of edges. In terms of storage, this is equivalent to a sparse matrix representation.
-  \end{block}
-  
-\end{frame}
-
-\begin{frame}
-  \frametitle{Incidence matrix}
-
-  \begin{definition}[Incidence matrix]
-    The connectivity of $\clG = (\clV,\clE)$ is captured by the $|\clV|\times |\clE|$ matrix $\bB$:
-    \[
-      (\bB)_{ij} = \begin{cases}
-      1  & \text{ if $i$ is incident to edge $j$},\\
-      0  & \text{otherwise}.
-      \end{cases}
-    \]
-  \end{definition}
-
-  \begin{proposition}[Relationship]
-    Let $\tilde\bB$ be a modified \alert{signed} version of $\bB$ where $\tilde{\! B}_{ij}= 1/-1$ if $i$ is incident to $j$ as tail/head. Then
-    \[
-      \tilde \bB \tilde \bB^\intercal = \bD - \bA,
-    \]
-    where $\bD = \diag(\set{d_i, i\in\clV})$ is the diagonal matrix of degrees. 
-  \end{proposition}
-
-  $\rightsquigarrow \tilde \bB \tilde \bB^\intercal $ is called the Laplacian matrix and will be studied later.
-
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{Layout and Vizualization}
-  
-  \begin{itemize}
-    \item Vizualization of large networks is a field of research in its own
-    \item Be carefull with graphical interpretation of (large) networks
+    \item The degree $d_i$ of a node $i$ is given by its number of neighbors $|\clN(i)|$.
   \end{itemize}
+\end{block}
 
-<<vizu_1, echo=TRUE>>=
-library(igraph)
-
-library(sand)
-
-GLattice <- graph.lattice(c(5,5,5))
-
-GBlog    <- aidsblog
-@
-  
 \end{frame}
 
 \begin{frame}
-  \frametitle{Layout and Vizualization}
-  \framesubtitle{Example with circle plot}
-  
-<<vizu_2, echo=FALSE>>=
-igraph.options(vertex.size=3, vertex.label=NA, edge.arrow.size=.5)
-@
+  \frametitle{Representation: adjacency matrix}
 
-<<vizu_3, echo=TRUE>>=
-par(mfrow=c(1,2))
+The connectivity of a binary undirected (symmetric) graph $\clG = (\clV,\clE)$ is captured by the $|\clV|\times |\clV|$ matrix $Y$, called the adjacency matrix
 
-plot(GLattice, layout=layout.circle); title("5x5x5 lattice")
+$$
+  (Y)_{ij} = \begin{cases}
+  1  & \text{ if } i \sim j,\\
+  0  & \text{otherwise}.
+\end{cases}
+$$
 
-plot(GBlog   , layout=layout.circle); title("blog network")
-@
-  
-\end{frame}
+For a valued of weighted graph, a similar definition would be
 
-\begin{frame}
-  \frametitle{Layout and Vizualization}
-  \framesubtitle{Example with Fruchterman and Reingold}
+$$
+  (Y)_{ij} = \begin{cases}
+  w_{ij}  & \text{ if } i \sim j,\\
+  0  & \text{otherwise}.
+\end{cases}
+$$
+where $w_{ij}$ is the weight associated with edge $i\sim j$.
 
-<<vizu_4, echo=TRUE>>=
-par(mfrow=c(1,2))
+  \begin{block}{Remark}
+    \it If the list of vertices is known, the only information which needs to be stored is the list of edges. In terms of storage, this is equivalent to a sparse matrix representation.
+  \end{block}
 
-plot(GLattice, layout=layout.fruchterman.reingold); title("5x5x5 lattice")
-
-plot(GBlog   , layout=layout.fruchterman.reingold); title("blog network")
-@
-  
-\end{frame}
-
-\begin{frame}[fragile, allowframebreaks]
-  \frametitle{Layout and Vizualization: \textbf{ggraph} way}
- 
-<<ggraph_vizu_1, echo=TRUE>>=
-library(ggraph)
-library(gridExtra)
-g1 <- ggraph(GBlog, layout = "fr") + 
-  geom_edge_link(color = "lightgray") + geom_node_point() + theme_void()
-
-g2 <- ggraph(GBlog   , layout = "kk") + 
-  geom_edge_link(color = "lightgray") + geom_node_point() + theme_void()
-
-g3 <- ggraph(GBlog, layout = "linear") + 
-  geom_edge_arc(aes(alpha=..index..), show.legend = FALSE) + 
-  geom_node_point() + theme_void()
-
-g4 <- ggraph(GBlog   , layout = "linear", circular = TRUE) + 
-  geom_edge_link(aes(alpha=..index..), show.legend = FALSE) + 
-  geom_node_point() + theme_void()
-
-grid.arrange(g1, g2, g3, g4, nrow = 2, ncol = 2)
-@
 \end{frame}
 
 %% ==========================================================================
@@ -306,7 +260,7 @@ grid.arrange(g1, g2, g3, g4, nrow = 2, ncol = 2)
   \vfill
 
   \begin{block}{Goal of graph partionning}
-    Form a partition of the vertices with unsupervized approach where the $\mathcal{C}$ is composed by \alert{"cohesive"} sets of vertices, for instance,
+    Form a partition of the vertices with unsupervised approach where the $\mathcal{C}$ is composed by \alert{"cohesive"} sets of vertices, for instance,
     \begin{enumerate}
       \item vertices well connected among themselves
       \item well separated from the remaining vertices
@@ -316,8 +270,9 @@ grid.arrange(g1, g2, g3, g4, nrow = 2, ncol = 2)
 
 \end{frame}
 
+
 %% ==========================================================================
-\subsection{Hierarchical clustering}
+\subsection{Hierarchical clustering for graph}
 
 \begin{frame}
   \frametitle{Principle}
@@ -366,44 +321,27 @@ grid.arrange(g1, g2, g3, g4, nrow = 2, ncol = 2)
   
 \end{frame}
 
-
-\begin{frame}[fragile]
-  \frametitle{Example: karaté club}
-
-<<degree_1>>=
-library(sand) 
-data(karate)
-
-par(mfrow=c(1,2))
-plot(karate)
-
-hist(degree(karate), col=adjustcolor("lightblue", alpha.f = 0.5), main="")
-@
-      
-\end{frame}
-
-
 \begin{frame}[fragile,allowframebreaks]
-  \frametitle{Examples of graph clustering}
+  \frametitle{Examples of graph partionning}
 
 <<>>=
-hc <- cluster_fast_greedy(karate)
-plot(hc,karate)
+hc <- cluster_fast_greedy(blog)
+plot(hc, blog)
 @
 
 <<>>=
-hc <- cluster_louvain(karate)
-plot(hc,karate)
+hc <- cluster_louvain(blog)
+plot(hc, blog)
 @
 
 <<>>=
-hc <- cluster_edge_betweenness(karate)
-plot(hc,karate)
+hc <- cluster_edge_betweenness(blog)
+plot(hc, blog)
 @
 
 <<>>=
-hc <- cluster_walktrap(karate)
-plot(hc,karate)
+hc <- cluster_walktrap(blog)
+plot(hc, blog)
 @
 
 \end{frame}
@@ -411,49 +349,190 @@ plot(hc,karate)
 %% ==========================================================================
 \subsection{Spectral Clustering}
 
-\begin{frame}
-  \frametitle{Graph Laplacian}
+\begin{frame}[fragile]
+  \frametitle{Graph-cut}
+  
+  \begin{block}{Definition}
+    The cut between two set of nodes that form a partition in the graph is
 
-  \begin{definition}[(Un-normalized) Laplacian]
-    The Laplacian matrix $\bL$, resulting from the modified incidence matrix $\tilde\bB$ $\tilde{\! B}_{ij}= 1/-1$ if $i$ is incident to $j$ as tail/head, is defined by 
-    \[
-      \bL = \tilde \bB \tilde \bB^\intercal = \bD - \bA,
-    \]
-    where $\bD = \diag(d_i, i\in\clV)$ is the diagonal matrix of degrees. 
-  \end{definition}
+$$
+\mathrm{cut}(\mathcal{V}_A, \mathcal{V}_B) = \sum_{i\in\clV_A, j\in\clV_B} Y_{ij}, \qquad \clV_A \cup \clV_B = \clV
+$$
+\end{block}
 
-  \begin{block}{Remark}
-    \begin{itemize}
-    \item $\bL$ is called the graph Laplacian (by analogy to continuous Laplacian).
-    \item Spectrum of $\bL$ has much to say about the structure of the graph $\clG$.
-    \end{itemize}
-  \end{block}
+\paragraph{Example:}
+The graph cut between $\clV_A= \{1,2,3,4,10\}$ and $\clV_B= \{5,6,7,8,9\}$ is 2.
+
+<<graph-cut-plot, echo = FALSE, fig.height=5>>=
+g <- graph.formula(1-2, 1-3, 1-4, 1-5, 2-3, 2-4, 3-4, 3-5, 5-2, 5-4, 10-6, 10-7, 10-8, 10-9, 6-7, 6-8, 6-9, 7-8, 7-9, 8-9, 2-6, 3-7)
+plot(g)
+@
 
 \end{frame}
 
 \begin{frame}
+  \frametitle{Min-cut}
+  
+  \begin{block}{Idea}
+    Find the 2-partition that minimizes the cut to form two homogeneous clusters.
+  \end{block}
+
+  Based on this principle, the normalized cut consider the connectivity between group relative to the volume of each groups
+
+$$\argmin_{\{\clV_A, \clV_B\}} \mathrm{cut}^{N}(\clV_A, \clV_B),$$
+
+where $\mathrm{Vol}(\clV_S)) = \sum_{i\in\mathcal{S}} d_i$ and
+
+$$
+\begin{aligned}
+\mathrm{cut}^{N}(\clV_A, \clV_B) & = \frac{\mathrm{cut}(\clV_A, \clV_B)}{\mathrm{Vol}(\clV_A)} + \frac{\mathrm{cut}(\clV_A, \clV_B)}{\mathrm{Vol}(\clV_B)} \\
+ & =  \mathrm{cut}(\clV_A, \clV_B)\frac{\mathrm{Vol}(\clV_A) + \mathrm{Vol}(\clV_B)}{\mathrm{Vol}(\clV_A)\mathrm{Vol}(\clV_B)} \\
+\end{aligned}
+$$
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Solving min-cut for 2 clusters}
+  
+Let 
+
+$$
+x = (x_i)_{i=1,\dots,n} = 
+\begin{cases}
+-1 & \mathrm{if} \quad  i\in \clV_A, \\
+ 1 & \mathrm{if} \quad  i\in \clV_B. \\
+\end{cases}
+$$
+Then, letting $D$ the diagonal matrix of degrees, 
+
+$$
+x^\top (D - Y) x = x^\top D x - ( x^\top D x - 2 \mathrm{cut} (\clV_A, \clV_B)),
+$$
+
+so that 
+
+$$
+\mathrm{cut} (\clV_A, \clV_B) = \frac12 x^\top (D - Y) x.
+$$
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Solving Min-cut for 2 clusters}
+
+\begin{block}{Normalized graph-cut $\Leftrightarrow$ integer programming problem}
+
+$$\begin{aligned}
+& \argmin_{\{\clV_A, \clV_B\}}  \mathrm{cut}^{N}(\clV_A, \clV_B) \\[1.5ex]
+\Leftrightarrow \quad & \argmin_{x\in\{-1, 1\}^n} \frac{x^\top (D - Y) x}{x^\top D x}, \quad \text{s.c.} \quad x^\top D \mathbf{1}_n = 0, 
+\end{aligned}
+$$
+where the constraint imposes only discrete values in $x$. 
+
+\end{block}
+
+\begin{block}{Relax version}<2>
+If we relax to $x\in[-1,1]^n$, it turns to a simple eigenvalue problem
+
+$$
+\argmin_{x\in[-1, 1]^n} x^\top (D - Y) x, \quad \text{s.c.} \quad x^\top D x = 1 \Leftrightarrow (D - Y) x = \lambda D x .
+$$
+where $\bL = D - Y$ is called the \alert{Laplacian matrix} of the graph $\mathcal{G}$.
+
+\end{block}
+  
+\end{frame}
+
+\begin{frame}[fragile]
   \frametitle{Graph Laplacian: spectrum}
 
   \begin{proposition}[Spectrum of $\bL$]
     The $n\times n$ matrix $\bL$ has the following properties:
     \[
-      \bx^\top \bL \bx = \frac{1}{2} \sum_{i,j} A_{ij} (x_i - x_j)^2, \quad \forall \bx\in\Rset^n .
+      \bx^\top \bL \bx = \frac{1}{2} \sum_{i,j} Y_{ij} (x_i - x_j)^2, \quad \forall \bx\in\Rset^n .
     \]
     \vspace{-.25cm}
     \begin{itemize}
       \item $\bL$ is a symmetric, positive semi-definite matrix,
-      \item  the smallest eigenvalue is $0$ with associated eigenvector $\mathbf{1}$.
-      \item $\bL$ has $n$ positive eigenvalues $0=\lambda_1<\dots <\lambda_n$. 
+      \item $\mathbf{1}_n$ is in the kernel of $L$ since $L \mathbf{1}_n = 0$,
+      \item The first normalized eigen vector with eigen value $\lambda> 0$ is solution to the relaxed graph cut problem
     \end{itemize}  
   \end{proposition}
 
-  \begin{corollary}[Spectrum and Graph]
-    \vspace{-.25cm}
-    \begin{itemize}
-      \item The multiplicity of the first eigen value ($0$) of $\bL$ determines the number of connected components in the graph.
-      \item The larger the second non trivial eigenvalue, the higher the connectivity of $\clG$.
-    \end{itemize}  
-  \end{corollary}
+The Laplacian is easily (and fastly) computed in \texttt{R} thanks to the \textbf{igraph} package:
+
+<<compute-laplacian>>=
+L <- laplacian_matrix(blog)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Bi-partionning and the Fiedler vector}
+  
+\alert{Fiedler vector} is the named sometimes given to the normalized eigen vector associated with the smallest positive eigen-value of $\bL$. 
+
+\begin{itemize}
+ \item[$\rightarrow$] solves the relaxed min-cut problem
+ \item[$\rightarrow$] can be used to compute a bi-partition of a graph.
+\end{itemize}
+
+<<fig.height=4>>=
+spec_L <- eigen(L); practical_zero <- 1e-12
+lambda  <- min(spec_L$values[spec_L$values>practical_zero])
+fiedler <- spec_L$vectors[, which(spec_L$values == lambda)]
+qplot(y = fiedler, colour = party) + viridis::scale_color_viridis(discrete = TRUE)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example on a simplied left/right view}
+
+<<fig.height=6>>=
+left_vs_right <- 
+  forcats::fct_collapse(party, 
+    left = c("green", "left", "far-left", "center-left"),
+    right = c("right", "liberal", "center-rigth"),
+    analyst = "analyst"
+  )
+qplot(y = fiedler, colour = left_vs_right) +  viridis::scale_color_viridis(discrete = TRUE)
+@
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{"Validation"}
+
+<<>>=
+thresholds <- seq(-.1, .1, len = 100)
+ARIs <- map_dbl(thresholds, ~ARI(left_vs_right, fiedler > .))
+qplot(thresholds, ARIs) + geom_vline(xintercept = thresholds[which.max(ARIs)]) + theme_bw()
+@
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Spectral clustering}
+
+From the definition of the Laplacian matrix,
+\begin{itemize}
+  \item The multiplicity of the first eigen value ($0$) of $\bL$ determines the number of connected components in the graph.
+  \item The larger the second non trivial (positive) eigenvalue, the higher the connectivity of $\clG$.
+\end{itemize}
+
+
+\begin{block}{General Heuristic}
+\begin{enumerate}
+\item Compute spectral decompostion of $\bL$ to perform clustering in the eigen space
+\item For a graph with $K$ connected components, the first $K$ eigen-vectors are $\mathbf{1}$ spanning the eigenspace associated with eigenvalue $0$
+\item Applying a simple clustering algorithm to the rows of the $K$ first eigenvectors separate the components
+\end{enumerate}
+\end{block}
+
+$\rightsquigarrow$ Generalizes to graphs with a single component (tends to separates groups of nodes which are highly connected together)
 
 \end{frame}
 
@@ -480,22 +559,6 @@ plot(hc,karate)
 \end{frame}
 
 \begin{frame}
-  \frametitle{Spectral Clustering}
-    
-  \begin{block}{Principle}
-  
-  \begin{enumerate}
-    \item Use the spectral property of $\bL$ to perform clustering in the eigen space \medskip
-    \item If the network have $K$ connected components, the first $K$ eigenvectors are $\mathbf{1}$ span the eigenspace associated with eigenvalue $0$ \medskip
-    \item Applying a simple clustering algorithm to the rows of the $K$ first eigenvectors separate the components
-  \end{enumerate}
-  $\rightsquigarrow$ This principle generalizes to a graph with a single component: spectral clustering tends to separates groups of nodes which are highly connected together
-  
-  \end{block}
-  
-\end{frame}
-
-\begin{frame}
   \frametitle{Normalized Spectral Clustering}
   \framesubtitle{by Ng, Jordan and Weiss (2002)}
 
@@ -515,17 +578,56 @@ plot(hc,karate)
 
 \end{algorithm}
 
-  \vfill
-
-  \begin{block}{Remarks}
-    \begin{itemize}
-      \item implemented during today's lab
-      \item also apply to no graphical data!
-    \end{itemize}
-  \end{block}
-  
 \end{frame}
 
+\begin{frame}[fragile]
+  \frametitle{Implementation of normalized spectral clustering }
+
+<<spectral_clustering>>=
+spectral_clustering <- function(graph, nb_cluster, normalized = TRUE) {
+  
+  ## Compute Laplacian matrix
+  L <- laplacian_matrix(graph, normalized = normalized) 
+  ## Generates indices of last (smallest) K vectors
+  selected <- rev(1:ncol(L))[1:nb_cluster] 
+  ## Extract an normalized eigen-vectors
+  U <- eigen(L)$vectors[, selected, drop = FALSE]  # spectral decomposition
+  U <- sweep(U, 1, sqrt(rowSums(U^2)), '/')    
+  ## Perform k-means
+  res <- kmeans(U, nb_cluster, nstart = 40)$cl
+  
+  res
+}
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Application to the French blogosphere (1)}
+
+Perform spectral clustering on the blogosphere for various numbers of group:
+
+<<spectral-blog, fig.height=5>>=
+nb_cluster <- 1:20
+map(nb_cluster, ~spectral_clustering(blog, .)) %>% 
+  map_dbl(ARI, party) %>% qplot(nb_cluster, y = .) + geom_line() + theme_bw()
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Application to the French blogosphere (2)}
+
+Once reorder according to the best clustering (obtained $k=6$) groups, the orginal data matrix looks as follows
+
+<<>>=
+plotMyMatrix(as_adj(blog, sparse = FALSE),
+  clustering = list(row = spectral_clustering(blog, 6)))
+@
+
+\end{frame}
+
+% 
 % \begin{frame}
 %   \frametitle{Absolute Spectral Clustering}
 % 
@@ -533,7 +635,7 @@ plot(hc,karate)
 %   \KwIn{Adjacency matrix and number of classes $Q$}
 %   \BlankLine\BlankLine
 %   \DontPrintSemicolon
-%   
+% 
 %   Compute the graph Laplacian $\mathbf{L}_{abs}$\;
 %   Compute the eigen vectors of $\mathbf{L}_{abs}$ associated with the $Q$ \alert{largest} absolute eigenvalues\;
 %   Define $\mathbf{U}$,  the $p\times Q$ matrix  that encompasses these $Q$ vectors \;
@@ -546,36 +648,6 @@ plot(hc,karate)
 % \end{algorithm}
 % 
 % \end{frame}
-
-% \begin{frame}[fragile,allowframebreaks]
-%   \frametitle{Example: Karate club and Fielder vector and eigenvalue}
-% 
-% <<laplacian example>>=
-% eigen_karate <- graph.laplacian(karate) %>% eigen()
-% 
-% fielder_vector <- eigen_karate$vectors[, igraph::vcount(karate) - 1]
-% faction <- as.character(vcount(karate))
-% faction[V(karate)$Faction == 1] <- "red"
-% faction[V(karate)$Faction == 2] <- "cyan"
-% 
-% par(mfrow = c(1,2))
-% plot(eigen_karate$values, col = "blue", ylab = "Eigenvalues of Graph Laplacian")
-% plot(fielder_vector, pch = 16, xlab = "labels",
-%    ylab = "Fiedler vector entry", col = faction)
-% abline(0, 0, lwd = 2, col = "lightgray")
-% @
-% 
-% \end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Clustering based on the first non null eigenvalue}
-  
-<<>>=
-hc <- cluster_leading_eigen(karate)
-plot(hc,karate)
-@
-
-\end{frame}
 
 %% ==========================================================================
 \section{The Stochastic Block Model (SBM)}
@@ -1231,5 +1303,6 @@ where
 % @
 % 
 % \end{frame}
+
 
 \end{document}
