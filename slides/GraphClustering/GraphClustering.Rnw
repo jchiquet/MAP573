@@ -1,15 +1,16 @@
 \documentclass{beamer}
 
 \def\currentCourse{Masterclass in Machine Learning}
-\def\currentInstitute{}
-\def\currentLogo{../common_figs/logo_X}
+\def\currentInstitute{Villiers-le-lac}
+\def\currentLogo{../common_figs/logo_apt}
 \def\currentDate{January 2022}
-\def\currentChapter{Graph clustering and the Stocahstic Bloc Model}
+\def\currentChapter{Graph clustering and the Stochastic Bloc Model}
 
 <<preamble, child='../common_preamble.Rnw'>>=
 @
 
 \usetikzlibrary{calc,shapes,backgrounds,arrows,automata,shadows,positioning}
+\definecolor{mygreen}{RGB}{20, 176, 61}
 
 \begin{document}
 
@@ -305,18 +306,20 @@ where $w_{ij}$ is the weight associated with edge $i\sim j$.
   \frametitle{Dissimilarity measures}
 
   \begin{block}{Standards}
-    Use standard distances on adjacency matrix:
+    Use standard distances on adjacency matrix, e.g.
     \begin{itemize}
       \item Euclidean distance: $\displaystyle x_{ij} = \sqrt{\sum_{ij} (A_{ik} - A_{jk})^2} $
       \item Manhattan distance: $\displaystyle x_{ij} = \sum_{ij} |A_{ik} - A_{jk})| $
-      \item  etc\dots
     \end{itemize}  
   \end{block}
 
   \vfill
 
   \begin{block}{Graph-specific}
-    For instance,  Modularity (studied during tutorial)
+    \begin{itemize}
+      \item \alert{Modularity}:  fraction of edges that fall within a given groups minus expected fraction if edges were distributed at random
+      \item \alert{Betweeness}: number of shortest paths that go through an edge in a graph or network
+      \end{itemize}
   \end{block}
   
 \end{frame}
@@ -326,31 +329,21 @@ where $w_{ij}$ is the weight associated with edge $i\sim j$.
 
 <<>>=
 hc <- cluster_fast_greedy(blog)
-plot(hc, blog)
-@
-
-<<>>=
-hc <- cluster_louvain(blog)
-plot(hc, blog)
+plot(hc, blog, vertex.label=NA)
 @
 
 <<>>=
 hc <- cluster_edge_betweenness(blog)
-plot(hc, blog)
-@
-
-<<>>=
-hc <- cluster_walktrap(blog)
-plot(hc, blog)
+plot(hc, blog, vertex.label=NA)
 @
 
 \end{frame}
 
 %% ==========================================================================
-\subsection{Spectral Clustering}
+\subsection{Spectral methods}
 
 \begin{frame}[fragile]
-  \frametitle{Graph-cut}
+  \frametitle{Motivation: graph-cut}
   
   \begin{block}{Definition}
     The cut between two set of nodes that form a partition in the graph is
@@ -373,11 +366,10 @@ plot(g)
 \begin{frame}
   \frametitle{Min-cut}
   
-  \begin{block}{Idea}
-    Find the 2-partition that minimizes the cut to form two homogeneous clusters.
-  \end{block}
+  \paragraph{Idea:} Find the 2-partition that minimizes the cut to form two homogeneous clusters.
 
-  Based on this principle, the normalized cut consider the connectivity between group relative to the volume of each groups
+  \begin{block}{Min-cut problem}
+  Based on this principle, the normalized cut consider the connectivity between groups relative to the volume of each groups
 
 $$\argmin_{\{\clV_A, \clV_B\}} \mathrm{cut}^{N}(\clV_A, \clV_B),$$
 
@@ -389,7 +381,7 @@ $$
  & =  \mathrm{cut}(\clV_A, \clV_B)\frac{\mathrm{Vol}(\clV_A) + \mathrm{Vol}(\clV_B)}{\mathrm{Vol}(\clV_A)\mathrm{Vol}(\clV_B)} \\
 \end{aligned}
 $$
-
+  \end{block}
 \end{frame}
 
 \begin{frame}
@@ -490,7 +482,7 @@ qplot(y = fiedler, colour = party) + viridis::scale_color_viridis(discrete = TRU
 \begin{frame}[fragile]
   \frametitle{Example on a simplied left/right view}
 
-<<fig.height=6>>=
+<<fig.height=5>>=
 left_vs_right <- 
   forcats::fct_collapse(party, 
     left = c("green", "left", "far-left", "center-left"),
@@ -1035,7 +1027,9 @@ hist(degree(G3), col="lightblue"); plot(cluster_fast_greedy(G3), G3)
 <<>>=
 pi <- matrix(c(0.3,0.02,0.02,0.02,0.3,0.02,0.02,0.02,0.3),3,3)
 communities <- igraph::sample_sbm(100, pi, c(25, 50, 25))
+par(mfrow = c(1,2))
 plot(communities, vertex.label=NA, vertex.color = rep(1:3,c(25, 50, 25)))
+corrplot(as_adj(communities, sparse =FALSE), tl.pos = "n", cl.pos = 'n')
 @
 
 \end{frame}
@@ -1047,10 +1041,28 @@ plot(communities, vertex.label=NA, vertex.color = rep(1:3,c(25, 50, 25)))
 <<>>=
 pi <- matrix(c(0.05,0.3,0.3,0),2,2)
 star <- igraph::sample_sbm(100, pi, c(4, 96))
+par(mfrow = c(1,2))
 plot(star, vertex.label=NA, vertex.color = rep(1:2,c(4,96)))
+corrplot(as_adj(star, sparse =FALSE), tl.pos = "n", cl.pos = 'n')
 @
 
 \end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Stochastic block models -- examples of topology}
+  \framesubtitle{Bipartite network}
+
+<<>>=
+pi <- matrix(c(.2,1-.2,.2,.2,1-.2,.2,.2,.2,.2,.2, .2,1-.2,.2,.2,1-.2,.2),4,4)
+bipar <- igraph::sample_sbm(100, pi, c(15, 35, 5, 45))
+par(mfrow = c(1,2))
+plot(bipar, vertex.label=NA, vertex.color = rep(1:4,c(15, 35, 5, 45)))
+corrplot(as_adj(bipar, sparse =FALSE), tl.pos = "n", cl.pos = 'n')
+@
+
+\end{frame}
+
+
 
 \begin{frame}
   \frametitle{Degree distributions}
@@ -1073,33 +1085,61 @@ plot(star, vertex.label=NA, vertex.color = rep(1:2,c(4,96)))
 
 \end{frame}
 
+%% ==========================================================================
+\subsection{Statistical Inference in the SBM}
+%% ==========================================================================
+
 \begin{frame}
   \frametitle{Likelihoods}
 
-  \begin{block}{Complete-data loglikelihood}
-    \vspace{-.5cm}
-    \begin{equation*}
-      \log L(\bX,\bZ) = \sum_{i,q} Z_{iq} \log \alpha_q + \sum_{i<j,q,\ell} Z_{iq}Z_{j\ell} \log \pi_{q\ell}^{X_{ij}} (1-\pi_{q\ell})^{1-X_{ij}}.
-    \end{equation*}
-  \end{block}
+\begin{block}{Complete  likelihood $(\bY)$  et  $(\bZ)$}
+ \begin{eqnarray}\label{eq:lik}
+\ell_c(\bY,\bZ; \theta) &=& p(\bY | \bZ; \balpha) p(\bZ ; \boldsymbol\pi)\nonumber  \\
+&=& \prod_{i,j} f_{\alpha_{Z_i,Z_j}}(Y_{ij}) \times   \prod_{i} \pi_{Z_i} \nonumber  \\
+&=&  \prod_{i,j} \alpha_{Z_i,Z_j}^{Y_{ij}} (1-  \alpha_{Z_i,Z_j})^{1- Y_{ij}}    \prod_{i} \pi_{Z_i} \nonumber
+\end{eqnarray}
+ 
+ \end{block}
+ 
 
-  \begin{block}{Conditional expectation of the complete-data loglikelihood}
-    \vspace{-.5cm}
+\begin{block}{Marginal likelihood $(\bY)$}
+\begin{equation*}\label{eq:vraismarg}
+\log \ell(\bY; \theta) =\log \sum_{\bZ \in \boldsymbol{\mathcal{Z}}} \ell_c(\bY,\bZ; \theta) \,.
+\end{equation*}
+\end{block}
+
+  \begin{block}{Remark}
+$\boldsymbol{\mathcal{Z}} =   \{1,\dots, K\}^{n}$  $\Rightarrow$ \color{black}  when  $K$ and $n$ increase, impossible to compute. 
+ \end{block}
+ 
+\alert{Standard tool to maximize the likelihood when latent variables involved} : EM  algorithm.  
+ 
+ \end{frame}
+
+
+\begin{frame}{From EM to variational EM}
+
+\begin{block}{Standard EM}
+At iteration $(t)$ : 
+\begin{itemize}
+ \item[$\bullet$]\textbf{Step E}: compute 
+ $$ Q(\theta | \theta^{(t-1)}) =   \mathbb E_{\bZ | \bY, \theta^{(t-1)} } \left[\log \ell_c(\bY,\bZ; \theta)  \right] $$
+ \item[$\bullet$]\textbf{Step M}: 
+ $$ \theta^{(t)} = \arg \max_{\theta} Q(\theta | \theta^{(t-1)})$$
+ \end{itemize}
+\end{block}
+
+  With SBM,
     \begin{equation*}
-      \E_{\bZ|\bX} \big[\log L(\btheta;\bX,\bZ) \big] = \sum_{i,q} \tau_{iq} \log \alpha_q + \sum_{i<j,q,\ell} \eta_{ijq\ell} \log \pi_{q\ell}^{X_{ij}} (1-\pi_{q\ell})^{1-X_{ij}}
+      \E_{\bZ|\bY} \big[\log L(\btheta;\bX,\bZ) \big] = \sum_{i,q} \tau_{iq} \log \alpha_q + \sum_{i<j,q,\ell} \eta_{ijq\ell} \log \pi_{q\ell}^{X_{ij}} (1-\pi_{q\ell})^{1-X_{ij}}
     \end{equation*}
       where $\tau_ {iq}, \eta_{ijq\ell}$ are the posterior probabilities:
       \begin{itemize}
         \item $\tau_{iq} = \prob(Z_{iq} = 1 | \bX) = \E \left[Z_{iq} | \bX\right].$
         \item $\eta_{ijq\ell} = \prob(Z_{iq}Z_{j\ell} = 1 | \bX) = \E \left[Z_{iq}Z_{j\ell} | \bX\right].$
       \end{itemize}
-  \end{block}
 
 \end{frame}
-
-%% ==========================================================================
-\subsection{Inference in SBM with variational EM}
-%% ==========================================================================
 
 \begin{frame}
   \frametitle{The EM strategy does not apply directly for SBM}
@@ -1238,71 +1278,247 @@ where
 
 \end{frame}
 
-% \begin{frame}[fragile]
-%   \frametitle{Example on the French blogsphere (I)}
-% 
-% <<example blockmodels 2, cache = TRUE>>=
-% library(blockmodels)
-% library(sand)
-% 
-% adj_blog <- upgrade_graph(fblog) %>% 
-%     as_adjacency_matrix() %>% 
-%     as.matrix()
-% 
-% mySBM_collection <- BM_bernoulli(
-%   "SBM_sym", 
-%   adj_blog, verbosity = 0, 
-%   plotting = "figures/ICL_fblog.pdf"
-% )
-% mySBM_collection$estimate()
-% @
-% 
-% \end{frame}
-% 
-% \begin{frame}[fragile]
-%   \frametitle{Example on the French blogsphere (II)}
-% 
-% \includegraphics[width=.7\textwidth]{figures/ICL_fblog}
-% 
-% \end{frame}
-% 
-% \begin{frame}[fragile]
-%   \frametitle{Example on the French blogsphere (III)}
-% 
-% <<example blockmodels 3>>=
-% library(Matrix)
-% clusters <- 
-%   apply(mySBM_collection$memberships[[10]]$Z, 1, which.max)
-% image(Matrix(adj_blog[order(clusters), order(clusters)]))
-% @
-% 
-% \end{frame}
-% 
-% 
-% \begin{frame}[fragile,allowframebreaks]
-%   \frametitle{Example on the French blogsphere (IV)}
-% 
-% <<example blockmodels 4, fig.align="center", fig.height=8>>=
-% library(RColorBrewer); pal <- brewer.pal(10, "Set3")
-% 
-% g <- graph_from_adjacency_matrix(
-%   adj_blog,
-%   mode = "undirected",
-%   weighted = TRUE,
-%   diag = FALSE
-% )
-% V(g)$class <- clusters
-% V(g)$size <- 5
-% V(g)$frame.color <- "white"
-% V(g)$color <- pal[V(g)$class]
-% V(g)$label <- ""
-% E(g)$arrow.mode <- 0
-% 
-% par(mar =c(0,0,0,0))
-% plot(g, edge.width=E(g)$weight)
-% @
-% 
-% \end{frame}
 
+\begin{frame}[fragile]
+    \frametitle{Example: French politcal blogosphere}
+    
+<<sbm, eval = FALSE, echo = FALSE, cache = TRUE>>=
+my_sbm <- 
+  blog %>% as_adj(sparse = FALSE) %>% 
+   sbm::estimateSimpleSBM()
+my_sbm
+@
+
+<<results='hide', cache = TRUE>>=
+my_sbm <- 
+  blog %>% as_adj(sparse = FALSE) %>% 
+   sbm::estimateSimpleSBM(estimOptions = list(plot = FALSE))
+@
+
+<<>>=
+my_sbm
+@
+
+<<fblog , cache = TRUE, results='hide', echo = FALSE, message=FALSE>>=
+library(blockmodels)
+  mySBM_collection <- BM_bernoulli(
+   "SBM_sym", 
+   blog %>% as_adj(sparse = FALSE), verbosity = 0, 
+    plotting = "figures/ICL_fblog.pdf"
+ )
+ mySBM_collection$estimate()
+ @
+    
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Example: model exploration (vICL)}
+
+\includegraphics[width=.7\textwidth]{figures/ICL_fblog}
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Example: monitoring convergence (ELBO)}
+
+<<cache = TRUE, echo = FALSE, results='hide'>>=
+blocks <- 1:18
+sbm_full <- 
+  blog %>% as_adj(sparse = FALSE) %>% 
+  estimateMissSBM(blocks, "node")
+@
+
+<<echo = FALSE>>=
+plot(sbm_full, "monitoring")
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Vizualisation: matrix view}
+
+<<>>=
+plot(my_sbm, dimLabels = list(row = "blogs", col = "blogs"))
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Vizualisation: expected value}
+
+<<>>=
+plot(my_sbm, "expected", dimLabels = list(row = "blogs", col = "blogs"))
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Vizualisation: mesoscopic view}
+
+<<>>=
+plot(my_sbm, "meso")
+@
+
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]
+  \frametitle{Accessing field}
+
+<<>>=
+aricode::ARI(my_sbm$memberships, party)
+@
+
+<<>>=
+barplot(my_sbm$blockProp)
+@
+
+<<>>=
+corrplot(my_sbm$connectParam$mean)
+@
+
+etc... see documentation and 
+
+\end{frame}
+
+\subsection{SBM: some extensions}
+
+\begin{frame}
+ \frametitle{SBM with covariates}
+
+\begin{itemize}
+\item As before :  ($Y_{ij}$) be an adjacency matrix 
+\item  Let   $x^{ij} \in \mathbb{R}^p$  denote covariates describing the pair $(i,j)$
+\end{itemize}
+
+\begin{block}{Latent variables : as before }
+\begin{itemize}
+\item The nodes $i= 1,\dots,n$ are partitioned into $K$ clusters
+\item $Z_i$ independent variables $ \mathbb{P}(Z_i = k) = \pi_k$
+\end{itemize}
+\end{block}
+ 
+\begin{block}{Conditionally to $(Z_i)_{i=1,\dots,n}$... }
+
+$(Y_{ij})$ independent and 
+\begin{eqnarray*}
+ Y_{ij}  | Z_i, Z_j&\sim&   \mathcal{B}ern(\mbox{logit}(\alpha_{Z_i,Z_j} + \theta \cdot x_{ij}) ) \quad \mbox {if binary data} \\
+ Y_{ij}  | Z_i, Z_j  &\sim&  \mathcal{P}(\exp(\alpha_{Z_i,Z_j} + \theta  \cdot x_{ij}) ) \quad \mbox {if counting data} 
+\end{eqnarray*}
+\end{block}
+
+
+If $K = 1$ : all the connection heterogeneity is explained by the covariates. 
+ \end{frame}
+
+\begin{frame}
+ \frametitle{Valued-edge networks}
+ 
+
+\begin{block}{Values-edges networks}
+ Information on edges can be something different from presence/absence.
+ It can be:
+ \begin{enumerate}
+  \item a count of the number of observed interactions,
+  \item a quantity interpreted as the interaction strength,
+  \end{enumerate}
+
+ \end{block}
+
+ \bigskip
+ 
+ 
+
+
+\begin{block}{ Natural extensions of SBM and LBM}
+ \begin{enumerate}
+  \item Poisson distribution: $Y_{ij} \ | \ \{i\in\textcolor{yellow!40!orange}{\bullet},j\in\textcolor{blue!80!black}{\bullet}\}
+\sim^{\text{ind}} \mathcal{P}(\lambda_{\textcolor{yellow!40!orange}{\bullet}\textcolor{blue!80!black}{\bullet}})$,
+ \item Gaussian distribution: $Y_{ij} \ | \ \{i\in\textcolor{yellow!40!orange}{\bullet},j\in\textcolor{blue!80!black}{\bullet}\}
+\sim^{\text{ind}} \mathcal{N}(\mu_{\textcolor{yellow!40!orange}{\bullet}\textcolor{blue!80!black}{\bullet}},\sigma^2)$,
+\textcolor{mygreen}{\cite{mariadassou2010uncovering}}
+\item More generally, 
+  $$Y_{ij} \ | \ \{i\in\textcolor{yellow!40!orange}{\bullet},j\in\textcolor{blue!80!black}{\bullet}\}
+\sim^{\text{ind}} \mathcal{F}(\theta_{\textcolor{yellow!40!orange}{\bullet}\textcolor{blue!80!black}{\bullet}})$$
+ \end{enumerate}
+ \end{block}
+ \bigskip
+
+\end{frame}
+
+\begin{frame}{Latent Block Models aka Bipartite SBM}
+
+Let $Y_{ij}$ be a bi-partite network. Individuals in row and cols are not the same. 
+
+\begin{block}{Latent variables : bi-clustering}
+\begin{itemize}
+\item Nodes $i= 1,\dots,n_1$   partitionned into $K_1$ clusters,  nodes $j= 1,\dots,n_2$  partitionned into $K_2$ clusters
+\item $$\begin{array}{cl}
+Z^1_i = k & \mbox{if node $i$ belongs to cluster (block) $k$}\\
+Z^2_j = \ell & \mbox{if node $j$ belongs to cluster (block) $\ell$}
+\end{array}$$
+\item $Z^1_i, Z^2_j$ independent variables
+$$ \mathbb{P}(Z^1_i = k) = \pi^1_k,\quad  \mathbb{P}(Z^2_j = \ell) = \pi^2_\ell$$
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Latent Block Model : illustration}
+
+ \begin{center}
+    \begin{overlayarea}{\textwidth}{.5\textheight}
+      \begin{columns}
+        \begin{column}{.45\paperwidth}
+        \centering
+        \includegraphics[scale=.3]{figures/LBM_example.pdf}
+        \end{column}
+        \begin{column}{.5\paperwidth}
+          \begin{small}
+            \begin{block}{Latent Block Model}
+              \begin{itemize}
+              \item
+                $n_1$ row nodes $\mathcal{K}_1=\{\textcolor{red}{\bullet},\textcolor{orange}{\bullet},\textcolor{green}{\bullet}\}$
+                classes
+              \item  $\pi^1_\bullet  =  \mathbb{P}(i  \in  \bullet)$,
+                $\bullet\in\mathcal{K}_1,i=1,\dots,n$
+              \item $n_2$ column nodes $\mathcal{K}_2=\{\textcolor{yellow}{\bullet},\textcolor{black}{\bullet}\}$
+                classes
+               \item  $\pi^2_\bullet  =  \mathbb{P}(j  \in  \bullet)$,
+                $\bullet\in\mathcal{K}_2,j=1,\dots,m$
+              \item      $\alpha_{\textcolor{red}{\bullet}\textcolor{yellow}{\bullet}}     =      \mathbb{P}(i
+                \leftrightarrow j | i\in\textcolor{red}{\bullet},j\in\textcolor{yellow}{\bullet})$
+              \end{itemize}
+            \end{block}
+          \end{small}
+        \end{column}
+      \end{columns}
+    \end{overlayarea}
+  \end{center}
+
+
+\begin{align*}
+Z^1_i = \mathbf{1}_{\{i \in \bullet\}}  \ & \sim^{\text{iid}} \mathcal{M}(1,\boldsymbol\pi^1), \quad \forall\bullet \in \mathcal{Q}_1, \\ 
+Z^2_j=\mathbf{1}_{\{j \in \bullet\}}  \ & \sim^{\text{iid}} \mathcal{M}(1,\boldsymbol\pi^2), \quad \forall\bullet \in \mathcal{Q}_2, \\
+Y_{ij} \ | \ \{i\in\textcolor{red}{\bullet},j\in\textcolor{yellow}{\bullet}\}
+& \sim^{\text{ind}} \mathcal{B}ern(\alpha_{\textcolor{red}{\bullet}\textcolor{yellow}{\bullet}})\\
+\end{align*}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{To go further...}
+  
+  \begin{itemize}
+    \item Group Gro{\ss}BM : \url{https://github.com/GrossSBM/}  \texttt{sbm}; 
+    \item Documentation of package \texttt{sbm}: \url{https://grosssbm.github.io/sbm/}
+    \item \texttt{missSBM} SBM with missing data \url{https://github.com/GrossSBM/misssbm} \\
+    
+      Slides : \url{https://grosssbm.github.io/slideshow-missSBM/slides.html}
+
+  \end{itemize}
+    
+\end{frame}
 
 \end{document}
