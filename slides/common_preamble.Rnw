@@ -59,7 +59,7 @@ opts_chunk$set(size = 'scriptsize',dev='pdf',fig.path='figures/',
     \titlepage
     \vfill
     \begin{center}
-        \scriptsize\url{https://jchiquet.github.io/MAP573}
+        \scriptsize\url{https://jchiquet.github.io/}
     \end{center}
     \vfill
     \includegraphics[width=2cm]{\currentLogo}\hfill
