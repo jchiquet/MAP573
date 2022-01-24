@@ -84,7 +84,7 @@ A seed exchange network in Kenya is collected on a limited space area, where all
 \end{block}
 
 \begin{block}{Ecological networks: plant-pollinator network}
-Interaction network between predefined sets of plants and pollinator, by direct observation.
+Interaction network between predefined sets of plants and pollinators, by direct observation.
 \end{block}
 
 \end{frame}
@@ -105,7 +105,7 @@ party %>% table() %>% knitr::kable("latex")
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Vizualization: graph view}
+  \frametitle{Visualization: graph view}
 
 A visual representation of the network data with nodes colored according to the political party each blog belongs to is achieved as follows:
 
@@ -119,7 +119,7 @@ plot.igraph(blog,
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Vizualization: graph view (advanced)}
+  \frametitle{Visualization: graph view (advanced)}
 
 <<frenchblog-igraph-plot-2, echo = FALSE, message = FALSE, results='hide', warning=FALSE>>=
 p <- fancy_network(blog, party)
@@ -131,7 +131,7 @@ ggsave(p, file='figures/fancy_frenchblog2007.png', device = "png")
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Vizualization: matrix view}
+  \frametitle{Visualization: matrix view}
 
 <<>>=
 Y  <- as_adj(blog, sparse = FALSE)
@@ -151,18 +151,18 @@ sbm::plotMyMatrix(
   
   \item  The pattern of connections between the nodes is highly related to the blog classification (political party). 
   
-  \item The data may support a natural grouping of the node which is not necessarily related a predefined classification
+  \item The data may support a natural grouping of the node which is not necessarily related to a predefined classification
   
-  \item Same remark holds for any kind of clusteringa and unsupervised leaning problem
+  \item Same remark holds for any kind of clustering and unsupervised leaning problem
 
   \end{itemize}
 \end{block}
 
   \vfill
   
-\begin{block}{Objective}  
+\begin{block}{Objective: \alert{Graph clustering}}
 
-  Our objective is to automatically find a \alert{partitioning} of the node, i.e. a clustering, that groups together nodes with similar connectivity pattern. This is known as graph clustering.
+  Automatically find a \alert{partitioning} of the nodes, i.e. a clustering, that groups together nodes with similar connectivity pattern.
 
 \end{block}
 
@@ -247,55 +247,35 @@ where $w_{ij}$ is the weight associated with edge $i\sim j$.
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Principle of graph partionning}
-
-  \begin{definition}[Partition]
-    A decomposition $\mathcal{C} = \{C_1,\dots,C_K\}$ of the vertices $\clV$ such that
-    \begin{itemize}
-      \item $C_k \cap C_{k'} = \emptyset$ for any $k\neq k'$
-      \item $\bigcup_{k} C_k = \clV$
-    \end{itemize}
-  \end{definition}
-
-  \vfill
-
-  \begin{block}{Goal of graph partionning}
-    Form a partition of the vertices with unsupervised approach where the $\mathcal{C}$ is composed by \alert{"cohesive"} sets of vertices, for instance,
-    \begin{enumerate}
-      \item vertices well connected among themselves
-      \item well separated from the remaining vertices
-    \end{enumerate}
-    
-  \end{block}
-
-\end{frame}
-
-
 %% ==========================================================================
 \subsection{Hierarchical clustering for graph}
 
 \begin{frame}
   \frametitle{Principle}
 
-
+    Form a partition of the nodes composed by \alert{"cohesive"} sets, e.g.
+    \begin{enumerate}
+      \item vertices well connected among themselves
+      \item well separated from the remaining vertices
+    \end{enumerate}
+  
+  \begin{block}{Agglomerative hierarchical clustering}
+  \vspace{-.25cm}
   \begin{algorithm}[H]
-    \KwIn{$n$ individuals with $p$ attributes}
     \BlankLine\BlankLine
     \DontPrintSemicolon
       1. Compute the dissimilarity between groups \;
       2. Regroup the two most similar elements \;
-      
+    \BlankLine  
       Iterate until all element are in a single group \;
     \BlankLine\BlankLine
     \KwOut{$n$ nested partitions from $\set{\set{1},\dots,\set{n}}$ to $\set{\set{1,\dots,n}}$}
-
-    \caption{Agglomerative hierarchical clustering}
   \end{algorithm}
+  \end{block}
   
   \begin{block}{Ingredients}
     \begin{enumerate}
-      \item a dissimilarity measure between singleton
+      \item a dissimilarity measure between nodes
       \item a distance measure between sets
     \end{enumerate}
   \end{block}
@@ -305,20 +285,28 @@ where $w_{ij}$ is the weight associated with edge $i\sim j$.
 \begin{frame}
   \frametitle{Dissimilarity measures}
 
-  \begin{block}{Standards}
-    Use standard distances on adjacency matrix, e.g.
-    \begin{itemize}
-      \item Euclidean distance: $\displaystyle x_{ij} = \sqrt{\sum_{ij} (A_{ik} - A_{jk})^2} $
-      \item Manhattan distance: $\displaystyle x_{ij} = \sum_{ij} |A_{ik} - A_{jk})| $
-    \end{itemize}  
-  \end{block}
-
-  \vfill
+  % \begin{block}{Standards}
+  %   Use standard distances on adjacency matrix, e.g.
+  %   \begin{itemize}
+  %     \item Euclidean distance: $\displaystyle \sqrt{\sum_{ij} (Y_{ik} - Y_{jk})^2} $
+  %     \item Manhattan distance: $\displaystyle \sum_{ij} |Y_{ik} - Y_{jk})| $
+  %   \end{itemize}  
+  % \end{block}
 
   \begin{block}{Graph-specific}
     \begin{itemize}
-      \item \alert{Modularity}:  fraction of edges that fall within a given groups minus expected fraction if edges were distributed at random
-      \item \alert{Betweeness}: number of shortest paths that go through an edge in a graph or network
+      \item \alert{Modularity}:  \textit{fraction of edges that fall within a given groups minus expected fraction if edges were distributed at random}\medskip
+      
+
+\textcolor{gray}{
+For $\mathcal{C} = \{C_1,\dots,C_K\}$ a candidate partition and $f_{ij}(\mathcal{C})$ the fraction of edges connecting vertices from $C_i$ to $C_j$
+\begin{equation*}
+  \mathrm{modularity}(\mathcal{C}) = \sum_{k=1}^K \left(f_{kk}(\mathcal{C}) - \mathbb{E}_{H_0}(f_{kk})\right)^2
+\end{equation*}
+}
+
+      \item \alert{Betweeness}: \textit{number of shortest paths that go through a node in a graph or network}
+      
       \end{itemize}
   \end{block}
   
@@ -346,7 +334,7 @@ plot(hc, blog, vertex.label=NA)
   \frametitle{Motivation: graph-cut}
   
   \begin{block}{Definition}
-    The cut between two set of nodes that form a partition in the graph is
+    The cut between two sets of nodes that form a partition in the graph is
 
 $$
 \mathrm{cut}(\mathcal{V}_A, \mathcal{V}_B) = \sum_{i\in\clV_A, j\in\clV_B} Y_{ij}, \qquad \clV_A \cup \clV_B = \clV
@@ -354,7 +342,7 @@ $$
 \end{block}
 
 \paragraph{Example:}
-The graph cut between $\clV_A= \{1,2,3,4,10\}$ and $\clV_B= \{5,6,7,8,9\}$ is 2.
+The graph cut between $\clV_A= \{1,2,3,4,5\}$ and $\clV_B= \{6,7,8,9,10\}$ is 2.
 
 <<graph-cut-plot, echo = FALSE, fig.height=5>>=
 g <- graph.formula(1-2, 1-3, 1-4, 1-5, 2-3, 2-4, 3-4, 3-5, 5-2, 5-4, 10-6, 10-7, 10-8, 10-9, 6-7, 6-8, 6-9, 7-8, 7-9, 8-9, 2-6, 3-7)
@@ -1092,26 +1080,24 @@ corrplot(as_adj(bipar, sparse =FALSE), tl.pos = "n", cl.pos = 'n')
 \begin{frame}
   \frametitle{Likelihoods}
 
-\begin{block}{Complete  likelihood $(\bY)$  et  $(\bZ)$}
- \begin{eqnarray}\label{eq:lik}
-\ell_c(\bY,\bZ; \theta) &=& p(\bY | \bZ; \balpha) p(\bZ ; \boldsymbol\pi)\nonumber  \\
-&=& \prod_{i,j} f_{\alpha_{Z_i,Z_j}}(Y_{ij}) \times   \prod_{i} \pi_{Z_i} \nonumber  \\
-&=&  \prod_{i,j} \alpha_{Z_i,Z_j}^{Y_{ij}} (1-  \alpha_{Z_i,Z_j})^{1- Y_{ij}}    \prod_{i} \pi_{Z_i} \nonumber
-\end{eqnarray}
- 
+\begin{block}{Complete data likelihood}
+\vspace{-.5cm}
+ \begin{align*}
+\ell_c(\bY,\bZ; \theta)  & =  p(\bY | \bZ; \balpha) p(\bZ ; \boldsymbol\pi)\nonumber = \prod_{i,j} f_{\alpha_{Z_i,Z_j}}(Y_{ij}) \times   \prod_{i} \pi_{Z_i} \nonumber  \\
+&=  \prod_{i,j} \alpha_{Z_i,Z_j}^{Y_{ij}} (1-  \alpha_{Z_i,Z_j})^{1- Y_{ij}}    \prod_{i} \pi_{Z_i} \nonumber
+\end{align*}
  \end{block}
  
-
 \begin{block}{Marginal likelihood $(\bY)$}
-\begin{equation*}\label{eq:vraismarg}
+\vspace{-.5cm}
+\begin{equation*}
 \log \ell(\bY; \theta) =\log \sum_{\bZ \in \boldsymbol{\mathcal{Z}}} \ell_c(\bY,\bZ; \theta) \,.
 \end{equation*}
+$\boldsymbol{\mathcal{Z}} =   \{1,\dots, K\}^{n}$: impossible to compute  when  $K$ and $n$ increase. 
 \end{block}
 
-  \begin{block}{Remark}
-$\boldsymbol{\mathcal{Z}} =   \{1,\dots, K\}^{n}$  $\Rightarrow$ \color{black}  when  $K$ and $n$ increase, impossible to compute. 
- \end{block}
- 
+\vfill
+
 \alert{Standard tool to maximize the likelihood when latent variables involved} : EM  algorithm.  
  
  \end{frame}
@@ -1243,18 +1229,18 @@ At iteration $(t)$ :
 
   \begin{block}{Variational E-step}
     Maximizing $J(\boldsymbol\tau)$ for fixed $\btheta$, we find a fixed-point relationship:
-    \begin{equation}
+    \begin{equation*}
       \hat{\tau}_{iq} \varpropto \alpha_q \prod_{j} \prod_{\ell} b(X_{ij}, \pi_{q\ell})^{\hat{\tau}_{j\ell}}
-    \end{equation}
+    \end{equation*}
   \end{block}
 
   \vfill
 
   \begin{block}{M-step}
     Maximizing $J(\btheta)$ for fixed $\boldsymbol\tau$, we find,
-    \begin{equation}
+    \begin{equation*}
 \hat{\alpha}_q = \frac{1}{n}\sum_i \hat{\tau}_{iq} , \quad \hat\pi_{q\ell} = \frac{\sum_{i\neq j} \hat{\tau}_{iq}\hat{\tau}_{j\ell} X_{ij}}{\sum_{i\neq j} \hat{\tau}_{iq}\hat{\tau}_{j\ell}}.
-\end{equation}
+\end{equation*}
   \end{block}
 
 \end{frame}
@@ -1377,7 +1363,7 @@ barplot(my_sbm$blockProp)
 corrplot(my_sbm$connectParam$mean)
 @
 
-etc... see documentation and 
+etc... see documentation and website
 
 \end{frame}
 
