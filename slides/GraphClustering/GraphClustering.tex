@@ -12,6 +12,9 @@
 \makeatother
 
 \definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\makeatletter
+\@ifundefined{AddToHook}{}{\AddToHook{package/xcolor/after}{\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}}}
+\makeatother
 \newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
 \newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
 \newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
@@ -46,6 +49,14 @@
 \definecolor{messagecolor}{rgb}{0, 0, 0}
 \definecolor{warningcolor}{rgb}{1, 0, 1}
 \definecolor{errorcolor}{rgb}{1, 0, 0}
+\makeatletter
+\@ifundefined{AddToHook}{}{\AddToHook{package/xcolor/after}{
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+}}
+\makeatother
 \newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
 
 \usepackage{alltt}
@@ -200,7 +211,7 @@ Single day snapshot of almost 200 political blogs automatically extracted the 14
 \hlkwd{summary}\hlstd{(blog)}
 \end{alltt}
 \begin{verbatim}
-## IGRAPH 6fb607c UN-- 192 1431 -- 
+## IGRAPH 997d6c3 UN-- 192 1431 -- 
 ## + attr: name (v/c), party (v/c)
 \end{verbatim}
 \begin{alltt}
@@ -280,13 +291,13 @@ A visual representation of the network data with nodes colored according to the 
 \end{frame}
 
 \begin{frame}
-  \frametitle{Questions}
+  \frametitle{Problematic}
 
 \begin{block}{Remarks}  
   
   \begin{itemize}
   
-  \item  The pattern of connections between the nodes is highly related to the blog classification (political party). 
+  \item  The pattern of connections between the nodes is highly related to the blog classification (political party)
   
   \item The data may support a natural grouping of the node which is not necessarily related to a predefined classification
   
@@ -517,6 +528,9 @@ $$
 \end{aligned}
 $$
   \end{block}
+
+$\rightsquigarrow$ The term in $(\mathrm{Vol}(\clV_A) ,\mathrm{Vol}(\clV_B))$ encourages balance groups/cuts
+
 \end{frame}
 
 \begin{frame}
@@ -876,7 +890,7 @@ Once reorder according to the best clustering (obtained $k=6$) groups, the orgin
   \begin{definition}
     Let $\clV = {1,\dots,n}$ be a set of fixed vertices. The (simple) Erdös-Rényi model $\mathcal{G}(n,\pi)$ assumes random edges between pairs of nodes with probability $\pi$. In orther word, the (random) adjacency matrix $\bX$ is such that
     \begin{equation*}
-      X_{ij} \sim \mathcal{B}(\pi)
+      Y_{ij} \sim \mathcal{B}(\pi)
     \end{equation*}
   \end{definition}
 
@@ -918,8 +932,8 @@ Once reorder according to the best clustering (obtained $k=6$) groups, the orgin
 \hlkwd{average.path.length}\hlstd{(G3);} \hlkwd{diameter}\hlstd{(G3)}
 \end{alltt}
 \begin{verbatim}
-## [1] 5.649385
-## [1] 13
+## [1] 5.233395
+## [1] 12
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -975,8 +989,8 @@ Once reorder according to the best clustering (obtained $k=6$) groups, the orgin
 \hlkwd{average.path.length}\hlstd{(G3);} \hlkwd{diameter}\hlstd{(G3)}
 \end{alltt}
 \begin{verbatim}
-## [1] 6.117387
-## [1] 14
+## [1] 6.019397
+## [1] 15
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1036,10 +1050,10 @@ Once reorder according to the best clustering (obtained $k=6$) groups, the orgin
     \begin{block}{The conditional distribution of the edges}
     Connexion probabilities depend on the node class belonging:
     \begin{equation*}
-      X_{ij} | \set{i\in q, j\in\ell} \sim \mathcal{B}(\pi_{q \ell}) \qquad \bigg(\Leftrightarrow       X_{ij} | \set{Z_{iq}Z_{j\ell}=1} \sim \mathcal{B}(\pi_{q \ell}).
+      Y_{ij} | \set{i\in q, j\in\ell} \sim \mathcal{B}(\pi_{q \ell}) \qquad \bigg(\Leftrightarrow       Y_{ij} | \set{Z_{iq}Z_{j\ell}=1} \sim \mathcal{B}(\pi_{q \ell}).
  \bigg)
     \end{equation*}
-    The $Q\times Q$ matrix ${\boldsymbol\pi}$  gives for all couple of labels $\pi_{q\ell}=\mathbb{P}(X_{ij}=1|i\in q, j\in\ell)$.
+    The $Q\times Q$ matrix ${\boldsymbol\pi}$  gives for all couple of labels $\pi_{q\ell}=\mathbb{P}(Y_{ij}=1|i\in q, j\in\ell)$.
    \end{block}
 
 \end{frame}
@@ -1127,7 +1141,7 @@ Once reorder according to the best clustering (obtained $k=6$) groups, the orgin
 
   \begin{align*}
     Z_i = \mathbf{1}_{\{i \in \bullet\}}  \ & \sim^{\text{iid}} \mathcal{M}(1,\alpha), \quad \forall\bullet\in\mathcal{Q}, \\
-    X_{ij} \ | \ \{i\in\textcolor{yellow!40!orange}{\bullet},j\in\textcolor{blue!80!black}{\bullet}\} & \sim^{\text{ind}} \mathcal{B}(\pi_{\textcolor{yellow!40!orange}{\bullet}\textcolor{blue!80!black}{\bullet}})\\
+    Y_{ij} \ | \ \{i\in\textcolor{yellow!40!orange}{\bullet},j\in\textcolor{blue!80!black}{\bullet}\} & \sim^{\text{ind}} \mathcal{B}(\pi_{\textcolor{yellow!40!orange}{\bullet}\textcolor{blue!80!black}{\bullet}})\\
   \end{align*}
 
 \end{frame}
@@ -1209,7 +1223,7 @@ Once reorder according to the best clustering (obtained $k=6$) groups, the orgin
 
   \begin{align*}
     Z_i = \mathbf{1}_{\{i \in \bullet\}}  \ & \sim^{\text{iid}} \mathcal{M}(1,\alpha), \quad \forall\bullet\in\mathcal{Q}, \\
-    X_{ij} \ | \ \{i\in\textcolor{yellow!40!orange}{\bullet},j\in\textcolor{blue!80!black}{\bullet}\} & \sim^{\text{ind}} \mathcal{B}(\pi_{\textcolor{yellow!40!orange}{\bullet}\textcolor{blue!80!black}{\bullet}})\\
+    Y_{ij} \ | \ \{i\in\textcolor{yellow!40!orange}{\bullet},j\in\textcolor{blue!80!black}{\bullet}\} & \sim^{\text{ind}} \mathcal{B}(\pi_{\textcolor{yellow!40!orange}{\bullet}\textcolor{blue!80!black}{\bullet}})\\
   \end{align*}
 
 \end{frame}
@@ -1279,7 +1293,7 @@ Once reorder according to the best clustering (obtained $k=6$) groups, the orgin
   \begin{block}{Conditional degree distribution}
     The conditional degree distribution of a node $i\in q$ is
     \begin{equation*}
-      D_i | i \in q \sim \mathrm{b}(n-1,\bar\pi) \approx \mathcal{P}(\lambda_q), \qquad \bar\pi_q = \sum_{\ell=1}^Q \alpha_\ell \pi_{q\ell}, \quad \lambda_q = (n-1)\bar\pi_q
+      D_i | i \in q \sim \mathrm{b}(n-1,\bar\pi_q) \approx \mathcal{P}(\lambda_q), \qquad \bar\pi_q = \sum_{\ell=1}^Q \alpha_\ell \pi_{q\ell}, \quad \lambda_q = (n-1)\bar\pi_q
     \end{equation*}
   \end{block}
 
@@ -1304,8 +1318,8 @@ Once reorder according to the best clustering (obtained $k=6$) groups, the orgin
 \begin{block}{Complete data likelihood}
 \vspace{-.5cm}
  \begin{align*}
-\ell_c(\bY,\bZ; \theta)  & =  p(\bY | \bZ; \balpha) p(\bZ ; \boldsymbol\pi)\nonumber = \prod_{i,j} f_{\alpha_{Z_i,Z_j}}(Y_{ij}) \times   \prod_{i} \pi_{Z_i} \nonumber  \\
-&=  \prod_{i,j} \alpha_{Z_i,Z_j}^{Y_{ij}} (1-  \alpha_{Z_i,Z_j})^{1- Y_{ij}}    \prod_{i} \pi_{Z_i} \nonumber
+\ell_c(\bY,\bZ; \theta)  & =  p(\bY | \bZ; \balpha) p(\bZ ; \boldsymbol\pi)\nonumber = \prod_{i,j} f_{\pi_{Z_i,Z_j}}(Y_{ij}) \times   \prod_{i} \alpha_{Z_i} \nonumber  \\
+&=  \prod_{i,j} \pi_{Z_i,Z_j}^{Y_{ij}} (1-  \pi_{Z_i,Z_j})^{1- Y_{ij}}    \prod_{i} \alpha_{Z_i} \nonumber
 \end{align*}
  \end{block}
  
@@ -1338,12 +1352,12 @@ At iteration $(t)$ :
 
   With SBM,
     \begin{equation*}
-      \E_{\bZ|\bY} \big[\log L(\btheta;\bX,\bZ) \big] = \sum_{i,q} \tau_{iq} \log \alpha_q + \sum_{i<j,q,\ell} \eta_{ijq\ell} \log \pi_{q\ell}^{X_{ij}} (1-\pi_{q\ell})^{1-X_{ij}}
+      \E_{\bZ|\bY} \big[\log L(\btheta;\bY,\bZ) \big] = \sum_{i,q} \tau_{iq} \log \alpha_q + \sum_{i<j,q,\ell} \eta_{ijq\ell} \log \pi_{q\ell}^{Y_{ij}} (1-\pi_{q\ell})^{1-Y_{ij}}
     \end{equation*}
       where $\tau_ {iq}, \eta_{ijq\ell}$ are the posterior probabilities:
       \begin{itemize}
-        \item $\tau_{iq} = \prob(Z_{iq} = 1 | \bX) = \E \left[Z_{iq} | \bX\right].$
-        \item $\eta_{ijq\ell} = \prob(Z_{iq}Z_{j\ell} = 1 | \bX) = \E \left[Z_{iq}Z_{j\ell} | \bX\right].$
+        \item $\tau_{iq} = \prob(Z_{iq} = 1 | \bY) = \E \left[Z_{iq} | \bY\right].$
+        \item $\eta_{ijq\ell} = \prob(Z_{iq}Z_{j\ell} = 1 | \bY) = \E \left[Z_{iq}Z_{j\ell} | \bY\right].$
       \end{itemize}
 
 \end{frame}
@@ -1354,7 +1368,7 @@ At iteration $(t)$ :
   \begin{block}{Ouch: another intractability problem}
     \begin{itemize}
       \item the $Z_{iq}$ are \alert{not independent conditional on $(X_{ij}, i<j)$} \dots
-      \item we cannot compute $\eta_{ijq\ell} = \prob(Z_{iq}Z_{j\ell} = 1 | \bX) = \E \left[Z_{iq}Z_{j\ell} | \bX\right]$,
+      \item we cannot compute $\eta_{ijq\ell} = \prob(Z_{iq}Z_{j\ell} = 1 | \bY) = \E \left[Z_{iq}Z_{j\ell} | \bY\right]$,
       \item the conditional expectation $Q(\btheta)$, i.e. the main EM ingredient, is \alert{intractable}.
     \end{itemize}
   \end{block}
@@ -1376,12 +1390,12 @@ At iteration $(t)$ :
   \begin{proposition}
     Consider a distribution $\mathbb{Q}$ for the $\set{Z_{iq}}$. We have
     \begin{equation*}
-      \log L(\btheta; \bX) = \E_{\mathbb{Q}} [\log L(\btheta, \bX,\bZ)] + \mathcal{H}(\mathbb{Q}) + \mathrm{KL}(\mathbb{Q} \ | \ \prob(\bZ|\bX;\btheta)),
+      \log L(\btheta; \bY) = \E_{\mathbb{Q}} [\log L(\btheta, \bY,\bZ)] + \mathcal{H}(\mathbb{Q}) + \mathrm{KL}(\mathbb{Q} \ | \ \prob(\bZ|\bY;\btheta)),
     \end{equation*}
     where $\mathcal{H}$ is the entropy and $\mathrm{KL}( \cdot| \cdot)$ is the Kullback-Leibler divergence:
     \begin{gather*}
       \mathcal{H}(\mathbb{Q}) = - \sum_z \mathbb{Q}(z) \log \mathbb{Q}(z) = - \E_\mathbb{Q} [\log \mathbb{Q} (Z)]\\
-      \mathrm{KL}(\mathbb{Q} \ | \ \prob(\bZ|\bX;\btheta)) = \sum_z \mathbb{Q}(z) \log \frac{\mathbb{Q}(z)}{\prob(\bZ|\bX;\btheta)} = \E_\mathbb{Q} \left[\log \frac{\mathbb{Q}(z)}{\prob(\bZ|\bX;\btheta)}\right]\\
+      \mathrm{KL}(\mathbb{Q} \ | \ \prob(\bZ|\bY;\btheta)) = \sum_z \mathbb{Q}(z) \log \frac{\mathbb{Q}(z)}{\prob(\bZ|\bY;\btheta)} = \E_\mathbb{Q} \left[\log \frac{\mathbb{Q}(z)}{\prob(\bZ|\bY;\btheta)}\right]\\
     \end{gather*}
   \end{proposition}
 \end{frame}
@@ -1390,7 +1404,7 @@ At iteration $(t)$ :
   \frametitle{Revisting the EM algorithm II}
   Let
    \begin{equation*}
-    J(\mathbb{Q},\btheta) \triangleq \E_{\mathbb{Q}}\left(\log L(\btheta ;\bX,\bZ)\right) + \mathcal{H}(\mathbb{Q})
+    J(\mathbb{Q},\btheta) \triangleq \E_{\mathbb{Q}}\left(\log L(\btheta ;\bY,\bZ)\right) + \mathcal{H}(\mathbb{Q})
 \end{equation*}
 
   \vfill
@@ -1398,9 +1412,9 @@ At iteration $(t)$ :
   The steps in the EM algorithm may be viewed as:
   \begin{description}
     \item[Expectation step]: choose $\mathbb{Q}$ to maximize $J(\mathbb{Q};\btheta^{(t)})$\\[2ex]
-      \alert{The solution is $\prob(\bZ|\bX;\btheta^{(t)})$}\\
+      \alert{The solution is $\prob(\bZ|\bY;\btheta^{(t)})$}\\
     \item[Maximization step]: choose $\btheta$ to maximize $J(\mathbb{Q}^{(t)};\btheta$)\\[2ex]
-      \alert{The solution maximizes $\E_{\bZ|\bX;\btheta^{(t)}}\left(\log L(\btheta ;\bX,\bZ)\right)$}
+      \alert{The solution maximizes $\E_{\bZ|\bY;\btheta^{(t)}}\left(\log L(\btheta ;\bY,\bZ)\right)$}
   \end{description}
 
 \end{frame}
@@ -1409,7 +1423,7 @@ At iteration $(t)$ :
   \frametitle{Variational approximation for SBM}
 
     \begin{block}{Problem for SBM}
-      $\prob(\bZ|\bX;\btheta^{(t)})$ cannot be computed thus the E-step cannot be solved.
+      $\prob(\bZ|\bY;\btheta^{(t)})$ cannot be computed thus the E-step cannot be solved.
   \end{block}
 
   \begin{block}{Idea}
@@ -1430,9 +1444,9 @@ At iteration $(t)$ :
   \frametitle{Variational EM for SBM: the criterion}
 
   \begin{block}{Lower bound of the loglikehood}
-  Since $\mathbb{Q}$ is an approximation of $\prob(\bZ|\bX)$, the Kullback-Leibler divergence is non-negative and
+  Since $\mathbb{Q}$ is an approximation of $\prob(\bZ|\bY)$, the Kullback-Leibler divergence is non-negative and
     \begin{equation*}
-      \log L(\btheta; \bX) \geq \E_{\mathbb{Q}} [\log L(\btheta, \bX,\bZ)] + \mathcal{H}(\mathbb{Q}) = J(\mathbb{Q},\btheta).
+      \log L(\btheta; \bY) \geq \E_{\mathbb{Q}} [\log L(\btheta, \bY,\bZ)] + \mathcal{H}(\mathbb{Q}) = J(\mathbb{Q},\btheta).
     \end{equation*}
   \end{block}
 
@@ -1451,7 +1465,7 @@ At iteration $(t)$ :
   \begin{block}{Variational E-step}
     Maximizing $J(\boldsymbol\tau)$ for fixed $\btheta$, we find a fixed-point relationship:
     \begin{equation*}
-      \hat{\tau}_{iq} \varpropto \alpha_q \prod_{j} \prod_{\ell} b(X_{ij}, \pi_{q\ell})^{\hat{\tau}_{j\ell}}
+      \hat{\tau}_{iq} \varpropto \alpha_q \prod_{j} \prod_{\ell} b(Y_{ij}, \pi_{q\ell})^{\hat{\tau}_{j\ell}}
     \end{equation*}
   \end{block}
 
@@ -1460,7 +1474,7 @@ At iteration $(t)$ :
   \begin{block}{M-step}
     Maximizing $J(\btheta)$ for fixed $\boldsymbol\tau$, we find,
     \begin{equation*}
-\hat{\alpha}_q = \frac{1}{n}\sum_i \hat{\tau}_{iq} , \quad \hat\pi_{q\ell} = \frac{\sum_{i\neq j} \hat{\tau}_{iq}\hat{\tau}_{j\ell} X_{ij}}{\sum_{i\neq j} \hat{\tau}_{iq}\hat{\tau}_{j\ell}}.
+\hat{\alpha}_q = \frac{1}{n}\sum_i \hat{\tau}_{iq} , \quad \hat\pi_{q\ell} = \frac{\sum_{i\neq j} \hat{\tau}_{iq}\hat{\tau}_{j\ell} Y_{ij}}{\sum_{i\neq j} \hat{\tau}_{iq}\hat{\tau}_{j\ell}}.
 \end{equation*}
   \end{block}
 
@@ -1471,11 +1485,11 @@ At iteration $(t)$ :
 
   We use our lower bound of the  loglikelihood to compute an approximation of the ICL
   \begin{multline*}
-  \mathrm{vICL}(Q) = \E_{\hat{\mathbb{Q}}} [\log L(\hat{\btheta)};\bX,\bZ] \\ - \frac{1}{2} \left(\frac{Q(Q+1)}{2} \log \frac{n(n-1)}{2} + (Q-1) \log (n) \right),
+  \mathrm{vICL}(Q) = \E_{\hat{\mathbb{Q}}} [\log L(\hat{\btheta)};\bY,\bZ] \\ - \frac{1}{2} \left(\frac{Q(Q+1)}{2} \log \frac{n(n-1)}{2} + (Q-1) \log (n) \right),
 \end{multline*}
 where
     \begin{equation*}
-      \E_{\hat{\mathbb{Q}}} [\log L(\hat\btheta; \bX,\bZ)] = J(\hat{\boldsymbol\tau},\hat\btheta) - \mathcal{H}(\hat{\mathbb{Q}}).
+      \E_{\hat{\mathbb{Q}}} [\log L(\hat\btheta; \bY,\bZ)] = J(\hat{\boldsymbol\tau},\hat\btheta) - \mathcal{H}(\hat{\mathbb{Q}}).
     \end{equation*}
 
     The variational BIC is just
